@@ -1,26 +1,24 @@
-import { Audio } from 'expo-av';
+import { Audio } from 'expo-audio';
 
 // ─────────────────────────────────────────────
-//  SOUND MANAGER
-//  All sounds use expo-av Audio.Sound
-//  Sound files live in assets/sounds/
-//  Uses short synthesized tones if files not found
+//  SOUND MANAGER — safe version
+//  Missing sound files are silently ignored
 // ─────────────────────────────────────────────
 
 let sounds = {};
 let isMuted = false;
 
-// Sound file map — add your .mp3 files to assets/sounds/
+// Safely load sounds — if a file is missing, that sound is just skipped
 const SOUND_FILES = {
-  tap:         require('../assets/sounds/tap.mp3'),
-  correct:     require('../assets/sounds/correct.mp3'),
-  wrong:       require('../assets/sounds/wrong.mp3'),
-  celebration: require('../assets/sounds/celebration.mp3'),
-  xp:          require('../assets/sounds/xp.mp3'),
-  badge:       require('../assets/sounds/badge.mp3'),
-  unlock:      require('../assets/sounds/unlock.mp3'),
-  whoosh:      require('../assets/sounds/whoosh.mp3'),
-  tick:        require('../assets/sounds/tick.mp3'),
+  tap:         () => require('../assets/sounds/tap.mp3'),
+  correct:     () => require('../assets/sounds/correct.mp3'),
+  wrong:       () => require('../assets/sounds/wrong.mp3'),
+  celebration: () => require('../assets/sounds/celebration.mp3'),
+  xp:          () => require('../assets/sounds/xp.mp3'),
+  badge:       () => require('../assets/sounds/badge.mp3'),
+  unlock:      () => require('../assets/sounds/unlock.mp3'),
+  whoosh:      () => require('../assets/sounds/whoosh.mp3'),
+  tick:        () => require('../assets/sounds/tick.mp3'),
 };
 
 export const initSounds = async () => {
@@ -31,17 +29,18 @@ export const initSounds = async () => {
       playsInSilentModeIOS: false,
       shouldDuckAndroid: true,
     });
-    // Preload all sounds
-    for (const [key, file] of Object.entries(SOUND_FILES)) {
+
+    for (const [key, getFile] of Object.entries(SOUND_FILES)) {
       try {
+        const file = getFile();
         const { sound } = await Audio.Sound.createAsync(file, { volume: 1.0 });
         sounds[key] = sound;
       } catch (e) {
-        console.log(`Sound ${key} not loaded (file missing), skipping`);
+        // Sound file missing or failed — just skip it, app still works
       }
     }
   } catch (e) {
-    console.log('Sound init error:', e);
+    // Audio setup failed (e.g. simulator) — continue without sound
   }
 };
 
@@ -53,7 +52,7 @@ export const playSound = async (name) => {
     await sound.setPositionAsync(0);
     await sound.playAsync();
   } catch (e) {
-    // Silently ignore — sound is non-critical
+    // Ignore — sound is non-critical
   }
 };
 
@@ -68,12 +67,12 @@ export const unloadSounds = async () => {
 };
 
 // Convenience helpers
-export const soundTap = () => playSound('tap');
-export const soundCorrect = () => playSound('correct');
-export const soundWrong = () => playSound('wrong');
+export const soundTap         = () => playSound('tap');
+export const soundCorrect     = () => playSound('correct');
+export const soundWrong       = () => playSound('wrong');
 export const soundCelebration = () => playSound('celebration');
-export const soundXP = () => playSound('xp');
-export const soundBadge = () => playSound('badge');
-export const soundUnlock = () => playSound('unlock');
-export const soundWhoosh = () => playSound('whoosh');
-export const soundTick = () => playSound('tick');
+export const soundXP          = () => playSound('xp');
+export const soundBadge       = () => playSound('badge');
+export const soundUnlock      = () => playSound('unlock');
+export const soundWhoosh      = () => playSound('whoosh');
+export const soundTick        = () => playSound('tick');

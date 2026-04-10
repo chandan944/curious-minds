@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Animated,
   Dimensions, ScrollView,
@@ -18,6 +18,7 @@ const { width } = Dimensions.get('window');
 // ─────────────────────────────────────────────
 
 const QUESTION_TIME = 30; // seconds per question
+const MAX_OPTIONS = 4;    // max answer options per question
 
 export default function QuizEngine({
   quiz,
@@ -30,7 +31,7 @@ export default function QuizEngine({
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
   const [maxStreak, setMaxStreak] = useState(0);
-  const [answers, setAnswers] = useState([]); // {correct: bool}[]
+  const [answers, setAnswers] = useState([]);
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
   const [showXP, setShowXP] = useState(false);
   const [xpAmount, setXpAmount] = useState(0);
@@ -39,11 +40,17 @@ export default function QuizEngine({
 
   const timerRef = useRef(null);
   const questionAnim = useRef(new Animated.Value(0)).current;
-  const optionAnims = quiz.map(() => useRef(new Animated.Value(0)).current);
   const correctAnim = useRef(new Animated.Value(1)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
   const streakAnim = useRef(new Animated.Value(1)).current;
-  const timerAnim = useRef(new Animated.Value(1)).current;
+
+  // FIX: Create a fixed number of option anims (MAX_OPTIONS = 4),
+  // NOT quiz.length. The old code mapped quiz (10 items) for per-option anims
+  // which made no sense and caused animation index errors.
+  const optionAnims = useMemo(
+    () => Array.from({ length: MAX_OPTIONS }, () => new Animated.Value(0)),
+    []
+  );
 
   useEffect(() => {
     animateIn();
@@ -53,22 +60,22 @@ export default function QuizEngine({
 
   const animateIn = () => {
     questionAnim.setValue(0);
-    Animated.parallel([
-      Animated.spring(questionAnim, { toValue: 1, tension: 60, friction: 14, useNativeDriver: true }),
-      ...optionAnims.map((a, i) => {
-        a.setValue(0);
-        return Animated.spring(a, {
-          toValue: 1, tension: 60, friction: 14,
-          delay: 100 + i * 60,
-          useNativeDriver: true,
-        });
-      }),
-    ]).start();
+    // Reset and animate each option
+    optionAnims.forEach((a, i) => {
+      a.setValue(0);
+      Animated.spring(a, {
+        toValue: 1, tension: 60, friction: 14,
+        delay: 100 + i * 60,
+        useNativeDriver: true,
+      }).start();
+    });
+    Animated.spring(questionAnim, {
+      toValue: 1, tension: 60, friction: 14, useNativeDriver: true,
+    }).start();
   };
 
   const startTimer = () => {
     setTimeLeft(QUESTION_TIME);
-    timerAnim.setValue(1);
     clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
@@ -84,17 +91,23 @@ export default function QuizEngine({
   };
 
   const handleTimeOut = () => {
+    // Use a ref guard so we don't double-fire if already answered
     if (!answered) {
-      handleAnswer(-1); // -1 = timed out
+      handleAnswer(-1);
     }
   };
 
+  // Guard answered with a ref to avoid stale closure in timer
+  const answeredRef = useRef(false);
+  useEffect(() => { answeredRef.current = answered; }, [answered]);
+
   const handleAnswer = (optionIndex) => {
-    if (answered) return;
+    if (answeredRef.current) return;
     clearInterval(timerRef.current);
     soundTap();
     setSelected(optionIndex);
     setAnswered(true);
+    answeredRef.current = true;
 
     const q = quiz[currentQ];
     const isCorrect = optionIndex === q.answer;
@@ -109,19 +122,16 @@ export default function QuizEngine({
       soundCorrect();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      // XP reward
       const xp = XP_REWARDS.quizCorrect + (newStreak > 2 ? newStreak * 5 : 0);
       setXpAmount(xp);
       setShowXP(true);
       setTimeout(() => setShowXP(false), 2000);
 
-      // Scale animation
       Animated.sequence([
         Animated.spring(correctAnim, { toValue: 1.05, tension: 200, friction: 8, useNativeDriver: true }),
         Animated.spring(correctAnim, { toValue: 1, tension: 200, friction: 8, useNativeDriver: true }),
       ]).start();
 
-      // Streak bounce
       if (newStreak > 1) {
         Animated.sequence([
           Animated.spring(streakAnim, { toValue: 1.3, tension: 300, friction: 6, useNativeDriver: true }),
@@ -133,7 +143,6 @@ export default function QuizEngine({
       soundWrong();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 
-      // Shake animation
       Animated.sequence([
         Animated.timing(questionAnim, { toValue: 0.97, duration: 60, useNativeDriver: true }),
         Animated.timing(questionAnim, { toValue: 1.02, duration: 60, useNativeDriver: true }),
@@ -142,13 +151,11 @@ export default function QuizEngine({
       ]).start();
     }
 
-    // Update progress bar
     Animated.spring(progressAnim, {
       toValue: (currentQ + 1) / quiz.length,
       tension: 60, friction: 14, useNativeDriver: false,
     }).start();
 
-    // Auto-advance after delay
     setTimeout(() => advanceQuestion(isCorrect), 2000);
   };
 
@@ -162,13 +169,14 @@ export default function QuizEngine({
       setFinished(true);
       onComplete(finalScore, quiz.length, timeTaken, isPerfect);
     } else {
+      answeredRef.current = false;
       setCurrentQ(i => i + 1);
       setSelected(null);
       setAnswered(false);
     }
   };
 
-  if (finished) return null;
+  if (finished || !quiz || quiz.length === 0) return null;
 
   const q = quiz[currentQ];
   const timerPct = timeLeft / QUESTION_TIME;
@@ -183,11 +191,13 @@ export default function QuizEngine({
 
         {/* ── Top bar ── */}
         <View style={styles.topBar}>
-          {/* Progress */}
           <View style={styles.progressWrap}>
             <Animated.View style={[
               styles.progressFill,
-              { width: progressAnim.interpolate({ inputRange: [0,1], outputRange: ['0%', '100%'] }), backgroundColor: accentColor }
+              {
+                width: progressAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }),
+                backgroundColor: accentColor,
+              }
             ]} />
           </View>
           <Text style={[styles.qCounter, { color: accentColor }]}>
@@ -197,18 +207,15 @@ export default function QuizEngine({
 
         {/* ── Stats row ── */}
         <View style={styles.statsRow}>
-          {/* Score */}
           <View style={styles.statBubble}>
             <Text style={styles.statBubbleLabel}>Score</Text>
             <Text style={[styles.statBubbleValue, { color: COLORS.correct }]}>{score}</Text>
           </View>
 
-          {/* Timer */}
           <View style={[styles.timerCircle, { borderColor: timerColor }]}>
             <Text style={[styles.timerNum, { color: timerColor }]}>{timeLeft}</Text>
           </View>
 
-          {/* Streak */}
           <Animated.View style={[styles.statBubble, { transform: [{ scale: streakAnim }] }]}>
             <Text style={styles.statBubbleLabel}>Streak</Text>
             <Text style={[styles.statBubbleValue, { color: streak > 0 ? COLORS.warning : COLORS.textMuted }]}>
@@ -224,7 +231,7 @@ export default function QuizEngine({
             opacity: questionAnim,
             transform: [
               { scale: correctAnim },
-              { translateY: questionAnim.interpolate({ inputRange: [0,1], outputRange: [20, 0] }) },
+              { translateY: questionAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) },
             ],
             borderColor: accentColor + '30',
           }
@@ -242,7 +249,6 @@ export default function QuizEngine({
             const isCorrectAnswer = i === q.answer;
             const showCorrect = answered && isCorrectAnswer;
             const showWrong = answered && isSelected && !isCorrectAnswer;
-            const isTimedOut = answered && selected === -1;
 
             let borderColor = COLORS.glassBorder;
             let bgColor = COLORS.glass1;
@@ -262,37 +268,43 @@ export default function QuizEngine({
               textColor = accentColor;
             }
 
+            // Use optionAnims[i] safely — we always have MAX_OPTIONS (4) anims
+            const anim = optionAnims[i] || new Animated.Value(1);
+
             return (
               <Animated.View key={i} style={{
-                opacity: optionAnims[i] || 1,
+                opacity: anim,
                 transform: [{
-                  translateX: (optionAnims[i] || { interpolate: () => 0 }).interpolate
-                    ? optionAnims[i].interpolate({ inputRange: [0,1], outputRange: [30, 0] })
-                    : 0,
+                  translateX: anim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [30, 0],
+                  }),
                 }],
               }}>
                 <TouchableOpacity
                   onPress={() => handleAnswer(i)}
                   disabled={answered}
-                  style={[
-                    styles.option,
-                    { borderColor, backgroundColor: bgColor },
-                  ]}
+                  style={[styles.option, { borderColor, backgroundColor: bgColor }]}
                   activeOpacity={0.75}
                 >
-                  {/* Option letter */}
                   <View style={[
                     styles.optionLetter,
-                    { borderColor, backgroundColor: showCorrect ? COLORS.correct + '20' : showWrong ? COLORS.wrong + '20' : COLORS.glass1 }
+                    {
+                      borderColor,
+                      backgroundColor: showCorrect
+                        ? COLORS.correct + '20'
+                        : showWrong
+                        ? COLORS.wrong + '20'
+                        : COLORS.glass1,
+                    }
                   ]}>
                     <Text style={[styles.optionLetterText, { color: textColor }]}>
-                      {['A','B','C','D'][i]}
+                      {['A', 'B', 'C', 'D'][i]}
                     </Text>
                   </View>
 
                   <Text style={[styles.optionText, { color: textColor }]}>{opt}</Text>
 
-                  {/* Result icon */}
                   {showCorrect && <Text style={styles.resultIcon}>✓</Text>}
                   {showWrong && <Text style={styles.resultIcon}>✗</Text>}
                 </TouchableOpacity>
@@ -305,11 +317,19 @@ export default function QuizEngine({
         {answered && (
           <Animated.View style={[
             styles.explanationCard,
-            { borderColor: answered && selected === q.answer ? COLORS.correct + '40' : COLORS.wrong + '40' }
+            {
+              borderColor: selected === q.answer
+                ? COLORS.correct + '40'
+                : COLORS.wrong + '40',
+            }
           ]}>
             <BlurView intensity={15} tint="dark" style={styles.explanationBlur}>
               <Text style={styles.explanationLabel}>
-                {selected === q.answer ? '✅ Correct!' : selected === -1 ? '⏰ Time's up!' : '❌ Not quite...'}
+                {selected === q.answer
+                  ? '✅ Correct!'
+                  : selected === -1
+                  ? "⏰ Time's up!"
+                  : '❌ Not quite...'}
               </Text>
               <Text style={styles.explanationText}>{q.explanation}</Text>
             </BlurView>
@@ -326,7 +346,6 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.bg1 },
   content: { paddingHorizontal: SPACING.lg, paddingTop: SPACING.md },
 
-  // Top bar
   topBar: {
     flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: SPACING.md,
   },
@@ -338,7 +357,6 @@ const styles = StyleSheet.create({
   progressFill: { height: 6, borderRadius: 3 },
   qCounter: { fontFamily: FONTS.mono, fontSize: 13 },
 
-  // Stats
   statsRow: {
     flexDirection: 'row', alignItems: 'center',
     justifyContent: 'space-between',
@@ -363,7 +381,6 @@ const styles = StyleSheet.create({
   },
   timerNum: { fontFamily: FONTS.display, fontSize: 20 },
 
-  // Question
   questionCard: {
     borderRadius: RADIUS.xl, borderWidth: 1,
     overflow: 'hidden', marginBottom: SPACING.md,
@@ -382,7 +399,6 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary, lineHeight: 26,
   },
 
-  // Options
   optionsWrap: { gap: 10, marginBottom: SPACING.md },
   option: {
     flexDirection: 'row', alignItems: 'center',
@@ -398,7 +414,6 @@ const styles = StyleSheet.create({
   optionText: { flex: 1, fontFamily: FONTS.bodyMedium, fontSize: 15, lineHeight: 20 },
   resultIcon: { fontSize: 18 },
 
-  // Explanation
   explanationCard: {
     borderRadius: RADIUS.lg, borderWidth: 1,
     overflow: 'hidden', ...SHADOWS.soft,

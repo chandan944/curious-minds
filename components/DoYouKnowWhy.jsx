@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView,
 } from 'react-native';
@@ -16,13 +16,19 @@ import * as Haptics from 'expo-haptics';
 export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealed, setRevealed] = useState([]);
-  const revealAnims = questions.map(() => useRef(new Animated.Value(0)).current);
   const slideAnim = useRef(new Animated.Value(0)).current;
+
+  // FIX: Cannot call useRef inside a .map() — that violates Rules of Hooks.
+  // Instead, create a fixed-size array of refs upfront with useMemo.
+  const revealAnims = useMemo(
+    () => Array.from({ length: questions.length }, () => new Animated.Value(0)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [] // intentionally empty — questions length won't change mid-session
+  );
 
   const q = questions[currentIndex];
   const isCurrentRevealed = revealed.includes(currentIndex);
   const isLast = currentIndex === questions.length - 1;
-  const allRevealed = questions.every((_, i) => revealed.includes(i));
 
   const handleReveal = () => {
     soundWhoosh();
@@ -42,6 +48,9 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
     ]).start();
     setCurrentIndex(i => i + 1);
   };
+
+  // Guard: if questions is empty or undefined, render nothing
+  if (!questions || questions.length === 0) return null;
 
   return (
     <View style={styles.root}>
@@ -136,10 +145,7 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
               </Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity
-              onPress={onComplete}
-              style={styles.quizBtn}
-            >
+            <TouchableOpacity onPress={onComplete} style={styles.quizBtn}>
               <LinearGradient
                 colors={[COLORS.xpGold + 'CC', COLORS.xpGold + '88']}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
