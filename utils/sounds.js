@@ -1,4 +1,4 @@
-import { Audio } from 'expo-audio';
+import { Audio } from 'expo-av';
 
 // ─────────────────────────────────────────────
 //  SOUND MANAGER — safe version
