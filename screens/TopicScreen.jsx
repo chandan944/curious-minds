@@ -24,11 +24,35 @@ const STATUS_BAR_H = Platform.OS === 'android' ? (StatusBar.currentHeight || 36)
 // Dynamic import for topic configs
 const TOPIC_CONFIGS = {
   gravity: () => require('../topics/gravity/config').default,
+  electricity_circuits: () => require('../topics/electricity_circuits/config').default,
+  chemical_bonding: () => require('../topics/chemical_bonding/config').default,
+  brain_structure: () => require('../topics/brain_structure/config').default,
+  ancient_civilizations: () => require('../topics/ancient_civilizations/config').default,
+  industrial_revolution: () => require('../topics/industrial_revolution/config').default,
+  world_wars: () => require('../topics/world_wars/config').default,
+  dna_genetics: () => require('../topics/dna_genetics/config').default,
+  atoms_molecules: () => require('../topics/atoms_molecules/config').default,
+  evolution_natural: () => require('../topics/evolution_natural/config').default,
+  solar_system: () => require('../topics/solar_system/config').default,
+  binary_computers: () => require('../topics/binary_computers/config').default,
+  internet_how_it_works: () => require('../topics/internet_how_it_works/config').default,
 };
 
 // Dynamic import for lab simulations
 const LAB_COMPONENTS = {
   gravity: () => require('../topics/gravity/LabSimulation').default,
+  electricity_circuits: () => require('../topics/electricity_circuits/LabSimulation').default,
+  chemical_bonding: () => require('../topics/chemical_bonding/LabSimulation').default,
+  brain_structure: () => require('../topics/brain_structure/LabSimulation').default,
+  ancient_civilizations: () => require('../topics/ancient_civilizations/LabSimulation').default,
+  industrial_revolution: () => require('../topics/industrial_revolution/LabSimulation').default,
+  world_wars: () => require('../topics/world_wars/LabSimulation').default,
+  dna_genetics: () => require('../topics/dna_genetics/LabSimulation').default,
+  atoms_molecules: () => require('../topics/atoms_molecules/LabSimulation').default,
+  evolution_natural: () => require('../topics/evolution_natural/LabSimulation').default,
+  solar_system: () => require('../topics/solar_system/LabSimulation').default,
+  binary_computers: () => require('../topics/binary_computers/LabSimulation').default,
+  internet_how_it_works: () => require('../topics/internet_how_it_works/LabSimulation').default,
 };
 
 const STEPS       = ['hook', 'theory', 'lab', 'dyk', 'quiz', 'results'];

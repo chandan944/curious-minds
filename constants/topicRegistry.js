@@ -12,7 +12,7 @@ export const TOPIC_REGISTRY = [
   { id: 'scientific_method',     icon: 'microscope',  category: 'Foundations', title: 'Scientific Method',               priority: 1, status: 'coming' },
   { id: 'measurement_units',     icon: 'ruler',       category: 'Foundations', title: 'Measurement & SI Units',          priority: 1, status: 'coming' },
   { id: 'matter_states',         icon: 'snowflake',   category: 'Foundations', title: 'States of Matter',                priority: 1, status: 'coming' },
-  { id: 'atoms_molecules',       icon: 'atom',        category: 'Foundations', title: 'Atoms & Molecules',               priority: 1, status: 'coming' },
+  { id: 'atoms_molecules',       icon: 'atom',        category: 'Foundations', title: 'Atoms & Molecules',               priority: 1, status: 'ready' },
   { id: 'periodic_table',        icon: 'grid',        category: 'Foundations', title: 'Periodic Table Basics',           priority: 1, status: 'coming' },
   { id: 'energy_types',          icon: 'zap',         category: 'Foundations', title: 'Energy Types & Conservation',     priority: 1, status: 'coming' },
   { id: 'forces_motion',         icon: 'target',      category: 'Foundations', title: 'Forces & Motion',                 priority: 1, status: 'coming' },
@@ -24,7 +24,7 @@ export const TOPIC_REGISTRY = [
   // ═══════════════════════════════════════════════════════════════
   //  BLOCK 2: PHYSICS (High demand - Engineering & Tech) - 8 topics
   // ═══════════════════════════════════════════════════════════════
-  { id: 'electricity_circuits',  icon: 'lightning',   category: 'Physics',     title: 'Electricity & Circuits',          priority: 2, status: 'coming' },
+  { id: 'electricity_circuits',  icon: 'lightning',   category: 'Physics',     title: 'Electricity & Circuits',          priority: 2, status: 'ready' },
   { id: 'magnetism',             icon: 'magnet',      category: 'Physics',     title: 'Magnetism & Electromagnetism',    priority: 2, status: 'coming' },
   { id: 'thermodynamics_laws',   icon: 'fire',        category: 'Physics',     title: 'Thermodynamics (Laws of Heat)',   priority: 2, status: 'coming' },
   { id: 'momentum_collisions',   icon: 'target',      category: 'Physics',     title: 'Momentum & Collisions',           priority: 2, status: 'coming' },
@@ -35,7 +35,7 @@ export const TOPIC_REGISTRY = [
   // ═══════════════════════════════════════════════════════════════
   //  BLOCK 3: CHEMISTRY (High demand - Medicine & Materials) - 8 topics
   // ═══════════════════════════════════════════════════════════════
-  { id: 'chemical_bonding',      icon: 'link',        category: 'Chemistry',   title: 'Chemical Bonding (Ionic/Covalent)', priority: 2, status: 'coming' },
+  { id: 'chemical_bonding',      icon: 'link',        category: 'Chemistry',   title: 'Chemical Bonding (Ionic/Covalent)', priority: 2, status: 'ready' },
   { id: 'chemical_reactions',    icon: 'flask',       category: 'Chemistry',   title: 'Chemical Reactions & Equations',  priority: 2, status: 'coming' },
   { id: 'acids_bases_ph',        icon: 'beaker',      category: 'Chemistry',   title: 'Acids, Bases & pH Scale',         priority: 2, status: 'coming' },
   { id: 'periodic_trends',       icon: 'chart',       category: 'Chemistry',   title: 'Periodic Trends (Reactivity etc.)', priority: 2, status: 'coming' },
@@ -48,18 +48,18 @@ export const TOPIC_REGISTRY = [
   //  BLOCK 4: BIOLOGY (High demand - Health & Life Sciences) - 8 topics
   // ═══════════════════════════════════════════════════════════════
   { id: 'cell_structure',        icon: 'microscope',  category: 'Biology',     title: 'Cell Structure & Function',        priority: 2, status: 'coming' },
-  { id: 'dna_genetics',          icon: 'dna',         category: 'Biology',     title: 'DNA, Genes & Genetics',            priority: 2, status: 'coming' },
-  { id: 'evolution_natural',     icon: 'dna',         category: 'Biology',     title: 'Evolution & Natural Selection',    priority: 2, status: 'coming' },
+  { id: 'dna_genetics',          icon: 'hash',        category: 'Biology',     title: 'DNA & Genetics (The Code of Life)',priority: 3, status: 'ready' },
+  { id: 'evolution_natural',     icon: 'dna',         category: 'Biology',     title: 'Evolution & Natural Selection',    priority: 2, status: 'ready' },
   { id: 'human_body_systems',    icon: 'person',      category: 'Biology',     title: 'Human Body Systems Overview',      priority: 2, status: 'coming' },
   { id: 'nervous_system_brain',  icon: 'brain',       category: 'Biology',     title: 'Nervous System & Brain',           priority: 2, status: 'coming' },
   { id: 'immune_system',         icon: 'shield',      category: 'Biology',     title: 'Immune System & Vaccines',         priority: 2, status: 'coming' },
-  { id: 'photosynthesis',        icon: 'leaf',        category: 'Biology',     title: 'Photosynthesis & Plants',          priority: 2, status: 'coming' },
+  { id: 'photosynthesis',        icon: 'leaf',        category: 'Biology',     title: 'Photosynthesis & Plants',          priority: 2, status: 'ready' },
   { id: 'ecosystems',            icon: 'earth',       category: 'Biology',     title: 'Ecosystems & Food Chains',         priority: 3, status: 'coming' },
 
   // ═══════════════════════════════════════════════════════════════
   //  BLOCK 5: PSYCHOLOGY (High demand - Self improvement & UX) - 6 topics
   // ═══════════════════════════════════════════════════════════════
-  { id: 'brain_structure',       icon: 'brain',       category: 'Psychology',  title: 'Brain Anatomy & Functions',        priority: 2, status: 'coming' },
+  { id: 'brain_structure',       icon: 'brain',       category: 'Psychology',  title: 'Brain Anatomy & Functions',        priority: 2, status: 'ready' },
   { id: 'memory_how_it_works',   icon: 'book',        category: 'Psychology',  title: 'How Memory Works (Learning Hack)', priority: 2, status: 'coming' },
   { id: 'cognitive_biases',      icon: 'target',      category: 'Psychology',  title: 'Cognitive Biases (Think Better)', priority: 2, status: 'coming' },
   { id: 'emotions_motivation',   icon: 'heart',       category: 'Psychology',  title: 'Emotions & Motivation',            priority: 2, status: 'coming' },
@@ -69,9 +69,9 @@ export const TOPIC_REGISTRY = [
   // ═══════════════════════════════════════════════════════════════
   //  BLOCK 6: HISTORY (High demand - Understanding today's world) - 6 topics
   // ═══════════════════════════════════════════════════════════════
-  { id: 'ancient_civilizations', icon: 'history',     category: 'History',     title: 'Ancient Civilizations (Egypt, Indus, Rome)', priority: 3, status: 'coming' },
-  { id: 'industrial_revolution', icon: 'factory',     category: 'History',     title: 'Industrial Revolution (How World Changed)', priority: 2, status: 'coming' },
-  { id: 'world_wars',            icon: 'bomb',        category: 'History',     title: 'World Wars (WW1 & WW2)',           priority: 2, status: 'coming' },
+  { id: 'ancient_civilizations', icon: 'history',     category: 'History',     title: 'Ancient Civilizations (Egypt, Indus, Rome)', priority: 3, status: 'ready' },
+  { id: 'industrial_revolution', icon: 'factory',     category: 'History',     title: 'Industrial Revolution (How World Changed)', priority: 2, status: 'ready' },
+  { id: 'world_wars',            icon: 'bomb',        category: 'History',     title: 'World Wars (WW1 & WW2)',           priority: 2, status: 'ready' },
   { id: 'colonization',          icon: 'globe',       category: 'History',     title: 'Colonization & Independence',      priority: 2, status: 'coming' },
   { id: 'cold_war',              icon: 'snowflake',   category: 'History',     title: 'Cold War (US vs USSR)',            priority: 3, status: 'coming' },
   { id: 'indian_freedom',        icon: 'flag',        category: 'History',     title: 'Indian Freedom Struggle (Gandhi, Nehru)', priority: 3, status: 'coming' },
@@ -79,7 +79,7 @@ export const TOPIC_REGISTRY = [
   // ═══════════════════════════════════════════════════════════════
   //  BLOCK 7: SPACE & FUTURE (High demand - Curiosity & Careers) - 6 topics
   // ═══════════════════════════════════════════════════════════════
-  { id: 'solar_system',          icon: 'planet',      category: 'Space',       title: 'Solar System (Planets & Moons)',  priority: 2, status: 'coming' },
+  { id: 'solar_system',          icon: 'planet',      category: 'Space',       title: 'Solar System (Planets & Moons)',  priority: 2, status: 'ready' },
   { id: 'stars_lifecycle',       icon: 'star',        category: 'Space',       title: 'Stars & Their Life Cycles',       priority: 2, status: 'coming' },
   { id: 'black_holes',           icon: 'blackhole',   category: 'Space',       title: 'Black Holes (Mind-Blowing)',       priority: 2, status: 'coming' },
   { id: 'big_bang',              icon: 'galaxy',      category: 'Space',       title: 'Big Bang Theory (Origin of Universe)', priority: 2, status: 'coming' },
@@ -89,8 +89,8 @@ export const TOPIC_REGISTRY = [
   // ═══════════════════════════════════════════════════════════════
   //  BLOCK 8: TECH & AI (HIGHEST DEMAND - Careers & Future) - 6 topics
   // ═══════════════════════════════════════════════════════════════
-  { id: 'binary_computers',      icon: 'binary',      category: 'Technology',  title: 'Binary & How Computers Work',     priority: 2, status: 'coming' },
-  { id: 'internet_how_it_works', icon: 'wifi',        category: 'Technology',  title: 'How the Internet Works',          priority: 2, status: 'coming' },
+  { id: 'binary_computers',      icon: 'binary',      category: 'Technology',  title: 'Binary & How Computers Work',     priority: 2, status: 'ready' },
+  { id: 'internet_how_it_works', icon: 'wifi',        category: 'Technology',  title: 'How the Internet Works',          priority: 2, status: 'ready' },
   { id: 'ai_machine_learning',   icon: 'robot',       category: 'Technology',  title: 'AI & Machine Learning (Intro)',   priority: 2, status: 'coming' },
   { id: 'digital_circuits',      icon: 'cpu',         category: 'Technology',  title: 'Digital Circuits & Logic Gates',  priority: 3, status: 'coming' },
   { id: 'cryptography',          icon: 'key',         category: 'Technology',  title: 'Cryptography (Passwords & Security)', priority: 2, status: 'coming' },

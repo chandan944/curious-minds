@@ -504,6 +504,13 @@ const iconMap = {
       <Path d="M12 16V12M12 8H12.01" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
     </Svg>
   ),
+  headphones: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M3 18V12C3 7.03 7.03 3 12 3C16.97 3 21 7.03 21 12V18" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <Rect x="3" y="15" width="4" height="6" rx="1.5" stroke={color} strokeWidth="1.5" />
+      <Rect x="17" y="15" width="4" height="6" rx="1.5" stroke={color} strokeWidth="1.5" />
+    </Svg>
+  ),
 };
 
 export default function Icon({ name, size = 24, color = '#fff', filled = false }) {
