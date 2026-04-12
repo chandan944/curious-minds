@@ -9,6 +9,7 @@ import { FONTS, RADIUS, SPACING } from '../constants/theme';
 import { soundWhoosh, soundTap } from '../utils/sounds';
 import * as Haptics from 'expo-haptics';
 import Icon from './ui/Icons';
+import MarkdownText from './ui/MarkdownText';
 
 // ─────────────────────────────────────────────
 //  CuriosityHook — the "jaw-drop" first screen
@@ -86,9 +87,9 @@ export default function CuriosityHook({ hook, accentColor, topicTitle, onContinu
         {/* Question */}
         <Text style={[styles.hookLabel, { color: txtM }]}>Here's a question:</Text>
         <View style={[styles.questionCard, { borderColor: color + '30', backgroundColor: glass2 }]}>
-          <Text style={[styles.question, { color: txt1 }]}>
+          <MarkdownText style={[styles.question, { color: txt1 }]} highlightColor="#FFD166">
             {hook.question}
-          </Text>
+          </MarkdownText>
         </View>
 
         {/* Reveal / Answer */}
@@ -123,7 +124,7 @@ export default function CuriosityHook({ hook, accentColor, topicTitle, onContinu
                 <Icon name="lightbulb" size={14} color={color} />
                 <Text style={[styles.answerLabel, { color: txtM }]}>The Answer</Text>
               </View>
-              <Text style={[styles.answerText, { color: txt2 }]}>{hook.reveal}</Text>
+              <MarkdownText style={[styles.answerText, { color: txt2 }]} highlightColor="#FFD166">{hook.reveal}</MarkdownText>
             </LinearGradient>
           </Animated.View>
         )}

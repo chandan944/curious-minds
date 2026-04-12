@@ -8,6 +8,7 @@ import { FONTS, RADIUS, SPACING } from '../constants/theme';
 import { soundTap, soundWhoosh } from '../utils/sounds';
 import * as Haptics from 'expo-haptics';
 import Icon from './ui/Icons';
+import MarkdownText from './ui/MarkdownText';
 
 export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
   const { theme, isDark } = useTheme();
@@ -99,7 +100,7 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
             <Text style={[styles.questionNum, { color: accentColor }]}>
               Question {currentIndex + 1} of {questions.length}
             </Text>
-            <Text style={[styles.questionText, { color: txt1 }]}>{q.question}</Text>
+            <MarkdownText style={[styles.questionText, { color: txt1 }]} highlightColor="#FFD166">{q.question}</MarkdownText>
 
             {!isCurrentRevealed && (
               <View style={[styles.thinkBox, { backgroundColor: glass1, borderColor: border }]}>
@@ -131,7 +132,7 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
                 <Text style={[styles.answerLabel, { color: accentColor }]}>The Explanation</Text>
               </View>
             </View>
-            <Text style={[styles.answerText, { color: txt2 }]}>{q.answer}</Text>
+            <MarkdownText style={[styles.answerText, { color: txt2 }]} highlightColor="#FFD166">{q.answer}</MarkdownText>
           </Animated.View>
         )}
 

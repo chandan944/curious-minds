@@ -69,13 +69,10 @@ that another AI will use to build it.
 
 I will give you ONE topic. You will output a complete, detailed 
 photosynthesis that slots into the Master Lab Framework below.
-
 ════════════════════════════════════════════════
 THE TOPIC I WANT YOU TO DESIGN FOR:
 ════════════════════════════════════════════════
-
-photosynthesis
-e.g: "Immune System" or "Periodic Table" or "Black Holes"
+light_optics , waves_sound,heat_temperature ,work_power ,forces_motion
 
 ════════════════════════════════════════════════
 YOUR THINKING PROCESS (follow this strictly):
@@ -118,7 +115,7 @@ Q6. DISCOVERY MODE (The Hidden Layer):
 OUTPUT FORMAT (write exactly this structure):
 ════════════════════════════════════════════════
 
-## TOPIC: [Topic Name]
+## TOPIC: [scientific_method,measurement_units,matter_states,periodic_table,energy_types]
 ## CORE CONCEPT IN ONE LINE: [What the student will deeply understand 
    after 10 minutes of play]
 
@@ -227,13 +224,10 @@ FINAL INSTRUCTION TO THE SPEC-WRITING AI:
 
 After writing the full spec above, append this section:
 
-## BUILDER PROMPT (copy-paste ready for the coding AI):
 
 Write a single ready-to-use prompt that:
 1. Pastes the entire Master Lab Framework rules above
-2. Then inserts the spec you just wrote as the [TOPIC BLOCK]
+2. Then inserts the spec you just wrote as the [light_optics , waves_sound,heat_temperature ,work_power ,forces_motion]
 3. Ends with: "Build the complete single-file React Native component 
    now. No placeholders. No TODOs. Full working code."
 
-The goal: I copy your output, paste it into any coding AI, 
-and receive complete working lab code immediately.

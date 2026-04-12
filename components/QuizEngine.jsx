@@ -11,6 +11,7 @@ import * as Haptics from 'expo-haptics';
 import XPToast from './ui/XPToast';
 import { XP_REWARDS } from '../constants/xpSystem';
 import Icon from './ui/Icons';
+import MarkdownText from './ui/MarkdownText';
 
 const { width } = Dimensions.get('window');
 
@@ -257,7 +258,7 @@ export default function QuizEngine({ quiz, accentColor, onComplete }) {
               ))}
             </View>
           </View>
-          <Text style={[styles.questionText, { color: txt1 }]}>{q.question}</Text>
+          <MarkdownText style={[styles.questionText, { color: txt1 }]} highlightColor="#FFD166">{q.question}</MarkdownText>
         </Animated.View>
 
         {/* ── Options ──────────────────────────────── */}
@@ -302,7 +303,7 @@ export default function QuizEngine({ quiz, accentColor, onComplete }) {
                     </Text>
                   </View>
 
-                  <Text style={[styles.optionText, { color: textC }]}>{opt}</Text>
+                  <MarkdownText style={[styles.optionText, { color: textC }]} highlightColor="#FFD166">{opt}</MarkdownText>
 
                   {showCorrectO && (
                     <View style={[styles.resultIconWrap, { backgroundColor: correct + '20' }]}>
@@ -355,7 +356,7 @@ export default function QuizEngine({ quiz, accentColor, onComplete }) {
                 </>
               )}
             </View>
-            <Text style={[styles.explanationText, { color: txt2 }]}>{q.explanation}</Text>
+            <MarkdownText style={[styles.explanationText, { color: txt2 }]} highlightColor="#FFD166">{q.explanation}</MarkdownText>
             
             <TouchableOpacity onPress={onNextQuestion} style={[styles.nextQBtn, { backgroundColor: accentColor }]}>
               <Text style={styles.nextQBtnText}>

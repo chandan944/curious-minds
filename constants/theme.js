@@ -6,28 +6,28 @@
 export const createTheme = (isDark = true) => ({
   // ── Background Layers ──────────────────────
   bg: {
-    base:     isDark ? '#08090F' : '#F0F2F8',
+    base:     isDark ? '#08090F' : '#F4F6F9',
     surface:  isDark ? '#0E1018' : '#FFFFFF',
-    elevated: isDark ? '#141620' : '#F8F9FF',
+    elevated: isDark ? '#141620' : '#FFFFFF',
     card:     isDark ? '#181B28' : '#FFFFFF',
-    overlay:  isDark ? 'rgba(8,9,15,0.85)' : 'rgba(240,242,248,0.85)',
+    overlay:  isDark ? 'rgba(8,9,15,0.85)' : 'rgba(244,246,249,0.85)',
   },
 
   // ── Glass Surfaces ─────────────────────────
   glass: {
-    light:   isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.70)',
-    medium:  isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.85)',
-    strong:  isDark ? 'rgba(255,255,255,0.11)' : 'rgba(255,255,255,0.95)',
-    border:  isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)',
-    borderBright: isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.14)',
+    light:   isDark ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.03)',
+    medium:  isDark ? 'rgba(255,255,255,0.07)' : 'rgba(15,23,42,0.06)',
+    strong:  isDark ? 'rgba(255,255,255,0.11)' : 'rgba(15,23,42,0.10)',
+    border:  isDark ? 'rgba(255,255,255,0.09)' : 'rgba(15,23,42,0.08)',
+    borderBright: isDark ? 'rgba(255,255,255,0.18)' : 'rgba(15,23,42,0.15)',
   },
 
   // ── Typography ─────────────────────────────
   text: {
-    primary:   isDark ? '#E8EAFF' : '#0D0F1E',
-    secondary: isDark ? 'rgba(232,234,255,0.65)' : 'rgba(13,15,30,0.60)',
-    muted:     isDark ? 'rgba(232,234,255,0.35)' : 'rgba(13,15,30,0.35)',
-    inverse:   isDark ? '#0D0F1E' : '#E8EAFF',
+    primary:   isDark ? '#E8EAFF' : '#0F172A',
+    secondary: isDark ? 'rgba(232,234,255,0.65)' : '#475569',
+    muted:     isDark ? 'rgba(232,234,255,0.35)' : '#94A3B8',
+    inverse:   isDark ? '#0D0F1E' : '#FFFFFF',
   },
 
   // ── Accent System ──────────────────────────

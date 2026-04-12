@@ -325,10 +325,12 @@ function TopicCard({ topic, index, theme, onPress }) {
           </View>
 
           {/* Title */}
-          <Text style={[styles.cardTitle, { color: isReady ? txtPrim : txtMut }]} numberOfLines={2}>
-            {topic.title}
-          </Text>
-          <Text style={[styles.cardCategory, { color: txtMut }]}>{topic.category}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.cardTitle, { color: isReady ? txtPrim : txtMut }]} numberOfLines={2}>
+              {topic.title}
+            </Text>
+            <Text style={[styles.cardCategory, { color: txtMut }]}>{topic.category}</Text>
+          </View>
 
           {/* Status badge */}
           {isReady ? (
@@ -483,7 +485,7 @@ const styles = StyleSheet.create({
   cardDimmed: { opacity: 0.5 },
   cardGrad: {
     borderRadius: RADIUS.xl, borderWidth: 1,
-    padding: SPACING.md, minHeight: 148,
+    padding: SPACING.md, minHeight: 164,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },

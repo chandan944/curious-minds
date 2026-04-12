@@ -9,6 +9,7 @@ import { FONTS, RADIUS, SPACING } from '../constants/theme';
 import { soundTap, soundWhoosh } from '../utils/sounds';
 import * as Haptics from 'expo-haptics';
 import Icon from './ui/Icons';
+import MarkdownText from './ui/MarkdownText';
 
 const { width, height: SCREEN_H } = Dimensions.get('window');
 const CARD_WIDTH = width - 48;
@@ -173,9 +174,9 @@ function TheoryCard({ card, index, total, isDark, txt1, txt2, accentColor, onPre
       )}
 
       {/* Content */}
-      <Text style={[styles.cardContent, { color: isDark ? 'rgba(232,234,255,0.70)' : 'rgba(13,15,30,0.65)' }]}>
+      <MarkdownText style={[styles.cardContent, { color: isDark ? 'rgba(232,234,255,0.70)' : 'rgba(13,15,30,0.65)' }]} highlightColor="#FFD166">
         {card.content}
-      </Text>
+      </MarkdownText>
 
       {/* Highlight callout */}
       {card.highlight && (
@@ -183,7 +184,7 @@ function TheoryCard({ card, index, total, isDark, txt1, txt2, accentColor, onPre
           <View style={[styles.highlightIconWrap, { backgroundColor: card.color + '20' }]}>
             <Icon name="lightbulb" size={14} color={card.color} />
           </View>
-          <Text style={[styles.highlightText, { color: card.color }]}>{card.highlight}</Text>
+          <MarkdownText style={[styles.highlightText, { color: card.color }]} highlightColor="#FFD166">{card.highlight}</MarkdownText>
         </View>
       )}
       </LinearGradient>
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
 
   // Vertical scroll for the card
   cardScroll: { flex: 1 },
-  cardScrollContent: { paddingHorizontal: 24, paddingTop: 8, paddingBottom: 16 },
+  cardScrollContent: { paddingHorizontal: 24, paddingTop: 8, paddingBottom: 80 },
 
   card: {
     borderRadius: RADIUS.xl, borderWidth: 1,

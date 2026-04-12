@@ -11,7 +11,7 @@ import { FONTS, RADIUS, SPACING } from '../../constants/theme';
 import { soundTap, soundWhoosh, soundBadge } from '../../utils/sounds';
 import * as Haptics from 'expo-haptics';
 import Icon from '../../components/ui/Icons';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber/native';
 
 // ══════════════════════════════════════════════════════════
 //  3D HELIX COMPONENT (GAME 1)

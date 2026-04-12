@@ -9,17 +9,17 @@ export const TOPIC_REGISTRY = [
   //  BLOCK 1: FOUNDATIONS (Must-know for EVERYTHING else) - 12 topics
   // ═══════════════════════════════════════════════════════════════
   { id: 'gravity',               icon: 'planet',      category: 'Foundations', title: 'Gravity & Gravitation',           priority: 1, status: 'ready'  },
-  { id: 'scientific_method',     icon: 'microscope',  category: 'Foundations', title: 'Scientific Method',               priority: 1, status: 'coming' },
-  { id: 'measurement_units',     icon: 'ruler',       category: 'Foundations', title: 'Measurement & SI Units',          priority: 1, status: 'coming' },
-  { id: 'matter_states',         icon: 'snowflake',   category: 'Foundations', title: 'States of Matter',                priority: 1, status: 'coming' },
+  { id: 'scientific_method',     icon: 'microscope',  category: 'Foundations', title: 'Scientific Method',               priority: 1, status: 'ready'  },
+  { id: 'measurement_units',     icon: 'ruler',       category: 'Foundations', title: 'Measurement & SI Units',          priority: 1, status: 'ready'  },
+  { id: 'matter_states',         icon: 'snowflake',   category: 'Foundations', title: 'States of Matter',                priority: 1, status: 'ready'  },
   { id: 'atoms_molecules',       icon: 'atom',        category: 'Foundations', title: 'Atoms & Molecules',               priority: 1, status: 'ready' },
-  { id: 'periodic_table',        icon: 'grid',        category: 'Foundations', title: 'Periodic Table Basics',           priority: 1, status: 'coming' },
-  { id: 'energy_types',          icon: 'zap',         category: 'Foundations', title: 'Energy Types & Conservation',     priority: 1, status: 'coming' },
-  { id: 'forces_motion',         icon: 'target',      category: 'Foundations', title: 'Forces & Motion',                 priority: 1, status: 'coming' },
-  { id: 'work_power',            icon: 'lightning',   category: 'Foundations', title: 'Work, Power & Energy',            priority: 1, status: 'coming' },
-  { id: 'heat_temperature',      icon: 'thermometer', category: 'Foundations', title: 'Heat & Temperature',              priority: 1, status: 'coming' },
-  { id: 'waves_sound',           icon: 'waves',       category: 'Foundations', title: 'Waves & Sound',                   priority: 1, status: 'coming' },
-  { id: 'light_optics',          icon: 'lightbulb',   category: 'Foundations', title: 'Light & Optics',                  priority: 1, status: 'coming' },
+  { id: 'periodic_table',        icon: 'grid',        category: 'Foundations', title: 'Periodic Table Basics',           priority: 1, status: 'ready'  },
+  { id: 'energy_types',          icon: 'zap',         category: 'Foundations', title: 'Energy Types & Conservation',     priority: 1, status: 'ready'  },
+  { id: 'forces_motion',         icon: 'target',      category: 'Foundations', title: 'Forces & Motion',                 priority: 1, status: 'ready' },
+  { id: 'work_power',            icon: 'lightning',   category: 'Foundations', title: 'Work, Power & Energy',            priority: 1, status: 'ready' },
+  { id: 'heat_temperature',      icon: 'thermometer', category: 'Foundations', title: 'Heat & Temperature',              priority: 1, status: 'ready' },
+  { id: 'waves_sound',           icon: 'waves',       category: 'Foundations', title: 'Waves & Sound',                   priority: 1, status: 'ready' },
+  { id: 'light_optics',          icon: 'lightbulb',   category: 'Foundations', title: 'Light & Optics',                  priority: 1, status: 'ready' },
 
   // ═══════════════════════════════════════════════════════════════
   //  BLOCK 2: PHYSICS (High demand - Engineering & Tech) - 8 topics
@@ -47,14 +47,14 @@ export const TOPIC_REGISTRY = [
   // ═══════════════════════════════════════════════════════════════
   //  BLOCK 4: BIOLOGY (High demand - Health & Life Sciences) - 8 topics
   // ═══════════════════════════════════════════════════════════════
-  { id: 'cell_structure',        icon: 'microscope',  category: 'Biology',     title: 'Cell Structure & Function',        priority: 2, status: 'coming' },
+  { id: 'cell_structure',        icon: 'microscope',  category: 'Biology',     title: 'Cell Structure & Function',        priority: 2, status: 'ready'  },
   { id: 'dna_genetics',          icon: 'hash',        category: 'Biology',     title: 'DNA & Genetics (The Code of Life)',priority: 3, status: 'ready' },
   { id: 'evolution_natural',     icon: 'dna',         category: 'Biology',     title: 'Evolution & Natural Selection',    priority: 2, status: 'ready' },
-  { id: 'human_body_systems',    icon: 'person',      category: 'Biology',     title: 'Human Body Systems Overview',      priority: 2, status: 'coming' },
+  { id: 'human_body_systems',    icon: 'person',      category: 'Biology',     title: 'Human Body Systems Overview',      priority: 2, status: 'ready'  },
   { id: 'nervous_system_brain',  icon: 'brain',       category: 'Biology',     title: 'Nervous System & Brain',           priority: 2, status: 'coming' },
-  { id: 'immune_system',         icon: 'shield',      category: 'Biology',     title: 'Immune System & Vaccines',         priority: 2, status: 'coming' },
+  { id: 'immune_system',         icon: 'shield',      category: 'Biology',     title: 'Immune System & Vaccines',         priority: 2, status: 'ready'  },
   { id: 'photosynthesis',        icon: 'leaf',        category: 'Biology',     title: 'Photosynthesis & Plants',          priority: 2, status: 'ready' },
-  { id: 'ecosystems',            icon: 'earth',       category: 'Biology',     title: 'Ecosystems & Food Chains',         priority: 3, status: 'coming' },
+  { id: 'ecosystems',            icon: 'earth',       category: 'Biology',     title: 'Ecosystems & Food Chains',         priority: 3, status: 'ready'  },
 
   // ═══════════════════════════════════════════════════════════════
   //  BLOCK 5: PSYCHOLOGY (High demand - Self improvement & UX) - 6 topics
@@ -91,10 +91,10 @@ export const TOPIC_REGISTRY = [
   // ═══════════════════════════════════════════════════════════════
   { id: 'binary_computers',      icon: 'binary',      category: 'Technology',  title: 'Binary & How Computers Work',     priority: 2, status: 'ready' },
   { id: 'internet_how_it_works', icon: 'wifi',        category: 'Technology',  title: 'How the Internet Works',          priority: 2, status: 'ready' },
-  { id: 'ai_machine_learning',   icon: 'robot',       category: 'Technology',  title: 'AI & Machine Learning (Intro)',   priority: 2, status: 'coming' },
-  { id: 'digital_circuits',      icon: 'cpu',         category: 'Technology',  title: 'Digital Circuits & Logic Gates',  priority: 3, status: 'coming' },
-  { id: 'cryptography',          icon: 'key',         category: 'Technology',  title: 'Cryptography (Passwords & Security)', priority: 2, status: 'coming' },
-  { id: 'data_science',          icon: 'data',        category: 'Technology',  title: 'Data Science & Statistics Basics', priority: 2, status: 'coming' },
+  { id: 'ai_machine_learning',   icon: 'robot',       category: 'Technology',  title: 'AI & Machine Learning (Intro)',   priority: 2, status: 'ready' },
+  { id: 'digital_circuits',      icon: 'cpu',         category: 'Technology',  title: 'Digital Circuits & Logic Gates',  priority: 3, status: 'ready' },
+  { id: 'cryptography',          icon: 'key',         category: 'Technology',  title: 'Cryptography (Passwords & Security)', priority: 2, status: 'ready' },
+  { id: 'data_science',          icon: 'data',        category: 'Technology',  title: 'Data Science & Statistics Basics', priority: 2, status: 'ready' },
 ];
 
 // ═══════════════════════════════════════════════════════════════════

@@ -38,7 +38,18 @@ export default function App() {
     return (
       <View style={styles.loading}>
         <ActivityIndicator color={COLORS.accent} size="large" />
-        <Text style={styles.loadingText}>Loading Curious Minds...</Text>
+
+        <Text
+          style={[
+            styles.loadingText,
+            {
+              fontFamily: "Outfit_600SemiBold",
+              letterSpacing: 1,
+            },
+          ]}
+        >
+          Loading Curious Minds... 🚀
+        </Text>
       </View>
     );
   }

@@ -1,451 +1,264 @@
-import React, { useState, useEffect, useRef } from 'react';
+/**
+ * PhotosynthesisLab — rewritten WITHOUT react-native-reanimated.
+ *
+ * Root cause of the previous crash:
+ *   react-native-reanimated v4 requires the New Architecture (Fabric/JSI).
+ *   Expo Go on Android without New Architecture throws:
+ *     "TurboModule method installTurboModule called with 1 arguments (expected 0)"
+ *   …which crashes the entire module at require() time, making .default === undefined.
+ *
+ * Fix: use only React Native's built-in Animated API + setInterval + useState.
+ *       These work on both Old and New Architecture with Expo Go.
+ */
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
-  ScrollView, Modal, TextInput,
+  ScrollView, Animated, Modal,
 } from 'react-native';
-import Animated, {
-  useSharedValue, useAnimatedStyle, useAnimatedProps,
-  withSpring, withTiming, withRepeat, withSequence,
-  Easing, interpolate, Extrapolation,
-  runOnJS, useFrameCallback, interpolateColor, useAnimatedReaction,
-} from 'react-native-reanimated';
-import {
-  Gesture, GestureDetector, GestureHandlerRootView,
-} from 'react-native-gesture-handler';
 import Svg, {
   Circle, Rect, Path, G, Ellipse, Defs,
   RadialGradient, Stop, Text as SvgText, Line,
 } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
-import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../context/ThemeContext';
+import { FONTS, RADIUS, SPACING } from '../../constants/theme';
+import { soundTap } from '../../utils/sounds';
+import Icon from '../../components/ui/Icons';
 
 const { width, height } = Dimensions.get('window');
 
-const HEADER_H  = height * 0.08;
-const VIEWPORT_H = height * 0.52;
-const PANEL_H   = height * 0.30;
-const LOG_H     = height * 0.10;
+// ── Layout constants ─────────────────────────────────────────────────────────
+const VIEWPORT_H = Math.min(height * 0.40, 260);
+const PANEL_H    = 240;
 
+// ── Scientific colour palette ────────────────────────────────────────────────
 const C = {
-  bg:     '#0A0A0F',
-  panel:  '#12121A',
   amber:  '#FFB347',
   cyan:   '#00D4FF',
   green:  '#39FF14',
   red:    '#FF3131',
   text:   '#E8E0D0',
-  stroma: '#1A3A1A',
   grana:  '#0D2B0D',
   steel:  '#2A2A35',
+  bg:     '#0A0A0F',
+  panel:  '#12121A',
 };
 
-const AnimatedCircle  = Animated.createAnimatedComponent(Circle);
-const AnimatedEllipse = Animated.createAnimatedComponent(Ellipse);
-const AnimatedRect    = Animated.createAnimatedComponent(Rect);
-const AnimatedLine    = Animated.createAnimatedComponent(Line);
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
-Animated.addWhitelistedNativeProps({ text: true });
+// ── Light wavelength options ─────────────────────────────────────────────────
+const WAVE_OPTIONS = [
+  { label: 'RED 660nm',  color: '#FF3131', wFactor: 1.0, description: 'Red light — absorbed by PS I & PS II' },
+  { label: 'WHITE MIX',  color: '#FFFFFF', wFactor: 0.9, description: 'Full spectrum — broad absorption' },
+  { label: 'GREEN 550nm', color: C.green,  wFactor: 0.1, description: 'Green light — mostly reflected by leaves' },
+];
 
-// ─── Sub-components: each has its own hooks at the top level ────────────────
+// ── Discovery log data ───────────────────────────────────────────────────────
+const DISCOVERIES = [
+  {
+    id: 'd1', minLight: 1200, maxCo2: 200, minCo2: -1, minTemp: -99, maxTemp: 99, wave: -1,
+    title: 'Light Saturation Limiting',
+    entry: "Even intense light can't make more sugar if CO₂ runs out — the light reactions outrun the Calvin cycle.",
+    rarity: 'Uncommon',
+  },
+  {
+    id: 'd2', minLight: -1, maxCo2: 9999, minCo2: -1, minTemp: -99, maxTemp: 99, wave: 2,
+    title: "Chlorophyll's Green Paradox",
+    entry: "Leaves appear green because they REFLECT green light — the one wavelength they cannot use.",
+    rarity: 'Common',
+  },
+  {
+    id: 'd3', minLight: 800, maxCo2: 9999, minCo2: 800, minTemp: 24, maxTemp: 26, wave: -1,
+    title: 'Optimal Photosynthesis State',
+    entry: "At 25 °C with abundant CO₂ and saturating light, enzymes hit peak efficiency — like a rainforest leaf at noon.",
+    rarity: 'Rare ✨',
+  },
+  {
+    id: 'd4', minLight: -1, maxCo2: 150, minCo2: -1, minTemp: -99, maxTemp: 99, wave: -1,
+    title: 'CO₂ Starvation',
+    entry: "The light reactions keep producing energy, but RuBisCO runs in reverse — wasting energy in photorespiration.",
+    rarity: 'Uncommon',
+  },
+  {
+    id: 'd5', minLight: 1000, maxCo2: 9999, minCo2: -1, minTemp: -99, maxTemp: 99, wave: 0,
+    title: 'Two-Photon Boost',
+    entry: "One photon isn't enough — plants chain two photosystems to give electrons enough energy to make NADPH.",
+    rarity: 'Rare ✨',
+  },
+];
 
-// Single photon particle — hooks at component top level, NOT inside map
-function PhotonParticle({ index, globalFrame, waveVal, lightVal }) {
-  const aProps = useAnimatedProps(() => {
-    const t    = globalFrame.value;
-    const slot = (t + index * 0.4) % 1; // 0..1 progress
-    const yPos = VIEWPORT_H * slot;
-
-    const wv = Math.round(waveVal.value);
-    const isGreen = wv === 2;
-    const isRed   = wv === 0;
-
-    const baseCx = width * 0.3 + index * (width * 0.05);
-    // bounce sideways for green (reflection)
-    const cx = isGreen && yPos > VIEWPORT_H * 0.4
-      ? baseCx + (yPos - VIEWPORT_H * 0.4) * (index % 2 === 0 ? 0.8 : -0.8)
-      : baseCx;
-
-    const fill = isGreen ? C.green : isRed ? C.red : (slot < 0.5 ? C.cyan : C.amber);
-    let opacity = interpolate(lightVal.value, [0, 50, 2000], [0, 0.5, 1], Extrapolation.CLAMP);
-    if (isGreen && yPos > VIEWPORT_H * 0.6) opacity = 0; // absorbed = 0
-
-    return { cx, cy: yPos, fill, opacity };
-  });
-  return <AnimatedCircle r={4} animatedProps={aProps} />;
-}
-
-// One grana disc
-function GranaDisc({ cx, cy, lightVal, dangerVal }) {
-  const aProps = useAnimatedProps(() => {
-    const glow    = interpolate(lightVal.value, [100, 1500], [0, 1], Extrapolation.CLAMP);
-    const stroke  = glow > 0.5 ? C.amber : C.green;
-    const sOpacity = dangerVal.value ? 0.9 : glow;
-    return { stroke, strokeOpacity: sOpacity };
-  });
-  return (
-    <AnimatedEllipse
-      cx={cx} cy={cy} rx={18} ry={6}
-      fill={C.grana} strokeWidth={1}
-      animatedProps={aProps}
-    />
-  );
-}
-
-// One glucose vertex node
-function GlucoseNode({ offsetX, offsetY, centerX, centerY, co2Val, dangerVal, glucoseShatter }) {
-  const aProps = useAnimatedProps(() => {
-    const shatter = glucoseShatter.value;
-    const danger  = dangerVal.value;
-    const scale   = danger ? 1 + shatter * 3 : 1;
-    const cx = centerX + offsetX * scale;
-    const cy = centerY + offsetY * scale;
-    const opacity = danger ? Math.max(0, 1 - shatter) : interpolate(co2Val.value, [50, 150, 400], [0.2, 0.5, 1], Extrapolation.CLAMP);
-    const fill    = danger ? C.red : C.amber;
-    return { cx, cy, opacity, fill };
-  });
-  return <AnimatedCircle r={5} animatedProps={aProps} />;
-}
-
-// Dial needle
-function DialNeedle({ lightVal }) {
-  const aProps = useAnimatedProps(() => {
-    const ang = (135 + (lightVal.value / 2000) * 270) * Math.PI / 180;
-    return {
-      x2: 45 + Math.cos(ang) * 30,
-      y2: 45 + Math.sin(ang) * 30,
-    };
-  });
-  return <AnimatedLine x1="45" y1="45" stroke={C.amber} strokeWidth={4} animatedProps={aProps} />;
-}
-
-// CO2 slider handle
-function SliderHandle({ co2Val }) {
-  const aProps = useAnimatedProps(() => {
-    const py = ((1500 - co2Val.value) / 1450) * 85;
-    return { y: py };
-  });
-  return <AnimatedRect x={5} width={30} height={15} fill={C.cyan} rx={4} animatedProps={aProps} />;
-}
-
-// Temperature needle
-function TempNeedle({ tempVal }) {
-  const aProps = useAnimatedProps(() => {
-    const ang = (180 + (tempVal.value / 50) * 180) * Math.PI / 180;
-    return {
-      x2: 50 + Math.cos(ang) * 35,
-      y2: 50 + Math.sin(ang) * 35,
-    };
-  });
-  return <AnimatedLine x1="50" y1="50" stroke={C.text} strokeWidth={3} animatedProps={aProps} />;
-}
-
-// Toggle knob
-function ToggleKnob({ waveVal }) {
-  const aProps = useAnimatedProps(() => {
-    const v    = waveVal.value;
-    const fill = v < 0.5 ? C.red : v < 1.5 ? '#FFFFFF' : C.green;
-    return { x: 5 + Math.round(v) * 25, fill };
-  });
-  return <AnimatedRect width={20} height={20} y={10} rx={10} animatedProps={aProps} />;
-}
-
-// Chloroplast body
-function ChloroplastBody({ tempVal, dangerVal, dangerFlash }) {
-  const aProps = useAnimatedProps(() => {
-    if (dangerVal.value) {
-      const fill = interpolateColor(dangerFlash.value, [-1, 0, 1, 2], ['#2A3A1A', '#2A3A1A', '#8B8B5C', '#8B8B5C']);
-      return { fill };
-    }
-    const fill = interpolateColor(
-      tempVal.value,
-      [-10, 0, 10, 25, 40, 50, 60],
-      ['#0A1A0A', '#0A1A0A', '#112211', '#1A3A1A', '#22331A', '#22331A', '#22331A']
-    );
-    return { fill };
-  });
-  return (
-    <AnimatedEllipse
-      cx={width / 2} cy={VIEWPORT_H / 2}
-      rx={160} ry={100}
-      stroke={C.green} strokeWidth={2} strokeOpacity={0.4}
-      animatedProps={aProps}
-    />
-  );
-}
-
-// Danger overlay (View-based so opacity works correctly)
-function DangerOverlay({ dangerFlash, dangerVal }) {
-  const style = useAnimatedStyle(() => ({
-    opacity: dangerVal.value
-      ? interpolate(dangerFlash.value, [0, 1], [0, 0.35])
-      : 0,
-  }));
-  return (
-    <Animated.View
-      pointerEvents="none"
-      style={[StyleSheet.absoluteFill, { backgroundColor: C.red }, style]}
-    />
-  );
-}
-
-// Screen shake wrapper
-function ShakeView({ shakeOffset, children, style }) {
-  const aStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shakeOffset.value }],
-  }));
-  return <Animated.View style={[style, aStyle]}>{children}</Animated.View>;
-}
-
-// LCD displays
-function LcdLight({ lightVal }) {
-  const aProps = useAnimatedProps(() => ({ text: `LIGHT: ${Math.round(lightVal.value)} μmol` }));
-  return (
-    <AnimatedTextInput
-      editable={false}
-      style={styles.lcdText}
-      animatedProps={aProps}
-    />
-  );
-}
-function LcdCo2({ co2Val }) {
-  const aProps = useAnimatedProps(() => ({ text: `CO₂: ${Math.round(co2Val.value)} ppm` }));
-  return (
-    <AnimatedTextInput
-      editable={false}
-      style={styles.lcdText}
-      animatedProps={aProps}
-    />
-  );
-}
-function LcdTemp({ tempVal }) {
-  const aProps = useAnimatedProps(() => ({ text: `TEMP: ${Math.round(tempVal.value)}°C` }));
-  return (
-    <AnimatedTextInput
-      editable={false}
-      style={styles.lcdText}
-      animatedProps={aProps}
-    />
-  );
-}
-function LcdWave({ waveVal }) {
-  const aProps = useAnimatedProps(() => {
-    const v = Math.round(waveVal.value);
-    const s = v === 0 ? 'RED 660nm' : v === 1 ? 'WHITE MIX' : 'GREEN 550nm';
-    return { text: `WAVE: ${s}` };
-  });
-  return (
-    <AnimatedTextInput
-      editable={false}
-      style={styles.lcdText}
-      animatedProps={aProps}
-    />
-  );
-}
-
-// ─── Glucose vertices ───────────────────────────────────────────────────────
+// ── Photon particle state (8 particles) ─────────────────────────────────────
+const PARTICLE_COUNT = 8;
 const GLUCOSE_OFFSETS = [
-  { x: 0,   y: -22 },
-  { x: 19,  y: -11 },
-  { x: 19,  y:  11 },
-  { x: 0,   y:  22 },
-  { x: -19, y:  11 },
-  { x: -19, y: -11 },
+  { x: 0, y: -22 }, { x: 19, y: -11 }, { x: 19, y: 11 }, { x: 0, y: 22 },
+  { x: -19, y: 11 }, { x: -19, y: -11 },
 ];
 
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
-export default function PhotosynthesisLab() {
-  const [logsOpen,      setLogsOpen]      = useState(false);
-  const [discoveryMode, setDiscoveryMode] = useState(false);
+export default function PhotosynthesisLab({
+  scientistMode = false,
+  accentColor   = '#39FF14',
+  onLabBreaker,
+}) {
+  const { theme, isDark } = useTheme();
+  const txt1 = theme.text.primary;
+  const txt2 = theme.text.secondary;
+  const txtM = theme.text.muted;
+  const glass1 = theme.glass.light;
+  const glass2 = theme.glass.medium;
+  const border = theme.glass.border;
+
+  // ── Instrument values (0-100 slider percentages) ─────────────────────────
+  const [lightPct, setLightPct]   = useState(0);    // 0–100 → 0–2000 μmol
+  const [co2Pct,   setCo2Pct]     = useState(27);   // 0–100 → 50–1500 ppm
+  const [tempPct,  setTempPct]    = useState(40);   // 0–100 → 0–50 °C
+  const [waveIdx,  setWaveIdx]    = useState(1);    // 0=red, 1=white, 2=green
+
+  // ── Computed real values ──────────────────────────────────────────────────
+  const lightVal = Math.round(lightPct * 20);        // 0–2000
+  const co2Val   = Math.round(50 + co2Pct * 14.5);  // 50–1500
+  const tempVal  = Math.round(tempPct * 0.5);        // 0–50
+
+  // ── Animation frame (JS-side, uses setInterval) ───────────────────────────
+  const frameRef       = useRef(0);        // 0–1 cycling
+  const [frame, setFrame] = useState(0);  // triggers re-render for particle positions
+
+  // ── Danger state ─────────────────────────────────────────────────────────
+  const [danger, setDanger] = useState(false);
+  const dangerAnim = useRef(new Animated.Value(0)).current;
+  const shakeAnim  = useRef(new Animated.Value(0)).current;
+
+  // ── Discovery log ─────────────────────────────────────────────────────────
   const [unlockedLogs,  setUnlockedLogs]  = useState([]);
+  const [logsOpen,      setLogsOpen]      = useState(false);
   const [activeHint,    setActiveHint]    = useState(
-    'Rotate the Light Dial clockwise to send photons into the chloroplast. Watch the grana wake up.'
+    'Slide the Light dial up to send photons into the chloroplast. Watch the grana wake up!'
   );
 
-  // Instrument values
-  const lightVal = useSharedValue(0);
-  const co2Val   = useSharedValue(400);
-  const tempVal  = useSharedValue(20);
-  const waveVal  = useSharedValue(1);   // 0=Red 1=White 2=Green (integer steps)
+  // ── Discovery log: track which ones unlocked ─────────────────────────────
+  const discLocks = useRef({});
 
-  // Animation internals
-  const globalFrame    = useSharedValue(0);
-  const dangerVal      = useSharedValue(false);
-  const shakeOffset    = useSharedValue(0);
-  const dangerFlash    = useSharedValue(0);
-  const glucoseShatter = useSharedValue(0);
-
-  // Haptic snap refs (JS-side tracking)
-  const lastLightSnap = useRef(-1);
-  const lastCo2Snap   = useRef(400);
-  const lastTempSnap  = useRef(20);
-  const discLocks     = useRef({});
-
-  // ── Frame loop ─────────────────────────────────────────────────────────────
-  useFrameCallback((frame) => {
-    if (!frame.timeDelta) return;
-    const temp  = tempVal.value;
-    const light = lightVal.value;
-    const co2   = co2Val.value;
-    const wave  = Math.round(waveVal.value);
-
-    let tFactor = temp < 10 ? 0.3 : temp > 42 ? 0.15 : 1.0;
-    let lFactor = interpolate(light, [0, 100, 1500, 2000], [0.05, 0.5, 1.5, 2.0], Extrapolation.CLAMP);
-    let cFactor = interpolate(co2,   [50, 150, 400, 1500], [0.1,  0.4, 1.0, 1.2], Extrapolation.CLAMP);
-    let wFactor = wave === 2 ? 0.1 : 1.0;
-
-    const speed = tFactor * lFactor * cFactor * wFactor;
-    globalFrame.value = (globalFrame.value + frame.timeDelta * speed * 0.0003) % 1;
+  // ── Animated values for shake ────────────────────────────────────────────
+  const shakeX = shakeAnim.interpolate({
+    inputRange: [-1, 0, 1], outputRange: [-5, 0, 5],
   });
 
-  // ── Danger monitor ─────────────────────────────────────────────────────────
-  useAnimatedReaction(
-    () => tempVal.value,
-    (temp) => {
-      if (temp > 45 && !dangerVal.value) {
-        dangerVal.value = true;
-        shakeOffset.value = withSequence(
-          withTiming(5,  { duration: 40 }),
-          withRepeat(withTiming(-5, { duration: 40 }), 8, true),
-          withTiming(0,  { duration: 40 })
-        );
-        dangerFlash.value = withRepeat(withTiming(1, { duration: 280 }), -1, true);
-        glucoseShatter.value = withTiming(1, { duration: 800 });
-        runOnJS(Haptics.notificationAsync)(Haptics.NotificationFeedbackType.Error);
-      } else if (temp <= 38 && dangerVal.value) {
-        dangerVal.value      = false;
-        dangerFlash.value    = withTiming(0, { duration: 300 });
-        glucoseShatter.value = withTiming(0, { duration: 1200 });
-        runOnJS(Haptics.notificationAsync)(Haptics.NotificationFeedbackType.Success);
-      }
-    }
-  );
-
-  // ── Hint monitor ───────────────────────────────────────────────────────────
-  useAnimatedReaction(
-    () => tempVal.value,
-    (temp) => {
-      if (temp > 40 && temp <= 45) {
-        runOnJS(setActiveHint)('⚠️ Enzymes approaching thermal limit. Lower the temperature!');
-      }
-    }
-  );
-
-  // ── Discovery checks (JS side, 1-second poll) ──────────────────────────────
-  const addLog = (id, title, entry, rarity) => {
-    if (discLocks.current[id]) return;
-    discLocks.current[id] = true;
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setUnlockedLogs(prev => [{ id, title, entry, rarity }, ...prev]);
-    setActiveHint(`Discovery: ${title}`);
-  };
-
+  // ── Frame loop: runs at ~30fps on JS thread ───────────────────────────────
   useEffect(() => {
-    const interval = setInterval(() => {
-      const l = lightVal.value;
-      const c = co2Val.value;
-      const t = tempVal.value;
-      const w = Math.round(waveVal.value);
+    const tFactor = tempVal < 10 ? 0.3 : tempVal > 42 ? 0.15 : 1.0;
+    const lFactor = lightVal < 100 ? 0.05 : lightVal < 1500 ? 0.5 + (lightVal - 100) / 1400 : 1.5;
+    const cFactor = co2Val < 150 ? 0.1 : co2Val < 400 ? 0.4 + (co2Val - 150) / 250 * 0.6 : 1.0;
+    const wFactor = waveIdx === 2 ? 0.1 : 1.0;
+    const speed   = tFactor * lFactor * cFactor * wFactor;
 
-      if (l > 1200 && c < 200)
-        addLog('d1', 'Light Saturation Limiting',
-          "Even intense light can't make more sugar if CO₂ runs out — the light reactions outrun the Calvin cycle.", 'Uncommon');
+    const id = setInterval(() => {
+      frameRef.current = (frameRef.current + 0.033 * speed) % 1;
+      setFrame(frameRef.current);
+    }, 33); // ~30fps
 
-      if (w === 2)
-        addLog('d2', "Chlorophyll's Green Paradox",
-          "Leaves appear green because they REFLECT green light — the one wavelength they cannot use.", 'Common');
+    return () => clearInterval(id);
+  }, [lightVal, co2Val, tempVal, waveIdx]);
 
-      if (t >= 24 && t <= 26 && l > 800 && c > 800)
-        addLog('d3', 'Optimal Photosynthesis State',
-          "At 25°C with abundant CO₂ and saturating light, enzymes hit peak efficiency — like a rainforest leaf at noon.", 'Rare');
-
-      if (c < 150)
-        addLog('d4', 'CO₂ Starvation',
-          "The light reactions keep producing energy, but RuBisCO runs in reverse — wasting energy in photorespiration.", 'Uncommon');
-
-      if (discoveryMode && w === 0 && l > 1000)
-        addLog('d5', 'Two-Photon Boost',
-          "One photon isn't enough — plants chain two photosystems to give electrons enough energy to make NADPH.", 'Rare');
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [discoveryMode]);
-
-  // ── Gestures ───────────────────────────────────────────────────────────────
-  const lightPan = Gesture.Pan().onUpdate((e) => {
-    let ang = Math.atan2(e.y - 45, e.x - 45) * (180 / Math.PI);
-    if (ang < 0) ang += 360;
-    // Map 135°..405° → 0..2000
-    let nAng = ang < 90 ? ang + 360 : ang;
-    nAng = Math.max(135, Math.min(405, nAng));
-    const val = ((nAng - 135) / 270) * 2000;
-    lightVal.value = val;
-
-    // Haptic snaps
-    if (val >= 200 && lastLightSnap.current < 200) {
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
+  // ── Temperature danger ────────────────────────────────────────────────────
+  useEffect(() => {
+    const isDanger = tempVal > 45;
+    setDanger(isDanger);
+    if (isDanger) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      if (onLabBreaker) onLabBreaker();
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(dangerAnim, { toValue: 1, duration: 280, useNativeDriver: true }),
+          Animated.timing(dangerAnim, { toValue: 0, duration: 280, useNativeDriver: true }),
+        ])
+      ).start();
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(shakeAnim, { toValue: 1,  duration: 50, useNativeDriver: true }),
+          Animated.timing(shakeAnim, { toValue: -1, duration: 50, useNativeDriver: true }),
+          Animated.timing(shakeAnim, { toValue: 0,  duration: 50, useNativeDriver: true }),
+        ])
+      ).start();
+      setActiveHint('🔥 Temperature too high! Enzymes are denaturing — lower the heat!');
+    } else {
+      dangerAnim.stopAnimation();
+      shakeAnim.stopAnimation();
+      dangerAnim.setValue(0);
+      shakeAnim.setValue(0);
     }
-    if (val < 200 && lastLightSnap.current >= 200) {
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
+    if (tempVal > 40 && tempVal <= 45) {
+      setActiveHint('⚠️ Enzymes approaching thermal limit. Lower the temperature!');
     }
-    if (val >= 1200 && lastLightSnap.current < 1200) {
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
-    }
-    if (val < 1200 && lastLightSnap.current >= 1200) {
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
-    }
-    lastLightSnap.current = val;
+  }, [tempVal]);
+
+  // ── Discovery checks (every 1.5 s) ───────────────────────────────────────
+  useEffect(() => {
+    const id = setInterval(() => {
+      DISCOVERIES.forEach(d => {
+        if (discLocks.current[d.id]) return;
+        const match =
+          (d.minLight < 0  || lightVal >= d.minLight) &&
+          (d.maxCo2  > 900 || co2Val   <= d.maxCo2)  &&
+          (d.minCo2  < 0   || co2Val   >= d.minCo2)  &&
+          (tempVal >= d.minTemp && tempVal <= d.maxTemp) &&
+          (d.wave < 0 || waveIdx === d.wave);
+
+        if (match) {
+          discLocks.current[d.id] = true;
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          setUnlockedLogs(prev => [{ ...d }, ...prev]);
+          setActiveHint(`🔬 Discovery: ${d.title}`);
+        }
+      });
+    }, 1500);
+    return () => clearInterval(id);
+  }, [lightVal, co2Val, tempVal, waveIdx]);
+
+  // ── Derived display values ────────────────────────────────────────────────
+  const wave        = WAVE_OPTIONS[waveIdx];
+  const glucoseLevel = Math.min(1,
+    (lightVal / 1200) * (co2Val / 800) *
+    (tempVal < 10 ? 0.2 : tempVal > 42 ? 0.1 : 1) *
+    wave.wFactor
+  );
+  const granaGlow = Math.min(1, lightVal / 800);
+
+  // ── Photon particle positions ─────────────────────────────────────────────
+  const photons = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+    const slot = (frame + i / PARTICLE_COUNT) % 1;
+    const yPos = slot * VIEWPORT_H;
+    const absorbed = waveIdx === 2 && yPos > VIEWPORT_H * 0.6;
+    const cx = width * 0.30 + i * (width * 0.045) +
+      (waveIdx === 2 && yPos > VIEWPORT_H * 0.4
+        ? (yPos - VIEWPORT_H * 0.4) * (i % 2 === 0 ? 0.8 : -0.8)
+        : 0);
+    const opacity = absorbed ? 0 :
+      lightVal < 50 ? 0 :
+      Math.min(1, lightVal / 1000) * (1 - slot * 0.2);
+    return { cx, cy: yPos, opacity, color: wave.color };
   });
 
-  const co2Pan = Gesture.Pan().onUpdate((e) => {
-    const py  = Math.max(0, Math.min(100, e.y));
-    const val = 1500 - (py / 100) * 1450;
-    co2Val.value = val;
-    if (Math.abs(val - 400) < 40 && Math.abs(lastCo2Snap.current - 400) >= 40) {
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
-    }
-    if (Math.abs(val - 150) < 40 && Math.abs(lastCo2Snap.current - 150) >= 40) {
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
-    }
-    lastCo2Snap.current = val;
+  // ── Glucose shatter (danger) ──────────────────────────────────────────────
+  const glucoseNodes = GLUCOSE_OFFSETS.map((off, i) => {
+    const cx = width * 0.72 + (danger ? off.x * 3 : off.x);
+    const cy = VIEWPORT_H * 0.5 + (danger ? off.y * 3 : off.y);
+    const opacity = danger ? 0 : glucoseLevel * (0.3 + i * 0.1);
+    return { cx, cy, opacity };
   });
 
-  const tempPan = Gesture.Pan().onUpdate((e) => {
-    const px  = Math.max(0, Math.min(100, e.x));
-    const val = (px / 100) * 50;
-    tempVal.value = val;
-    if (Math.abs(val - 10) < 2 && Math.abs(lastTempSnap.current - 10) >= 2) {
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
-    }
-    if (Math.abs(val - 25) < 2 && Math.abs(lastTempSnap.current - 25) >= 2) {
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
-    }
-    if (Math.abs(val - 42) < 2 && Math.abs(lastTempSnap.current - 42) >= 2) {
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
-    }
-    lastTempSnap.current = val;
-  });
-
-  const handleToggle = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    const next = (Math.round(waveVal.value) + 1) % 3;
-    waveVal.value = withTiming(next, { duration: 150, easing: Easing.out(Easing.quad) });
-  };
-
-  // ── Render ─────────────────────────────────────────────────────────────────
-  const glucoseCX = width * 0.72;
-  const glucoseCY = VIEWPORT_H * 0.5;
+  // ── Chloroplast body color ────────────────────────────────────────────────
+  const chloroFill = danger ? '#8B8B5C' :
+    tempVal < 10 ? '#0A1A0A' :
+    tempVal < 25 ? '#112211' : '#1A3A1A';
 
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <View style={styles.container}>
 
-      {/* ── HEADER ── */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>PHOTOSYNTHESIS LAB</Text>
-        <View style={styles.led} />
-      </View>
-
-      {/* ── VIEWPORT ── */}
-      <ShakeView shakeOffset={shakeOffset} style={styles.viewport}>
-        <Svg width="100%" height="100%">
+      {/* ── VIEWPORT ───────────────────────────────────────────────────── */}
+      <Animated.View style={[
+        styles.viewport,
+        { transform: [{ translateX: shakeX }] },
+      ]}>
+        <Svg width="100%" height={VIEWPORT_H}>
           <Defs>
             <RadialGradient id="bgGrad" cx="50%" cy="50%" r="60%">
               <Stop offset="0%"   stopColor="#1A3A1A" stopOpacity="0.4" />
@@ -458,265 +271,395 @@ export default function PhotosynthesisLab() {
           </Defs>
 
           {/* Background */}
-          <Rect width="100%" height="100%" fill="url(#bgGrad)" />
+          <Rect width="100%" height={VIEWPORT_H} fill="url(#bgGrad)" />
 
-          {/* Chloroplast */}
-          <ChloroplastBody tempVal={tempVal} dangerVal={dangerVal} dangerFlash={dangerFlash} />
+          {/* Chloroplast body */}
+          <Ellipse
+            cx={width / 2} cy={VIEWPORT_H / 2}
+            rx={160} ry={100}
+            fill={chloroFill}
+            stroke={C.green} strokeWidth={2} strokeOpacity={0.4}
+          />
 
-          {/* Grana stacks — 3 stacks × 4 discs */}
-          {[0, 1, 2].map(si => (
-            <G key={`stack${si}`}>
-              {[0, 1, 2, 3].map(di => (
-                <GranaDisc
-                  key={`g${si}${di}`}
-                  cx={width / 2 - 60 + si * 40}
-                  cy={VIEWPORT_H / 2 - 15 + di * 10}
-                  lightVal={lightVal}
-                  dangerVal={dangerVal}
-                />
-              ))}
-            </G>
-          ))}
+          {/* Grana stacks */}
+          {[0, 1, 2].map(si =>
+            [0, 1, 2, 3].map(di => (
+              <Ellipse
+                key={`g${si}${di}`}
+                cx={width / 2 - 60 + si * 40}
+                cy={VIEWPORT_H / 2 - 15 + di * 10}
+                rx={18} ry={6}
+                fill={C.grana}
+                stroke={granaGlow > 0.5 ? C.amber : C.green}
+                strokeWidth={1}
+                strokeOpacity={danger ? 0.9 : granaGlow}
+              />
+            ))
+          )}
 
-          {/* Photon particles — each is its own component with proper hooks */}
-          {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
-            <PhotonParticle
+          {/* Photon particles */}
+          {photons.map((p, i) => (
+            <Circle
               key={`ph${i}`}
-              index={i}
-              globalFrame={globalFrame}
-              waveVal={waveVal}
-              lightVal={lightVal}
+              cx={p.cx} cy={p.cy}
+              r={4}
+              fill={p.color}
+              opacity={p.opacity}
             />
           ))}
 
-          {/* Glucose ring nodes */}
-          {GLUCOSE_OFFSETS.map((off, i) => (
-            <GlucoseNode
+          {/* Glucose hexagon nodes */}
+          {glucoseNodes.map((gn, i) => (
+            <Circle
               key={`gn${i}`}
-              offsetX={off.x}
-              offsetY={off.y}
-              centerX={glucoseCX}
-              centerY={glucoseCY}
-              co2Val={co2Val}
-              dangerVal={dangerVal}
-              glucoseShatter={glucoseShatter}
+              cx={gn.cx} cy={gn.cy}
+              r={5}
+              fill={danger ? C.red : C.amber}
+              opacity={Math.max(0, gn.opacity)}
             />
           ))}
 
           {/* Vignette */}
-          <Rect width="100%" height="100%" fill="url(#vig)" />
+          <Rect width="100%" height={VIEWPORT_H} fill="url(#vig)" />
         </Svg>
 
-        {/* Danger overlay as a plain View (opacity works correctly) */}
-        <DangerOverlay dangerFlash={dangerFlash} dangerVal={dangerVal} />
-
-        {/* Discovery Mode overlay */}
-        {discoveryMode && (
-          <View style={styles.discoveryOverlay}>
-            <View style={styles.discoveryBox}>
-              <Text style={styles.discTitle}>NANO-SCALE MACHINERY REVEALED</Text>
-              <View style={styles.psRow}>
-                <View style={[styles.protein, { backgroundColor: C.cyan }]}>
-                  <Text style={styles.pText}>PS-II</Text>
-                </View>
-                <View style={[styles.protein, { backgroundColor: C.amber }]}>
-                  <Text style={styles.pText}>PS-I</Text>
-                </View>
-              </View>
-              <Text style={styles.obsText}>
-                You are watching the nanoscale machinery of life.{'\n'}
-                Every breath of oxygen came from a water molecule split here.
-              </Text>
-            </View>
-          </View>
+        {/* Danger red flash overlay */}
+        {danger && (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: C.red, opacity: dangerAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 0.3] }) },
+            ]}
+          />
         )}
 
-        {/* Discovery toggle button */}
-        <TouchableOpacity style={styles.magBtn} onPress={() => setDiscoveryMode(d => !d)}>
-          <Ionicons name={discoveryMode ? 'close-circle' : 'search'} size={28} color={C.cyan} />
-        </TouchableOpacity>
-      </ShakeView>
+        {/* LED status */}
+        <View style={[styles.led, { backgroundColor: danger ? C.red : lightVal > 50 ? C.green : '#444' }]} />
+      </Animated.View>
 
-      {/* ── CONTROL PANEL ── */}
-      <View style={styles.panel}>
+      {/* ── CONTROL PANEL ──────────────────────────────────────────────── */}
+      <View style={[styles.panel, { backgroundColor: C.panel }]}>
 
-        {/* Row 1: Light Dial + CO2 Slider */}
+        {/* Row 1: Light + CO₂ */}
         <View style={styles.panelRow}>
 
-          {/* Light intensity rotary dial */}
+          {/* Light intensity slider */}
           <View style={styles.instBox}>
-            <GestureDetector gesture={lightPan}>
-              <View style={styles.dialContainer}>
-                <Svg width={90} height={90}>
-                  <Circle cx="45" cy="45" r="40" fill={C.steel} stroke={C.amber} strokeWidth="2" />
-                  <Circle cx="15" cy="75" r="3" fill="#666" />
-                  <Circle cx="75" cy="75" r="3" fill="#666" />
-                  <DialNeedle lightVal={lightVal} />
-                </Svg>
-              </View>
-            </GestureDetector>
-            <LcdLight lightVal={lightVal} />
+            <Text style={styles.instLabel}>☀️ Light</Text>
+            <SliderControl
+              value={lightPct}
+              onChange={v => { setLightPct(v); soundTap(); }}
+              color={C.amber}
+              trackColor="#1A1A1A"
+            />
+            <Text style={styles.lcdText}>LIGHT: {lightVal} μmol</Text>
           </View>
 
-          {/* CO2 vertical slider */}
+          {/* CO₂ slider */}
           <View style={styles.instBox}>
-            <GestureDetector gesture={co2Pan}>
-              <View style={styles.sliderContainer}>
-                <Svg width={40} height={100}>
-                  <Rect x="15" y="0" width="10" height="100" fill="#333" rx="5" />
-                  <SliderHandle co2Val={co2Val} />
-                </Svg>
-              </View>
-            </GestureDetector>
-            <LcdCo2 co2Val={co2Val} />
+            <Text style={styles.instLabel}>💨 CO₂</Text>
+            <SliderControl
+              value={co2Pct}
+              onChange={v => { setCo2Pct(v); soundTap(); }}
+              color={C.cyan}
+              trackColor="#1A1A1A"
+            />
+            <Text style={styles.lcdText}>CO₂: {co2Val} ppm</Text>
           </View>
         </View>
 
-        {/* Row 2: Temperature Gauge + Wavelength Toggle */}
+        {/* Row 2: Temperature + Wavelength */}
         <View style={styles.panelRow}>
 
-          {/* Temperature gauge */}
+          {/* Temperature slider */}
           <View style={styles.instBox}>
-            <GestureDetector gesture={tempPan}>
-              <View style={styles.gaugeContainer}>
-                <Svg width={100} height={60}>
-                  <Path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#555" strokeWidth="10" />
-                  <Path d="M 72 18 A 40 40 0 0 1 90 50" fill="none" stroke={C.red}   strokeWidth="10" />
-                  <Path d="M 38 16 A 40 40 0 0 1 62 16" fill="none" stroke={C.green} strokeWidth="4"  />
-                  <TempNeedle tempVal={tempVal} />
-                  <Circle cx="50" cy="50" r="5" fill={C.text} />
-                </Svg>
-              </View>
-            </GestureDetector>
-            <LcdTemp tempVal={tempVal} />
+            <Text style={styles.instLabel}>🌡️ Temp</Text>
+            <SliderControl
+              value={tempPct}
+              onChange={v => { setTempPct(v); soundTap(); }}
+              color={tempVal > 42 ? C.red : tempVal > 30 ? C.amber : C.cyan}
+              trackColor="#1A1A1A"
+            />
+            <Text style={[styles.lcdText, tempVal > 42 && { color: C.red }]}>
+              TEMP: {tempVal}°C {tempVal > 42 ? '🔥' : ''}
+            </Text>
           </View>
 
           {/* Wavelength toggle */}
           <View style={styles.instBox}>
-            <TouchableOpacity activeOpacity={0.8} onPress={handleToggle} style={styles.toggleContainer}>
-              <Svg width={80} height={40}>
-                <Rect x="0" y="5" width="80" height="30" rx="15" fill="#333" />
-                <ToggleKnob waveVal={waveVal} />
-              </Svg>
-            </TouchableOpacity>
-            <LcdWave waveVal={waveVal} />
+            <Text style={styles.instLabel}>🌈 Wavelength</Text>
+            <View style={styles.waveToggleRow}>
+              {WAVE_OPTIONS.map((w, i) => (
+                <TouchableOpacity
+                  key={w.label}
+                  onPress={() => { setWaveIdx(i); soundTap(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); }}
+                  style={[
+                    styles.waveBtn,
+                    { borderColor: i === waveIdx ? w.color : '#333', backgroundColor: i === waveIdx ? w.color + '25' : '#111' },
+                  ]}
+                >
+                  <View style={[styles.waveDot, { backgroundColor: w.color }]} />
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={[styles.lcdText, { color: wave.color }]}>
+              {wave.label}
+            </Text>
           </View>
         </View>
       </View>
 
-      {/* ── RESEARCH LOG BAR ── */}
-      <TouchableOpacity style={styles.logBar} onPress={() => setLogsOpen(true)}>
-        <Ionicons name="journal-outline" size={24} color={C.amber} />
+      {/* ── LIVE READOUT BAR ────────────────────────────────────────────── */}
+      <View style={[styles.readoutBar, { backgroundColor: '#0D0D14', borderColor: '#1A1A2A' }]}>
+        <ReadoutPill label="Glucose" value={`${Math.round(glucoseLevel * 100)}%`} color={C.amber} />
+        <ReadoutPill label="Grana glow" value={`${Math.round(granaGlow * 100)}%`} color={C.green} />
+        <ReadoutPill label="Efficiency" value={
+          danger ? 'DANGER' :
+          waveIdx === 2 ? 'Very Low' :
+          glucoseLevel > 0.8 ? 'Optimal' :
+          glucoseLevel > 0.4 ? 'Good' : 'Low'
+        } color={danger ? C.red : glucoseLevel > 0.8 ? C.green : glucoseLevel > 0.4 ? C.amber : '#888'} />
+        <ReadoutPill label="Discoveries" value={`${unlockedLogs.length}/5`} color={C.cyan} />
+      </View>
+
+      {/* ── HINT / LOG BAR ──────────────────────────────────────────────── */}
+      <TouchableOpacity
+        style={[styles.logBar, { backgroundColor: '#1A1A1A', borderColor: '#2A2A3A' }]}
+        onPress={() => { setLogsOpen(true); soundTap(); }}
+      >
+        <Icon name="book" size={18} color={C.amber} />
         <Text style={styles.logHintText} numberOfLines={1}>{activeHint}</Text>
+        {unlockedLogs.length > 0 && (
+          <View style={styles.logBadge}>
+            <Text style={styles.logBadgeText}>{unlockedLogs.length}</Text>
+          </View>
+        )}
       </TouchableOpacity>
 
-      {/* ── LOG MODAL ── */}
+      {/* ── SCIENTIST MODE: wavelength info ─────────────────────────────── */}
+      {scientistMode && (
+        <View style={[styles.sciBox, { backgroundColor: '#0D1520', borderColor: C.cyan + '40' }]}>
+          <Icon name="flask" size={14} color={C.cyan} />
+          <Text style={[styles.sciText, { color: C.cyan + 'CC' }]}>
+            {wave.description}
+            {waveIdx === 1 && ` — CO₂ rate: ${Math.round(glucoseLevel * 100)}% of max`}
+          </Text>
+        </View>
+      )}
+
+      {/* ── RESEARCH LOG MODAL ──────────────────────────────────────────── */}
       <Modal visible={logsOpen} animationType="slide" transparent>
         <View style={styles.modalBg}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { backgroundColor: C.panel }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Research Logs</Text>
-              <TouchableOpacity onPress={() => setLogsOpen(false)}>
-                <Ionicons name="close" size={28} color={C.text} />
+              <Text style={[styles.modalTitle, { color: C.amber }]}>Research Logs 📓</Text>
+              <TouchableOpacity onPress={() => { setLogsOpen(false); soundTap(); }}>
+                <Icon name="close" size={24} color={C.text} />
               </TouchableOpacity>
             </View>
             <ScrollView style={styles.logScroll}>
               {unlockedLogs.length === 0 ? (
-                <Text style={styles.emptyLog}>
-                  Explore the controls to discover hidden scientific facts!
-                </Text>
+                <View style={styles.emptyLogWrap}>
+                  <Text style={styles.emptyLog}>
+                    🔬 Explore the controls to discover hidden scientific facts!
+                  </Text>
+                  <Text style={[styles.emptyLogHint, { color: '#555' }]}>
+                    Tip: try extreme temperature, low CO₂, or green light wavelength
+                  </Text>
+                </View>
               ) : (
                 unlockedLogs.map(log => (
                   <View key={log.id} style={styles.logCard}>
-                    <Text style={styles.logCardTitle}>
-                      {log.title}{' '}
-                      <Text style={{ fontSize: 12, color: C.amber }}>({log.rarity})</Text>
-                    </Text>
+                    <View style={styles.logCardHeader}>
+                      <Text style={styles.logCardTitle}>{log.title}</Text>
+                      <Text style={[styles.logRarity, {
+                        color: log.rarity.includes('Rare') ? C.amber : log.rarity === 'Common' ? '#888' : C.cyan,
+                      }]}>{log.rarity}</Text>
+                    </View>
                     <Text style={styles.logCardDesc}>{log.entry}</Text>
                   </View>
                 ))
               )}
+              <View style={{ height: 40 }} />
             </ScrollView>
           </View>
         </View>
       </Modal>
+    </View>
+  );
+}
 
-    </GestureHandlerRootView>
+// ─── SliderControl: touch-friendly slider using layout measurement ───────────
+function SliderControl({ value, onChange, color, trackColor }) {
+  const trackRef = useRef(null);
+  const trackWidth = useRef(0);
+  const dragging = useRef(false);
+
+  const handleLayout = (e) => {
+    trackWidth.current = e.nativeEvent.layout.width;
+  };
+
+  const getValueFromX = (pageX) => {
+    if (!trackRef.current) return value;
+    trackRef.current.measure((fx, fy, fw, fh, px, py) => {
+      const relX = Math.max(0, Math.min(pageX - px, fw));
+      const pct  = Math.round((relX / fw) * 100);
+      onChange(pct);
+    });
+  };
+
+  const filled = `${value}%`;
+
+  return (
+    <View
+      ref={trackRef}
+      onLayout={handleLayout}
+      style={[styles.sliderTrack, { backgroundColor: trackColor }]}
+      onStartShouldSetResponder={() => true}
+      onMoveShouldSetResponder={() => true}
+      onResponderGrant={(e) => { dragging.current = true; getValueFromX(e.nativeEvent.pageX); }}
+      onResponderMove={(e) => { if (dragging.current) getValueFromX(e.nativeEvent.pageX); }}
+      onResponderRelease={() => { dragging.current = false; }}
+    >
+      <View style={[styles.sliderFill, { width: filled, backgroundColor: color }]} />
+      <View style={[styles.sliderThumb, { left: filled, borderColor: color, backgroundColor: color + '40' }]} />
+    </View>
+  );
+}
+
+// ─── ReadoutPill ─────────────────────────────────────────────────────────────
+function ReadoutPill({ label, value, color }) {
+  return (
+    <View style={styles.readoutPill}>
+      <Text style={[styles.readoutVal, { color }]}>{value}</Text>
+      <Text style={styles.readoutLabel}>{label}</Text>
+    </View>
   );
 }
 
 // ─── STYLES ─────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container:    { flex: 1, backgroundColor: C.bg },
-  header:       {
-    height: HEADER_H, flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'space-between', paddingHorizontal: 20,
-    backgroundColor: '#050508', borderBottomWidth: 1,
-    borderBottomColor: '#222', paddingTop: 30,
+  container: { flex: 1, backgroundColor: C.bg },
+
+  viewport: {
+    width: '100%', height: VIEWPORT_H,
+    backgroundColor: C.bg, overflow: 'hidden',
+    position: 'relative',
   },
-  headerTitle:  { color: '#888', fontSize: 16, letterSpacing: 3, fontWeight: '800' },
-  led:          {
+  led: {
+    position: 'absolute', top: 10, right: 12,
     width: 10, height: 10, borderRadius: 5,
-    backgroundColor: '#FFB347',
-    shadowColor: '#FFB347', shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.9, shadowRadius: 6,
   },
-  viewport:     { height: VIEWPORT_H, width, backgroundColor: C.bg, overflow: 'hidden' },
-  magBtn:       {
-    position: 'absolute', bottom: 20, right: 20,
-    backgroundColor: '#112233', padding: 10, borderRadius: 20,
-    borderWidth: 1, borderColor: '#005588',
+
+  panel: {
+    paddingHorizontal: 12, paddingVertical: 10,
+    borderTopWidth: 1, borderTopColor: '#222',
   },
-  discoveryOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,10,30,0.88)',
-    justifyContent: 'center', alignItems: 'center',
+  panelRow: {
+    flexDirection: 'row', justifyContent: 'space-around',
+    marginBottom: 10,
   },
-  discoveryBox: {
-    padding: 20, borderWidth: 1, borderColor: C.cyan,
-    borderRadius: 15, backgroundColor: '#0A1A25', width: width * 0.85,
+  instBox: {
+    width: '47%', alignItems: 'stretch',
   },
-  discTitle:  { color: C.cyan, fontWeight: 'bold', marginBottom: 15, textAlign: 'center', letterSpacing: 1 },
-  psRow:      { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 15 },
-  protein:    { width: 60, height: 60, justifyContent: 'center', alignItems: 'center', borderRadius: 8 },
-  pText:      { color: '#000', fontWeight: '900' },
-  obsText:    { color: C.text, fontSize: 13, textAlign: 'center', lineHeight: 20 },
-  panel:      {
-    height: PANEL_H, backgroundColor: C.panel,
-    borderTopWidth: 2, borderTopColor: '#333',
-    padding: 10, justifyContent: 'space-evenly',
+  instLabel: {
+    color: '#888', fontSize: 11, fontFamily: 'monospace',
+    letterSpacing: 1, marginBottom: 6,
   },
-  panelRow:   { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
-  instBox:    { alignItems: 'center', width: width / 2 - 20 },
-  dialContainer:   { width: 90,  height: 90,  margin: 5 },
-  sliderContainer: { width: 40,  height: 100, margin: 5 },
-  gaugeContainer:  { width: 100, height: 60,  margin: 5 },
-  toggleContainer: { width: 80,  height: 40,  margin: 5, justifyContent: 'center' },
   lcdText: {
-    color: C.green, fontFamily: 'monospace', fontSize: 12,
-    marginTop: 5, backgroundColor: '#050505',
-    paddingHorizontal: 8, paddingVertical: 3,
+    color: C.green, fontFamily: 'monospace', fontSize: 11,
+    marginTop: 6, backgroundColor: '#050505',
+    paddingHorizontal: 8, paddingVertical: 4,
     borderRadius: 4, borderWidth: 1, borderColor: '#111',
-    overflow: 'hidden', textAlign: 'center', minWidth: 140,
+    overflow: 'hidden', textAlign: 'center',
   },
-  logBar:     {
-    height: LOG_H, backgroundColor: '#1A1A1A',
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20,
+
+  sliderTrack: {
+    height: 24, borderRadius: 12, overflow: 'visible',
+    position: 'relative', justifyContent: 'center',
+    borderWidth: 1, borderColor: '#2A2A35',
   },
-  logHintText: { color: '#888', marginLeft: 15, fontSize: 13, flex: 1, fontStyle: 'italic' },
-  modalBg:     { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'flex-end' },
+  sliderFill: {
+    position: 'absolute', left: 0, top: 0, bottom: 0,
+    borderRadius: 12,
+  },
+  sliderThumb: {
+    position: 'absolute', width: 20, height: 20,
+    borderRadius: 10, borderWidth: 2,
+    top: 2, marginLeft: -10,
+  },
+
+  waveToggleRow: {
+    flexDirection: 'row', gap: 6, marginVertical: 4,
+  },
+  waveBtn: {
+    flex: 1, height: 28, borderRadius: 6,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1,
+  },
+  waveDot: {
+    width: 10, height: 10, borderRadius: 5,
+  },
+
+  readoutBar: {
+    flexDirection: 'row', justifyContent: 'space-around',
+    paddingVertical: 8, borderTopWidth: 1, borderBottomWidth: 1,
+  },
+  readoutPill: { alignItems: 'center', minWidth: 64 },
+  readoutVal:  { fontFamily: 'monospace', fontSize: 13, fontWeight: 'bold' },
+  readoutLabel: { color: '#555', fontFamily: 'monospace', fontSize: 10, marginTop: 2 },
+
+  logBar: {
+    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: 16, paddingVertical: 12,
+    borderTopWidth: 1, borderBottomWidth: 1,
+    gap: 10,
+  },
+  logHintText: {
+    flex: 1, color: '#888', fontFamily: 'monospace',
+    fontSize: 12, fontStyle: 'italic',
+  },
+  logBadge: {
+    minWidth: 20, height: 20, borderRadius: 10,
+    backgroundColor: C.amber, alignItems: 'center', justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  logBadgeText: { color: '#000', fontSize: 11, fontWeight: 'bold' },
+
+  sciBox: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: 8,
+    borderWidth: 1, borderRadius: 8, padding: 10,
+    marginHorizontal: 12, marginTop: 6,
+  },
+  sciText: { flex: 1, fontFamily: 'monospace', fontSize: 12, lineHeight: 18 },
+
+  // Modal
+  modalBg: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.9)',
+    justifyContent: 'flex-end',
+  },
   modalContent: {
-    height: height * 0.7, backgroundColor: C.panel,
-    borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20,
+    maxHeight: height * 0.72,
+    borderTopLeftRadius: 20, borderTopRightRadius: 20,
+    padding: 20,
   },
-  modalHeader:  { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  modalTitle:   { color: C.amber, fontSize: 20, fontWeight: 'bold' },
-  logScroll:    { flex: 1 },
-  emptyLog:     { color: '#666', textAlign: 'center', marginTop: 50, fontStyle: 'italic' },
+  modalHeader: {
+    flexDirection: 'row', justifyContent: 'space-between',
+    alignItems: 'center', marginBottom: 16,
+  },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', fontFamily: 'monospace' },
+  logScroll:  { flex: 1 },
+  emptyLogWrap: { alignItems: 'center', marginTop: 40, gap: 8 },
+  emptyLog: { color: '#666', textAlign: 'center', fontFamily: 'monospace', fontSize: 13 },
+  emptyLogHint: { textAlign: 'center', fontSize: 11, fontFamily: 'monospace' },
   logCard: {
-    backgroundColor: '#1E1E28', padding: 15, borderRadius: 10,
-    marginBottom: 10, borderLeftWidth: 3, borderLeftColor: C.amber,
+    backgroundColor: '#1E1E28', padding: 14,
+    borderRadius: 10, marginBottom: 10,
+    borderLeftWidth: 3, borderLeftColor: C.amber,
   },
-  logCardTitle: { color: C.text, fontWeight: 'bold', fontSize: 16, marginBottom: 5 },
-  logCardDesc:  { color: '#CCC', fontSize: 14, lineHeight: 20 },
+  logCardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
+  logCardTitle: { color: C.text, fontWeight: 'bold', fontSize: 14, flex: 1 },
+  logRarity: { fontSize: 11, fontFamily: 'monospace', marginLeft: 8 },
+  logCardDesc: { color: '#CCC', fontSize: 13, lineHeight: 19 },
 });
