@@ -1,325 +1,272 @@
-/**
- * Cryptography Lab — Cyber-Decryption Terminal & Brute Force
- * Scientist Mode: Raw Hexadecimal strings and XOR
- * NO react-native-reanimated — Old Architecture safe
- */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, Dimensions, TouchableOpacity,
-  PanResponder, Animated, Easing, Modal, ScrollView, TextInput
-} from 'react-native';
-import Svg, {
-  Rect, Line, Defs, RadialGradient as SvgRadial, Stop, G, Text as SvgText, Circle, Path
-} from 'react-native-svg';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated, TextInput, ScrollView } from 'react-native';
+import Svg, { Circle, G, Path, Line, Text as SvgText, Rect, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
+import { useTheme } from '../../context/ThemeContext';
+import { FONTS, RADIUS, SPACING } from '../../constants/theme';
+import { soundTap, soundWhoosh, soundBadge } from '../../utils/sounds';
 import * as Haptics from 'expo-haptics';
-import { soundTap } from '../../utils/sounds';
 import Icon from '../../components/ui/Icons';
 
-const { width, height } = Dimensions.get('window');
-const H_VIEWPORT = height * 0.45;
-const H_PANEL = height * 0.35;
-const H_LOG = height * 0.10;
+const { width } = Dimensions.get('window');
+const SIM_W = width - SPACING.md * 4;
+const SIM_H = 340;
 
-const PALETTE = {
-  bg: '#050A05',
-  panel: '#0B150B',
-  cyan: '#00FFCC',
-  green: '#39FF14',
-  red: '#FF3131',
-  text: '#E8F0E8',
-  steel: '#1A251A',
-  purple: '#A855F7',
-  alert: '#FFD166'
-};
+const CHALLENGES = [
+  { id: 'cipher_sync', title: 'The Enigma Code', desc: 'Encrypt a message of at least 10 characters', icon: 'lock', color: '#FFD166' },
+  { id: 'brute_force', title: 'Hacker Spirit', desc: 'Launch a Brute Force attack on the current rotors', icon: 'zap', color: '#FF3131' },
+  { id: 'ascii_master', title: 'Hexadecimal Vision', desc: 'View raw ASCII bytes in Scientist Mode', icon: 'terminal', color: '#A855F7' },
+  { id: 'reset_rotors', title: 'Zero State', desc: 'Reset all rotors to position 0', icon: 'refresh', color: '#00E5FF' },
+];
 
-const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+export default function CryptographyLab({ scientistMode = false }) {
+  const { theme, isDark } = useTheme();
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
-export default function CryptoLab({ scientistMode = false, accentColor = '#39FF14', onLabBreaker }) {
-  const [discoveryMode, setDiscoveryMode] = useState(false);
-  const discoveryAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const [inputChar, setInputChar] = useState('');
+  const [cipherText, setCipherText] = useState('');
+  const [rotors, setRotors] = useState([0, 0, 0]);
+  const [bruteActive, setBruteActive] = useState(false);
+  const [completedChallenges, setCompleted] = useState([]);
+  const [lastChallengeMsg, setLastChallengeMsg] = useState(null);
 
-  const [logs, setLogs] = useState([]);
-  const [logsOpen, setLogsOpen] = useState(false);
-  const discovered = useRef(new Set());
+  const challengePopAnim = useRef(new Animated.Value(0)).current;
 
-  // Cypher State
-  const [plaintext, setPlaintext] = useState("HELLO");
-  const [shift, setShift] = useState(3);
-  const [bruteForceActive, setBruteForceActive] = useState(false);
-  const [bruteShift, setBruteShift] = useState(0);
-
-  // Logic Tick
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const loop = setInterval(() => setTick(t => t + 1), 50);
-    return () => clearInterval(loop);
-  }, []);
-
-  const addLog = useCallback((id, entry) => {
-    if (!discovered.current.has(id)) {
-      discovered.current.add(id);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setLogs(prev => [...prev, entry]);
-    }
-  }, []);
-
-  // Compute Ciphertext
-  const applyCaesar = (text, key) => {
-    let result = "";
-    const clean = text.toUpperCase().replace(/[^A-Z]/g, '');
-    for (let i = 0; i < clean.length; i++) {
-       const charCode = clean.charCodeAt(i);
-       const s = (charCode - 65 + key) % 26;
-       // Handle negative modulo correctly
-       const mapped = s < 0 ? s + 26 : s;
-       result += String.fromCharCode(mapped + 65);
-    }
-    return result;
+  const encryptChar = (char, pos) => {
+    const code = char.charCodeAt(0);
+    // Simple shifting algorithm for simulation
+    const shifted = String.fromCharCode(((code - 32 + pos) % 94) + 32);
+    return shifted;
   };
 
-  const trueCipher = applyCaesar(plaintext, shift);
-  const bruteCipher = applyCaesar(trueCipher, -bruteShift);
-
-  // Discovery Triggers
-  useEffect(() => {
-    if (shift === 13 && !discovered.current.has('d1')) {
-      addLog('d1', {
-        title: "ROT13 Protocol",
-        entry: "You selected Shift 13. This is the famous 'ROT13' cipher! Because the alphabet has 26 letters, shifting by exactly 13 means encrypting and decrypting use the exact same algorithm.",
-        color: PALETTE.purple
-      });
-    }
-  }, [shift, addLog]);
-
-  // Brute Force Engine
-  useEffect(() => {
-    let bruteLoop;
-    if (bruteForceActive) {
-      bruteLoop = setInterval(() => {
-        setBruteShift(prev => {
-          const next = prev + 1;
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          
-          if (next >= 26 || next === shift) {
-            setIsCracked(next === shift);
-            setBruteForceActive(false);
-            if (next === shift) {
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-              addLog('d2', {
-                title: "Brute Force Success",
-                entry: "The algorithm cycled through every possible combination until it recognized the English word. Caesar ciphers take a computer 0.001 seconds to crack!",
-                color: PALETTE.green
-              });
-            }
-            return next;
-          }
-          return next;
-        });
-      }, 100); // 100ms per attempt
-    }
-    return () => clearInterval(bruteLoop);
-  }, [bruteForceActive, shift, addLog]);
-
-  const triggerBruteForce = () => {
+  const handleInput = (char) => {
+    if (!char) return;
     soundTap();
-    setBruteShift(0);
-    setBruteForceActive(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    // Rotate rotors
+    setRotors(prev => {
+      const next = [...prev];
+      next[0] = (next[0] + 1) % 26;
+      if (next[0] === 0) next[1] = (next[1] + 1) % 26;
+      if (next[1] === 0 && next[0] === 0) next[2] = (next[2] + 1) % 26;
+      return next;
+    });
+
+    const encrypted = encryptChar(char, rotors[0] + rotors[1] + rotors[2]);
+    setCipherText(prev => (prev + encrypted).slice(-15));
+    setInputChar('');
+
+    if (cipherText.length > 8) triggerChallenge('cipher_sync');
   };
 
-  const [isCracked, setIsCracked] = useState(false);
+  const runBruteForce = () => {
+    if (bruteActive) return;
+    soundWhoosh();
+    setBruteActive(true);
+    let count = 0;
+    const interval = setInterval(() => {
+      setRotors([Math.floor(Math.random()*26), Math.floor(Math.random()*26), Math.floor(Math.random()*26)]);
+      count++;
+      if (count > 20) {
+        clearInterval(interval);
+        setBruteActive(false);
+        triggerChallenge('brute_force');
+      }
+    }, 80);
+  };
 
-  // Layout math
-  const cx = width / 2;
-  const cy = H_VIEWPORT / 2;
-  const rad = 80;
+  const triggerChallenge = useCallback((cid) => {
+    if (completedChallenges.includes(cid)) return;
+    const ch = CHALLENGES.find(c => c.id === cid);
+    setLastChallengeMsg(ch);
+    soundBadge();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    challengePopAnim.setValue(0);
+    Animated.sequence([
+      Animated.spring(challengePopAnim, { toValue: 1, tension: 80, friction: 10, useNativeDriver: true }),
+      Animated.delay(2500),
+      Animated.timing(challengePopAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+    ]).start(() => setLastChallengeMsg(null));
+    setCompleted(prev => [...prev, cid]);
+  }, [completedChallenges]);
 
   return (
-    <View style={styles.root}>
-      {/* Viewport */}
-      <Animated.View style={[styles.viewport, { height: H_VIEWPORT, transform: [{ translateX: shakeAnim }] }]}>
-        <Svg width="100%" height="100%">
-          <Defs>
-            <SvgRadial id="bg" cx="50%" cy="50%" r="50%">
-              <Stop offset="0%" stopColor="#0B150B" />
-              <Stop offset="100%" stopColor={PALETTE.bg} />
-            </SvgRadial>
-          </Defs>
-          <Rect width="100%" height="100%" fill="url(#bg)" />
-
-          {/* Core Crypto Wheel */}
-          <G x={cx} y={cy}>
-            {/* Outer Static Wheel */}
-            <Circle cx={0} cy={0} r={rad + 30} fill="none" stroke={PALETTE.steel} strokeWidth={2} />
-            {Array.from({length:26}).map((_, i) => {
-               const angle = (i * (360/26) - 90) * (Math.PI/180);
-               const px = Math.cos(angle) * (rad + 15);
-               const py = Math.sin(angle) * (rad + 15);
-               return (
-                 <SvgText key={`out-${i}`} x={px} y={py+4} fill="#888" fontSize={12} textAnchor="middle" fontFamily="monospace">
-                   {ALPHABET[i]}
-                 </SvgText>
-               );
-            })}
-
-            {/* Inner Rotating Wheel */}
-            <G rotation={(bruteForceActive ? bruteShift : shift) * (360/26)}>
-              <Circle cx={0} cy={0} r={rad} fill="#0A100A" stroke={PALETTE.green} strokeWidth={2} />
-              {Array.from({length:26}).map((_, i) => {
-                 const angle = (i * (360/26) - 90) * (Math.PI/180);
-                 const px = Math.cos(angle) * (rad - 15);
-                 const py = Math.sin(angle) * (rad - 15);
-                 return (
-                   <SvgText key={`in-${i}`} x={px} y={py+4} fill={bruteForceActive ? PALETTE.red : PALETTE.cyan} fontSize={12} textAnchor="middle" fontFamily="monospace" fontWeight="bold">
-                     {ALPHABET[i]}
-                   </SvgText>
-                 );
-              })}
-            </G>
-
-            {/* Target Reticle */}
-            <Rect x={-15} y={-rad-35} width={30} height={70} fill="none" stroke={PALETTE.alert} strokeWidth={2} rx={4} />
-          </G>
-
-          {/* Scientist Mode Hex Dump Overlay */}
-          {scientistMode && (
-            <G x={15} y={20}>
-              <SvgText x={0} y={0} fill={PALETTE.purple} fontSize={10} fontFamily="monospace">
-                HEX DUMP -> {trueCipher.split('').map(c => '\\x'+c.charCodeAt(0).toString(16)).join('')}
-              </SvgText>
-              <SvgText x={0} y={15} fill={PALETTE.purple} fontSize={10} fontFamily="monospace">
-                XOR LAYER -> {trueCipher.split('').map(c => (c.charCodeAt(0) ^ 42).toString(2).padStart(8,'0')).slice(0,3).join(' ')}...
-              </SvgText>
-            </G>
-          )}
-
-          {/* Current Status HUD */}
-          <G x={width - 150} y={15}>
-            <Rect x={0} y={0} width={135} height={40} fill="#000" rx={5} stroke={bruteForceActive ? PALETTE.red : PALETTE.green} strokeWidth={1} />
-            <SvgText x={10} y={18} fill={bruteForceActive ? PALETTE.red : PALETTE.text} fontSize={10} fontFamily="monospace" fontWeight="bold">
-              {bruteForceActive ? 'ATTACKING SERVER...' : 'CONNECTION SECURE'}
-            </SvgText>
-             <SvgText x={10} y={30} fill="#666" fontSize={9} fontFamily="monospace">
-              ALG: CAESAR(ROT_26)
-            </SvgText>
-          </G>
-
-        </Svg>
-      </Animated.View>
-
-      {/* Control Panel */}
-      <View style={[styles.panel, { height: H_PANEL }]}>
-        <View style={styles.panelInner}>
-
-          <View style={styles.ioWrap}>
-             <View style={styles.ioBox}>
-                <Text style={styles.ioLabel}>PLAINTEXT (INPUT)</Text>
-                <TextInput 
-                  style={styles.input} 
-                  value={plaintext} 
-                  onChangeText={t => setPlaintext(t.toUpperCase())}
-                  maxLength={10}
-                  editable={!bruteForceActive}
-                />
-             </View>
-             <Icon name="arrow-right" size={20} color={PALETTE.green} />
-             <View style={[styles.ioBox, { borderColor: bruteForceActive ? PALETTE.red : PALETTE.cyan }]}>
-                <Text style={styles.ioLabel}>CIPHERTEXT (OUTPUT)</Text>
-                <Text style={[styles.input, { color: PALETTE.cyan }]}>
-                  {bruteForceActive ? bruteCipher : trueCipher}
-                </Text>
-             </View>
+    <View style={styles.container}>
+      {lastChallengeMsg && (
+        <Animated.View style={[styles.challengePopup, {
+          opacity: challengePopAnim, backgroundColor: lastChallengeMsg.color + '20', borderColor: lastChallengeMsg.color + '60',
+          transform: [{ translateY: challengePopAnim.interpolate({ inputRange: [0, 1], outputRange: [-20, 0] }) }],
+        }]}>
+          <Icon name="trophy" size={18} color={lastChallengeMsg.color} />
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.challengePopTitle, { color: lastChallengeMsg.color }]}>Challenge Complete!</Text>
+            <Text style={[styles.challengePopDesc, { color: txt2 }]}>{lastChallengeMsg.title}</Text>
           </View>
+        </Animated.View>
+      )}
 
-          <View style={styles.sliderWrap}>
-            <Text style={styles.sliderLabel}>ENCRYPTION KEY (SHIFT): ROT_{shift}</Text>
-            <View style={[styles.sliderBg, { borderColor: PALETTE.green}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-              if (bruteForceActive) return;
-              const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-              setShift(Math.round((x / (width-40)) * 25));
-              setIsCracked(false); // Reset crack status if key changes
-            }}>
-              <View style={[styles.sliderFill, { width: `${(shift/25)*100}%`, backgroundColor: PALETTE.green }]} />
-              <View style={[styles.sliderThumb, { left: `${(shift/25)*100}%` }]} />
+      {/* ── Security HUD ── */}
+      <View style={[styles.statusCard, { backgroundColor: glass1, borderColor: border }]}>
+         <View style={styles.statusRow}>
+            <Icon name="shield" size={24} color="#FFD166" />
+            <View style={{ flex: 1 }}>
+               <Text style={[styles.sLabel, { color: txtM }]}>ENCRYPTION DEPTH</Text>
+               <Text style={[styles.sValue, { color: '#FFD166' }]}>256-BIT SYMBOLIC</Text>
             </View>
-          </View>
-
-          <TouchableOpacity 
-            style={[styles.actionBtn, bruteForceActive && { backgroundColor: '#441111' }, isCracked && { backgroundColor: PALETTE.green }]} 
-            activeOpacity={0.8} 
-            onPress={triggerBruteForce}
-            disabled={bruteForceActive || isCracked}
-          >
-            <Text style={styles.actionBtnTxt}>
-              {bruteForceActive ? `BRUTE FORCING (ATTEMPT ${bruteShift}/26)` : isCracked ? 'CIPHER CRACKED!' : 'LAUNCH BRUTE FORCE ATTACK'}
-            </Text>
-          </TouchableOpacity>
-
-        </View>
+            <View style={{ alignItems: 'flex-end' }}>
+               <Text style={[styles.sLabel, { color: txtM }]}>ENTROPY</Text>
+               <Text style={[styles.sValue, { color: '#00E5FF' }]}>{(rotors.reduce((a,b)=>a+b,0)/78 * 100).toFixed(0)}%</Text>
+            </View>
+         </View>
       </View>
 
-      {/* Research Log Bar */}
-      <TouchableOpacity style={[styles.logBar, { height: H_LOG }]} activeOpacity={0.8} onPress={() => { soundTap(); setLogsOpen(true); }}>
-        <Icon name="search" size={20} color={PALETTE.text} />
-        <Text style={styles.logHintText} numberOfLines={1}>{logs.length > 0 ? `Log: ${logs[logs.length - 1].title}` : 'Launch a cyber attack...'}</Text>
-        <View style={[styles.logBadge, { backgroundColor: logs.length > 0 ? PALETTE.green : '#333' }]}><Text style={{ color: logs.length > 0 ? '#000' : '#888', fontSize: 11, fontWeight: 'bold' }}>{logs.length}</Text></View>
-      </TouchableOpacity>
+      {/* ── Mechanical Machine Viz ── */}
+      <View style={[styles.simBox, { borderColor: border, backgroundColor: isDark ? '#111827' : '#F3F4F6' }]}>
+        <Svg width={SIM_W} height={SIM_H} style={StyleSheet.absoluteFill}>
+           <Defs>
+             <SvgGradient id="rotorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+               <Stop offset="0%" stopColor="#334444" />
+               <Stop offset="50%" stopColor="#667777" />
+               <Stop offset="100%" stopColor="#334444" />
+             </SvgGradient>
+           </Defs>
+           
+           {/* Mechanical Rotors */}
+           {[0, 1, 2].map(i => (
+             <G key={i} transform={`translate(${60 + i * 80}, 60)`}>
+                <Rect x="0" y="0" width="60" height="150" rx="10" fill="url(#rotorGrad)" stroke="#0002" />
+                <Line x1="0" y1="75" x2="60" y2="75" stroke="#FFF4" strokeWidth="2" />
+                {[...Array(5)].map((_, j) => {
+                  const val = (rotors[i] + j - 2 + 26) % 26;
+                  return (
+                    <SvgText key={j} x="30" y={35 + j * 30} fontSize="14" fill={j === 2 ? '#FFD166' : '#888'} textAnchor="middle" fontWeight={j === 2 ? 'bold' : 'normal'} fontFamily="monospace">
+                      {String.fromCharCode(65 + val)}
+                    </SvgText>
+                  );
+                })}
+             </G>
+           ))}
 
-      {/* Logs Modal */}
-      <Modal visible={logsOpen} transparent animationType="slide">
-        <View style={styles.modalBg}>
-          <View style={[styles.modalContent, { backgroundColor: PALETTE.panel }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: PALETTE.text }]}>Research Log</Text>
-              <TouchableOpacity onPress={() => { soundTap(); setLogsOpen(false); }}>
-                <Icon name="x" size={24} color={PALETTE.text} />
-              </TouchableOpacity>
-            </View>
-            <ScrollView>
-              {logs.length === 0 ? (
-                <Text style={styles.emptyLog}>No discoveries yet. Try shifting to 13!</Text>
-              ) : (
-                logs.map((l, i) => (
-                  <View key={i} style={[styles.logCard, { borderLeftColor: l.color }]}>
-                    <Text style={styles.logCardTitle}>{l.title}</Text>
-                    <Text style={styles.logCardDesc}>{l.entry}</Text>
-                  </View>
-                ))
-              )}
-              <View style={{ height: 30 }} />
-            </ScrollView>
-          </View>
+           {/* Cipher Stream */}
+           <G transform={`translate(20, 240)`}>
+              <Rect x="0" y="0" width={SIM_W - 40} height={60} rx="12" fill={isDark ? '#000' : '#FFF'} stroke="#A855F760" />
+              <SvgText x="15" y="35" fontSize="16" fill="#A855F7" fontWeight="bold" fontFamily="monospace">
+                {"> " + (cipherText || "AWAITING INPUT...")}
+              </SvgText>
+           </G>
+        </Svg>
+      </View>
+
+      {/* ── Terminal Input ── */}
+      <View style={styles.inputArea}>
+         <TextInput 
+            style={[styles.input, { color: txt1, backgroundColor: glass2, borderColor: border }]}
+            placeholder="TYPE HERE TO SCRAMBLE..."
+            placeholderTextColor={txtM}
+            value={inputChar}
+            onChangeText={t => handleInput(t.slice(-1))}
+            autoCapitalize="characters"
+         />
+         <TouchableOpacity onPress={runBruteForce} style={[styles.hackerBtn, { backgroundColor: bruteActive ? '#FF3131' : '#1F2937' }]}>
+            <Icon name="terminal" size={18} color={bruteActive ? '#FFF' : '#FF3131'} />
+            <Text style={[styles.hackerBtnText, { color: bruteActive ? '#FFF' : '#FF3131' }]}>{bruteActive ? 'CRACKING...' : 'BRUTE FORCE'}</Text>
+         </TouchableOpacity>
+      </View>
+
+      {/* ── Scholar Analytics 🧑‍🔬 ── */}
+      {scientistMode && (
+        <View style={[styles.sciCard, { backgroundColor: glass1, borderColor: border }]}>
+           <View style={styles.sciHeader}>
+             <Icon name="star" size={14} color="#A855F7" />
+             <Text style={[styles.sciTitle, { color: txt1 }]}>Byte Matrix 🧑‍🔬</Text>
+           </View>
+           <View style={styles.statGrid}>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>INPUT ASCII</Text>
+                 <Text style={[styles.statValue, { color: '#00E5FF' }]}>0x41 (A)</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>POSITIONS</Text>
+                 <Text style={[styles.statValue, { color: '#FFD166' }]}>{rotors.join(':')}</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>XOR MASK</Text>
+                 <Text style={[styles.statValue, { color: '#FF3131' }]}>1011001</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>KEYSPACE</Text>
+                 <Text style={[styles.statValue, { color: '#10B981' }]}>17,576</Text>
+              </View>
+           </View>
+           <View style={{ marginTop: 12 }}>
+              <Text style={[styles.sciNoteText, { color: txtM, textAlign: 'center' }]}>
+                {"Equation: Cᵢ = (Pᵢ + Kᵢ) mod 26"}
+              </Text>
+           </View>
         </View>
-      </Modal>
+      )}
+
+      {/* ── Challenges ── */}
+      <View style={[styles.challengeCard, { backgroundColor: glass1, borderColor: border }]}>
+        <View style={styles.challengeHeader}>
+          <Icon name="trophy" size={16} color="#FFD166" />
+          <Text style={[styles.challengeCardTitle, { color: txt1 }]}>Cipher Missions ({completedChallenges.length}/4)</Text>
+        </View>
+        {CHALLENGES.map(c => {
+          const done = completedChallenges.includes(c.id);
+          return (
+            <View key={c.id} style={styles.challengeItem}>
+              <View style={[styles.cIcon, { backgroundColor: done ? c.color + '20' : '#334444' }]}>
+                <Icon name={done ? 'check' : c.icon} size={14} color={done ? c.color : txtM} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.cTitle, { color: done ? c.color : txt1, textDecorationLine: done ? 'line-through' : 'none' }]}>{c.title}</Text>
+                <Text style={[styles.cDesc, { color: txtM }]}>{c.desc}</Text>
+              </View>
+            </View>
+          );
+        })}
+      </View>
+
+      <View style={{ height: 40 }} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: PALETTE.bg },
-  viewport: { width: '100%', overflow: 'hidden' },
-  panel: { backgroundColor: PALETTE.panel, borderTopWidth: 2, borderTopColor: PALETTE.steel },
-  panelInner: { flex: 1, padding: 20 },
-  ioWrap: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 },
-  ioBox: { flex: 1, backgroundColor: '#000', padding: 10, borderRadius: 8, borderWidth: 1, borderColor: '#222', marginHorizontal: 5 },
-  ioLabel: { color: '#666', fontSize: 9, fontFamily: 'monospace', marginBottom: 5 },
-  input: { color: '#FFF', fontSize: 18, fontFamily: 'monospace', fontWeight: 'bold' },
-  sliderWrap: { width: '100%', marginBottom: 15 },
-  sliderLabel: { color: PALETTE.text, fontSize: 11, fontFamily: 'monospace', marginBottom: 6 },
-  sliderBg: { height: 16, backgroundColor: '#051015', borderRadius: 8, borderWidth: 1, justifyContent: 'center' },
-  sliderFill: { position: 'absolute', height: '100%', borderRadius: 8 },
-  sliderThumb: { position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: '#FFF', marginLeft: -10 },
-  actionBtn: { marginTop: 10, backgroundColor: PALETTE.red, paddingVertical: 14, borderRadius: 8, alignItems: 'center' },
-  actionBtnTxt: { color: '#FFF', fontFamily: 'Outfit_700Bold', letterSpacing: 1, fontSize: 14 },
-  logBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, backgroundColor: '#051005', borderTopWidth: 1, borderTopColor: '#111', gap: 10 },
-  logHintText: { flex: 1, color: '#888', fontSize: 12, fontFamily: 'monospace', fontStyle: 'italic' },
-  logBadge: { minWidth: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.92)', justifyContent: 'flex-end' },
-  modalContent: { maxHeight: height * 0.7, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', fontFamily: 'Outfit_700Bold' },
-  emptyLog: { color: '#555', textAlign: 'center', marginTop: 40, fontFamily: 'monospace', fontSize: 13 },
-  logCard: { backgroundColor: '#051005', padding: 14, borderRadius: 10, marginBottom: 10, borderLeftWidth: 3 },
-  logCardTitle: { color: PALETTE.text, fontWeight: 'bold', fontSize: 14, marginBottom: 5, fontFamily: 'Outfit_500Medium' },
-  logCardDesc: { color: '#AAA', fontSize: 13, lineHeight: 19 }
+  container: { paddingHorizontal: SPACING.md },
+  statusCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  sLabel: { fontFamily: FONTS.bodyMedium, fontSize: 10 },
+  sValue: { fontFamily: FONTS.displayMedium, fontSize: 15, marginTop: 2 },
+  simBox: { height: SIM_H, borderRadius: RADIUS.lg, borderWidth: 1, marginTop: 16, overflow: 'hidden' },
+  inputArea: { marginTop: 16, gap: 12 },
+  input: { height: 50, paddingHorizontal: 16, borderRadius: RADIUS.md, borderWidth: 1, fontFamily: 'monospace', fontSize: 14 },
+  hackerBtn: { height: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, borderRadius: RADIUS.md },
+  hackerBtnText: { fontFamily: FONTS.displayMedium, fontSize: 13, letterSpacing: 1 },
+  sciCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  sciHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  sciTitle: { fontFamily: FONTS.displayMedium, fontSize: 16 },
+  statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  statItem: { flex: 1, minWidth: '45%', padding: 10, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: RADIUS.sm },
+  statLabel: { fontFamily: FONTS.bodyMedium, fontSize: 8, marginBottom: 2 },
+  statValue: { fontFamily: FONTS.displayMedium, fontSize: 13 },
+  sciNoteText: { fontFamily: 'monospace', fontSize: 11 },
+  challengeCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  challengeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  challengeCardTitle: { fontFamily: FONTS.displayMedium, fontSize: 15 },
+  challengeItem: { flexDirection: 'row', gap: 12, paddingVertical: 10 },
+  cIcon: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  cTitle: { fontFamily: FONTS.bodyMedium, fontSize: 13 },
+  cDesc: { fontFamily: FONTS.body, fontSize: 11, marginTop: 2 },
+  challengePopup: { position: 'absolute', top: 20, left: 10, right: 10, padding: 12, borderRadius: RADIUS.md, borderWidth: 1, flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 100 },
+  challengePopTitle: { fontFamily: FONTS.displayMedium, fontSize: 13 },
+  challengePopDesc: { fontFamily: FONTS.body, fontSize: 11, marginTop: 1 },
 });

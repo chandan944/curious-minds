@@ -28,7 +28,7 @@ const SEQUENCE = [
 ];
 
 function DNAHelix3D({ isUnzipped, isMutated, isDark }) {
-  const groupRef = useRef();
+  const groupRef = useRef(null);
   const animOffset = useRef(0);
 
   useFrame((state, delta) => {
@@ -86,8 +86,14 @@ function DNAHelix3D({ isUnzipped, isMutated, isDark }) {
 
 export default function GeneticMiniGamesLab() {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary, txt2 = theme.text.secondary, txtM = theme.text.muted;
-  const glass1 = theme.glass.light, glass2 = theme.glass.medium, border = theme.glass.border;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
   // ── GAME 1 STATES ──
   const [g1_unzipped, setG1Unzipped] = useState(false);
@@ -205,7 +211,7 @@ export default function GeneticMiniGamesLab() {
   );
 
   return (
-    <View style={[s.root, { backgroundColor: theme.background }]}>
+    <View style={[s.root, { backgroundColor: (isDark ? '#0A0A0F' : '#FFFFFF') }]}>
       
       {/* ───────────────────────────────────────────────────────── */}
       {/* GAME 1: THE RADIATION CHAMBER                             */}

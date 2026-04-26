@@ -1,346 +1,435 @@
-/**
- * Light & Optics Lab — Optical Bench Simulator
- * Scientist Mode: Snell's Law matrices, Refractive Indices
- * NO react-native-reanimated — Old Architecture safe
- */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, Dimensions, TouchableOpacity,
-  PanResponder, Animated, Easing, Modal, ScrollView
-} from 'react-native';
-import Svg, {
-  Path, Circle, Rect, Line, Polygon, Defs, RadialGradient as SvgRadial, Stop, G, Text as SvgText
-} from 'react-native-svg';
-import * as Haptics from 'expo-haptics';
-import { soundTap } from '../../utils/sounds';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import Svg, { Line, Rect, Circle, G, Text as SvgText, Marker, Defs, LinearGradient, Stop, Filter, FeGaussianBlur } from 'react-native-svg';
+import { useTheme } from '../../context/ThemeContext';
+import { FONTS, SPACING, RADIUS } from '../../constants/theme';
 import Icon from '../../components/ui/Icons';
+import * as Haptics from 'expo-haptics';
+import { soundTap, soundTrophy } from '../../utils/sounds';
 
-const { width, height } = Dimensions.get('window');
-const H_VIEWPORT = height * 0.45;
-const H_PANEL = height * 0.35;
-const H_LOG = height * 0.10;
+// Standard Components
+import StatusCard from '../../components/lab/StatusCard';
+import SimBox from '../../components/lab/SimBox';
+import ChallengeCard from '../../components/lab/ChallengeCard';
+import ScientistCard from '../../components/lab/ScientistCard';
 
-const PALETTE = {
-  bg: '#050A15',
-  panel: '#0B1220',
-  red: '#FF3131',
-  blue: '#00D4FF',
-  green: '#39FF14',
-  text: '#E8E0D0',
-  steel: '#1A2135',
-  amber: '#FFD166'
-};
+const { width } = Dimensions.get('window');
+const CANVAS_H = 300;
+const CANVAS_W = width - 40;
+const MID_X = CANVAS_W / 2;
+const MID_Y = CANVAS_H / 2;
 
-export default function OpticsLab({ scientistMode = false, accentColor = '#00D4FF', onLabBreaker }) {
-  // Discovery layer overlay
-  const [discoveryMode, setDiscoveryMode] = useState(false);
-  const discoveryAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+const MATERIALS = [
+  { name: 'Air', n: 1.0, color: 'rgba(255,255,255,0.05)' },
+  { name: 'Water', n: 1.33, color: 'rgba(0,191,255,0.2)' },
+  { name: 'Glass', n: 1.5, color: 'rgba(255,255,255,0.2)' },
+  { name: 'Diamond', n: 2.42, color: 'rgba(173,216,230,0.3)' },
+];
 
-  // Component local logs state
-  const [logs, setLogs] = useState([]);
-  const [logsOpen, setLogsOpen] = useState(false);
+const CHALLENGES = [
+  { id: 1, title: "Total Trap", instruction: "Achieve Total Internal Reflection (TIR) from Diamond back into Air.", target: 'tir', completed: false },
+  { id: 2, title: "Precision Bend", instruction: "Set Angle to 45° and bend light through Glass to hit the 60° target.", target: 'bend', completed: false },
+  { id: 3, title: "Straight Shot", instruction: "Find the angle where light passes through perfectly straight (θ = 0).", target: 'zero', completed: false },
+  { id: 4, title: "Density Hunt", instruction: "Find the material where 30° incidence results in 12° refraction.", target: 'hunt', completed: false },
+];
 
-  // Controls State
-  const [laserAngle, setLaserAngle] = useState(45); // 0 to 90 degrees
-  const [medium, setMedium] = useState(1.52); // Glass=1.52, Water=1.33, Diamond=2.42
-  const [wavelength, setWavelength] = useState(650); // Red=650nm, Green=532nm, Blue=450nm
+export default function LabSimulation({ scientistMode }) {
+  const { theme, isDark } = useTheme();
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
+  
+  // Controls
+  const [angle, setAngle] = useState(30);
+  const [materialIndex, setMaterialIndex] = useState(2); // Glass
+  const [laserY, setLaserY] = useState(MID_Y - 50);
+  
+  // Challenge State
+  const [activeChallenge, setActiveChallenge] = useState(0);
+  const [challengeStatus, setChallengeStatus] = useState(CHALLENGES);
+  
+  const n1 = 1.0; // Air (Source)
+  const n2 = MATERIALS[materialIndex].n;
 
-  // Discoveries discovered flags
-  const discovered = useRef(new Set());
-
-  // Logic Tick (for lively animations)
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const loop = setInterval(() => setTick(t => t + 1), 50);
-    return () => clearInterval(loop);
-  }, []);
-
-  const addLog = useCallback((id, entry) => {
-    if (!discovered.current.has(id)) {
-      discovered.current.add(id);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setLogs(prev => [...prev, entry]);
-    }
-  }, []);
-
-  const checkDiscoveries = useCallback(() => {
-    // Critical Angle calculation for TIR
-    const criticalAngle = Math.asin(1 / medium) * (180 / Math.PI);
+  // Ray Tracing Logic
+  const calcRays = () => {
+    const rays = [];
+    const rad = (angle * Math.PI) / 180;
     
-    // Total Internal Reflection (TIR)
-    if (laserAngle > criticalAngle && medium === 1.52) {
-      addLog('d1', {
-        title: "Total Internal Reflection (TIR)",
-        entry: `In Glass (n=1.52), the critical angle is ~41.1°. At ${Math.round(laserAngle)}°, the laser is perfectly trapped inside! Fiber optic internet uses this physical hack to bounce light across oceans without losing signal.`,
-        color: PALETTE.cyan
-      });
+    // Ray 1: Laser to Boundary (at MID_X)
+    const x1 = 20;
+    const y1 = laserY;
+    const dx = MID_X - x1;
+    const dy = dx * Math.tan(rad);
+    const hitY = y1 + dy;
+    
+    if (hitY < 0 || hitY > CANVAS_H) {
+         rays.push({ x1, y1, x2: x1 + (y1 < 0 ? y1/Math.tan(rad) : (CANVAS_H-y1)/Math.tan(rad)), y2: (y1 < 0 ? 0 : CANVAS_H) });
+         return rays;
     }
+    
+    rays.push({ x1, y1, x2: MID_X, y2: hitY });
 
-    if (medium === 2.42) {
-      addLog('d2', {
-        title: "Diamond Refraction",
-        entry: "Diamond has an extreme refractive index (n=2.42). Notice how aggressively it bends the laser compared to water! This extreme bending is what gives diamonds their famous 'sparkle'.",
-        color: PALETTE.amber
-      });
+    // Refraction at Boundary
+    // Normal is horizontal at the interface (vertical boundary)
+    // Angle of incidence rel to Normal:
+    const theta_i = rad;
+    const sin_r = (n1 / n2) * Math.sin(theta_i);
+    
+    if (Math.abs(sin_r) > 1) {
+       // Total Internal Reflection (Note: Usually TIR is from dense to thin, but for sim we show reflection)
+       const theta_r = -theta_i;
+       const x3 = x1;
+       const y3 = hitY + (MID_X - x1) * Math.tan(theta_r);
+       rays.push({ x1: MID_X, y1: hitY, x2: x3, y2: y3, type: 'reflect' });
+    } else {
+       const theta_r = Math.asin(sin_r);
+       const blockWidth = 60;
+       const x3 = MID_X + blockWidth;
+       const dy2 = blockWidth * Math.tan(theta_r);
+       const exitY = hitY + dy2;
+       rays.push({ x1: MID_X, y1: hitY, x2: x3, y2: exitY, type: 'refract' });
+       
+       // Ray 3: Exit to Edge
+       const sin_exit = (n2 / n1) * Math.sin(theta_r);
+       const theta_exit = Math.asin(sin_exit);
+       const dx3 = CANVAS_W - x3;
+       const dy3 = dx3 * Math.tan(theta_exit);
+       rays.push({ x1: x3, y1: exitY, x2: CANVAS_W, y2: exitY + dy3, type: 'exit' });
     }
-
-    if (wavelength === 450 && medium === 1.52 && laserAngle > 30) {
-      addLog('d3', {
-        title: "High Energy Dispersion",
-        entry: "Blue light (450nm) has a shorter wavelength and higher energy than Red. Therefore, it mathematically bends SLIGHTLY MORE than red light when hitting the glass. This slight difference is what causes prisms to fan out white light into rainbows!",
-        color: PALETTE.green
-      });
-    }
-
-    // Danger overload
-    if (medium === 2.42 && laserAngle > 80 && wavelength === 450) {
-      if (shakeAnim._value === 0) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        onLabBreaker && onLabBreaker();
-        Animated.sequence([
-          Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true })
-        ]).start();
-      }
-    }
-  }, [laserAngle, medium, wavelength, addLog]);
-
-  useEffect(() => { checkDiscoveries(); }, [checkDiscoveries]);
-
-  const toggleDiscovery = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const next = !discoveryMode;
-    setDiscoveryMode(next);
-    Animated.timing(discoveryAnim, {
-      toValue: next ? 1 : 0, duration: 400, easing: Easing.out(Easing.ease), useNativeDriver: false
-    }).start();
+    
+    return rays;
   };
 
-  // Rendering the Laser Math
-  const cx = width / 2;
-  const cy = H_VIEWPORT / 2;
-  
-  // Laser source position
-  const sourceRadius = 120;
-  const radIncidence = laserAngle * (Math.PI / 180);
-  
-  // Source is bottom-left, aiming at center (cy)
-  // Let's make flat boundary at Cy. Air above, Medium below.
-  const sourceX = cx - Math.sin(radIncidence) * sourceRadius;
-  const sourceY = cy - Math.cos(radIncidence) * sourceRadius;
+  const rays = calcRays();
 
-  // Snell's Law: n1 * sin(θ1) = n2 * sin(θ2)
-  // Air n1 = 1.00
-  const n1 = 1.0;
-  const n2 = medium;
-  
-  let refractAngle = 0;
-  let isTIR = false;
-  
-  // Wait, if source is in air, light ALWAYS enters denser medium.
-  // We want to demonstrate TIR! So source must be IN the medium!
-  // Let's put the laser source below the boundary (in the medium).
-  // And it tries to exit into the air (above).
-  const raySourceX = cx - Math.sin(radIncidence) * sourceRadius;
-  const raySourceY = cy + Math.cos(radIncidence) * sourceRadius; // Below boundary
-  
-  const sinTheta2 = (n2 / n1) * Math.sin(radIncidence);
-  
-  if (sinTheta2 > 1) {
-    isTIR = true;
-    refractAngle = radIncidence; // Reflects back down perfectly
-  } else {
-    refractAngle = Math.asin(sinTheta2);
-  }
-
-  const exitRayLength = 150;
-  // If TIR, it bounces down-right. If refracting, it goes up-right.
-  const exitX = isTIR 
-    ? cx + Math.sin(refractAngle) * exitRayLength
-    : cx + Math.sin(refractAngle) * exitRayLength;
+  const checkChallenges = () => {
+    const chal = CHALLENGES[activeChallenge];
+    let success = false;
     
-  const exitY = isTIR
-    ? cy + Math.cos(refractAngle) * exitRayLength
-    : cy - Math.cos(refractAngle) * exitRayLength;
+    if (activeChallenge === 2 && angle === 0) success = true;
+    if (activeChallenge === 1 && angle === 45 && materialIndex === 2) {
+       // Check if hit target area
+       success = true;
+    }
+    
+    if (success) {
+      const newStatus = [...challengeStatus];
+      if (!newStatus[activeChallenge].completed) {
+        newStatus[activeChallenge].completed = true;
+        setChallengeStatus(newStatus);
+        soundTrophy();
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    }
+  };
 
-  let laserColor = PALETTE.red;
-  if (wavelength === 532) laserColor = PALETTE.green;
-  if (wavelength === 450) laserColor = PALETTE.blue;
+  useEffect(() => {
+    checkChallenges();
+  }, [angle, materialIndex]);
 
   return (
-    <View style={styles.root}>
-      {/* Viewport */}
-      <Animated.View style={[styles.viewport, { height: H_VIEWPORT, transform: [{ translateX: shakeAnim }] }]}>
-        <Svg width="100%" height="100%">
+    <View style={styles.container}>
+      {/* 1. Status Cards */}
+      <View style={styles.header}>
+        <StatusCard 
+          label="INCIDENCE" 
+          value={angle} 
+          unit="°" 
+          icon="activity" 
+          color="#4ECDC4" 
+        />
+        <StatusCard 
+          label="INDEX (n)" 
+          value={n2.toFixed(2)} 
+          unit="" 
+          icon="link" 
+          color="#FF6B6B" 
+        />
+        <StatusCard 
+          label="SPEED" 
+          value={(300000 / n2).toFixed(0)} 
+          unit="km/s" 
+          icon="lightning" 
+          color="#FFD166" 
+        />
+      </View>
+
+      {/* 2. Simulation Box */}
+      <SimBox>
+        <Svg width={CANVAS_W} height={CANVAS_H}>
           <Defs>
-            <SvgRadial id="air" cx="50%" cy="20%" r="50%">
-              <Stop offset="0%" stopColor="#0B1220" />
-              <Stop offset="100%" stopColor="#050A15" />
-            </SvgRadial>
-            <SvgRadial id="med" cx="50%" cy="80%" r="50%">
-              <Stop offset="0%" stopColor={medium === 1.33 ? '#003366' : medium === 2.42 ? '#333333' : '#1A2A3A'} opacity={0.6}/>
-              <Stop offset="100%" stopColor="#050A15" />
-            </SvgRadial>
+            <Filter id="glow">
+               <FeGaussianBlur stdDeviation="2" result="coloredBlur" />
+            </Filter>
           </Defs>
-          
-          {/* Backgrounds */}
-          <Rect x={0} y={0} width={width} height={cy} fill="url(#air)" />
-          <Rect x={0} y={cy} width={width} height={height} fill="url(#med)" />
-          
-          {/* The Boundary */}
-          <Line x1={0} y1={cy} x2={width} y2={cy} stroke={PALETTE.steel} strokeWidth={2} />
+
+          {/* Optical Medium Block */}
+          <Rect 
+            x={MID_X} 
+            y="0" 
+            width="60" 
+            height={CANVAS_H} 
+            fill={MATERIALS[materialIndex].color} 
+            stroke={isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
+          />
+
           {/* Normal Line */}
-          <Line x1={cx} y1={cy - 60} x2={cx} y2={cy + 60} stroke="#444" strokeWidth={1} strokeDasharray="5 5" />
-          
-          {/* The Incoming Laser */}
-          <Line x1={raySourceX} y1={raySourceY} x2={cx} y2={cy} stroke={laserColor} strokeWidth={4} opacity={0.8} />
-          {/* Pulse animation for incoming */}
-          <Circle cx={cx - Math.sin(radIncidence) * (sourceRadius - (tick*4)%sourceRadius)} 
-                  cy={cy + Math.cos(radIncidence) * (sourceRadius - (tick*4)%sourceRadius)} 
-                  r={3} fill="#FFF" />
-
-          {/* The Outgoing/Refracted/Reflected Laser */}
-          <Line x1={cx} y1={cy} x2={exitX} y2={exitY} stroke={laserColor} strokeWidth={isTIR ? 4 : 2} opacity={0.8} />
-
-          {/* Partial reflection if refracting */}
-          {!isTIR && (
-            <Line x1={cx} y1={cy} x2={cx + Math.sin(radIncidence)*exitRayLength} y2={cy + Math.cos(radIncidence)*exitRayLength} 
-                  stroke={laserColor} strokeWidth={1} opacity={0.3} />
+          {rays[0] && (
+            <Line 
+              x1={MID_X - 40} y1={rays[0].y2} 
+              x2={MID_X + 40} y2={rays[0].y2} 
+              stroke={txt1} 
+              strokeDasharray="4 4" 
+              opacity={0.3} 
+            />
           )}
 
-          {/* Draw Laser Head Component at bottom-left */}
-          <Rect x={raySourceX - 10} y={raySourceY - 10} width={20} height={20} fill={PALETTE.steel} rotation={-laserAngle} origin={`${raySourceX},${raySourceY}`} rx={3} />
-          <Circle cx={raySourceX} cy={raySourceY} r={5} fill={laserColor} />
+          {/* Laser Source */}
+          <G transform={`translate(10, ${laserY - 10})`}>
+             <Rect width="20" height="20" fill={isDark ? "#333" : "#CCC"} rx={4} />
+             <Rect x="15" y="7" width="10" height="6" fill="#F00" rx={2} />
+          </G>
 
-          {scientistMode && (
+          {/* Rays */}
+          {rays.map((r, i) => (
+             <Line 
+               key={i} 
+               x1={r.x1} y1={r.y1} 
+               x2={r.x2} y2={r.y2} 
+               stroke="#FF3131" 
+               strokeWidth="3" 
+               filter="url(#glow)"
+             />
+          ))}
+
+          {/* Scientist Mode Labels */}
+          {scientistMode && rays[0] && (
             <G>
-              <SvgText x={cx + 10} y={cy - 40} fill="#666" fontSize={10}>Air (n₁ = 1.00)</SvgText>
-              <SvgText x={cx + 10} y={cy + 40} fill="#666" fontSize={10}>Medium (n₂ = {medium})</SvgText>
-              <SvgText x={raySourceX + 20} y={raySourceY} fill={laserColor} fontSize={10}>θ₁ = {Math.round(laserAngle)}°</SvgText>
-              <SvgText x={exitX - 40} y={exitY + 20} fill={laserColor} fontSize={10}>θ₂ = {Math.round(refractAngle * 180/Math.PI)}°</SvgText>
+               <SvgText x={MID_X - 40} y={rays[0].y2 - 10} fill={color} fontSize="10" fontFamily={FONTS.mono}>
+                 θi = {angle}°
+               </SvgText>
+               <SvgText x={MID_X + 10} y={rays[0].y2 + 20} fill={color} fontSize="10" fontFamily={FONTS.mono}>
+                 θr = {((Math.asin((n1/n2) * Math.sin(angle * Math.PI / 180)) * 180 / Math.PI) || 0).toFixed(1)}°
+               </SvgText>
             </G>
           )}
 
-          {discoveryMode && (
-            // Wavefront analysis overlay
-            <Circle cx={cx} cy={cy} r={tick%100} stroke={PALETTE.green} strokeWidth={0.5} opacity={1 - (tick%100)/100} fill="none" />
-          )}
+          {/* Target */}
+          <G transform={`translate(${CANVAS_W - 20}, ${MID_Y + 40})`}>
+             <Circle r="10" fill="none" stroke="#FFD166" strokeWidth="2" />
+             <Circle r="4" fill="#FFD166" />
+          </G>
         </Svg>
-        
-        <TouchableOpacity style={styles.discoveryBtn} onPress={toggleDiscovery} activeOpacity={0.8}>
-          <Icon name="search" size={24} color={discoveryMode ? PALETTE.green : PALETTE.text} />
-        </TouchableOpacity>
-      </Animated.View>
 
-      {/* Control Panel */}
-      <View style={[styles.panel, { height: H_PANEL }]}>
-        <View style={styles.panelInner}>
-          
-          <View style={styles.sliderWrap}>
-            <Text style={styles.sliderLabel}>INCIDENCE ANGLE (θ) : {Math.round(laserAngle)}°</Text>
-            <View style={styles.sliderBg} onStartShouldSetResponder={() => true} onResponderMove={e => {
-              const x = Math.max(0, Math.min(width-60, e.nativeEvent.locationX));
-              setLaserAngle((x / (width-60)) * 89);
-            }}>
-              <View style={[styles.sliderFill, { width: `${(laserAngle/89)*100}%`, backgroundColor: PALETTE.cyan }]} />
-              <View style={[styles.sliderThumb, { left: `${(laserAngle/89)*100}%` }]} />
+        <View style={styles.controls}>
+          <View style={styles.controlRow}>
+            <Text style={[styles.label, { color: txt1 }]}>Laser Angle: {angle}°</Text>
+            <View style={styles.sliderMock}>
+               <TouchableOpacity onPress={() => setAngle(Math.max(-45, angle - 5))} style={styles.miniBtn}>
+                 <Icon name="minus" size={16} color="#FFF" />
+               </TouchableOpacity>
+               <View style={styles.bar}>
+                  <View style={[styles.barInner, 
+// @ts-ignore
+                  { width: ((angle + 45)/90)*100 + '%', backgroundColor: '#FF6B6B' }]} />
+               </View>
+               <TouchableOpacity onPress={() => setAngle(Math.min(45, angle + 5))} style={styles.miniBtn}>
+                 <Icon name="plus" size={16} color="#FFF" />
+               </TouchableOpacity>
             </View>
           </View>
-
-          <View style={styles.row}>
-            <Text style={styles.optLabel}>MEDIUM:</Text>
-            <TouchableOpacity style={[styles.pill, medium===1.33 && styles.pillActive]} onPress={() => { soundTap(); setMedium(1.33); }}>
-              <Text style={styles.pillTxt}>Water (1.33)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.pill, medium===1.52 && styles.pillActive]} onPress={() => { soundTap(); setMedium(1.52); }}>
-              <Text style={styles.pillTxt}>Glass (1.52)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.pill, medium===2.42 && styles.pillActive]} onPress={() => { soundTap(); setMedium(2.42); }}>
-              <Text style={styles.pillTxt}>Diamond (2.42)</Text>
-            </TouchableOpacity>
+          
+          <View style={styles.controlRow}>
+             <Text style={[styles.label, { color: txt1 }]}>Vertical Position</Text>
+             <View style={styles.sliderMock}>
+               <TouchableOpacity onPress={() => setLaserY(Math.max(20, laserY - 10))} style={styles.miniBtn}>
+                 <Icon name="arrow-up" size={16} color="#FFF" />
+               </TouchableOpacity>
+               <TouchableOpacity onPress={() => setLaserY(Math.min(CANVAS_H - 20, laserY + 10))} style={styles.miniBtn}>
+                 <Icon name="arrow-down" size={16} color="#FFF" />
+               </TouchableOpacity>
+             </View>
           </View>
+        </View>
+      </SimBox>
 
-          <View style={styles.row}>
-            <Text style={styles.optLabel}>LASER:</Text>
-            <TouchableOpacity style={[styles.pill, wavelength===650 && {backgroundColor: PALETTE.red}]} onPress={() => { soundTap(); setWavelength(650); }}>
-              <Text style={styles.pillTxt}>Red (650nm)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.pill, wavelength===532 && {backgroundColor: PALETTE.green}]} onPress={() => { soundTap(); setWavelength(532); }}>
-              <Text style={styles.pillTxt}>Green (532nm)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.pill, wavelength===450 && {backgroundColor: PALETTE.blue}]} onPress={() => { soundTap(); setWavelength(450); }}>
-              <Text style={styles.pillTxt}>Blue (450nm)</Text>
-            </TouchableOpacity>
+      {/* 3. Scientist Mode Analytics */}
+      {scientistMode && (
+        <ScientistCard title="Snell's Law Matrix">
+          <View style={styles.sciGrid}>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Refractive Index (n2)</Text>
+              <Text style={styles.sciValue}>{n2.toFixed(2)}</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Critical Angle</Text>
+              <Text style={styles.sciValue}>{n2 < n1 ? (Math.asin(n2/n1) * 180 / Math.PI).toFixed(1) : 'N/A'} °</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Wavelength Shift</Text>
+              <Text style={styles.sciValue}>{(1 / n2).toFixed(2)}x</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Status</Text>
+              <Text style={[styles.sciValue, { color: '#39FF14' }]}>RAY PROPAGATING</Text>
+            </View>
           </View>
+          <Text style={styles.formula}>n₁ sin θ₁ = n₂ sin θ₂</Text>
+        </ScientistCard>
+      )}
 
+      {/* 4. Material Selection */}
+      <View style={styles.materialContainer}>
+        <Text style={[styles.sectionTitle, { color: txt1 }]}>Propagating Medium</Text>
+        <View style={styles.materialRow}>
+          {MATERIALS.map((mat, i) => (
+            <TouchableOpacity 
+              key={mat.name} 
+              style={[styles.matBtn, materialIndex === i && styles.matActive]}
+              onPress={() => setMaterialIndex(i)}
+            >
+              <Text style={[styles.matText, materialIndex === i && styles.matActiveText]}>{mat.name}</Text>
+              <Text style={[styles.matN, materialIndex === i && styles.matActiveText]}>n={mat.n}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
-      {/* Research Log Bar */}
-      <TouchableOpacity style={[styles.logBar, { height: H_LOG }]} activeOpacity={0.8} onPress={() => { soundTap(); setLogsOpen(true); }}>
-        <Icon name="search" size={20} color={PALETTE.text} />
-        <Text style={styles.logHintText} numberOfLines={1}>{logs.length > 0 ? `Log: ${logs[logs.length - 1].title}` : 'Experiment to discover optics...'}</Text>
-        <View style={[styles.logBadge, { backgroundColor: logs.length > 0 ? PALETTE.amber : '#333' }]}><Text style={{ color: logs.length > 0 ? '#000' : '#888', fontSize: 11, fontWeight: 'bold' }}>{logs.length}</Text></View>
-      </TouchableOpacity>
-
-      {/* Logs Modal */}
-      <Modal visible={logsOpen} transparent animationType="slide">
-        <View style={styles.modalBg}>
-          <View style={[styles.modalContent, { backgroundColor: PALETTE.panel }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: PALETTE.text }]}>Research Log</Text>
-              <TouchableOpacity onPress={() => { soundTap(); setLogsOpen(false); }}>
-                <Icon name="x" size={24} color={PALETTE.text} />
-              </TouchableOpacity>
-            </View>
-            <ScrollView>
-              {logs.length === 0 ? (
-                <Text style={styles.emptyLog}>No discoveries yet. Try pushing the laser to total internal reflection!</Text>
-              ) : (
-                logs.map((l, i) => (
-                  <View key={i} style={[styles.logCard, { borderLeftColor: l.color }]}>
-                    <Text style={styles.logCardTitle}>{l.title}</Text>
-                    <Text style={styles.logCardDesc}>{l.entry}</Text>
-                  </View>
-                ))
-              )}
-              <View style={{ height: 30 }} />
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
+      {/* 5. Challenge Card */}
+      <View style={styles.challengeBox}>
+         <ChallengeCard
+           title={CHALLENGES[activeChallenge].title}
+           instruction={CHALLENGES[activeChallenge].instruction}
+           completed={challengeStatus[activeChallenge].completed}
+           onNext={() => setActiveChallenge(prev => (prev + 1) % CHALLENGES.length)}
+         />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: PALETTE.bg },
-  viewport: { width: '100%', overflow: 'hidden' },
-  discoveryBtn: { position: 'absolute', bottom: 15, right: 15, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: PALETTE.steel },
-  panel: { backgroundColor: PALETTE.panel, borderTopWidth: 2, borderTopColor: PALETTE.steel },
-  panelInner: { flex: 1, padding: 20, justifyContent: 'space-around' },
-  sliderWrap: { width: '100%', marginBottom: 15 },
-  sliderLabel: { color: PALETTE.text, fontSize: 11, fontFamily: 'Outfit_500Medium', marginBottom: 8 },
-  sliderBg: { height: 24, backgroundColor: '#050A15', borderRadius: 12, borderWidth: 1, borderColor: PALETTE.steel, justifyContent: 'center' },
-  sliderFill: { position: 'absolute', height: '100%', borderRadius: 12 },
-  sliderThumb: { position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: '#FFF', marginLeft: -10 },
-  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 8 },
-  optLabel: { color: '#888', fontSize: 10, fontFamily: 'monospace' },
-  pill: { paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, borderWidth: 1, borderColor: PALETTE.steel, backgroundColor: '#050A15' },
-  pillActive: { backgroundColor: PALETTE.cyan, borderColor: PALETTE.cyan },
-  pillTxt: { color: '#FFF', fontSize: 11, fontFamily: 'Outfit_500Medium' },
-  logBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, backgroundColor: '#050A15', borderTopWidth: 1, borderTopColor: '#111', gap: 10 },
-  logHintText: { flex: 1, color: '#888', fontSize: 12, fontFamily: 'monospace', fontStyle: 'italic' },
-  logBadge: { minWidth: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.92)', justifyContent: 'flex-end' },
-  modalContent: { maxHeight: height * 0.7, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', fontFamily: 'Outfit_700Bold' },
-  emptyLog: { color: '#555', textAlign: 'center', marginTop: 40, fontFamily: 'monospace', fontSize: 13 },
-  logCard: { backgroundColor: '#0E0E08', padding: 14, borderRadius: 10, marginBottom: 10, borderLeftWidth: 3 },
-  logCardTitle: { color: PALETTE.text, fontWeight: 'bold', fontSize: 14, marginBottom: 5, fontFamily: 'Outfit_500Medium' },
-  logCardDesc: { color: '#AAA', fontSize: 13, lineHeight: 19 }
+  container: {
+    padding: SPACING.md,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: SPACING.md,
+  },
+  controls: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    right: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    padding: 10,
+    borderRadius: RADIUS.md,
+  },
+  controlRow: {
+    flex: 1,
+    paddingHorizontal: 8,
+  },
+  label: {
+    fontSize: 9,
+    fontFamily: FONTS.bold,
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  sliderMock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bar: {
+    flex: 1,
+    height: 6,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    marginHorizontal: 8,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  barInner: {
+    height: '100%',
+  },
+  miniBtn: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 4,
+    borderRadius: 4,
+  },
+  sciGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  sciItem: {
+    width: '48%',
+    marginBottom: 8,
+  },
+  sciLabel: {
+    fontSize: 10,
+    color: '#888',
+  },
+  sciValue: {
+    fontSize: 13,
+    fontFamily: FONTS.mono,
+    color: '#FFF',
+  },
+  formula: {
+    textAlign: 'center',
+    color: '#4ECDC4',
+    fontFamily: FONTS.mono,
+    fontSize: 14,
+    marginTop: 5,
+  },
+  materialContainer: {
+    marginTop: SPACING.lg,
+  },
+  sectionTitle: {
+    fontSize: 15,
+    fontFamily: FONTS.bold,
+    marginBottom: SPACING.sm,
+  },
+  materialRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  matBtn: {
+    flex: 1,
+    padding: 8,
+    borderRadius: RADIUS.sm,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    alignItems: 'center',
+    marginHorizontal: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  matActive: {
+    backgroundColor: '#00D4FF',
+    borderColor: '#00D4FF',
+  },
+  matText: {
+    fontSize: 9,
+    fontFamily: FONTS.bold,
+    color: '#FFF',
+  },
+  matActiveText: {
+    color: '#000',
+  },
+  matN: {
+    fontSize: 8,
+    color: '#888',
+  },
+  challengeBox: {
+    marginTop: SPACING.xl,
+    marginBottom: 40,
+  }
 });

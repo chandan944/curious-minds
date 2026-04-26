@@ -6,11 +6,11 @@ export default {
   category: 'Space',
   accentKey: 'space',
 
-  hook: {
+hook: {
     question: "How long would it take to drive a car to the Sun?",
     reveal: "If you got in a car and drove straight up at 60 mph (100 km/h) without ever stopping, it would take you 177 YEARS to reach the Sun! ☀️ Space is unfathomably, terrifyingly empty. All the planets you see in textbooks are drawn way too close together. If the Earth were the size of a marble, the Sun would be a giant yoga ball 300 yards away! Let's explore our massive, beautiful neighborhood.",
     emoji: '🚀',
-  },
+},
 
   theory: [
     {

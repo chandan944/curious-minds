@@ -191,7 +191,14 @@ function AsciiGame({ txt1, glass2 }) {
 // ══════════════════════════════════════════════════════════
 export default function BinaryMiniGamesLab() {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary, border = theme.glass.border, glass2 = theme.glass.medium;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
   const InstructionCard = ({ gameNum, title, text, color }) => (
     <View style={[s.instCard, { backgroundColor: isDark ? '#1C2733' : '#E6F0FA', borderColor: color+'50' }]}>
@@ -204,7 +211,7 @@ export default function BinaryMiniGamesLab() {
   );
 
   return (
-    <View style={[s.root, { backgroundColor: theme.background }]}>
+    <View style={[s.root, { backgroundColor: (isDark ? '#0A0A0F' : '#FFFFFF') }]}>
       
       {/* GAME 1 */}
       <View style={[s.gameBox, { borderColor: border, backgroundColor: isDark ? '#0F1218' : '#F5F7FA' }]}>

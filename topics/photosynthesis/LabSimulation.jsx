@@ -100,12 +100,15 @@ export default function PhotosynthesisLab({
   onLabBreaker,
 }) {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary;
-  const txt2 = theme.text.secondary;
-  const txtM = theme.text.muted;
-  const glass1 = theme.glass.light;
-  const glass2 = theme.glass.medium;
-  const border = theme.glass.border;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
+  const bg = (_themeObj || {}).bg?.base || '#0A0A0A';
 
   // ── Instrument values (0-100 slider percentages) ─────────────────────────
   const [lightPct, setLightPct]   = useState(0);    // 0–100 → 0–2000 μmol
@@ -522,8 +525,8 @@ function SliderControl({ value, onChange, color, trackColor }) {
       onResponderMove={(e) => { if (dragging.current) getValueFromX(e.nativeEvent.pageX); }}
       onResponderRelease={() => { dragging.current = false; }}
     >
-      <View style={[styles.sliderFill, { width: filled, backgroundColor: color }]} />
-      <View style={[styles.sliderThumb, { left: filled, borderColor: color, backgroundColor: color + '40' }]} />
+      <View style={[styles.sliderFill, { width: `${value}%`, backgroundColor: color }]} />
+      <View style={[styles.sliderThumb, { left: `${value}%`, borderColor: color, backgroundColor: color + '40' }]} />
     </View>
   );
 }

@@ -1,386 +1,289 @@
-/**
- * Data Science Lab — Linear Regression & Outliers
- * Scientist Mode: Standard deviation boundaries
- * NO react-native-reanimated — Old Architecture safe
- */
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import {
-  View, Text, StyleSheet, Dimensions, TouchableOpacity,
-  PanResponder, Animated, Easing, Modal, ScrollView
-} from 'react-native';
-import Svg, {
-  Rect, Line, Defs, RadialGradient as SvgRadial, Stop, G, Text as SvgText, Circle, Path, Polygon
-} from 'react-native-svg';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated, ScrollView } from 'react-native';
+import Svg, { Circle, G, Line, Text as SvgText, Rect, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
+import { useTheme } from '../../context/ThemeContext';
+import { FONTS, RADIUS, SPACING } from '../../constants/theme';
+import { soundTap, soundWhoosh, soundBadge } from '../../utils/sounds';
 import * as Haptics from 'expo-haptics';
-import { soundTap } from '../../utils/sounds';
 import Icon from '../../components/ui/Icons';
 
-const { width, height } = Dimensions.get('window');
-const H_VIEWPORT = height * 0.45;
-const H_PANEL = height * 0.35;
-const H_LOG = height * 0.10;
+const { width } = Dimensions.get('window');
+const SIM_W = width - SPACING.md * 4;
+const SIM_H = 340;
 
-const PALETTE = {
-  bg: '#0A0515',
-  panel: '#150B20',
-  cyan: '#00D4FF',
-  green: '#39FF14',
-  red: '#FF4D6D',
-  text: '#E8E5F0',
-  steel: '#1A1525',
-  purple: '#A855F7',
-  alert: '#FFB347'
-};
+const INITIAL_DATA = [
+  { x: 0.1, y: 0.15 }, { x: 0.2, y: 0.25 }, { x: 0.3, y: 0.35 },
+  { x: 0.4, y: 0.45 }, { x: 0.5, y: 0.55 }, { x: 0.6, y: 0.65 },
+  { x: 0.7, y: 0.75 }, { x: 0.8, y: 0.85 }, { x: 0.9, y: 0.95 },
+];
 
-// Box-Muller transform for normal distribution
-const randn_bm = () => {
-    let u = 0, v = 0;
-    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
-    while(v === 0) v = Math.random();
-    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
-}
+const CHALLENGES = [
+  { id: 'chaos_theory', title: 'Noise Injection', desc: 'Add chaos until variance exceeds 0.5', icon: 'zap', color: '#FF3131' },
+  { id: 'perfect_fit', title: 'R² Master', desc: 'Clean the dataset to achieve > 95% correlation', icon: 'star', color: '#10B981' },
+  { id: 'outlier_hunt', title: 'The Janitor', desc: 'Manually remove exactly 3 outliers from the plot', icon: 'search', color: '#00E5FF' },
+  { id: 'regression_king', title: 'Linear Legend', desc: 'Identify the trend line with 10+ points active', icon: 'chart', color: '#FFD166' },
+];
 
-export default function DataLab({ scientistMode = false, accentColor = '#00D4FF', onLabBreaker }) {
-  const [discoveryMode, setDiscoveryMode] = useState(false);
-  const discoveryAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+export default function DataScienceLab({ scientistMode = false }) {
+  const { theme, isDark } = useTheme();
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
-  const [logs, setLogs] = useState([]);
-  const [logsOpen, setLogsOpen] = useState(false);
-  const discovered = useRef(new Set());
+  const [data, setData] = useState(INITIAL_DATA);
+  const [completedChallenges, setCompleted] = useState([]);
+  const [lastChallengeMsg, setLastChallengeMsg] = useState(null);
+  const [metrics, setMetrics] = useState({ r2: 1, sd: 0 });
 
-  // Data State
-  const [variance, setVariance] = useState(1); // 0.1 to 3
-  const [points, setPoints] = useState([]);
-  const [outliersIdx, setOutliersIdx] = useState(new Set());
-  const [isCleaning, setIsCleaning] = useState(false);
+  const challengePopAnim = useRef(new Animated.Value(0)).current;
 
-  // Generate Base Data (y = mx + b + noise)
-  const generateData = useCallback((v) => {
-    const newPts = [];
-    const m = 0.6;
-    const b = 0.2;
-    for(let i=0; i<30; i++) {
-        const x = Math.random();
-        // Normal distribution noise based on variance
-        const noise = randn_bm() * 0.1 * v;
-        let y = m * x + b + noise;
-        y = Math.max(0, Math.min(1, y)); // clamp
-        newPts.push({x, y, isOutlier: false});
-    }
-    setPoints(newPts);
-    setOutliersIdx(new Set());
-  }, []);
+  // Linear Regression Logic: y = mx + c
+  const calculateRegression = useCallback(() => {
+    if (data.length < 2) return { m: 0, c: 0, r2: 0, sd: 0 };
+    let n = data.length;
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+    data.forEach(p => {
+      sumX += p.x; sumY += p.y;
+      sumXY += p.x * p.y;
+      sumX2 += p.x * p.x;
+      sumY2 += p.y * p.y;
+    });
 
-  // Init Data
-  useEffect(() => {
-     generateData(variance);
-  }, []);
-
-  // Compute Statistics
-  const stats = useMemo(() => {
-    // Only use non-outlier points or all points if not cleaned
-    const validPts = points.filter((_, i) => !outliersIdx.has(i));
+    const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const c = (sumY - m * sumX) / n;
     
-    // Mean
-    let meanY = 0; let meanX = 0;
-    validPts.forEach(p => { meanX+=p.x; meanY+=p.y; });
-    meanX /= validPts.length; meanY /= validPts.length;
+    // R-Squared
+    const num = (n * sumXY - sumX * sumY);
+    const den = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+    const r = den === 0 ? 0 : num / den;
+    const r2 = r * r;
 
-    // Linear Regression (Least Squares)
-    let num = 0, den = 0;
-    validPts.forEach(p => {
-       num += (p.x - meanX)*(p.y - meanY);
-       den += (p.x - meanX)*(p.x - meanX);
-    });
-    const m = den === 0 ? 0 : num/den;
-    const b = meanY - m*meanX;
+    // SD
+    let sqDiff = 0;
+    data.forEach(p => sqDiff += Math.pow(p.y - (m * p.x + c), 2));
+    const sd = Math.sqrt(sqDiff / n);
 
-    // Standard Deviation of Y distance from regression line
-    let varianceSum = 0;
-    validPts.forEach(p => {
-       const expectedY = m*p.x + b;
-       varianceSum += Math.pow(p.y - expectedY, 2);
-    });
-    const stdDev = Math.sqrt(varianceSum / validPts.length);
+    setMetrics({ r2, sd });
 
-    return { meanX, meanY, m, b, stdDev };
-  }, [points, outliersIdx]);
+    return { m, c };
+  }, [data]);
 
-  const addLog = useCallback((id, entry) => {
-    if (!discovered.current.has(id)) {
-      discovered.current.add(id);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setLogs(prev => [...prev, entry]);
-    }
-  }, []);
-
-  // Logic Tick
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const loop = setInterval(() => setTick(t => t + 1), 50);
-    return () => clearInterval(loop);
-  }, []);
-
-  // Actions
-  const injectOutliers = () => {
-    soundTap();
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    const newPts = [...points];
-    // Inject 3 massive outliers
-    for(let i=0; i<3; i++) {
-        newPts.push({
-            x: Math.random(),
-            y: Math.random() > 0.5 ? 0.9 + Math.random()*0.1 : 0.0 + Math.random()*0.1,
-            isOutlier: true
-        });
-    }
-    setPoints(newPts);
-
-    Animated.sequence([
-      Animated.timing(shakeAnim, { toValue: 5, duration: 40, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: -5, duration: 40, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: 0, duration: 40, useNativeDriver: true })
-    ]).start();
-
-    if (!discovered.current.has('d1')) {
-      addLog('d1', {
-        title: "Data Corruption (Outliers)",
-        entry: "You injected wildly irrational data points into the set. Notice how severely the Linear Regression line violently physically breaks and shifts just to improperly mathematically accommodate the few extreme bad points!",
-        color: PALETTE.red
-      });
-    }
-  };
-
-  const cleanData = () => {
-    soundTap();
-    setIsCleaning(true);
-    // Find points where distance from regression > 2 stdDev
-    const newOutliers = new Set(outliersIdx);
-    
-    let caught = 0;
-    points.forEach((p, i) => {
-       const expectedY = stats.m * p.x + stats.b;
-       const dist = Math.abs(p.y - expectedY);
-       if (dist > stats.stdDev * 1.5) { // Strict cleaning threshold
-          newOutliers.add(i);
-          caught++;
-       }
-    });
-
-    setOutliersIdx(newOutliers);
+  const triggerChallenge = useCallback((cid) => {
+    if (completedChallenges.includes(cid)) return;
+    const ch = CHALLENGES.find(c => c.id === cid);
+    setLastChallengeMsg(ch);
+    soundBadge();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    
-    setTimeout(() => setIsCleaning(false), 1000);
+    challengePopAnim.setValue(0);
+    Animated.sequence([
+      Animated.spring(challengePopAnim, { toValue: 1, tension: 80, friction: 10, useNativeDriver: true }),
+      Animated.delay(2500),
+      Animated.timing(challengePopAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+    ]).start(() => setLastChallengeMsg(null));
+    setCompleted(prev => [...prev, cid]);
+  }, [completedChallenges]);
 
-    if (caught > 0 && !discovered.current.has('d2')) {
-      addLog('d2', {
-        title: "Standard Deviation Purge",
-        entry: "The algorithm successfully mathematically hunted down any point located beyond 1.5 Standard Deviations from the Mean! It purged them, allowing the Regression curve to miraculously heal.",
-        color: PALETTE.cyan
-      });
-    }
+  const { m, c } = calculateRegression();
+
+  useEffect(() => {
+    if (metrics.r2 > 0.95 && data.length > 5) triggerChallenge('perfect_fit');
+    if (metrics.sd > 0.1) triggerChallenge('chaos_theory');
+    if (data.length >= 10) triggerChallenge('regression_king');
+  }, [metrics, data.length]);
+
+  const injectNoise = () => {
+    soundTap();
+    Haptics.impactAsync();
+    setData(prev => prev.map(p => ({
+      ...p,
+      y: Math.max(0, Math.min(1, p.y + (Math.random() - 0.5) * 0.2))
+    })));
   };
 
-  const toggleDiscovery = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const next = !discoveryMode;
-    setDiscoveryMode(next);
-    Animated.timing(discoveryAnim, {
-      toValue: next ? 1 : 0, duration: 400, easing: Easing.out(Easing.ease), useNativeDriver: false
-    }).start();
+  const addPoint = () => {
+    if (data.length > 20) return;
+    soundWhoosh();
+    setData(prev => [...prev, { x: Math.random(), y: Math.random() }]);
   };
 
-  // Layout Viewport Data
-  const pad = 40;
-  const gw = width - pad * 2;
-  const gh = H_VIEWPORT - pad * 2 - 20;
+  const clearOutliers = () => {
+    soundWhoosh();
+    setData(prev => prev.filter(p => {
+        const expectedY = m * p.x + c;
+        return Math.abs(p.y - expectedY) < 0.2;
+    }));
+    triggerChallenge('outlier_hunt');
+  };
 
-  const mapX = (x) => pad + x * gw;
-  const mapY = (y) => pad + gh - y * gh;
-
-  // Draw Regression Line
-  const rx1 = 0; const ry1 = stats.m * rx1 + stats.b;
-  const rx2 = 1; const ry2 = stats.m * rx2 + stats.b;
+  const mapCoor = (val, size) => 30 + val * (size - 60);
 
   return (
-    <View style={styles.root}>
-      {/* Viewport */}
-      <Animated.View style={[styles.viewport, { height: H_VIEWPORT, transform: [{ translateX: shakeAnim }] }]}>
-        <Svg width="100%" height="100%">
-          <Defs>
-            <SvgRadial id="bg" cx="50%" cy="50%" r="50%">
-              <Stop offset="0%" stopColor="#100A20" />
-              <Stop offset="100%" stopColor={PALETTE.bg} />
-            </SvgRadial>
-          </Defs>
-          <Rect width="100%" height="100%" fill="url(#bg)" />
+    <View style={styles.container}>
+      {lastChallengeMsg && (
+        <Animated.View style={[styles.challengePopup, {
+          opacity: challengePopAnim, backgroundColor: lastChallengeMsg.color + '20', borderColor: lastChallengeMsg.color + '60',
+          transform: [{ translateY: challengePopAnim.interpolate({ inputRange: [0, 1], outputRange: [-20, 0] }) }],
+        }]}>
+          <Icon name="trophy" size={18} color={lastChallengeMsg.color} />
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.challengePopTitle, { color: lastChallengeMsg.color }]}>Challenge Complete!</Text>
+            <Text style={[styles.challengePopDesc, { color: txt2 }]}>{lastChallengeMsg.title}</Text>
+          </View>
+        </Animated.View>
+      )}
 
-          {/* Grid */}
-          <Line x1={pad} y1={pad + gh} x2={pad + gw + 10} y2={pad + gh} stroke={PALETTE.steel} strokeWidth={2} />
-          <Line x1={pad} y1={pad + gh} x2={pad} y2={pad - 10} stroke={PALETTE.steel} strokeWidth={2} />
-          <SvgText x={pad + gw - 30} y={pad + gh + 15} fill="#666" fontSize={10}>Feature X</SvgText>
-          <SvgText x={pad - 35} y={pad} fill="#666" fontSize={10}>Variable Y</SvgText>
-
-          {/* Scientist Mode: Z-Score Bounds (1 StdDev & 2 StdDev) */}
-          {scientistMode && (
-             <G>
-                {/* 1 StdDev Band */}
-                <Polygon 
-                   points={`${mapX(0)},${mapY(ry1 + stats.stdDev)} ${mapX(1)},${mapY(ry2 + stats.stdDev)} ${mapX(1)},${mapY(ry2 - stats.stdDev)} ${mapX(0)},${mapY(ry1 - stats.stdDev)}`}
-                   fill={PALETTE.purple} opacity={0.15}
-                />
-                {/* 2 StdDev Band Limits */}
-                <Line x1={mapX(rx1)} y1={mapY(ry1 + stats.stdDev*2)} x2={mapX(rx2)} y2={mapY(ry2 + stats.stdDev*2)} stroke={PALETTE.red} strokeWidth={1} strokeDasharray="4 4" opacity={0.5} />
-                <Line x1={mapX(rx1)} y1={mapY(ry1 - stats.stdDev*2)} x2={mapX(rx2)} y2={mapY(ry2 - stats.stdDev*2)} stroke={PALETTE.red} strokeWidth={1} strokeDasharray="4 4" opacity={0.5} />
-                
-                <SvgText x={pad + gw - 40} y={mapY(ry2 + stats.stdDev*2) - 5} fill={PALETTE.red} fontSize={8}>+2σ Bound</SvgText>
-             </G>
-          )}
-
-          {/* Data Points */}
-          {points.map((pt, i) => {
-             const dist = Math.abs(pt.y - (stats.m*pt.x + stats.b));
-             const isFar = dist > stats.stdDev * 1.5;
-             const isDeleted = outliersIdx.has(i);
-
-             if (isDeleted && !isCleaning) return null; // Don't draw if truly deleted
-
-             return (
-               <G key={i} x={mapX(pt.x)} y={mapY(pt.y)}>
-                  {/* The Point itself */}
-                  <Circle cx={0} cy={0} r={5} fill={isDeleted ? '#333' : pt.isOutlier ? PALETTE.alert : PALETTE.cyan} />
-                  
-                  {/* Warning ring if Discovery Mode is on and it's far */}
-                  {discoveryMode && isFar && !isDeleted && (
-                     <Circle cx={0} cy={0} r={10 + (tick%5)} fill="none" stroke={PALETTE.red} strokeWidth={1} />
-                  )}
-
-                  {/* Laser beam animation during Delete */}
-                  {isCleaning && isDeleted && (
-                     <Line x1={-10} y1={-10} x2={10} y2={10} stroke={PALETTE.red} strokeWidth={2} />
-                  )}
-               </G>
-             );
-          })}
-
-          {/* Linear Regression Line */}
-          <Line 
-             x1={mapX(rx1)} y1={mapY(ry1)} 
-             x2={mapX(rx2)} y2={mapY(ry2)} 
-             stroke={PALETTE.green} strokeWidth={3} 
-          />
-
-          {scientistMode && (
-             <G>
-               <SvgText x={15} y={15} fill={PALETTE.green} fontSize={10} fontFamily="monospace">
-                  y = {stats.m.toFixed(2)}x + {stats.b.toFixed(2)}
-               </SvgText>
-               <SvgText x={15} y={30} fill={PALETTE.purple} fontSize={10} fontFamily="monospace">
-                  σ (StdDev) = {stats.stdDev.toFixed(3)}
-               </SvgText>
-             </G>
-          )}
-
-        </Svg>
-        
-        <TouchableOpacity style={styles.discoveryBtn} onPress={toggleDiscovery} activeOpacity={0.8}>
-          <Icon name="search" size={24} color={discoveryMode ? PALETTE.cyan : PALETTE.text} />
-        </TouchableOpacity>
-      </Animated.View>
-
-      {/* Control Panel */}
-      <View style={[styles.panel, { height: H_PANEL }]}>
-        <View style={styles.panelInner}>
-
-          <View style={styles.sliderWrap}>
-            <Text style={styles.sliderLabel}>DATASET VARIANCE (SCATTER): {variance.toFixed(1)}</Text>
-            <View style={[styles.sliderBg, { borderColor: PALETTE.cyan}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-              const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-              const v = 0.1 + (x / (width-40)) * 2.9;
-              setVariance(v);
-              generateData(v);
-            }}>
-              <View style={[styles.sliderFill, { width: `${((variance-0.1)/2.9)*100}%`, backgroundColor: PALETTE.cyan }]} />
-              <View style={[styles.sliderThumb, { left: `${((variance-0.1)/2.9)*100}%` }]} />
+      {/* ── Data HUD ── */}
+      <View style={[styles.statusCard, { backgroundColor: glass1, borderColor: border }]}>
+         <View style={styles.statusRow}>
+            <Icon name="chart" size={24} color="#00E5FF" />
+            <View style={{ flex: 1 }}>
+               <Text style={[styles.sLabel, { color: txtM }]}>CORRELATION (R²)</Text>
+               <Text style={[styles.sValue, { color: metrics.r2 > 0.9 ? '#10B981' : (metrics.r2 > 0.5 ? '#FFD166' : '#FF3131') }]}>
+                 {(metrics.r2 * 100).toFixed(1)}% {metrics.r2 > 0.9 ? 'STABLE' : 'UNSTABLE'}
+               </Text>
             </View>
-          </View>
-
-          <View style={styles.row}>
-            <TouchableOpacity style={styles.actionBtnHalf} activeOpacity={0.8} onPress={injectOutliers}>
-               <Icon name="alert-triangle" size={16} color="#FFF" style={{marginBottom: 4}} />
-               <Text style={styles.actionBtnTxt}>INJECT OUTLIERS</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={[styles.actionBtnHalf, {backgroundColor: PALETTE.purple}]} activeOpacity={0.8} onPress={cleanData}>
-               <Icon name="check-circle" size={16} color="#FFF" style={{marginBottom: 4}} />
-               <Text style={styles.actionBtnTxt}>PULSE CLEAN (±1.5σ)</Text>
-            </TouchableOpacity>
-          </View>
-
-        </View>
+            <View style={{ alignItems: 'flex-end' }}>
+               <Text style={[styles.sLabel, { color: txtM }]}>SAMPLE SIZE</Text>
+               <Text style={[styles.sValue, { color: txt1 }]}>{data.length}</Text>
+            </View>
+         </View>
       </View>
 
-      {/* Research Log Bar */}
-      <TouchableOpacity style={[styles.logBar, { height: H_LOG }]} activeOpacity={0.8} onPress={() => { soundTap(); setLogsOpen(true); }}>
-        <Icon name="search" size={20} color={PALETTE.text} />
-        <Text style={styles.logHintText} numberOfLines={1}>{logs.length > 0 ? `Log: ${logs[logs.length - 1].title}` : 'Inject outliers into the dataset...'}</Text>
-        <View style={[styles.logBadge, { backgroundColor: logs.length > 0 ? PALETTE.green : '#333' }]}><Text style={{ color: logs.length > 0 ? '#000' : '#888', fontSize: 11, fontWeight: 'bold' }}>{logs.length}</Text></View>
+      {/* ── Scatter Plot Viz ── */}
+      <View style={[styles.simBox, { borderColor: border, backgroundColor: isDark ? '#0F172A' : '#F8FAFC' }]}>
+        <Svg width={SIM_W} height={SIM_H} style={StyleSheet.absoluteFill}>
+           {/* Axes */}
+           <Line x1="30" y1={SIM_H-30} x2={SIM_W-30} y2={SIM_H-30} stroke={txtM} strokeWidth="1" />
+           <Line x1="30" y1="30" x2="30" y2={SIM_H-30} stroke={txtM} strokeWidth="1" />
+           
+           {/* Trend Line */}
+           {data.length > 1 && (
+             <Line 
+               x1={mapCoor(0, SIM_W)} y1={mapCoor(c, SIM_H)}
+               x2={mapCoor(1, SIM_W)} y2={mapCoor(m + c, SIM_H)}
+               stroke="#00E5FF" strokeWidth="3" opacity={0.6} />
+           )}
+
+           {/* Data Points */}
+           {data.map((p, i) => {
+              const expectedY = m * p.x + c;
+              const isOutlier = Math.abs(p.y - expectedY) > 0.2;
+              return (
+                <Circle key={i} cx={mapCoor(p.x, SIM_W)} cy={mapCoor(p.y, SIM_H)} r="5" fill={isOutlier ? '#FF3131' : '#10B981'} opacity={0.8} />
+              );
+           })}
+        </Svg>
+      </View>
+
+      {/* ── Action Buttons ── */}
+      <View style={styles.btnRow}>
+         <TouchableOpacity onPress={injectNoise} style={[styles.btn, { backgroundColor: '#FF313120', borderColor: '#FF313160' }]}>
+            <Icon name="zap" size={16} color="#FF3131" />
+            <Text style={[styles.btnText, { color: '#FF3131' }]}>INJECT NOISE</Text>
+         </TouchableOpacity>
+         <TouchableOpacity onPress={clearOutliers} style={[styles.btn, { backgroundColor: '#10B98120', borderColor: '#10B98160' }]}>
+            <Icon name="wrench" size={16} color="#10B981" />
+            <Text style={[styles.btnText, { color: '#10B981' }]}>CLEAN DATA</Text>
+         </TouchableOpacity>
+      </View>
+      <TouchableOpacity onPress={addPoint} style={[styles.addBtn, { backgroundColor: glass1, borderColor: border }]}>
+         <Icon name="plus" size={18} color={txt1} />
+         <Text style={[styles.addBtnText, { color: txt1 }]}>CAPTURE NEW DATA POINT</Text>
       </TouchableOpacity>
 
-      {/* Logs Modal */}
-      <Modal visible={logsOpen} transparent animationType="slide">
-        <View style={styles.modalBg}>
-          <View style={[styles.modalContent, { backgroundColor: PALETTE.panel }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: PALETTE.text }]}>Research Log</Text>
-              <TouchableOpacity onPress={() => { soundTap(); setLogsOpen(false); }}>
-                <Icon name="x" size={24} color={PALETTE.text} />
-              </TouchableOpacity>
-            </View>
-            <ScrollView>
-              {logs.length === 0 ? (
-                <Text style={styles.emptyLog}>No discoveries yet. Trigger a corruption event!</Text>
-              ) : (
-                logs.map((l, i) => (
-                  <View key={i} style={[styles.logCard, { borderLeftColor: l.color }]}>
-                    <Text style={styles.logCardTitle}>{l.title}</Text>
-                    <Text style={styles.logCardDesc}>{l.entry}</Text>
-                  </View>
-                ))
-              )}
-              <View style={{ height: 30 }} />
-            </ScrollView>
-          </View>
+      {/* ── Scholar Analytics 🧑‍🔬 ── */}
+      {scientistMode && (
+        <View style={[styles.sciCard, { backgroundColor: glass1, borderColor: border }]}>
+           <View style={styles.sciHeader}>
+             <Icon name="terminal" size={14} color="#00E5FF" />
+             <Text style={[styles.sciTitle, { color: txt1 }]}>Linear Stats 🧑‍🔬</Text>
+           </View>
+           <View style={styles.statGrid}>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>SLOPE (M)</Text>
+                 <Text style={[styles.statValue, { color: '#00E5FF' }]}>{m.toFixed(3)}</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>INTERCEPT (C)</Text>
+                 <Text style={[styles.statValue, { color: '#FFD166' }]}>{c.toFixed(3)}</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>VARIANCE (σ)</Text>
+                 <Text style={[styles.statValue, { color: '#FF3131' }]}>{metrics.sd.toFixed(3)}</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>Z-SCORE ZONE</Text>
+                 <Text style={[styles.statValue, { color: '#A855F7' }]}>95% CONF.</Text>
+              </View>
+           </View>
+           <View style={{ marginTop: 12 }}>
+              <Text style={[styles.sciNoteText, { color: txtM, textAlign: 'center' }]}>
+                {"Goal: Minimizing the Residual Squared Error."}
+              </Text>
+           </View>
         </View>
-      </Modal>
+      )}
+
+      {/* ── Challenges ── */}
+      <View style={[styles.challengeCard, { backgroundColor: glass1, borderColor: border }]}>
+        <View style={styles.challengeHeader}>
+          <Icon name="trophy" size={16} color="#FFD166" />
+          <Text style={[styles.challengeCardTitle, { color: txt1 }]}>Analytics Missions ({completedChallenges.length}/4)</Text>
+        </View>
+        {CHALLENGES.map(c => {
+          const done = completedChallenges.includes(c.id);
+          return (
+            <View key={c.id} style={styles.challengeItem}>
+              <View style={[styles.cIcon, { backgroundColor: done ? c.color + '20' : '#334444' }]}>
+                <Icon name={done ? 'check' : c.icon} size={14} color={done ? c.color : txtM} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.cTitle, { color: done ? c.color : txt1, textDecorationLine: done ? 'line-through' : 'none' }]}>{c.title}</Text>
+                <Text style={[styles.cDesc, { color: txtM }]}>{c.desc}</Text>
+              </View>
+            </View>
+          );
+        })}
+      </View>
+
+      <View style={{ height: 40 }} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: PALETTE.bg },
-  viewport: { width: '100%', overflow: 'hidden' },
-  discoveryBtn: { position: 'absolute', top: 15, right: 15, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: PALETTE.steel },
-  panel: { backgroundColor: PALETTE.panel, borderTopWidth: 2, borderTopColor: PALETTE.steel },
-  panelInner: { flex: 1, padding: 20 },
-  sliderWrap: { width: '100%', marginBottom: 20 },
-  sliderLabel: { color: PALETTE.text, fontSize: 11, fontFamily: 'monospace', marginBottom: 6 },
-  sliderBg: { height: 16, backgroundColor: '#0A0515', borderRadius: 8, borderWidth: 1, justifyContent: 'center' },
-  sliderFill: { position: 'absolute', height: '100%', borderRadius: 8 },
-  sliderThumb: { position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: '#FFF', marginLeft: -10 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
-  actionBtnHalf: { flex: 1, backgroundColor: PALETTE.red, paddingVertical: 14, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
-  actionBtnTxt: { color: '#FFF', fontFamily: 'Outfit_700Bold', letterSpacing: 0.5, fontSize: 12, textAlign: 'center' },
-  logBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, backgroundColor: '#0A0510', borderTopWidth: 1, borderTopColor: '#111', gap: 10 },
-  logHintText: { flex: 1, color: '#888', fontSize: 12, fontFamily: 'monospace', fontStyle: 'italic' },
-  logBadge: { minWidth: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.92)', justifyContent: 'flex-end' },
-  modalContent: { maxHeight: height * 0.7, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', fontFamily: 'Outfit_700Bold' },
-  emptyLog: { color: '#555', textAlign: 'center', marginTop: 40, fontFamily: 'monospace', fontSize: 13 },
-  logCard: { backgroundColor: '#0A0510', padding: 14, borderRadius: 10, marginBottom: 10, borderLeftWidth: 3 },
-  logCardTitle: { color: PALETTE.text, fontWeight: 'bold', fontSize: 14, marginBottom: 5, fontFamily: 'Outfit_500Medium' },
-  logCardDesc: { color: '#AAA', fontSize: 13, lineHeight: 19 }
+  container: { paddingHorizontal: SPACING.md },
+  statusCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  sLabel: { fontFamily: FONTS.bodyMedium, fontSize: 10 },
+  sValue: { fontFamily: FONTS.displayMedium, fontSize: 15, marginTop: 2 },
+  simBox: { height: SIM_H, borderRadius: RADIUS.lg, borderWidth: 1, marginTop: 16, overflow: 'hidden' },
+  btnRow: { flexDirection: 'row', marginTop: 16, gap: 12 },
+  btn: { flex: 1, paddingVertical: 12, borderRadius: RADIUS.md, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  btnText: { fontFamily: FONTS.displayMedium, fontSize: 10, letterSpacing: 0.5 },
+  addBtn: { marginTop: 12, paddingVertical: 14, borderRadius: RADIUS.md, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
+  addBtnText: { fontFamily: FONTS.displayMedium, fontSize: 11, letterSpacing: 1 },
+  sciCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  sciHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  sciTitle: { fontFamily: FONTS.displayMedium, fontSize: 16 },
+  statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  statItem: { flex: 1, minWidth: '45%', padding: 10, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: RADIUS.sm },
+  statLabel: { fontFamily: FONTS.bodyMedium, fontSize: 8, marginBottom: 2 },
+  statValue: { fontFamily: FONTS.displayMedium, fontSize: 13 },
+  sciNoteText: { fontFamily: 'monospace', fontSize: 11 },
+  challengeCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  challengeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  challengeCardTitle: { fontFamily: FONTS.displayMedium, fontSize: 15 },
+  challengeItem: { flexDirection: 'row', gap: 12, paddingVertical: 10 },
+  cIcon: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  cTitle: { fontFamily: FONTS.bodyMedium, fontSize: 13 },
+  cDesc: { fontFamily: FONTS.body, fontSize: 11, marginTop: 2 },
+  challengePopup: { position: 'absolute', top: 20, left: 10, right: 10, padding: 12, borderRadius: RADIUS.md, borderWidth: 1, flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 100 },
+  challengePopTitle: { fontFamily: FONTS.displayMedium, fontSize: 13 },
+  challengePopDesc: { fontFamily: FONTS.body, fontSize: 11, marginTop: 1 },
 });

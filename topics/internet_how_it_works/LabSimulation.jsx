@@ -1,274 +1,298 @@
-// ─────────────────────────────────────────────────────────────
-//  LAB: How the Internet Works — 4 Interactive Games
-// ─────────────────────────────────────────────────────────────
-
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated, TextInput, PanResponder
-} from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated, ScrollView } from 'react-native';
+import Svg, { Circle, G, Path, Line, Text as SvgText, Defs, RadialGradient, Stop } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
 import { soundTap, soundWhoosh, soundBadge } from '../../utils/sounds';
 import * as Haptics from 'expo-haptics';
 import Icon from '../../components/ui/Icons';
-import Svg, { Line, Circle, Path } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
+const SIM_W = width - SPACING.md * 4;
+const SIM_H = 340;
 
-// ══════════════════════════════════════════════════════════
-//  GAMES
-// ══════════════════════════════════════════════════════════
+const NODES = [
+  { id: 'NY', x: 60, y: 150, label: 'New York', color: '#00E5FF' },
+  { id: 'LON', x: 200, y: 100, label: 'London', color: '#10B981' },
+  { id: 'PAR', x: 230, y: 130, label: 'Paris', color: '#FFD166' },
+  { id: 'TOKY', x: 300, y: 180, label: 'Tokyo', color: '#FF3131' },
+  { id: 'SYD', x: 280, y: 280, label: 'Sydney', color: '#A855F7' },
+];
 
-// GAME 1: PACKET ROUTING HACKER
-function PacketRouterGame({ txt1 }) {
-  const [cableCut, setCableCut] = useState(false);
-  const [packetPos, setPacketPos] = useState({ x: 40, y: 150 });
-  const [run, setRun] = useState(false);
-  
-  const cutAnim = useRef(new Animated.Value(0)).current;
+const CABLES = [
+  { from: 'NY', to: 'LON', type: 'Submarine-Primary', latency: 65 },
+  { from: 'LON', to: 'PAR', type: 'Terrestrial', latency: 12 },
+  { from: 'PAR', to: 'TOKY', type: 'Inter-Continental', latency: 140 },
+  { from: 'NY', to: 'SYD', type: 'Deep-Sea-Alt', latency: 190 },
+  { from: 'TOKY', to: 'SYD', type: 'Pacific-Fiber', latency: 90 },
+];
 
-  // Nodes: Client(40,150) -> R1(120,40) -> R2(220,150) -> Server(300,100)
-  // Alt path: Client(40,150) -> R3(150,220) -> R2(220,150)
-  const routePaths = {
-    normal: [{x:40,y:150}, {x:120,y:40}, {x:220,y:150}, {x:310,y:100}],
-    reroute: [{x:40,y:150}, {x:150,y:220}, {x:220,y:150}, {x:310,y:100}]
-  };
+const CHALLENGES = [
+  { id: 'trans_atlantic', title: 'Trans-Atlantic Sync', desc: 'Deliver 100% of packets from New York to Paris', icon: 'globe', color: '#00E5FF' },
+  { id: 'redirect', title: 'Route Ninja', desc: 'Secure the connection after a fiber-cut outage', icon: 'zap', color: '#FFD166' },
+  { id: 'ping_master', title: 'Low Latency King', desc: 'Achieve < 80ms ping to London', icon: 'activity', color: '#10B981' },
+  { id: 'subsea_expert', title: 'Deep-Sea Mechanic', desc: 'Tap the submarine cable to view raw throughput', icon: 'wrench', color: '#A855F7' },
+];
 
-  const simulate = () => {
-    soundWhoosh();
-    setRun(true);
-    let step = 0;
-    const path = cableCut ? routePaths.reroute : routePaths.normal;
-    
-    const interval = setInterval(() => {
-      step++;
-      if (step < path.length) {
-        setPacketPos(path[step]);
-        Haptics.impactAsync();
-      } else {
-        clearInterval(interval);
-        soundBadge();
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        setTimeout(() => { setPacketPos(path[0]); setRun(false); }, 1000);
-      }
-    }, 400);
-  };
-
-  const cutCable = () => {
-    soundTap(); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    setCableCut(true);
-  };
-  const fixCable = () => {
-    soundTap(); setCableCut(false);
-  };
-
-  return (
-    <View style={{ alignItems: 'center' }}>
-       <View style={{ width: '100%', height: 260, backgroundColor: '#0A1220', borderRadius: RADIUS.md, position: 'relative', overflow: 'hidden' }}>
-          
-          <Svg width="100%" height="260">
-             {/* Fast Primary Cable (Client -> R1 -> R2 -> Server) */}
-             <Line x1="40" y1="150" x2="120" y2="40" stroke={cableCut ? '#FF4444' : '#00D4A0'} strokeWidth="6" strokeDasharray={cableCut ? "10,10" : ""} />
-             <Line x1="120" y1="40" x2="220" y2="150" stroke={cableCut ? '#FF4444' : '#00D4A0'} strokeWidth="6" strokeDasharray={cableCut ? "10,10" : ""} />
-             
-             {/* Slow Alt Cable (Client -> R3 -> R2) */}
-             <Line x1="40" y1="150" x2="150" y2="220" stroke="#3B82F6" strokeWidth="4" />
-             <Line x1="150" y1="220" x2="220" y2="150" stroke="#3B82F6" strokeWidth="4" />
-             
-             {/* Final leg (R2 -> Server) */}
-             <Line x1="220" y1="150" x2="310" y2="100" stroke="#00D4A0" strokeWidth="6" />
-
-             {/* Nodes */}
-             <Circle cx="40" cy="150" r="16" fill="#FFF" />
-             <Circle cx="120" cy="40" r="14" fill="#666" />
-             <Circle cx="150" cy="220" r="14" fill="#666" />
-             <Circle cx="220" cy="150" r="14" fill="#666" />
-             <Circle cx="310" cy="100" r="20" fill="#FF9F1C" />
-             
-             {/* Moving Packet (Only render when running) */}
-             {run && <Circle cx={packetPos.x} cy={packetPos.y} r="8" fill="#FF007F" />}
-          </Svg>
-
-          <Text style={{ position: 'absolute', top: 120, left: 10, color: '#FFF', fontSize: 10 }}>CLIENT</Text>
-          <Text style={{ position: 'absolute', top: 70, left: 290, color: '#FF9F1C', fontSize: 10 }}>SERVER</Text>
-          {cableCut && <Text style={{ position: 'absolute', top: 20, left: 60, fontSize: 30 }}>✂️</Text>}
-       </View>
-
-       <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
-          <TouchableOpacity onPress={simulate} disabled={run} style={[s.btn, { flex: 1, backgroundColor: run ? '#444' : '#00D4A0' }]}><Text style={{ color: '#000', fontWeight: 'bold' }}>SEND PACKETS</Text></TouchableOpacity>
-          <TouchableOpacity onPress={cableCut ? fixCable : cutCable} style={[s.btn, { flex: 1, backgroundColor: cableCut ? '#3B82F6' : '#FF4444' }]}><Text style={{ color: '#FFF', fontWeight: 'bold' }}>{cableCut ? 'FIX CABLE' : 'CUT MAIN FIBER'}</Text></TouchableOpacity>
-       </View>
-       <Text style={{ color: txt1, marginTop: 10, textAlign: 'center', fontSize: 13 }}>
-          {cableCut ? 'TCP/IP detects the outage and dynamically re-routes traffic through the slower southern network!' : 'Packets are flowing optimally over the high-speed northern line.'}
-       </Text>
-    </View>
-  );
-}
-
-
-// GAME 2: SUBMARINE CABLE EXPLORER
-function SubmarineMap({ txt1, isDark }) {
-  // Simplified SVG world map interaction
-  return (
-    <View style={{ alignItems: 'center' }}>
-       <View style={{ width: '100%', height: 200, backgroundColor: isDark ? '#001A20' : '#E0F7FA', borderRadius: RADIUS.md, justifyContent: 'center' }}>
-          <Text style={{ textAlign: 'center', fontSize: 80, opacity: 0.3 }}>🗺️</Text>
-          <Svg width="100%" height="200" style={{ position: 'absolute', top: 0, left: 0 }}>
-             <Path d="M 50 100 Q 150 150 250 80" stroke="#FF007F" strokeWidth="3" fill="none" />
-             <Path d="M 60 120 Q 180 180 300 130" stroke="#00E5FF" strokeWidth="2" fill="none" />
-             <Path d="M 250 80 Q 280 50 320 60" stroke="#FF9F1C" strokeWidth="3" fill="none" />
-             <Circle cx="150" cy="120" r="4" fill="#FFF" opacity="0.5" />
-             <Circle cx="200" cy="140" r="3" fill="#FFF" opacity="0.5" />
-          </Svg>
-          <Text style={{ position: 'absolute', top: 80, left: 20, color: txt1, fontSize: 10, fontWeight: 'bold' }}>NEW YORK</Text>
-          <Text style={{ position: 'absolute', top: 60, left: 230, color: txt1, fontSize: 10, fontWeight: 'bold' }}>LONDON</Text>
-          <Text style={{ position: 'absolute', top: 130, left: 290, color: txt1, fontSize: 10, fontWeight: 'bold' }}>TOKYO</Text>
-       </View>
-       <Text style={{ color: txt1, marginTop: 10, textAlign: 'center', fontSize: 13 }}>
-          Over 500 massive armored fiber-optic cables lie on the bottom of the ocean floor right now, wrapped in steel and shark-proof kevlar!
-       </Text>
-    </View>
-  );
-}
-
-
-// GAME 3: DNS LOOKUP
-function DnsSimulator({ txt1, glass2 }) {
-  const [url, setUrl] = useState('youtube.com');
-  const [step, setStep] = useState(0); // 0: Wait, 1: Browser, 2: DNS, 3: IP
-  const [ipStr, setIpStr] = useState('');
-
-  const executeDns = () => {
-    soundTap(); Haptics.selectionAsync();
-    setStep(1);
-    setTimeout(() => { soundWhoosh(); setStep(2); }, 800);
-    setTimeout(() => { 
-      soundBadge(); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setStep(3);
-      // Generate fake IP based on length
-      setIpStr(`142.250.${url.length * 10}.${(url.length * 7) % 255}`);
-    }, 1800);
-  };
-
-  const resetDns = () => { setStep(0); };
-
-  return (
-    <View>
-      <View style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
-         <TextInput 
-           style={{ flex: 1, backgroundColor: glass2, color: txt1, padding: 16, borderRadius: RADIUS.md, fontFamily: 'monospace', fontSize: 16 }}
-           value={url}
-           onChangeText={setUrl}
-           autoCapitalize="none"
-         />
-         <TouchableOpacity onPress={executeDns} style={[s.btn, { backgroundColor: '#3B82F6' }]}><Text style={{ color: '#FFF', fontWeight: 'bold' }}>GO</Text></TouchableOpacity>
-      </View>
-
-      <View style={{ height: 160, backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: RADIUS.md, padding: 16, gap: 10 }}>
-         {step >= 1 && <Text style={{ color: txt1, fontFamily: FONTS.bodyMedium }}>💻 Browser: "Hey DNS, what is the IP number for <Text style={{color:'#3B82F6'}}>{url}</Text>?"</Text>}
-         {step >= 2 && <Text style={{ color: txt1, fontFamily: FONTS.bodyMedium }}>📖 DNS Phonebook: "Let me check the .com server records..."</Text>}
-         {step >= 3 && (
-            <View style={{ marginTop: 10, padding: 16, backgroundColor: '#00D4A020', borderRadius: RADIUS.sm, borderWidth: 1, borderColor: '#00D4A0' }}>
-               <Text style={{ color: '#00D4A0', fontFamily: FONTS.displayHeavy }}>CONNECTION SUCCESS!</Text>
-               <Text style={{ color: txt1, fontFamily: 'monospace', fontSize: 20 }}>IP: {ipStr}</Text>
-            </View>
-         )}
-      </View>
-      {step === 3 && <TouchableOpacity onPress={resetDns} style={{ marginTop: 10, alignSelf:'center' }}><Text style={{ color: '#3B82F6' }}>Clear DNS Cache</Text></TouchableOpacity>}
-    </View>
-  );
-}
-
-
-// GAME 4: ENCRYPTION
-function EncryptionGame({ txt1 }) {
-  const [scrambled, setScrambled] = useState(true);
-  const realText = "CREDIT CARD 4400-XXXX";
-  const fakeText = "XJ9@!L$P^MZQK8#B*VWCY";
-
-  const toggleEncrypt = () => {
-    soundTap(); Haptics.impactAsync();
-    setScrambled(!scrambled);
-  };
-
-  return (
-    <View style={{ alignItems: 'center' }}>
-       <View style={{ width: '100%', padding: 24, backgroundColor: '#11151A', borderRadius: RADIUS.md, alignItems: 'center', justifyContent: 'center', minHeight: 120, borderWidth: 2, borderColor: scrambled ? '#A855F7' : '#00E5FF' }}>
-          {scrambled && <Icon name="lock" size={32} color="#A855F7" style={{ marginBottom: 10 }} />}
-          {!scrambled && <Icon name="unlock" size={32} color="#00E5FF" style={{ marginBottom: 10 }} />}
-          
-          <Text style={{ fontFamily: 'monospace', fontSize: 22, color: scrambled ? '#A855F7' : '#00E5FF', fontWeight: 'bold', textAlign: 'center' }}>
-             {scrambled ? fakeText : realText}
-          </Text>
-       </View>
-
-       <TouchableOpacity onPress={toggleEncrypt} style={[s.hugeBtn, { backgroundColor: scrambled ? '#552277' : '#007788', width: '100%', marginTop: 16 }]}>
-          <Text style={{ color: '#FFF', fontFamily: FONTS.displayHeavy }}>{scrambled ? 'APPLY PRIVATE KEY (DECRYPT)' : 'SCRAMBLE DATA (ENCRYPT)'}</Text>
-       </TouchableOpacity>
-       
-       <Text style={{ color: txt1, marginTop: 16, textAlign: 'center', fontSize: 13 }}>
-          {scrambled ? 'If a hacker intercepts your Wi-Fi, this gibberish is all they see. It takes a supercomputer millions of years to guess the math formula.' : 'When the Amazon Server receives it, it applies its secret Private Key to instantly unscramble the message!'}
-       </Text>
-    </View>
-  );
-}
-
-
-// ══════════════════════════════════════════════════════════
-//  MAIN LAYOUT
-// ══════════════════════════════════════════════════════════
-export default function InternetMiniGamesLab() {
+export default function InternetNetworkingLab({ scientistMode = false }) {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary, border = theme.glass.border, glass2 = theme.glass.medium;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
-  const InstructionCard = ({ gameNum, title, text, color }) => (
-    <View style={[s.instCard, { backgroundColor: isDark ? '#1C2733' : '#E6F0FA', borderColor: color+'50' }]}>
-      <View style={s.instHeader}>
-         <Icon name="help" size={16} color={color} />
-         <Text style={[s.instTitle, { color: color }]}>TERMINAL {gameNum}: {title}</Text>
-      </View>
-      <Text style={[s.instText, { color: txt1 }]}>{text}</Text>
-    </View>
-  );
+  const [activePackets, setActivePackets] = useState([]);
+  const [cableCut, setCableCut] = useState(false);
+  const [completedChallenges, setCompleted] = useState([]);
+  const [lastChallengeMsg, setLastChallengeMsg] = useState(null);
+  const [metrics, setMetrics] = useState({ ping: 0, drops: 0 });
+
+  const challengePopAnim = useRef(new Animated.Value(0)).current;
+
+  // Simulation loop for packets
+  useEffect(() => {
+    let interval;
+    if (activePackets.length > 0) {
+      interval = setInterval(() => {
+        setActivePackets(prev => prev.map(p => ({
+          ...p,
+          progress: p.progress + 0.02
+        })).filter(p => p.progress < 1));
+      }, 30);
+    }
+    return () => clearInterval(interval);
+  }, [activePackets]);
+
+  const triggerChallenge = useCallback((cid) => {
+    if (completedChallenges.includes(cid)) return;
+    const ch = CHALLENGES.find(c => c.id === cid);
+    setLastChallengeMsg(ch);
+    soundBadge();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    challengePopAnim.setValue(0);
+    Animated.sequence([
+      Animated.spring(challengePopAnim, { toValue: 1, tension: 80, friction: 10, useNativeDriver: true }),
+      Animated.delay(2500),
+      Animated.timing(challengePopAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+    ]).start(() => setLastChallengeMsg(null));
+    setCompleted(prev => [...prev, cid]);
+  }, [completedChallenges]);
+
+  const sendPacket = () => {
+    if (cableCut) {
+        setMetrics(prev => ({ ...prev, drops: prev.drops + 1 }));
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        triggerChallenge('redirect');
+    } else {
+        setMetrics({ ping: 68, drops: 0 });
+    }
+    
+    soundWhoosh();
+    const newPacket = { id: Date.now(), progress: 0 };
+    setActivePackets(prev => [...prev, newPacket]);
+    if (!cableCut) triggerChallenge('trans_atlantic');
+    if (!cableCut && metrics.ping < 80) triggerChallenge('ping_master');
+  };
+
+  const toggleCable = () => {
+    soundTap();
+    setCableCut(!cableCut);
+    if (!cableCut) {
+        setMetrics(prev => ({ ...prev, ping: 0 }));
+    }
+  };
 
   return (
-    <View style={[s.root, { backgroundColor: theme.background }]}>
-      
-      {/* GAME 1 */}
-      <View style={[s.gameBox, { borderColor: border, backgroundColor: isDark ? '#0F1218' : '#F5F7FA' }]}>
-        <InstructionCard gameNum={1} title="The Packet Routing Hacker" color="#00D4A0" text="Hit 'Send Packets' to trace the fastest route. But what if a Shark bites the main fiber optic line? Hit 'Cut Main Fiber' to test the internet's decentralized self-healing TCP/IP algorithm!" />
-        <PacketRouterGame txt1={txt1} />
+    <View style={styles.container}>
+      {lastChallengeMsg && (
+        <Animated.View style={[styles.challengePopup, {
+          opacity: challengePopAnim, backgroundColor: lastChallengeMsg.color + '20', borderColor: lastChallengeMsg.color + '60',
+          transform: [{ translateY: challengePopAnim.interpolate({ inputRange: [0, 1], outputRange: [-20, 0] }) }],
+        }]}>
+          <Icon name="trophy" size={18} color={lastChallengeMsg.color} />
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.challengePopTitle, { color: lastChallengeMsg.color }]}>Challenge Complete!</Text>
+            <Text style={[styles.challengePopDesc, { color: txt2 }]}>{lastChallengeMsg.title}</Text>
+          </View>
+        </Animated.View>
+      )}
+
+      {/* ── Network Hub ── */}
+      <View style={[styles.statusCard, { backgroundColor: glass1, borderColor: border }]}>
+         <View style={styles.statusRow}>
+            <Icon name="globe" size={24} color="#00E5FF" />
+            <View style={{ flex: 1 }}>
+               <Text style={[styles.sLabel, { color: txtM }]}>NETWORK STATUS</Text>
+               <Text style={[styles.sValue, { color: cableCut ? '#FF3131' : '#10B981' }]}>
+                 {cableCut ? 'OUTAGE DETECTED' : 'BACKBONE OPERATIONAL'}
+               </Text>
+            </View>
+            <TouchableOpacity onPress={sendPacket} style={styles.sendBtn}>
+               <Icon name="zap" size={20} color="#000" />
+            </TouchableOpacity>
+         </View>
       </View>
 
-      {/* GAME 2 */}
-      <View style={[s.gameBox, { borderColor: border, backgroundColor: isDark ? '#0F1218' : '#F5F7FA' }]}>
-        <InstructionCard gameNum={2} title="Submarine Cable Explorer" color="#3B82F6" text="99% of global internet relies on physical, armored glass wires lying at the absolute bottom of the freezing ocean." />
-        <SubmarineMap txt1={txt1} isDark={isDark} />
+      {/* ── Global Routing Simulation ── */}
+      <View style={[styles.simBox, { borderColor: border, backgroundColor: isDark ? '#000' : '#111' }]}>
+        <Svg width={SIM_W} height={SIM_H} style={StyleSheet.absoluteFill}>
+           <Defs>
+             <RadialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+                <Stop offset="0%" stopColor="#FFF" stopOpacity="0.4" />
+                <Stop offset="100%" stopColor="#FFF" stopOpacity="0" />
+             </RadialGradient>
+           </Defs>
+           
+           {/* Submarine Cables */}
+           {CABLES.map((c, i) => {
+             const n1 = NODES.find(n => n.id === c.from);
+             const n2 = NODES.find(n => n.id === c.to);
+             const isMainTrunk = c.from === 'NY' && c.to === 'LON';
+             const isBroken = isMainTrunk && cableCut;
+             
+             return (
+               <G key={i}>
+                 <Line x1={n1.x} y1={n1.y} x2={n2.x} y2={n2.y} 
+                   stroke={isBroken ? '#FF313160' : (isDark ? '#334444' : '#E2E8F0')} 
+                   strokeWidth={isMainTrunk ? 4 : 2}
+                   strokeDasharray={isBroken ? "5,5" : "0"} />
+                 
+                 {/* Packets moving along the line */}
+                 {!isBroken && activePackets.map(p => (
+                   <Circle key={`${i}-${p.id}`} 
+                     cx={n1.x + (n2.x - n1.x) * p.progress} 
+                     cy={n1.y + (n2.y - n1.y) * p.progress} 
+                     r="3" fill="#00E5FF" />
+                 ))}
+               </G>
+             );
+           })}
+
+           {/* Continent Nodes */}
+           {NODES.map(n => (
+             <G key={n.id}>
+                <Circle cx={n.x} cy={n.y} r="15" fill="url(#nodeGlow)" />
+                <Circle cx={n.x} cy={n.y} r="6" fill={n.color} />
+                <SvgText x={n.x} y={n.y + 20} fontSize="9" fill="rgba(255,255,255,0.6)" textAnchor="middle" fontFamily="monospace">
+                  {n.label}
+                </SvgText>
+             </G>
+           ))}
+        </Svg>
+
+        {cableCut && (
+          <View style={styles.alertBox}>
+             <Icon name="activity" size={24} color="#FF3131" />
+             <Text style={styles.alertText}>PACKET LOSS: 98.2%</Text>
+          </View>
+        )}
       </View>
 
-      {/* GAME 3 */}
-      <View style={[s.gameBox, { borderColor: border, backgroundColor: isDark ? '#0F1218' : '#F5F7FA' }]}>
-        <InstructionCard gameNum={3} title="DNS Directory Simulator" color="#D4A74A" text="Computers don't know what 'youtube.com' is. They only understand numbers. Type a URL and watch the DNS Phonebook translate it into a raw IP address." />
-        <DnsSimulator txt1={txt1} glass2={glass2} />
+      {/* ── Control Center ── */}
+      <View style={styles.btnRow}>
+         <TouchableOpacity onPress={toggleCable} style={[styles.btn, { flex: 1, backgroundColor: cableCut ? '#10B98120' : '#FF313120', borderColor: cableCut ? '#10B98160' : '#FF313160' }]}>
+            <Text style={[styles.btnText, { color: cableCut ? '#10B981' : '#FF3131' }]}>
+               {cableCut ? 'FIX SUBMARINE CABLE' : 'CUT TRANS-ATLANTIC'}
+            </Text>
+         </TouchableOpacity>
       </View>
 
-      {/* GAME 4 */}
-      <View style={[s.gameBox, { borderColor: border, backgroundColor: isDark ? '#0F1218' : '#F5F7FA', marginBottom: 40 }]}>
-        <InstructionCard gameNum={4} title="HTTPS Encryption Sandbox" color="#A855F7" text="Sending unencrypted credit card data is like writing it on a postcard. HTTPS scrambles the card using insane math so that only the destination server can read it!" />
-        <EncryptionGame txt1={txt1} />
+      {/* ── Scholar Analytics 🧑‍🔬 ── */}
+      {scientistMode && (
+        <View style={[styles.sciCard, { backgroundColor: glass1, borderColor: border }]}>
+           <View style={styles.sciHeader}>
+             <Icon name="terminal" size={14} color="#A855F7" />
+             <Text style={[styles.sciTitle, { color: txt1 }]}>Ping Diagnostics 🧑‍🔬</Text>
+           </View>
+           <View style={styles.statGrid}>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>LATENT PING (ms)</Text>
+                 <Text style={[styles.statValue, { color: '#00E5FF' }]}>{cableCut ? 'TIMEOUT' : `${metrics.ping} ms`}</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>PACKET DROPS</Text>
+                 <Text style={[styles.statValue, { color: '#FF3131' }]}>{metrics.drops}</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>PROTOCOL</Text>
+                 <Text style={[styles.statValue, { color: '#FFD166' }]}>TCP/IP v6</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>ENCRYPTION</Text>
+                 <Text style={[styles.statValue, { color: '#10B981' }]}>AES-256</Text>
+              </View>
+           </View>
+           <View style={styles.sciNote}>
+             <Icon name="info" size={12} color={txtM} />
+             <Text style={[styles.sciNoteText, { color: txtM }]}>
+               {"Note: Packet rerouting is handled by the BGP (Border Gateway Protocol)."}
+             </Text>
+           </View>
+        </View>
+      )}
+
+      {/* ── Challenges ── */}
+      <View style={[styles.challengeCard, { backgroundColor: glass1, borderColor: border }]}>
+        <View style={styles.challengeHeader}>
+          <Icon name="trophy" size={16} color="#FFD166" />
+          <Text style={[styles.challengeCardTitle, { color: txt1 }]}>Network Missions ({completedChallenges.length}/4)</Text>
+        </View>
+        {CHALLENGES.map(c => {
+          const done = completedChallenges.includes(c.id);
+          return (
+            <View key={c.id} style={styles.challengeItem}>
+              <View style={[styles.cIcon, { backgroundColor: done ? c.color + '20' : '#334444' }]}>
+                <Icon name={done ? 'check' : c.icon} size={14} color={done ? c.color : txtM} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.cTitle, { color: done ? c.color : txt1, textDecorationLine: done ? 'line-through' : 'none' }]}>{c.title}</Text>
+                <Text style={[styles.cDesc, { color: txtM }]}>{c.desc}</Text>
+              </View>
+            </View>
+          );
+        })}
       </View>
 
+      <View style={{ height: 40 }} />
     </View>
   );
 }
 
-const s = StyleSheet.create({
-  root: { flex: 1, padding: SPACING.md, gap: SPACING.lg },
-  gameBox: { borderWidth: 1, borderRadius: RADIUS.lg, padding: 16, overflow: 'hidden' },
-  instCard: { borderWidth: 1, borderRadius: RADIUS.md, padding: 16, marginBottom: 20 },
-  instHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
-  instTitle: { fontFamily: FONTS.displayHeavy, fontSize: 13, letterSpacing: 1 },
-  instText: { fontFamily: FONTS.bodyMedium, fontSize: 13, lineHeight: 18 },
-  btn: { padding: 16, borderRadius: RADIUS.md, alignItems: 'center', justifyContent: 'center' },
-  hugeBtn: { paddingVertical: 18, borderRadius: RADIUS.md, alignItems: 'center', justifyContent: 'center' },
+const styles = StyleSheet.create({
+  container: { paddingHorizontal: SPACING.md },
+  statusCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  sLabel: { fontFamily: FONTS.bodyMedium, fontSize: 10 },
+  sValue: { fontFamily: FONTS.displayMedium, fontSize: 15, marginTop: 2 },
+  sendBtn: { backgroundColor: '#FFD166', padding: 8, borderRadius: RADIUS.sm },
+  simBox: { height: SIM_H, borderRadius: RADIUS.lg, borderWidth: 1, marginTop: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  alertBox: { position: 'absolute', top: 20, backgroundColor: 'rgba(255,49,49,0.1)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderColor: '#FF3131' },
+  alertText: { color: '#FF3131', fontFamily: 'monospace', fontSize: 12, fontWeight: 'bold' },
+  btnRow: { flexDirection: 'row', marginTop: 16 },
+  btn: { paddingVertical: 14, alignItems: 'center', borderRadius: RADIUS.md, borderWidth: 1 },
+  btnText: { fontFamily: FONTS.displayMedium, fontSize: 12, letterSpacing: 1 },
+  sciCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  sciHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  sciTitle: { fontFamily: FONTS.displayMedium, fontSize: 16 },
+  statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  statItem: { flex: 1, minWidth: '45%', padding: 10, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: RADIUS.sm },
+  statLabel: { fontFamily: FONTS.bodyMedium, fontSize: 8, marginBottom: 2 },
+  statValue: { fontFamily: FONTS.displayMedium, fontSize: 13 },
+  sciNote: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12 },
+  sciNoteText: { fontFamily: FONTS.body, fontSize: 11 },
+  challengeCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  challengeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  challengeCardTitle: { fontFamily: FONTS.displayMedium, fontSize: 15 },
+  challengeItem: { flexDirection: 'row', gap: 12, paddingVertical: 10 },
+  cIcon: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  cTitle: { fontFamily: FONTS.bodyMedium, fontSize: 13 },
+  cDesc: { fontFamily: FONTS.body, fontSize: 11, marginTop: 2 },
+  challengePopup: { position: 'absolute', top: 20, left: 10, right: 10, padding: 12, borderRadius: RADIUS.md, borderWidth: 1, flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 100 },
+  challengePopTitle: { fontFamily: FONTS.displayMedium, fontSize: 13 },
+  challengePopDesc: { fontFamily: FONTS.body, fontSize: 11, marginTop: 1 },
 });

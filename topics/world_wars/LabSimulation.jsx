@@ -6,14 +6,14 @@
 //  MODE 3 — Shifting Fronts (WWII): Timeline map of Axis expansion
 // ─────────────────────────────────────────────────────────────
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
-  Animated, ScrollView, Vibration
+  Animated, ScrollView,
 } from 'react-native';
 import Svg, {
-  Circle, Line, Text as SvgText, Rect, Path,
-  Defs, RadialGradient, LinearGradient as SvgLG, Stop, Polygon
+  Circle, Line, Text as SvgText, Path,
+  Defs, LinearGradient as SvgLG, Stop, Polygon
 } from 'react-native-svg';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
@@ -87,8 +87,15 @@ export default function WorldWarsLab({
   accentColor   = '#B42B2B',
 }) {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary, txt2 = theme.text.secondary, txtM = theme.text.muted;
-  const glass1 = theme.glass.light, glass2 = theme.glass.medium, border = theme.glass.border;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  // @ts-ignore
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
   const wire = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
 
   // ── State ──────────────────────────────────
@@ -262,7 +269,7 @@ export default function WorldWarsLab({
                       {isAtWar && <Circle cx={nat.cx} cy={nat.cy} r={35} fill="#FF4444" fillOpacity={0.2} />}
                       <Circle cx={nat.cx} cy={nat.cy} r={20} fill={isAtWar ? '#FF4444' : nat.color} 
                          stroke={isAtWar ? '#FF9999' : '#FFF'} strokeWidth={isAtWar ? 3 : 1} />
-                      <SvgText x={nat.cx} y={nat.cy + 35} textAnchor="middle" fill={txt1} fontSize="11" fontWeight="bold">
+                      <SvgText x={nat.cx} y={nat.cy + 35} textAnchor="middle" fill="#FFF" fontSize="11" fontWeight="bold">
                         {nat.name}
                       </SvgText>
                    </React.Fragment>
@@ -350,10 +357,12 @@ export default function WorldWarsLab({
                <Path d={MAP_PATH} fill={isDark ? '#152233' : '#BAC6D4'} stroke={wire} strokeWidth={2} />
                
                {/* Axis Expansion Area */}
-               <SvgLG id="axisGrad" x1="0" y1="0" x2="1" y2="1">
-                 <Stop offset="0" stopColor="#B42B2B" stopOpacity="0.8" />
-                 <Stop offset="1" stopColor="#FF4444" stopOpacity="0.6" />
-               </SvgLG>
+               <Defs>
+                 <SvgLG id="axisGrad" x1="0" y1="0" x2="1" y2="1">
+                   <Stop offset="0" stopColor="#B42B2B" stopOpacity="0.8" />
+                   <Stop offset="1" stopColor="#FF4444" stopOpacity="0.6" />
+                 </SvgLG>
+               </Defs>
                <Path d={AXIS_POLYS[year]} fill="url(#axisGrad)" stroke="#FFAAAA" strokeWidth={2} />
 
                {/* Allies Pushback Arrows (Visually appear 1943+) */}
@@ -369,7 +378,7 @@ export default function WorldWarsLab({
                )}
 
                {/* Year display massive */}
-               <SvgText x={SIM_W / 2} y={50} textAnchor="middle" fill={txt1} fontSize="36" fontWeight="bold" opacity={0.8}>{year}</SvgText>
+               <SvgText x={SIM_W / 2} y={50} textAnchor="middle" fill="#FFF" fontSize="36" fontWeight="bold" opacity={0.8}>{year}</SvgText>
             </Svg>
 
             {/* Timeline Overlay */}

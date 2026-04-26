@@ -33,9 +33,9 @@ const SIM_H = 300;
 // ══════════════════════════════════════════════════════════
 
 function SteamEngine3D({ heatLevel, isDark }) {
-  const flywheelRef = useRef();
-  const pistonRef = useRef();
-  const steamRef = useRef();
+  const flywheelRef = useRef(null);
+  const pistonRef = useRef(null);
+  const steamRef = useRef(null);
 
   useFrame((state, delta) => {
     // RPM scales quadratically with heat for visual impact
@@ -190,8 +190,14 @@ export default function IndustrialRevolutionLab({
   accentColor   = '#FF7A59',
 }) {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary, txt2 = theme.text.secondary, txtM = theme.text.muted;
-  const glass1 = theme.glass.light, glass2 = theme.glass.medium, border = theme.glass.border;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
   const wire = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
 
   // ── State ──────────────────────────────────
@@ -355,7 +361,7 @@ export default function IndustrialRevolutionLab({
                       {isOn && <Circle cx={L.cx} cy={L.cy} r={28} fill="#FF9F1C" fillOpacity={0.2} />}
                       <Rect x={L.cx - 20} y={L.cy - 15} width={40} height={30} fill={isOn ? '#FF9F1C' : metalColor(isDark)} rx={4} />
                       <Circle cx={L.cx} cy={L.cy} r={8} fill={isOn ? "#FFF" : "#333"} />
-                      <SvgText x={L.cx} y={L.cy + 25} textAnchor="middle" fontSize="9" fill={txt2} fontWeight="bold">LOOM {L.id}</SvgText>
+                      <SvgText x={L.cx} y={L.cy + 25} textAnchor="middle" fontSize="9" fill="rgba(255,255,255,0.8)" fontWeight="bold">LOOM {L.id}</SvgText>
                    </React.Fragment>
                  );
                })}
@@ -399,13 +405,13 @@ export default function IndustrialRevolutionLab({
                     <React.Fragment key={c.id}>
                        <Circle cx={c.cx} cy={c.cy} r={pop} fill="#00D4A0" fillOpacity={isDark ? 0.6 : 0.8} />
                        <Circle cx={c.cx} cy={c.cy} r={2} fill="#FFF" />
-                       <SvgText x={c.cx} y={c.cy - pop - 2} textAnchor="middle" fill={txt1} fontSize="10">{c.name}</SvgText>
+                       <SvgText x={c.cx} y={c.cy - pop - 2} textAnchor="middle" fill="#FFF" fontSize="10">{c.name}</SvgText>
                     </React.Fragment>
                   );
                })}
 
                {/* Year display massive */}
-               <SvgText x={SIM_W - 20} y={50} textAnchor="end" fill={txt1} fontSize="36" fontWeight="bold" opacity={0.8}>{year}</SvgText>
+               <SvgText x={SIM_W - 20} y={50} textAnchor="end" fill="#FFF" fontSize="36" fontWeight="bold" opacity={0.8}>{year}</SvgText>
             </Svg>
 
             {/* Timeline Slider Overlay */}

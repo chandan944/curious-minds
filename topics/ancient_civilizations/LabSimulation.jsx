@@ -257,8 +257,14 @@ export default function AncientCivilizationsLab({
   accentColor   = '#D4A74A',
 }) {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary, txt2 = theme.text.secondary, txtM = theme.text.muted;
-  const glass1 = theme.glass.light, glass2 = theme.glass.medium, border = theme.glass.border;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
   const landFill = isDark ? '#151828' : '#E0E2F0';
   const oceanBg  = isDark ? '#0A0C18' : '#EDF0FF';
   const wire     = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
@@ -451,7 +457,7 @@ export default function AncientCivilizationsLab({
                 <Rect x={8} y={6} width={SIM_W - 16} height={24} rx={8} fill={accentColor} fillOpacity={0.06}
                   stroke={accentColor} strokeOpacity={0.15} strokeWidth={0.8} />
                 <SvgText x={14} y={22} fontSize="9" fill={accentColor} fontWeight="bold">{era.label}</SvgText>
-                <SvgText x={SIM_W - 14} y={22} textAnchor="end" fontSize="9" fill={txt2}>{era.title}</SvgText>
+                <SvgText x={SIM_W - 14} y={22} textAnchor="end" fontSize="9" fill="rgba(255,255,255,0.8)">{era.title}</SvgText>
 
                 {/* Territory ellipses */}
                 {CIVS.map(c => {
@@ -493,7 +499,7 @@ export default function AncientCivilizationsLab({
                 })}
 
                 {/* Active count */}
-                <SvgText x={SIM_W / 2} y={SIM_H - 8} textAnchor="middle" fontSize="8" fill={txtM}>
+                <SvgText x={SIM_W / 2} y={SIM_H - 8} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.6)">
                   {activeCivs.length} empire{activeCivs.length !== 1 ? 's' : ''} active  •  Numbers = power (1-10)
                 </SvgText>
               </>
@@ -520,7 +526,7 @@ export default function AncientCivilizationsLab({
                   </React.Fragment>
                 ))}
                 {/* Y axis label */}
-                <SvgText x={4} y={CH_TOP + CH_H / 2} fontSize="7" fill={txtM} transform={`rotate(-90, 4, ${CH_TOP + CH_H / 2})`}>
+                <SvgText x={4} y={CH_TOP + CH_H / 2} fontSize="7" fill="rgba(255,255,255,0.6)" transform={`rotate(-90, 4, ${CH_TOP + CH_H / 2})`}>
                   Power
                 </SvgText>
 
@@ -550,7 +556,7 @@ export default function AncientCivilizationsLab({
                 <Circle cx={eraX(eraIdx, ERAS.length, SIM_W)} cy={CH_TOP - 8} r={4} fill={accentColor} />
 
                 {/* Title */}
-                <SvgText x={SIM_W / 2} y={16} textAnchor="middle" fontSize="10" fill={txt1} fontWeight="bold">
+                <SvgText x={SIM_W / 2} y={16} textAnchor="middle" fontSize="10" fill="#FFF" fontWeight="bold">
                   Rise & Fall of Ancient Empires
                 </SvgText>
               </>
@@ -562,7 +568,7 @@ export default function AncientCivilizationsLab({
                 {landPaths(SIM_W, SIM_H).map((d, i) => (
                   <Path key={`wl${i}`} d={d} fill={landFill} stroke={wire} strokeWidth={0.8} />
                 ))}
-                <SvgText x={SIM_W / 2} y={18} textAnchor="middle" fontSize="10" fill={txt1} fontWeight="bold">
+                <SvgText x={SIM_W / 2} y={18} textAnchor="middle" fontSize="10" fill="#FFF" fontWeight="bold">
                   Major Battles of the Ancient World
                 </SvgText>
                 {WARS.map((w, i) => {

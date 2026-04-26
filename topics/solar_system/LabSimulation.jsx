@@ -25,7 +25,7 @@ const PLANETS = [
 ];
 
 function Orrery3D({ speedFactor }) {
-  const planetsRef = useRef();
+  const planetsRef = useRef(null);
   
   useFrame((state, delta) => {
     if (planetsRef.current) {
@@ -79,7 +79,14 @@ function Orrery3D({ speedFactor }) {
 // ══════════════════════════════════════════════════════════
 export default function SolarSystemLab() {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary, border = theme.glass.border;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
   // ── G1 STATES ──
   const [speed, setSpeed] = useState(1); // 1, 2, 5, 10
@@ -120,7 +127,7 @@ export default function SolarSystemLab() {
   );
 
   return (
-    <View style={[s.root, { backgroundColor: theme.background }]}>
+    <View style={[s.root, { backgroundColor: (isDark ? '#0A0A0F' : '#FFFFFF') }]}>
 
       {/* ───────────────────────────────────────────────────────── */}
       {/* GAME 1: ORRERY */}
@@ -134,9 +141,9 @@ export default function SolarSystemLab() {
         </View>
 
         <View style={{ flexDirection: 'row', gap: 10 }}>
-           <TouchableOpacity onPress={() => setSpeed(1)} style={[s.hugeBtn, { flex: 1, backgroundColor: speed===1 ? '#7B2CBF' : theme.glass.medium }]}><Text style={{ color: speed===1 ? '#FFF' : txt1 }}>1x Speed</Text></TouchableOpacity>
-           <TouchableOpacity onPress={() => setSpeed(4)} style={[s.hugeBtn, { flex: 1, backgroundColor: speed===4 ? '#7B2CBF' : theme.glass.medium }]}><Text style={{ color: speed===4 ? '#FFF' : txt1 }}>4x Speed</Text></TouchableOpacity>
-           <TouchableOpacity onPress={() => setSpeed(10)} style={[s.hugeBtn, { flex: 1, backgroundColor: speed===10 ? '#7B2CBF' : theme.glass.medium }]}><Text style={{ color: speed===10 ? '#FFF' : txt1 }}>TIME WARP</Text></TouchableOpacity>
+           <TouchableOpacity onPress={() => setSpeed(1)} style={[s.hugeBtn, { flex: 1, backgroundColor: speed===1 ? '#7B2CBF' : glass2 }]}><Text style={{ color: speed===1 ? '#FFF' : txt1 }}>1x Speed</Text></TouchableOpacity>
+           <TouchableOpacity onPress={() => setSpeed(4)} style={[s.hugeBtn, { flex: 1, backgroundColor: speed===4 ? '#7B2CBF' : glass2 }]}><Text style={{ color: speed===4 ? '#FFF' : txt1 }}>4x Speed</Text></TouchableOpacity>
+           <TouchableOpacity onPress={() => setSpeed(10)} style={[s.hugeBtn, { flex: 1, backgroundColor: speed===10 ? '#7B2CBF' : glass2 }]}><Text style={{ color: speed===10 ? '#FFF' : txt1 }}>TIME WARP</Text></TouchableOpacity>
         </View>
       </View>
 
@@ -221,8 +228,8 @@ export default function SolarSystemLab() {
         </View>
 
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
-           <TouchableOpacity onPress={()=>setScaleMode(1)} style={[s.hugeBtn, { flex: 1, backgroundColor: scaleMode===1 ? '#7B2CBF' : theme.glass.medium }]}><Text style={{ color: scaleMode===1 ? '#FFF' : txt1 }}>Earth vs Jupiter</Text></TouchableOpacity>
-           <TouchableOpacity onPress={()=>setScaleMode(2)} style={[s.hugeBtn, { flex: 1, backgroundColor: scaleMode===2 ? '#7B2CBF' : theme.glass.medium }]}><Text style={{ color: scaleMode===2 ? '#FFF' : txt1 }}>Jupiter vs Sun</Text></TouchableOpacity>
+           <TouchableOpacity onPress={()=>setScaleMode(1)} style={[s.hugeBtn, { flex: 1, backgroundColor: scaleMode===1 ? '#7B2CBF' : glass2 }]}><Text style={{ color: scaleMode===1 ? '#FFF' : txt1 }}>Earth vs Jupiter</Text></TouchableOpacity>
+           <TouchableOpacity onPress={()=>setScaleMode(2)} style={[s.hugeBtn, { flex: 1, backgroundColor: scaleMode===2 ? '#7B2CBF' : glass2 }]}><Text style={{ color: scaleMode===2 ? '#FFF' : txt1 }}>Jupiter vs Sun</Text></TouchableOpacity>
         </View>
       </View>
 

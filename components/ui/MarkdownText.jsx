@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Text, Animated } from 'react-native';
 
+import { useTheme } from '../../context/ThemeContext';
+
 // 🎨 Vibrant colors derived from the user's gradients
-const vividColors = [
+const darkColors = [
   '#00ff87', // Neon green
   '#ff6a00', // Orange
   '#fbc2eb', // Pink
@@ -10,32 +12,41 @@ const vividColors = [
   '#f5af19', // Gold
 ];
 
+const lightColors = [
+  '#008a40', // Dark green
+  '#c74b00', // Dark orange
+  '#8a005c', // Dark magenta
+  '#0f5a70', // Dark cyan
+  '#b27300', // Dark gold/brown
+];
+
 // 🔥 Animated Text overlay without MaskedView to prevent text overlap in RN
-const VibrantText = ({ children, style, italic }) => {
+const VibrantText = ({ children, style, italic, isDark }) => {
   const [index, setIndex] = useState(0);
   const colorAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => {
-        const next = (prev + 1) % vividColors.length;
+        const next = (prev + 1) % (isDark ? darkColors.length : lightColors.length);
 
         colorAnim.setValue(0);
         Animated.timing(colorAnim, {
           toValue: 1,
-          duration: 1000,
+          duration: 300000, // 5 minutes transition
           useNativeDriver: false,
         }).start();
 
         return next;
       });
-    }, 10000);
+    }, 300000); // 5 minutes interval
 
     return () => clearInterval(interval);
   }, []);
 
-  const currentColor = vividColors[index];
-  const nextColor = vividColors[(index + 1) % vividColors.length];
+  const colors = isDark ? darkColors : lightColors;
+  const currentColor = colors[index];
+  const nextColor = colors[(index + 1) % colors.length];
 
   const animatedColor = colorAnim.interpolate({
     inputRange: [0, 1],
@@ -61,6 +72,8 @@ const VibrantText = ({ children, style, italic }) => {
 
 // 🧠 Markdown Parser
 export default function MarkdownText({ children, style, ...props }) {
+  const { isDark } = useTheme();
+
   if (typeof children !== 'string') {
     return <Text style={style} {...props}>{children}</Text>;
   }
@@ -74,7 +87,7 @@ export default function MarkdownText({ children, style, ...props }) {
         if (part.startsWith('**') && part.endsWith('**')) {
           const inner = part.slice(2, -2);
           return (
-            <VibrantText key={index} style={style}>
+            <VibrantText key={index} style={style} isDark={isDark}>
               {inner}
             </VibrantText>
           );
@@ -84,7 +97,7 @@ export default function MarkdownText({ children, style, ...props }) {
         if (part.startsWith('*') && part.endsWith('*')) {
           const inner = part.slice(1, -1);
           return (
-            <VibrantText key={index} style={style} italic>
+            <VibrantText key={index} style={style} italic isDark={isDark}>
               {inner}
             </VibrantText>
           );

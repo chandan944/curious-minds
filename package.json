@@ -12,6 +12,7 @@
     "@expo-google-fonts/outfit": "^0.4.3",
     "@expo-google-fonts/space-grotesk": "^0.4.1",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/slider": "5.0.1",
     "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-navigation/native": "^7.2.2",
     "@react-three/fiber": "^9.5.0",
@@ -35,10 +36,12 @@
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
     "react-native-svg": "15.12.1",
-    "three": "^0.183.2"
+    "three": "^0.183.2",
+    "typescript": "^5.9.3"
   },
   "private": true,
   "devDependencies": {
-    "babel-preset-expo": "^55.0.16"
+    "babel-preset-expo": "^55.0.16",
+    "google-translate-api-x": "^10.7.2"
   }
 }

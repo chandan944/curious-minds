@@ -86,6 +86,46 @@ const iconMap = {
       <Path d="M8 15L12 9L16 15M9.5 13H14.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   ),
+  activity: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M22 12H18L15 21L9 3L6 12H2" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  plus: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 5V19M5 12H19" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  minus: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M5 12H19" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  repeat: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M17 1L21 5L17 9" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M3 11V9C3 7.93913 3.42143 6.92172 4.17157 6.17157C4.92172 5.42143 5.93913 5 7 5H21" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M7 23L3 19L7 15" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M21 13V15C21 16.0609 20.5786 17.0783 19.8284 17.8284C19.0783 18.5786 18.0609 19 17 19H3" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  power: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  layers: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2L2 7L12 12L22 7L12 2Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M2 12L12 17L22 12" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M2 17L12 22L22 17" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  droplet: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2C12 2 5 10 5 15C5 18.87 8.13 22 12 22C15.87 22 19 18.87 19 15C19 10 12 2 12 2Z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
+    </Svg>
+  ),
 
   // ── Learning & Science ─────────────────────────
   brain: ({ size, color }) => (
@@ -142,12 +182,24 @@ const iconMap = {
       <Path d="M6 6V10M10 6V8M14 6V10M18 6V8" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
     </Svg>
   ),
+  robot: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x="3" y="11" width="18" height="10" rx="2" stroke={color} strokeWidth="1.5" />
+      <Path d="M12 11V7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <Circle cx="12" cy="5.5" r="1.5" stroke={color} strokeWidth="1.5" />
+      <Circle cx="8.5" cy="15.5" r="1.5" fill={color} />
+      <Circle cx="15.5" cy="15.5" r="1.5" fill={color} />
+      <Path d="M9 19h6" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <Path d="M3 14H1M23 14H21" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </Svg>
+  ),
+
   snowflake: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M12 2V22M12 2L9 5M12 2L15 5M12 22L9 19M12 22L15 19" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <Path d="M2 12H22M2 12L5 9M2 12L5 15M22 12L19 9M22 12L19 15" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <Path d="M5.64 5.64L18.36 18.36M5.64 5.64L7.5 8.5M5.64 5.64L8.5 7.5M18.36 18.36L15.5 15.5M18.36 18.36L16.5 15.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        <Path d="M18.36 5.64L5.64 18.36M18.36 5.64L15.5 8.5M18.36 5.64L16.5 7.5M5.64 18.36L7.5 15.5M5.64 18.36L8.5 16.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M18.36 18.36L15.5 15.5M18.36 18.36L16.5 15.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M18.36 5.64L5.64 18.36M18.36 5.64L15.5 8.5M18.36 5.64L16.5 7.5M5.64 18.36L7.5 15.5M5.64 18.36L8.5 16.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   ),
   beaker: ({ size, color }) => (
@@ -188,14 +240,6 @@ const iconMap = {
       <Circle cx="11" cy="13" r="7" stroke={color} strokeWidth="1.5" />
       <Path d="M11 6V3M15 5L17 3M17 3L19 5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <Path d="M8 11C8 11 9 10 11 10.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </Svg>
-  ),
-  robot: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Rect x="5" y="8" width="14" height="12" rx="2" stroke={color} strokeWidth="1.5" />
-      <Path d="M9 8V6a3 3 0 1 1 6 0v2" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-      <Circle cx="9" cy="13" r="1.5" fill={color} />
-      <Circle cx="15" cy="13" r="1.5" fill={color} />
       <Path d="M9 17H15" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
       <Path d="M2 11H5M19 11H22" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
     </Svg>
@@ -206,6 +250,17 @@ const iconMap = {
       <Path d="M5 12C7.13 9.87 9.47 8.5 12 8.5C14.53 8.5 16.87 9.87 19 12" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <Path d="M8.5 15.5C9.75 14.25 10.79 13.5 12 13.5C13.21 13.5 14.25 14.25 15.5 15.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <Circle cx="12" cy="19" r="1.5" fill={color} />
+    </Svg>
+  ),
+  terminal: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x="2" y="4" width="20" height="16" rx="2" stroke={color} strokeWidth="1.5" />
+      <Path d="M7 10L10 12L7 14M12 15H17" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  cloud: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M17.5 19C20.5 19 23 16.5 23 13.5C23 10.5 20.7 8.2 17.8 8C16.8 4.5 13.7 2 10 2C5.6 2 2 5.6 2 10C2 10.3 2.1 10.7 2.1 11C0.8 12.1 0 13.7 0 15.5C0 18.5 2.5 21 5.5 21H17.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   ),
   waves: ({ size, color }) => (
@@ -426,7 +481,7 @@ const iconMap = {
       <Path d="M8 5L19 12L8 19V5Z" fill={color} />
     </Svg>
   ),
-  drop: ({ size, color }) => (
+  download: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M12 2L12 15M12 15L7 10M12 15L17 10" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <Path d="M5 18H19" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
@@ -438,7 +493,7 @@ const iconMap = {
       <Path d="M19 3L19.5 5L21 5.5L19.5 6L19 8L18.5 6L17 5.5L18.5 5L19 3Z" fill={color} />
     </Svg>
   ),
-  construction: ({ size, color }) => (
+  shovel: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M2 20L10 12M14 8L16 6L20 4L20 8L18 10M14 8L10 12M14 8L12 10" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <Path d="M4 22H20" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
@@ -469,39 +524,10 @@ const iconMap = {
     </Svg>
   ),
 
-  // ── Additional icons ──────────────────────────
-  balance: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 3V21M3 8L12 5L21 8M3 8L6 16H3M21 8L18 16H21M6 16C6 16 4 16 4 14M18 16C18 16 20 16 20 14" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  ),
-  waves: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M2 6C4 4 6 4 8 6C10 8 12 8 14 6C16 4 18 4 20 6" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-      <Path d="M2 12C4 10 6 10 8 12C10 14 12 14 14 12C16 10 18 10 20 12" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-      <Path d="M2 18C4 16 6 16 8 18C10 20 12 20 14 18C16 16 18 16 20 18" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </Svg>
-  ),
-  drop: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 2C12 2 5 10 5 15C5 18.87 8.13 22 12 22C15.87 22 19 18.87 19 15C19 10 12 2 12 2Z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
-    </Svg>
-  ),
-  construction: ({ size, color }) => (
+  hammer: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M14.7 6.3L21 12.6L19.2 14.4L12.9 8.1M2 22L9.3 14.7M12.6 11.4L7.5 6.3L10.2 3.6C11.4 2.4 13.3 2.4 14.5 3.6L14.7 3.8" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <Path d="M15 12L22 19L20 21L13 14" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  ),
-  wrench: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M14.7 6.3C14.3 4.3 12.5 2.8 10.4 3.1C8.1 3.4 6.4 5.5 6.7 7.8C6.9 9.2 7.8 10.3 9 10.9L3 17L5 19L11 13C11.7 13.2 12.5 13.2 13.2 13C15.5 12.4 16.9 10 16.3 7.7C16.2 7.2 15.9 6.7 15.5 6.3" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  ),
-  info: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="12" r="10" stroke={color} strokeWidth="1.5" />
-      <Path d="M12 16V12M12 8H12.01" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
     </Svg>
   ),
   headphones: ({ size, color }) => (
@@ -509,6 +535,158 @@ const iconMap = {
       <Path d="M3 18V12C3 7.03 7.03 3 12 3C16.97 3 21 7.03 21 12V18" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
       <Rect x="3" y="15" width="4" height="6" rx="1.5" stroke={color} strokeWidth="1.5" />
       <Rect x="17" y="15" width="4" height="6" rx="1.5" stroke={color} strokeWidth="1.5" />
+    </Svg>
+  ),
+  alert: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M12 9v4M12 17h.01" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </Svg>
+  ),
+  users: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Circle cx="9" cy="7" r="4" stroke={color} strokeWidth="1.5" />
+      <Path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M16 3.13a4 4 0 0 1 0 7.75" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  hash: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  robot: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x="4" y="8" width="16" height="12" rx="2" stroke={color} strokeWidth="1.5" />
+      <Path d="M12 2v4M8 5h8" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <Circle cx="9" cy="13" r="1.5" fill={color} />
+      <Circle cx="15" cy="13" r="1.5" fill={color} />
+      <Path d="M9 17h6" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </Svg>
+  ),
+  cube: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M21 16.09v-8.19a2 2 0 0 0-1-1.73L13 2.61a2 2 0 0 0-2 0L4 6.17a2 2 0 0 0-1 1.73v8.19a2 2 0 0 0 1 1.73l7 3.56a2 2 0 0 0 2 0l7-3.56a2 2 0 0 0 1-1.73z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12.01" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  question: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="10" stroke={color} strokeWidth="1.5" />
+      <Path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Circle cx="12" cy="17" r="1" fill={color} />
+    </Svg>
+  ),
+  void: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="10" stroke={color} strokeWidth="1.5" strokeDasharray="4 4" />
+      <Circle cx="12" cy="12" r="3" fill={color} />
+    </Svg>
+  ),
+  chaos: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M3 12C3 5 10 3 14 7C18 11 10 18 16 21C22 24 21 12 18 8" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  mountain: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M8 3L2 21H14L8 3Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M16 11L11 21H22L16 11Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  compass: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="12" r="10" stroke={color} strokeWidth="1.5" />
+      <Path d="M16.24 7.76L14.12 14.12L7.76 16.24L9.88 9.88L16.24 7.76Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  scroll: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M17 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V7L17 3Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M17 3V7H21" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M9 13H15M9 17H15M9 9H11" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </Svg>
+  ),
+  scale: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 3V21M5 21H19M12 4L4 9M12 4L20 9" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M4 9L6 14H2L4 9ZM20 9L22 14H18L20 9Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  eye: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Circle cx="12" cy="12" r="3" stroke={color} strokeWidth="1.5" />
+    </Svg>
+  ),
+  lotus: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 22C12 22 4 18 4 12C4 8 8 3 12 2C16 3 20 8 20 12C20 18 12 22 12 22Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M12 22C12 22 17 21 17 16C17 11 12 5 12 5C12 5 7 11 7 16C7 21 12 22 12 22Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  debate: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M10 2H2V10H6V14L10 10H14V2H10Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M22 10H14V18H10V22L14 18H18V10Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  rain: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M17.5 19C20.5 19 23 16.5 23 13.5C23 10.5 20.7 8.2 17.8 8C16.8 4.5 13.7 2 10 2C5.6 2 2 5.6 2 10C2 10.3 2.1 10.7 2.1 11C0.8 12.1 0 13.7 0 15.5C0 18.5 2.5 21 5.5 21" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M8 21L6 24M12 21L10 24M16 21L14 24" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </Svg>
+  ),
+  storm: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M17.5 19C20.5 19 23 16.5 23 13.5C23 10.5 20.7 8.2 17.8 8C16.8 4.5 13.7 2 10 2C5.6 2 2 5.6 2 10C2 10.3 2.1 10.7 2.1 11C0.8 12.1 0 13.7 0 15.5C0 18.5 2.5 21 5.5 21" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M13 18L9 22H13L11 25" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  broken_heart: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M12 5.67L10 10L14 14L12 21.23" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  mirror: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Ellipse cx="12" cy="10" rx="6" ry="8" stroke={color} strokeWidth="1.5" />
+      <Path d="M12 18V22M8 22H16" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </Svg>
+  ),
+  spiral: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 12C12 10 14 10 14 12C14 15 9 15 9 12C9 8 16 8 16 12C16 17 7 17 7 12C7 5 19 5 19 12C19 20 5 20 5 12" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  dollar: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 2V22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  eyes: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Circle cx="8" cy="12" r="2" stroke={color} strokeWidth="1.5" />
+      <Circle cx="16" cy="12" r="2" stroke={color} strokeWidth="1.5" />
+    </Svg>
+  ),
+  sleep: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M4 6H10L4 12H10M14 12H20L14 18H20" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  volcano: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M8 10L2 22H22L16 10H8Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M10 10V6M14 10V4M12 10V2" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </Svg>
+  ),
+  handshake: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M9 13L11 15L15 11L13 9M9 13C8 14 6 14 5 13L3 11L7 7L13 9M15 11C16 10 18 10 19 11L21 13L17 17L11 15" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   ),
 };

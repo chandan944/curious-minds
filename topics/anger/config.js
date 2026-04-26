@@ -1,0 +1,168 @@
+// ─────────────────────────────────────────────────────────
+//  TOPIC: ANGER
+//  Category: Personal Development
+//  Standard: v3.0 Extreme (10 Cards, 5 Facts, 20 Questions, Scientist Lab)
+// ─────────────────────────────────────────────────────────
+
+export default {
+  id: 'anger',
+  title: 'Anger',
+  subtitle: 'The Fire Within: Mastering the Amygdala Hijack 🌋',
+  emoji: '🔥',
+  category: 'Personal Development',
+  accentKey: 'danger',
+
+  hook: {
+    question: "Why does getting cut off in traffic make your heart race and your muscles tense as if you're fighting a saber-toothed tiger in the wild? 🐅",
+    reveal: "Because your brain's alarm system—the Amygdala—can't tell the difference between a minor annoyance and a mortal threat! When it triggers an 'Amygdala Hijack', it shuts down your logical brain, floods you with adrenaline, and turns you into a reactive beast. Let's learn how to take the wheel back. 🧠💥",
+    emoji: '🌋',
+  },
+
+  theory: [
+    {
+      id: 'evolution',
+      title: 'The Evolutionary Furnace 🔥',
+      color: '#FF4444',
+      bgGradient: ['#300000', '#0A0000'],
+      icon: '🔥',
+      svgIcon: 'flame',
+      content: "Anger is not a 'bad' emotion; it is an incredibly powerful evolutionary tool. For our ancestors, anger was the 'Fight' in the 'Fight or Flight' response.\n\nWhen a tribe member was attacked or food was stolen, anger provided an immediate, explosive surge of energy to defend boundaries and survive.\n\nWithout anger, humanity would have been wiped out. It is the emotion of self-preservation and boundary defense. 🛡️",
+      highlight: "Anger's original job was to keep you alive and protect what is yours.",
+    },
+    {
+      id: 'amygdala',
+      title: 'The Amygdala Hijack 🚨',
+      color: '#FF1111',
+      bgGradient: ['#250000', '#050000'],
+      icon: '🚨',
+      svgIcon: 'radiation',
+      content: "Deep in the temporal lobe is the *Amygdala*, the brain's threat-detection scanner.\n\nWhen it senses danger (even an insulting text message!), it bypasses the *Prefrontal Cortex* (your logical brain) to react faster. It signals the adrenal glands to flood your system with cortisol and adrenaline.\n\nYour pupils dilate, your heart rate spikes, your blood vessels constrict—you are physically preparing for war. This complete loss of logical control is called the **Amygdala Hijack**. 🧠⚡",
+      highlight: "During an attack, your IQ temporarily drops! Logic shuts down so action can take over.",
+    },
+    {
+      id: 'secondary_emotion',
+      title: 'Anger as a Mask 🎭',
+      color: '#FF8C00',
+      bgGradient: ['#2A1500', '#0A0500'],
+      icon: '🎭',
+      svgIcon: 'eye',
+      content: "Psychologists call anger a **Secondary Emotion**.\n\nIt is often the 'tip of the iceberg' covering up a primary, more vulnerable emotion underneath. Before you felt angry, you likely felt:\n• Disrespected\n• Abandoned\n• Fearful\n• Unfairly treated\n• Exhausted\n\nBecause vulnerability feels weak, the ego instantly converts that pain into aggression, which feels strong. 🛡️",
+      highlight: "Anger is the armor that protects pain. To fix the anger, you must find the underlying wound.",
+    },
+    {
+      id: 'physical_toll',
+      title: 'The Toxic Aftermath ☠️',
+      color: '#FFEB3B',
+      bgGradient: ['#202000', '#050500'],
+      icon: '☠️',
+      svgIcon: 'heartbeat',
+      content: "While a flash of anger is natural, staying chronically angry is literal poison to the body.\n\nA constant bath of stress hormones (cortisol) causes:\n• High blood pressure (Hypertension)\n• Weakened immune system\n• Increased risk of heart attacks\n• Slower wound healing\n\nDr. Redford Williams proved that hostility is a better predictor of heart disease than smoking or high cholesterol! 💔",
+      highlight: "Holding onto anger is like drinking poison and expecting the other person to die.",
+    },
+    {
+      id: 'trigger_stacking',
+      title: 'Trigger Stacking 🥞',
+      color: '#D4A74A',
+      bgGradient: ['#1A1000', '#050000'],
+      icon: '🥞',
+      svgIcon: 'hash',
+      content: "Ever wonder why dropping your keys makes you suddenly scream in rage?\n\nIt's called **Trigger Stacking**. Your baseline stress level is already at 90% from a bad day at work, poor sleep, and hungry stomach (hangry).\n\nDropping the keys was just the final 10% that triggered the explosion. You aren't really mad at the keys; you are discharging the accumulated stress of the entire week. 💥",
+      highlight: "Manage your baseline stress (sleep, food, rest), and your triggers become harmless.",
+    },
+    {
+      id: 'space_between',
+      title: "The 6-Second Rule ⏱️",
+      color: '#4ECDC4',
+      bgGradient: ['#002020', '#000A0A'],
+      icon: '⏱️',
+      svgIcon: 'zap',
+      content: "The chemical rush that fuels an Amygdala Hijack peaks and begins to clear the bloodstream within about **6 seconds**.\n\nIf you can create a gap—just a 6-second pause—between the trigger and your reaction, the chemicals will fade enough for your Prefrontal Cortex (logic) to come back online.\n\nBreathe deeply to slow the heart rate. Do not speak. Take the space. 🛑",
+      highlight: "Between stimulus and response there is a space. In that space is our power to choose our response.",
+    },
+    {
+      id: 'reframing',
+      title: 'Cognitive Reframing 🖼️',
+      color: '#A855F7',
+      bgGradient: ['#150025', '#05000A'],
+      icon: '🖼️',
+      svgIcon: 'sparkle',
+      content: "Anger is often fueled by the *stories we tell ourselves* about an event, not the event itself.\n\nIf someone cuts you off, Story A is: 'They are doing this on purpose to disrespect me!' (Rage)\n\nStory B is: 'They might have a medical emergency in the backseat.' (Compassion)\n\n**Cognitive Reframing** is the habit of intentionally changing your interpretation of ambiguous events to assume positive intent. 🧐",
+      highlight: "You cannot control what people do, but you have 100% control over the story you attach to it.",
+    },
+    {
+      id: 'righteous_anger',
+      title: 'Righteous Anger ⚖️',
+      color: '#00E5FF',
+      bgGradient: ['#001A25', '#000A0A'],
+      icon: '⚖️',
+      svgIcon: 'star',
+      content: "Not all anger must be suppressed. **Righteous Anger** is the fuel of social justice, revolutions, and vital boundary-setting.\n\nWhen you see someone being abused, the anger you feel is the correct ethical response. Suppressing this form of anger leads to apathy and cowardice.\n\nThe key is using the *energy* of anger, but filtering the *action* through the prefrontal cortex—turning rage into calculated reform. ✊",
+      highlight: "Rage destroys blindly. Righteous anger builds fiercely.",
+    },
+  ],
+
+  lab: {
+    title: "The Amygdala Hijack Lab 🌋",
+    description: "Experience the mechanics of a mental explosion! Manage the rising Cortisol and Heart Rate levels in the brain against the external 'Trigger Stack'. Can you keep your Prefrontal Cortex online before the emotional system erupts? 🧠💥",
+    hint: "Use 'Deep Breathing (Vagus Nerve)' when Heart Rate spikes, and Use 'Cognitive Reframing' when the Trigger Stack gets too high!",
+    scientistModeHint: "Scientist Mode 🧑‍🔬: Monitor numeric Cortisol concentration (nmol/L), Autonomic Nervous System balance, and live Amygdala activation indices.",
+  },
+
+  doYouKnowWhy: [
+    {
+      id: 'dyk1',
+      question: "Do you know why we pace the room or act restless when angry? 🚶",
+      answer: "Your body has just released a massive dump of adrenaline meant for 'Fight or Flight.' If you aren't punching a predator or running for your life, that kinetic energy has nowhere to go! Pacing is a subconscious way for your nervous system to burn off the fuel overload. ⚡",
+      emoji: '🐅',
+    },
+    {
+      id: 'dyk2',
+      question: "Do you know why we say 'blind with rage'? 🙈",
+      answer: "It's biologically true! During an extreme rage state, the body restricts blood flow to peripheral systems focusing purely on survival. This can actually lead to tunnel vision, where your peripheral sight is physically reduced so you hyper-focus entirely on the 'threat!' 🔦",
+      emoji: '👁️',
+    },
+    {
+      id: 'dyk3',
+      question: "Do you know why we often say things we don't mean when angry? 🤬",
+      answer: "When the Amygdala hijacks the brain, it physically restricts access to the Prefrontal Cortex—the area responsible for complex language, empathy, and consequence-prediction. You literally lose access to your vocabulary and your moral compass while hijacked! 📉",
+      emoji: '🗣️',
+    },
+    {
+      id: 'dyk4',
+      question: "Do you know why 'venting' (screaming into a pillow) actually makes you MORE angry? 🥊",
+      answer: "Catharsis theory (that you need to 'let out' anger) is a myth! Studies show that violently punching pillows or screaming actually reinforces the neural pathways for aggression. It tells your brain 'Yes, we are fighting!', keeping cortisol high. The real biological reset is slow breathing and distraction. 🛑",
+      emoji: '🛑',
+    },
+    {
+      id: 'dyk5',
+      question: "Do you know why 'Hangry' (Hungry + Angry) is a real scientific phenomenon? 🍔",
+      answer: "When your blood sugar drops, your brain views it as a life-threatening crisis. It releases cortisol and adrenaline to force you to find food. Since these are the exact same hormones released during a threat, your brain is pre-loaded for a furious fight over the smallest inconvenience! 🍩",
+      emoji: '🩸',
+    },
+  ],
+
+  quiz: [
+    { id: 'q1', question: "What is the primary evolutionary purpose of Anger?", options: ["To make friends", "To fuel the 'Fight' response for survival", "To improve logic", "To burn fat"], answer: 1, explanation: "Anger is the 'Fight' in 'Fight or Flight', providing explosive energy to defend boundaries. 🛡️" },
+    { id: 'q2', question: "Which part of the brain is responsible for acting as a 'threat-detecting alarm system'?", options: ["The Hippocampus", "The Medulla", "The Amygdala", "The Prefrontal Cortex"], answer: 2, explanation: "The Amygdala is the primal alarm bell that triggers the stress response. 🚨" },
+    { id: 'q3', question: "An 'Amygdala Hijack' occurs when the emotional brain bypasses which logical section of the brain?", options: ["Cerebellum", "Occipital Lobe", "Prefrontal Cortex", "Brain Stem"], answer: 2, explanation: "It bypasses the Prefrontal Cortex, cutting off your access to logic and consequence-prediction! 🧠" },
+    { id: 'q4', question: "Anger is often referred to by psychologists as a '___________ Emotion' because it masks underlying pain.", options: ["Primary", "Secondary", "Constructive", "Tertiary"], answer: 1, explanation: "Anger is the armor covering a softer primary emotion like fear, hurt, or disrespect. 🎭" },
+    { id: 'q5', question: "Which stress hormone is heavily released during episodes of intense anger, causing long-term physical damage?", options: ["Oxytocin", "Melatonin", "Cortisol", "Dopamine"], answer: 2, explanation: "Cortisol is the long-term stress hormone that, in high amounts, acts as poison on your cardiovascular system. ☠️" },
+    { id: 'q6', question: "Chronic, unresolved anger and hostility are strong predictors for which physical illness?", options: ["Asthma", "Heart Disease & Heart Attacks", "Scoliosis", "Blindness"], answer: 1, explanation: "Hostility puts massive constant pressure on blood vessels, leading directly to cardiovascular disease. 💔" },
+    { id: 'q7', question: "What is 'Trigger Stacking'?", options: ["Arranging guns", "When multiple small, unaddressed stressors pile up until a tiny event causes an explosion", "A healthy coping mechanism", "Forgetting why you are angry"], answer: 1, explanation: "Dropping the keys didn't cause the rage; the 5 stressors before it did! 🥞" },
+    { id: 'q8', question: "How long does it take for the initial chemical rush of an angry trigger to begin fading?", options: ["1 second", "6 seconds", "10 minutes", "2 hours"], answer: 1, explanation: "The '6-Second Rule' exploits the fact that the initial adrenaline spike peaks and begins clearing quickly! ⏱️" },
+    { id: 'q9', question: "Changing your interpretation of a frustrating event (e.g., 'they cut me off because of an emergency') is called:", options: ["Delusion", "Cognitive Reframing", "Apathy", "Triggering"], answer: 1, explanation: "Reframing changes the story you tell yourself, which directly changes the emotion you feel! 🖼️" },
+    { id: 'q10', question: "According to modern psychology, violently 'venting' anger (like punching walls or pillows) usually:", options: ["Cures anger entirely", "Makes you feel instantly sleepy", "Reinforces the brain's aggression pathways and keeps you angry longer", "Reduces blood pressure"], answer: 2, explanation: "The Catharsis myth is busted; acting violently just tells your brain 'Yes, it is time to fight!' 🥊" },
+    { id: 'q11', question: "Why do we pace around when we are furiously angry?", options: ["To find a weapon", "Because the brain dumped kinetic adrenaline meant for running or fighting", "To cool down by creating wind", "To stretch muscles"], answer: 1, explanation: "Your body is hyper-charged with fuel that has nowhere to go if you aren't physically fighting! 🏃‍♂️" },
+    { id: 'q12', question: "'Righteous Anger' is best described as:", options: ["Anger directed at oneself", "Anger used constructively to fight injustice or set ethical boundaries", "Getting angry at religious figures", "Anger over minor inconveniences"], answer: 1, explanation: "Righteous anger is the moral fuel of change and reform! ⚖️" },
+    { id: 'q13', question: "What is the biological reason behind being 'Hangry'?", options: ["Low water levels", "Drop in blood sugar triggers the exact same stress hormones (cortisol) used in fight-or-flight", "The stomach presses against the amygdala", "Your tongue misses flavors"], answer: 1, explanation: "Low glucose = survival threat = panic and rage! 🍔" },
+    { id: 'q14', question: "By breathing deeply and slowly when angry, which nerve do you activate to force the heart rate down?", options: ["Sciatic Nerve", "Optic Nerve", "The Vagus Nerve", "Spinal Cord"], answer: 2, explanation: "Deep breathing stimulates the Vagus Nerve, directly pulling the brakes on the sympathetic nervous system! 🫁" },
+    { id: 'q15', question: "During an attack of rage, which bodily function is typically restricted/reduced?", options: ["Heart rate", "Peripheral vision (leading to 'blind rage' tunnel vision)", "Adrenaline production", "Lung capacity"], answer: 1, explanation: "Blood flows away from unessential sight towards the center of focus, literally creating tunnel vision! 🙈" },
+    { id: 'q16', question: "If anger is a 'Secondary Emotion', what is an example of the 'Primary Emotion' hiding beneath it?", options: ["Joy", "Hunger", "Feeling abandoned or disrespected", "Excitement"], answer: 2, explanation: "We feel disrespected (pain), and the ego quickly covers the pain with rage (power). 🛡️" },
+    { id: 'q17', question: "What physical change occurs in your blood vessels when experiencing chronic anger?", options: ["They turn blue", "They dissolve", "They chronically constrict, causing high blood pressure", "They expand, lowering pressure"], answer: 2, explanation: "Constriction forces the heart to work overtime, damaging the arterial walls over time. ⚡" },
+    { id: 'q18', question: "When the Amygdala hijacks the brain, what happens to your ability to articulate complex words?", options: ["It improves", "It stays the same", "It plummets because the language center is cut off from power", "You start speaking a different language"], answer: 2, explanation: "Your complex vocabulary lives in the Prefrontal cortex, which is turned off during an Amygdala Hijack! 🤬" },
+    { id: 'q19', question: "Which scenario best describes 'Positive Intent Assumption' as an anger management technique?", options: ["Assuming someone meant to hurt you", "Assuming the person who bumped into you did it by accident", "Ignoring everyone completely", "Believing you are always right"], answer: 1, explanation: "Assuming positive intent removes the perceived 'threat', instantly neutralizing the anger response! 🕊️" },
+    { id: 'q20', question: "The emotion of anger is universally recognized across all human cultures through:", options: ["The words they use", "Specific facial micro-expressions (furrowed brow, flared nostrils, thinned lips)", "The way they walk", "The clothes they wear"], answer: 1, explanation: "Facial expressions for anger are genetically hardwired into humans, not culturally learned! 😠" },
+  ],
+
+  relatedTopics: ['science_of_emotion', 'manipulation_tactics', 'brain_structure'],
+};

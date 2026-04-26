@@ -1,375 +1,311 @@
-/**
- * AI & Machine Learning Lab — Perceptron Gradient Descent
- * Scientist Mode: Sigmoid, MSE computations
- * NO react-native-reanimated — Old Architecture safe
- */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, Dimensions, TouchableOpacity,
-  PanResponder, Animated, Easing, Modal, ScrollView
-} from 'react-native';
-import Svg, {
-  Path, Circle, Rect, Line, Defs, RadialGradient as SvgRadial, Stop, G, Text as SvgText, Polygon
-} from 'react-native-svg';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated, ScrollView } from 'react-native';
+import Svg, { Circle, G, Path, Line, Text as SvgText, Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../context/ThemeContext';
+import { FONTS, RADIUS, SPACING } from '../../constants/theme';
+import { soundTap, soundWhoosh, soundBadge } from '../../utils/sounds';
 import * as Haptics from 'expo-haptics';
-import { soundTap } from '../../utils/sounds';
 import Icon from '../../components/ui/Icons';
 
-const { width, height } = Dimensions.get('window');
-const H_VIEWPORT = height * 0.45;
-const H_PANEL = height * 0.35;
-const H_LOG = height * 0.10;
+const { width } = Dimensions.get('window');
+const SIM_W = width - SPACING.md * 4;
+const SIM_H = 340;
 
-const PALETTE = {
-  bg: '#051015',
-  panel: '#0B1A20',
-  cyan: '#00D4FF',
-  green: '#39FF14',
-  red: '#FF3131',
-  text: '#E8E0D0',
-  steel: '#1A3035',
-  purple: '#A855F7',
-  pink: '#FF4D6D'
-};
-
-// Generate fixed dataset for stability
 const DATA_POINTS = [
-  // Class 0 (Blue) - Bottom left
   { x: 0.2, y: 0.2, c: 0 }, { x: 0.3, y: 0.4, c: 0 }, { x: 0.1, y: 0.5, c: 0 },
   { x: 0.4, y: 0.2, c: 0 }, { x: 0.2, y: 0.6, c: 0 }, { x: 0.45, y: 0.45, c: 0 },
-  // Class 1 (Red) - Top right
-  { x: 0.7, y: 0.8, c: 1 }, { x: 0.6, y: 0.9, c: 1 }, { x: 0.9, y: 0.6, c: 1 },
-  { x: 0.8, y: 0.7, c: 1 }, { x: 0.55, y: 0.65, c: 1 }, { x: 0.85, y: 0.9, c: 1 }
+  { x: 0.8, y: 0.8, c: 1 }, { x: 0.7, y: 0.9, c: 1 }, { x: 0.9, y: 0.7, c: 1 },
+  { x: 0.85, y: 0.6, c: 1 }, { x: 0.6, y: 0.7, c: 1 }, { x: 0.55, y: 0.9, c: 1 },
 ];
 
-export default function AILab({ scientistMode = false, accentColor = '#00D4FF', onLabBreaker }) {
-  const [discoveryMode, setDiscoveryMode] = useState(false);
-  const discoveryAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+const CHALLENGES = [
+  { id: 'separate', title: 'Perfect Separation', desc: 'Achieve a Loss of < 0.05 by adjusting weights', icon: 'star', color: '#10B981' },
+  { id: 'overfit', title: 'The Chaos Boundary', desc: 'Force the line into a high-error zone (> 0.8 Loss)', icon: 'zap', color: '#FF3131' },
+  { id: 'grad_descent', title: 'Auto-Optimizer', desc: 'Let the Gradient Descent algorithm find the solution', icon: 'terminal', color: '#A855F7' },
+  { id: 'bias_shift', title: 'The Bias Lever', desc: 'Shift the entire decision plane using only the Bias slider', icon: 'layers', color: '#FFD166' },
+];
 
-  // Local logs state
-  const [logs, setLogs] = useState([]);
-  const [logsOpen, setLogsOpen] = useState(false);
-  const discovered = useRef(new Set());
+export default function AILab({ scientistMode = false }) {
+  const { theme, isDark } = useTheme();
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
-  // Weights and Bias (range -10 to 10)
   const [w1, setW1] = useState(1);
   const [w2, setW2] = useState(-1);
   const [b, setB] = useState(0);
-
-  // Training state
-  const [isTraining, setIsTraining] = useState(false);
-  const [epoch, setEpoch] = useState(0);
   const [loss, setLoss] = useState(1.0);
+  const [training, setTraining] = useState(false);
+  const [completedChallenges, setCompleted] = useState([]);
+  const [lastChallengeMsg, setLastChallengeMsg] = useState(null);
 
-  // Logic Tick
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const loop = setInterval(() => setTick(t => t + 1), 50);
-    return () => clearInterval(loop);
-  }, []);
+  const challengePopAnim = useRef(new Animated.Value(0)).current;
 
-  const addLog = useCallback((id, entry) => {
-    if (!discovered.current.has(id)) {
-      discovered.current.add(id);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setLogs(prev => [...prev, entry]);
-    }
-  }, []);
+  const triggerChallenge = useCallback((cid) => {
+    if (completedChallenges.includes(cid)) return;
+    const ch = CHALLENGES.find(c => c.id === cid);
+    setLastChallengeMsg(ch);
+    soundBadge();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    challengePopAnim.setValue(0);
+    Animated.sequence([
+      Animated.spring(challengePopAnim, { toValue: 1, tension: 80, friction: 10, useNativeDriver: true }),
+      Animated.delay(2500),
+      Animated.timing(challengePopAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+    ]).start(() => setLastChallengeMsg(null));
+    setCompleted(prev => [...prev, cid]);
+  }, [completedChallenges]);
 
-  // Compute Loss immediately when weights change
-  useEffect(() => {
+  const calculateLoss = useCallback(() => {
     let currentLoss = 0;
     DATA_POINTS.forEach(pt => {
-      // Linear eq: z = x*w1 + y*w2 + b
       const z = pt.x * w1 + pt.y * w2 + b;
-      // Sigmoid activation: 1 / (1 + e^-z)
       const a = 1 / (1 + Math.exp(-z));
-      // Mean Squared Error component: (target - prediction)^2
       currentLoss += Math.pow(pt.c - a, 2);
     });
-    currentLoss = currentLoss / DATA_POINTS.length;
-    setLoss(currentLoss);
+    const avgLoss = currentLoss / DATA_POINTS.length;
+    setLoss(avgLoss);
 
-    // Discoveries
-    if (currentLoss < 0.05 && !discovered.current.has('d1')) {
-       addLog('d1', {
-         title: "Optimal Convergence (0% Error)",
-         entry: "You successfully separated the data! The Decision Boundary perfectly isolates the Red dots from the Blue dots. The neural network has learned!",
-         color: PALETTE.green
-       });
-    }
+    if (avgLoss < 0.05) triggerChallenge('separate');
+    if (avgLoss > 0.8) triggerChallenge('overfit');
+  }, [w1, w2, b, triggerChallenge]);
 
-    if (currentLoss > 0.8 && !discovered.current.has('d2')) {
-       addLog('d2', {
-         title: "Catastrophic Overfitting (High Loss)",
-         entry: "The model is completely backwards! The Loss metric is skyrocketing. In a real AI, this mathematically forces the algorithm to immediately reverse its weights to survive.",
-         color: PALETTE.red
-       });
-       // Vibrate intensely if loss is high
-       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    }
-  }, [w1, w2, b, addLog]);
-
-  // Autogradient Descent Loop
   useEffect(() => {
-    let trainLoop;
-    if (isTraining) {
-      trainLoop = setInterval(() => {
-        // Simple Gradient Descent
-        const lr = 0.5; // learning rate
-        let dw1 = 0, dw2 = 0, db = 0;
-        
-        DATA_POINTS.forEach(pt => {
-          const z = pt.x * w1 + pt.y * w2 + b;
-          const a = 1 / (1 + Math.exp(-z));
-          // Derivative of loss wrt weights
-          const dz = a - pt.c;
-          dw1 += dz * pt.x;
-          dw2 += dz * pt.y;
-          db += dz;
-        });
+    calculateLoss();
+  }, [w1, w2, b, calculateLoss]);
 
-        dw1 /= DATA_POINTS.length;
-        dw2 /= DATA_POINTS.length;
-        db /= DATA_POINTS.length;
-
-        setW1(prev => prev - lr * dw1);
-        setW2(prev => prev - lr * dw2);
-        setB(prev => prev - lr * db);
-        setEpoch(e => e + 1);
-
-        if (loss < 0.02 || epoch > 100) {
-          setIsTraining(false);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          if (epoch > 100 && !discovered.current.has('d3')) {
-            addLog('d3', {
-              title: "Gradient Descent Auto-Pilot",
-              entry: "The algorithm mathematically rolled down the slope of the error curve to automatically find the perfect Weights! You just witnessed Machine Learning.",
-              color: PALETTE.purple
-            });
-          }
-        }
-      }, 50); // fast epochs
-    }
-    return () => clearInterval(trainLoop);
-  }, [isTraining, w1, w2, b, loss, epoch, addLog]);
-
-  const toggleDiscovery = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const next = !discoveryMode;
-    setDiscoveryMode(next);
-    Animated.timing(discoveryAnim, {
-      toValue: next ? 1 : 0, duration: 400, easing: Easing.out(Easing.ease), useNativeDriver: false
-    }).start();
+  const runGradientDescent = () => {
+    soundWhoosh();
+    setTraining(true);
+    let iter = 0;
+    const interval = setInterval(() => {
+      const lr = 0.5;
+      let dw1 = 0, dw2 = 0, db = 0;
+      DATA_POINTS.forEach(pt => {
+        const z = pt.x * w1 + pt.y * w2 + b;
+        const a = 1 / (1 + Math.exp(-z));
+        const dz = a - pt.c;
+        dw1 += dz * pt.x;
+        dw2 += dz * pt.y;
+        db += dz;
+      });
+      setW1(p => p - (lr * dw1) / DATA_POINTS.length);
+      setW2(p => p - (lr * dw2) / DATA_POINTS.length);
+      setB(p => p - (lr * db) / DATA_POINTS.length);
+      iter++;
+      if (iter > 50 || loss < 0.03) {
+        clearInterval(interval);
+        setTraining(false);
+        triggerChallenge('grad_descent');
+      }
+    }, 50);
   };
 
-  // Viewport Coordinates mapping
-  const pad = 40;
-  const gw = width - pad * 2;
-  const gh = H_VIEWPORT - pad * 2 - 20;
-
-  // The decision boundary is the line where z = 0
-  // x*w1 + y*w2 + b = 0  =>  y = -(w1/w2)x - (b/w2)
-  // We need to plot this line.
-  
-  const getLineY = (x) => {
-    if (Math.abs(w2) < 0.01) return -100; // prevent infinity
-    return -(w1 / w2) * x - (b / w2);
-  };
-
-  const lineX1 = 0; const lineY1 = getLineY(lineX1);
-  const lineX2 = 1; const lineY2 = getLineY(lineX2);
-
-  // Map to SVG pixels: y is inverted in SVG
-  const mapX = (x) => pad + x * gw;
-  const mapY = (y) => pad + gh - y * gh;
+  const mapCoor = (val, size) => 30 + val * (size - 60);
 
   return (
-    <View style={styles.root}>
-      {/* Viewport */}
-      <Animated.View style={[styles.viewport, { height: H_VIEWPORT, transform: [{ translateX: shakeAnim }] }]}>
-        <Svg width="100%" height="100%">
-          <Defs>
-            <SvgRadial id="bg" cx="50%" cy="50%" r="50%">
-              <Stop offset="0%" stopColor="#0B1A20" />
-              <Stop offset="100%" stopColor={PALETTE.bg} />
-            </SvgRadial>
-          </Defs>
-          <Rect width="100%" height="100%" fill="url(#bg)" />
-          
-          {/* Axis Grid */}
-          <Line x1={pad} y1={pad + gh} x2={pad + gw + 10} y2={pad + gh} stroke={PALETTE.steel} strokeWidth={2} />
-          <Line x1={pad} y1={pad + gh} x2={pad} y2={pad - 10} stroke={PALETTE.steel} strokeWidth={2} />
-          <SvgText x={pad + gw - 20} y={pad + gh + 15} fill="#666" fontSize={10}>Input X₁</SvgText>
-          <SvgText x={pad - 35} y={pad} fill="#666" fontSize={10}>Input X₂</SvgText>
-
-          {/* Decision Boundary Line */}
-          <Line x1={mapX(lineX1)} y1={mapY(lineY1)} x2={mapX(lineX2)} y2={mapY(lineY2)} stroke={PALETTE.green} strokeWidth={3} strokeDasharray="8 4" opacity={0.8} />
-
-          {/* If scientist mode, show the shading region where Sigmoid > 0.5 */}
-          {scientistMode && w2 !== 0 && (
-             <Polygon 
-               points={`${mapX(0)},${mapY(0)} ${mapX(1)},${mapY(0)} ${mapX(1)},${mapY(1)} ${mapX(0)},${mapY(1)}`}
-               fill={w2 > 0 ? PALETTE.red : PALETTE.cyan} opacity={0.05}
-             />
-          )}
-
-          {/* Data Points */}
-          {DATA_POINTS.map((pt, i) => {
-            // Is it currently misclassified by the line?
-            const z = pt.x * w1 + pt.y * w2 + b;
-            const a = 1 / (1 + Math.exp(-z));
-            const isWrong = Math.abs(pt.c - a) > 0.5;
-            
-            return (
-              <G key={i} x={mapX(pt.x)} y={mapY(pt.y)}>
-                <Circle cx={0} cy={0} r={6} fill={pt.c === 0 ? PALETTE.cyan : PALETTE.red} />
-                {isWrong && discoveryMode && (
-                  <Circle cx={0} cy={0} r={12 + (tick%5)} fill="none" stroke={PALETTE.pink} strokeWidth={1} />
-                )}
-                {scientistMode && !isWrong && (
-                  <Line x1={0} y1={0} x2={Math.cos(tick*0.1)*5} y2={Math.sin(tick*0.1)*5} stroke="#FFF" strokeWidth={1} />
-                )}
-              </G>
-            );
-          })}
-
-          {scientistMode && (
-            <G>
-              <SvgText x={15} y={25} fill={PALETTE.purple} fontSize={12} fontFamily="monospace">
-                z = w₁x₁ + w₂x₂ + b
-              </SvgText>
-              <SvgText x={15} y={45} fill={PALETTE.cyan} fontSize={10} fontFamily="monospace">
-                σ(z) = 1 / (1 + e⁻ᶻ)
-              </SvgText>
-            </G>
-          )}
-
-          {/* Loss HUD (Top Right) */}
-          <G x={width - 120} y={15}>
-            <Rect x={0} y={0} width={100} height={30} fill="#000" rx={5} stroke={loss > 0.5 ? PALETTE.red : PALETTE.green} strokeWidth={1} />
-            <SvgText x={10} y={19} fill={loss > 0.5 ? PALETTE.red : PALETTE.green} fontSize={12} fontFamily="monospace" fontWeight="bold">
-              LOSS: {loss.toFixed(3)}
-            </SvgText>
-          </G>
-        </Svg>
-        
-        <TouchableOpacity style={styles.discoveryBtn} onPress={toggleDiscovery} activeOpacity={0.8}>
-          <Icon name="search" size={24} color={discoveryMode ? PALETTE.cyan : PALETTE.text} />
-        </TouchableOpacity>
-      </Animated.View>
-
-      {/* Control Panel */}
-      <View style={[styles.panel, { height: H_PANEL }]}>
-        <View style={styles.panelInner}>
-
-          <View style={styles.sliderWrap}>
-            <Text style={styles.sliderLabel}>WEIGHT 1 (X Axis Pull): {w1.toFixed(2)}</Text>
-            <View style={[styles.sliderBg, { borderColor: PALETTE.cyan}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-              if (isTraining) return;
-              const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-              setW1(-5 + (x / (width-40)) * 10);
-            }}>
-              <View style={[styles.sliderFill, { width: `${((w1+5)/10)*100}%`, backgroundColor: PALETTE.cyan }]} />
-              <View style={[styles.sliderThumb, { left: `${((w1+5)/10)*100}%` }]} />
-            </View>
+    <View style={styles.container}>
+      {lastChallengeMsg && (
+        <Animated.View style={[styles.challengePopup, {
+          opacity: challengePopAnim, backgroundColor: lastChallengeMsg.color + '20', borderColor: lastChallengeMsg.color + '60',
+          transform: [{ translateY: challengePopAnim.interpolate({ inputRange: [0, 1], outputRange: [-20, 0] }) }],
+        }]}>
+          <Icon name="trophy" size={18} color={lastChallengeMsg.color} />
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.challengePopTitle, { color: lastChallengeMsg.color }]}>Challenge Complete!</Text>
+            <Text style={[styles.challengePopDesc, { color: txt2 }]}>{lastChallengeMsg.title}</Text>
           </View>
+        </Animated.View>
+      )}
 
-          <View style={styles.sliderWrap}>
-            <Text style={styles.sliderLabel}>WEIGHT 2 (Y Axis Pull): {w2.toFixed(2)}</Text>
-            <View style={[styles.sliderBg, { borderColor: PALETTE.red}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-              if (isTraining) return;
-              const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-              setW2(-5 + (x / (width-40)) * 10);
-            }}>
-              <View style={[styles.sliderFill, { width: `${((w2+5)/10)*100}%`, backgroundColor: PALETTE.red }]} />
-              <View style={[styles.sliderThumb, { left: `${((w2+5)/10)*100}%` }]} />
+      {/* ── Model HUD ── */}
+      <View style={[styles.statusCard, { backgroundColor: glass1, borderColor: border }]}>
+         <View style={styles.statusRow}>
+            <Icon name="cpu" size={24} color="#A855F7" />
+            <View style={{ flex: 1 }}>
+               <Text style={[styles.sLabel, { color: txtM }]}>LOSS METRIC (MSE)</Text>
+               <View style={styles.lossBarBg}>
+                  <View style={[styles.lossBarFill, { width: `${(1 - loss) * 100}%`, backgroundColor: loss < 0.1 ? '#10B981' : (loss < 0.4 ? '#FFD166' : '#FF3131') }]} />
+               </View>
             </View>
-          </View>
-
-          <View style={styles.sliderWrap}>
-            <Text style={styles.sliderLabel}>BIAS (Line Shift): {b.toFixed(2)}</Text>
-            <View style={[styles.sliderBg, { borderColor: PALETTE.purple}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-              if (isTraining) return;
-              const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-              setB(-5 + (x / (width-40)) * 10);
-            }}>
-              <View style={[styles.sliderFill, { width: `${((b+5)/10)*100}%`, backgroundColor: PALETTE.purple }]} />
-              <View style={[styles.sliderThumb, { left: `${((b+5)/10)*100}%` }]} />
-            </View>
-          </View>
-
-          <TouchableOpacity 
-            style={[styles.actionBtn, isTraining && { backgroundColor: PALETTE.red }]} 
-            activeOpacity={0.8} 
-            onPress={() => { soundTap(); setIsTraining(!isTraining); setEpoch(0); }}
-          >
-            <Text style={styles.actionBtnTxt}>{isTraining ? 'HALT TRAINING' : 'START GRADIENT DESCENT (EPOCH)'}</Text>
-          </TouchableOpacity>
-
-        </View>
+            <Text style={[styles.lossValue, { color: loss < 0.1 ? '#10B981' : txt1 }]}>{(loss * 100).toFixed(1)}%</Text>
+         </View>
       </View>
 
-      {/* Research Log Bar */}
-      <TouchableOpacity style={[styles.logBar, { height: H_LOG }]} activeOpacity={0.8} onPress={() => { soundTap(); setLogsOpen(true); }}>
-        <Icon name="search" size={20} color={PALETTE.text} />
-        <Text style={styles.logHintText} numberOfLines={1}>{logs.length > 0 ? `Log: ${logs[logs.length - 1].title}` : 'Adjust weights to separate the data...'}</Text>
-        <View style={[styles.logBadge, { backgroundColor: logs.length > 0 ? PALETTE.green : '#333' }]}><Text style={{ color: logs.length > 0 ? '#000' : '#888', fontSize: 11, fontWeight: 'bold' }}>{logs.length}</Text></View>
+      {/* ── Decision Boundary Viz ── */}
+      <View style={[styles.simBox, { borderColor: border, backgroundColor: isDark ? '#050D0A' : '#F8FAFC' }]}>
+        <Svg width={SIM_W} height={SIM_H} style={StyleSheet.absoluteFill}>
+           {/* Grid */}
+           {[...Array(6)].map((_, i) => (
+             <React.Fragment key={i}>
+                <Line x1={30 + i * (SIM_W - 60) / 5} y1="30" x2={30 + i * (SIM_W - 60) / 5} y2={SIM_H - 30} stroke={isDark ? '#FFF2' : '#0001'} />
+                <Line x1="30" y1={30 + i * (SIM_H - 60) / 5} x2={SIM_W - 30} y2={30 + i * (SIM_H - 60) / 5} stroke={isDark ? '#FFF2' : '#0001'} />
+             </React.Fragment>
+           ))}
+
+           {/* Decision Line: x*w1 + y*w2 + b = 0 => y = -(w1/w2)x - b/w2 */}
+           <Line 
+             x1={mapCoor(0, SIM_W)} y1={mapCoor(-(w1/w2)*0 - b/w2 || 0, SIM_H)}
+             x2={mapCoor(1, SIM_W)} y2={mapCoor(-(w1/w2)*1 - b/w2 || 0, SIM_H)}
+             stroke="#A855F7" strokeWidth="4" opacity={0.8} />
+
+           {/* Data Points */}
+           {DATA_POINTS.map((pt, i) => (
+             <Circle key={i} cx={mapCoor(pt.x, SIM_W)} cy={mapCoor(pt.y, SIM_H)} r="6" fill={pt.c === 0 ? '#00E5FF' : '#FF3131'} />
+           ))}
+        </Svg>
+      </View>
+
+      {/* ── Weights & Bias Sliders ── */}
+      <View style={styles.controlPanel}>
+         <View style={styles.sliderRow}>
+            <Text style={[styles.sliderLabel, { color: txtM }]}>WEIGHT 1 (X)</Text>
+            <View style={styles.sliderTrack}>
+               <TouchableOpacity 
+                 onPress={() => { setW1(p => p - 0.2); Haptics.impactAsync(); }} 
+                 style={[styles.miniBtn, { backgroundColor: glass2 }]}><Icon name="minus" size={14} color={txt1} /></TouchableOpacity>
+               <View style={styles.valBox}><Text style={[styles.valText, { color: '#00E5FF' }]}>{w1.toFixed(1)}</Text></View>
+               <TouchableOpacity 
+                 onPress={() => { setW1(p => p + 0.2); Haptics.impactAsync(); }} 
+                 style={[styles.miniBtn, { backgroundColor: glass2 }]}><Icon name="plus" size={14} color={txt1} /></TouchableOpacity>
+            </View>
+         </View>
+
+         <View style={styles.sliderRow}>
+            <Text style={[styles.sliderLabel, { color: txtM }]}>WEIGHT 2 (Y)</Text>
+            <View style={styles.sliderTrack}>
+               <TouchableOpacity 
+                 onPress={() => { setW2(p => p - 0.2); Haptics.impactAsync(); }} 
+                 style={[styles.miniBtn, { backgroundColor: glass2 }]}><Icon name="minus" size={14} color={txt1} /></TouchableOpacity>
+               <View style={styles.valBox}><Text style={[styles.valText, { color: '#FF3131' }]}>{w2.toFixed(1)}</Text></View>
+               <TouchableOpacity 
+                 onPress={() => { setW2(p => p + 0.2); Haptics.impactAsync(); }} 
+                 style={[styles.miniBtn, { backgroundColor: glass2 }]}><Icon name="plus" size={14} color={txt1} /></TouchableOpacity>
+            </View>
+         </View>
+
+         <View style={styles.sliderRow}>
+            <Text style={[styles.sliderLabel, { color: txtM }]}>BIAS (OFFSET)</Text>
+            <View style={styles.sliderTrack}>
+               <TouchableOpacity 
+                 onPress={() => { setB(p => p - 0.2); triggerChallenge('bias_shift'); Haptics.impactAsync(); }} 
+                 style={[styles.miniBtn, { backgroundColor: glass2 }]}><Icon name="minus" size={14} color={txt1} /></TouchableOpacity>
+               <View style={styles.valBox}><Text style={[styles.valText, { color: '#FFD166' }]}>{b.toFixed(1)}</Text></View>
+               <TouchableOpacity 
+                 onPress={() => { setB(p => p + 0.2); triggerChallenge('bias_shift'); Haptics.impactAsync(); }} 
+                 style={[styles.miniBtn, { backgroundColor: glass2 }]}><Icon name="plus" size={14} color={txt1} /></TouchableOpacity>
+            </View>
+         </View>
+      </View>
+
+      <TouchableOpacity onPress={runGradientDescent} disabled={training}
+        style={[styles.trainBtn, { backgroundColor: training ? '#A855F740' : '#A855F7' }]}>
+         <Icon name="terminal" size={18} color="#FFF" />
+         <Text style={styles.trainBtnText}>{training ? 'TRAINING MODEL...' : 'AUTO-OPTIMIZE (STOCHASTIC)'}</Text>
       </TouchableOpacity>
 
-      {/* Logs Modal */}
-      <Modal visible={logsOpen} transparent animationType="slide">
-        <View style={styles.modalBg}>
-          <View style={[styles.modalContent, { backgroundColor: PALETTE.panel }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: PALETTE.text }]}>Research Log</Text>
-              <TouchableOpacity onPress={() => { soundTap(); setLogsOpen(false); }}>
-                <Icon name="x" size={24} color={PALETTE.text} />
-              </TouchableOpacity>
-            </View>
-            <ScrollView>
-              {logs.length === 0 ? (
-                <Text style={styles.emptyLog}>No discoveries yet. Try hitting 0% Error, or triggering Overfitting!</Text>
-              ) : (
-                logs.map((l, i) => (
-                  <View key={i} style={[styles.logCard, { borderLeftColor: l.color }]}>
-                    <Text style={styles.logCardTitle}>{l.title}</Text>
-                    <Text style={styles.logCardDesc}>{l.entry}</Text>
-                  </View>
-                ))
-              )}
-              <View style={{ height: 30 }} />
-            </ScrollView>
-          </View>
+      {/* ── Scholar Analytics 🧑‍🔬 ── */}
+      {scientistMode && (
+        <View style={[styles.sciCard, { backgroundColor: glass1, borderColor: border }]}>
+           <View style={styles.sciHeader}>
+             <Icon name="search" size={14} color="#00E5FF" />
+             <Text style={[styles.sciTitle, { color: txt1 }]}>Inference Logic 🧑‍🔬</Text>
+           </View>
+           <View style={styles.statGrid}>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>ACTIVATION</Text>
+                 <Text style={[styles.statValue, { color: '#10B981' }]}>SIGMOID</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>LR (RATE)</Text>
+                 <Text style={[styles.statValue, { color: '#FFD166' }]}>0.5</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>DECISION Z</Text>
+                 <Text style={[styles.statValue, { color: '#FF3131' }]}>{((w1+w2)/2).toFixed(2)}</Text>
+              </View>
+              <View style={styles.statItem}>
+                 <Text style={[styles.statLabel, { color: txtM }]}>SQUASHING</Text>
+                 <Text style={[styles.statValue, { color: '#00E5FF' }]}>NON-LINEAR</Text>
+              </View>
+           </View>
+           <View style={styles.sciNote}>
+             <Icon name="info" size={12} color={txtM} />
+             <Text style={[styles.sciNoteText, { color: txtM }]}>
+               {"Equation: σ(w₁x₁ + w₂x₂ + b)"}
+             </Text>
+           </View>
         </View>
-      </Modal>
+      )}
+
+      {/* ── Challenges ── */}
+      <View style={[styles.challengeCard, { backgroundColor: glass1, borderColor: border }]}>
+        <View style={styles.challengeHeader}>
+          <Icon name="trophy" size={16} color="#FFD166" />
+          <Text style={[styles.challengeCardTitle, { color: txt1 }]}>AI Missions ({completedChallenges.length}/4)</Text>
+        </View>
+        {CHALLENGES.map(c => {
+          const done = completedChallenges.includes(c.id);
+          return (
+            <View key={c.id} style={styles.challengeItem}>
+              <View style={[styles.cIcon, { backgroundColor: done ? c.color + '20' : '#334444' }]}>
+                <Icon name={done ? 'check' : c.icon} size={14} color={done ? c.color : txtM} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.cTitle, { color: done ? c.color : txt1, textDecorationLine: done ? 'line-through' : 'none' }]}>{c.title}</Text>
+                <Text style={[styles.cDesc, { color: txtM }]}>{c.desc}</Text>
+              </View>
+            </View>
+          );
+        })}
+      </View>
+
+      <View style={{ height: 40 }} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: PALETTE.bg },
-  viewport: { width: '100%', overflow: 'hidden' },
-  discoveryBtn: { position: 'absolute', top: 15, right: 15, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: PALETTE.steel },
-  panel: { backgroundColor: PALETTE.panel, borderTopWidth: 2, borderTopColor: PALETTE.steel },
-  panelInner: { flex: 1, padding: 20 },
-  sliderWrap: { width: '100%', marginBottom: 12 },
-  sliderLabel: { color: PALETTE.text, fontSize: 10, fontFamily: 'monospace', marginBottom: 4 },
-  sliderBg: { height: 16, backgroundColor: '#051015', borderRadius: 8, borderWidth: 1, justifyContent: 'center' },
-  sliderFill: { position: 'absolute', height: '100%', borderRadius: 8 },
-  sliderThumb: { position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: '#FFF', marginLeft: -10 },
-  actionBtn: { marginTop: 10, backgroundColor: PALETTE.purple, paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
-  actionBtnTxt: { color: '#FFF', fontFamily: 'Outfit_700Bold', letterSpacing: 1, fontSize: 13 },
-  logBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, backgroundColor: '#051015', borderTopWidth: 1, borderTopColor: '#111', gap: 10 },
-  logHintText: { flex: 1, color: '#888', fontSize: 12, fontFamily: 'monospace', fontStyle: 'italic' },
-  logBadge: { minWidth: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.92)', justifyContent: 'flex-end' },
-  modalContent: { maxHeight: height * 0.7, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', fontFamily: 'Outfit_700Bold' },
-  emptyLog: { color: '#555', textAlign: 'center', marginTop: 40, fontFamily: 'monospace', fontSize: 13 },
-  logCard: { backgroundColor: '#051015', padding: 14, borderRadius: 10, marginBottom: 10, borderLeftWidth: 3 },
-  logCardTitle: { color: PALETTE.text, fontWeight: 'bold', fontSize: 14, marginBottom: 5, fontFamily: 'Outfit_500Medium' },
-  logCardDesc: { color: '#AAA', fontSize: 13, lineHeight: 19 }
+  container: { paddingHorizontal: SPACING.md },
+  statusCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  sLabel: { fontFamily: FONTS.bodyMedium, fontSize: 10 },
+  lossBarBg: { height: 6, backgroundColor: '#333', borderRadius: 3, marginTop: 4, overflow: 'hidden' },
+  lossBarFill: { height: '100%' },
+  lossValue: { fontFamily: FONTS.displayMedium, fontSize: 18 },
+  simBox: { height: SIM_H, borderRadius: RADIUS.lg, borderWidth: 1, marginTop: 16, overflow: 'hidden' },
+  controlPanel: { marginTop: 16, gap: 12 },
+  sliderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  sliderLabel: { fontFamily: FONTS.bodyMedium, fontSize: 10, flex: 1 },
+  sliderTrack: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  miniBtn: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  valBox: { width: 50, alignItems: 'center' },
+  valText: { fontFamily: 'monospace', fontSize: 16, fontWeight: 'bold' },
+  trainBtn: { marginTop: 20, paddingVertical: 14, borderRadius: RADIUS.md, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
+  trainBtnText: { color: '#FFF', fontFamily: FONTS.displayMedium, fontSize: 12, letterSpacing: 1 },
+  sciCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  sciHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  sciTitle: { fontFamily: FONTS.displayMedium, fontSize: 16 },
+  statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  statItem: { flex: 1, minWidth: '45%', padding: 10, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: RADIUS.sm },
+  statLabel: { fontFamily: FONTS.bodyMedium, fontSize: 8, marginBottom: 2 },
+  statValue: { fontFamily: FONTS.displayMedium, fontSize: 13 },
+  sciNote: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12 },
+  sciNoteText: { fontFamily: FONTS.body, fontSize: 11 },
+  challengeCard: { marginTop: 16, padding: 16, borderRadius: RADIUS.md, borderWidth: 1 },
+  challengeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  challengeCardTitle: { fontFamily: FONTS.displayMedium, fontSize: 15 },
+  challengeItem: { flexDirection: 'row', gap: 12, paddingVertical: 10 },
+  cIcon: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  cTitle: { fontFamily: FONTS.bodyMedium, fontSize: 13 },
+  cDesc: { fontFamily: FONTS.body, fontSize: 11, marginTop: 2 },
+  challengePopup: { position: 'absolute', top: 20, left: 10, right: 10, padding: 12, borderRadius: RADIUS.md, borderWidth: 1, flexDirection: 'row', alignItems: 'center', gap: 12, zIndex: 100 },
+  challengePopTitle: { fontFamily: FONTS.displayMedium, fontSize: 13 },
+  challengePopDesc: { fontFamily: FONTS.body, fontSize: 11, marginTop: 1 },
 });

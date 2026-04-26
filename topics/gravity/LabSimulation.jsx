@@ -67,14 +67,16 @@ export default function GravityLab({
   onLabBreaker,
 }) {
   const { theme, isDark } = useTheme();
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
+  const bg = (_themeObj || {}).bg?.base || '#0A0A0A';
 
-  // Theme tokens
-  const txt1 = theme.text.primary;
-  const txt2 = theme.text.secondary;
-  const txtM = theme.text.muted;
-  const glass1 = theme.glass.light;
-  const glass2 = theme.glass.medium;
-  const border = theme.glass.border;
 
   const [selPlanet,   setSelPlanet]   = useState(2);
   const [customG,     setCustomG]     = useState(9.8);

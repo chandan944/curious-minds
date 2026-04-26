@@ -223,7 +223,14 @@ function AncestorTree({ txt1, isDark }) {
 // ══════════════════════════════════════════════════════════
 export default function EvolutionMiniGamesLab() {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary, border = theme.glass.border;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
   const InstructionCard = ({ gameNum, title, text, color }) => (
     <View style={[s.instCard, { backgroundColor: isDark ? '#1C2733' : '#E6F0FA', borderColor: color+'50' }]}>
@@ -236,30 +243,30 @@ export default function EvolutionMiniGamesLab() {
   );
 
   return (
-    <View style={[s.root, { backgroundColor: theme.background }]}>
+    <View style={[s.root, { backgroundColor: (isDark ? '#0A0A0F' : '#FFFFFF') }]}>
       
       {/* GAME 1 */}
       <View style={[s.gameBox, { borderColor: border, backgroundColor: isDark ? '#0F1218' : '#F5F7FA' }]}>
         <InstructionCard gameNum={1} title="The Galapagos Simulator" color="#4CA050" text="Adjust the rainfall. If it's very dry, only hard nuts grow! Press 'Simulate' and watch how the Bird Population is literally forced to mutate a massive, crushing beak to survive!" />
-        <GalapagosSim isDark={isDark} txt1={theme.text.primary} glass2={theme.glass.medium} />
+        <GalapagosSim isDark={isDark} txt1={txt1} glass2={glass2} />
       </View>
 
       {/* GAME 2 */}
       <View style={[s.gameBox, { borderColor: border, backgroundColor: isDark ? '#0F1218' : '#F5F7FA' }]}>
         <InstructionCard gameNum={2} title="Peppered Moth Camouflage" color="#3B82F6" text="During the Industrial Revolution, trees turned black from coal soot. Tap the Moths to ACT AS THE PREDATOR. Who do you eat? Hit 'Reproduce' to see who survives to pass on their genes!" />
-        <MothGame txt1={theme.text.primary} glass2={theme.glass.medium} />
+        <MothGame txt1={txt1} glass2={glass2} />
       </View>
 
       {/* GAME 3 */}
       <View style={[s.gameBox, { borderColor: border, backgroundColor: isDark ? '#0F1218' : '#F5F7FA' }]}>
         <InstructionCard gameNum={3} title="Antibiotic Resistance" color="#FF007F" text="You have an infection. You take Antibiotics (RED BUTTON). It kills 90% of bacteria. BUT, what if 1 mutant (pink) survives? Hit MULTIPLY and see why overuse of medicine creates 'Superbugs'!" />
-        <BacteriaGame txt1={theme.text.primary} glass2={theme.glass.medium} />
+        <BacteriaGame txt1={txt1} glass2={glass2} />
       </View>
 
       {/* GAME 4 */}
       <View style={[s.gameBox, { borderColor: border, backgroundColor: isDark ? '#0F1218' : '#F5F7FA', marginBottom: 40 }]}>
         <InstructionCard gameNum={4} title="Phylogenetic Tree" color="#D4A74A" text="People say 'If humans evolved from monkeys, why are there still monkeys?' Tap the nodes to learn the truth: We didn't evolve FROM them, we are cousins!" />
-        <AncestorTree txt1={theme.text.primary} isDark={isDark} />
+        <AncestorTree txt1={txt1} isDark={isDark} />
       </View>
 
     </View>

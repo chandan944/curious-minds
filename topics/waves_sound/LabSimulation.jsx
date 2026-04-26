@@ -1,308 +1,371 @@
-/**
- * Waves & Sound Lab — Acoustic Oscilloscope Simulator
- * Scientist Mode: Sine Wave matrices, Constructive Interference
- * NO react-native-reanimated — Old Architecture safe
- */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, Dimensions, TouchableOpacity,
-  PanResponder, Animated, Easing, Modal, ScrollView
-} from 'react-native';
-import Svg, {
-  Path, Circle, Rect, Line, Defs, RadialGradient as SvgRadial, Stop, G, Text as SvgText, Ellipse
-} from 'react-native-svg';
-import * as Haptics from 'expo-haptics';
-import { soundTap } from '../../utils/sounds';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import Svg, { Path, Line, Circle, G, Text as SvgText, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { useTheme } from '../../context/ThemeContext';
+import { FONTS, SPACING, RADIUS } from '../../constants/theme';
 import Icon from '../../components/ui/Icons';
+import * as Haptics from 'expo-haptics';
+import { soundTap, soundTrophy } from '../../utils/sounds';
 
-const { width, height } = Dimensions.get('window');
-const H_VIEWPORT = height * 0.45;
-const H_PANEL = height * 0.35;
-const H_LOG = height * 0.10;
+// Standard Components
+import StatusCard from '../../components/lab/StatusCard';
+import SimBox from '../../components/lab/SimBox';
+import ChallengeCard from '../../components/lab/ChallengeCard';
+import ScientistCard from '../../components/lab/ScientistCard';
 
-const PALETTE = {
-  bg: '#0A150A',
-  panel: '#122012',
-  cyan: '#00D4FF',
-  green: '#39FF14',
-  red: '#FF3131',
-  text: '#E8E0D0',
-  steel: '#1A351A',
-  amber: '#FFB347'
-};
+const { width } = Dimensions.get('window');
+const CANVAS_H = 300;
+const CANVAS_W = width - 40;
+const MID_Y = CANVAS_H / 2;
 
-export default function SoundLab({ scientistMode = false, accentColor = '#39FF14', onLabBreaker }) {
-  const [discoveryMode, setDiscoveryMode] = useState(false);
-  const discoveryAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+const CHALLENGES = [
+  { id: 1, title: "Silence is Golden", instruction: "Achieve perfect destructive interference (Resulting amplitude = 0).", target: 'destructive', completed: false },
+  { id: 2, title: "Octave Shift", instruction: "Set Wave 2 to exactly double the frequency of Wave 1 (Ratio 2:1).", target: 'octave', completed: false },
+  { id: 3, title: "Resonance Peak", instruction: "Maximize the combined amplitude to over 150 units.", target: 'max', completed: false },
+  { id: 4, title: "Phase Shift", instruction: "Achieve constructive interference exactly 180 degrees offset.", target: 'phase', completed: false },
+];
 
-  // Local logs state
-  const [logs, setLogs] = useState([]);
-  const [logsOpen, setLogsOpen] = useState(false);
-
-  // Controls State
-  const [freqA, setFreqA] = useState(440); // 20 to 20000 Hz
-  const [ampA, setAmpA] = useState(50); // 0 to 100 dB
-  const [freqB, setFreqB] = useState(440);
-  const [ampB, setAmpB] = useState(50);
-
-  const discovered = useRef(new Set());
-
-  // Logic Tick (for lively animations)
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const loop = setInterval(() => setTick(t => t + 1), 50);
-    return () => clearInterval(loop);
-  }, []);
-
-  const addLog = useCallback((id, entry) => {
-    if (!discovered.current.has(id)) {
-      discovered.current.add(id);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setLogs(prev => [...prev, entry]);
-    }
-  }, []);
-
-  const checkDiscoveries = useCallback(() => {
-    // 1. Resonance matching
-    if (Math.abs(freqA - freqB) === 0 && ampA > 0 && ampB > 0) {
-      addLog('d1', {
-        title: "Perfect Resonance",
-        entry: "Both sources are generating the exact same frequency! If two physical objects share this frequency, one can cause the other to violently vibrate across the room—this is how singers shatter glass.",
-        color: PALETTE.amber
-      });
-    }
-
-    // 2. Destructive Interference (180 out of phase simulation)
-    // We simulate this by having exactly 1 Hz difference creating a beat frequency of 1
-    if (Math.abs(freqA - freqB) === 1 && ampA > 40 && ampB > 40) {
-      addLog('d2', {
-        title: "Acoustic Beat Frequencies",
-        entry: "Frequencies 1 Hz apart create an oscillating 'beat' where the waves continuously drift in and out of phase, creating a pulsing 'wah-wah' sound. At the exact moment they push opposite to each other, they create Destructive Interference—total silence!",
-        color: PALETTE.cyan
-      });
-    }
-
-    // 3. Ultrasound
-    if ((freqA > 18000 || freqB > 18000) && (ampA > 20 || ampB > 20)) {
-      addLog('d3', {
-        title: "Ultrasonic Waves",
-        entry: "You've crossed 18,000 Hertz. These high-speed longitudinal waves are completely invisible to human ears, but dogs, bats, and hospital ultrasound machines can use them perfectly!",
-        color: PALETTE.green
-      });
-    }
-
-    // Danger: Over-amplitude
-    if (ampA > 95 && ampB > 95 && Math.abs(freqA - freqB) === 0) {
-      if (shakeAnim._value === 0) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        onLabBreaker && onLabBreaker();
-        Animated.sequence([
-          Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true })
-        ]).start();
-      }
-    }
-  }, [freqA, ampA, freqB, ampB, addLog]);
-
-  useEffect(() => { checkDiscoveries(); }, [checkDiscoveries]);
-
-  const toggleDiscovery = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const next = !discoveryMode;
-    setDiscoveryMode(next);
-    Animated.timing(discoveryAnim, {
-      toValue: next ? 1 : 0, duration: 400, easing: Easing.out(Easing.ease), useNativeDriver: false
-    }).start();
-  };
-
-  // Rendering Waves
-  const cx = width / 2;
-  const cy = H_VIEWPORT / 2;
+export default function LabSimulation({ scientistMode }) {
+  const { theme, isDark } = useTheme();
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
   
-  // Create SVG path strings for sine waves
-  const buildWave = (frequency, amplitude, phaseOffset) => {
-    let d = `M 0 ${cy} `;
-    // Map frequency (20-20k) to a visual wavelength scalar
-    // 20Hz = long waves (few peaks), 20k = many peaks
-    // For visual aesthetics, we map to a reasonable number of cycles
-    const mappedFreq = 1 + (frequency / 20000) * 15; // 1 to 16 cycles
-    const mappedAmp = (amplitude / 100) * (H_VIEWPORT / 3);
-    
-    for (let x = 0; x <= width; x += 5) {
-      const theta = (x / width) * Math.PI * 2 * mappedFreq + phaseOffset;
-      const y = cy + Math.sin(theta) * mappedAmp;
-      d += `L ${x} ${y} `;
+  // Wave 1 State
+  const [amp1, setAmp1] = useState(40);
+  const [freq1, setFreq1] = useState(2);
+  const [phase1, setPhase1] = useState(0);
+  
+  // Wave 2 State
+  const [amp2, setAmp2] = useState(40);
+  const [freq2, setFreq2] = useState(2);
+  const [phase2, setPhase2] = useState(180);
+  
+  // UI State
+  const [showSum, setShowSum] = useState(true);
+  const [activeChallenge, setActiveChallenge] = useState(0);
+  const [challengeStatus, setChallengeStatus] = useState(CHALLENGES);
+  
+  const [time, setTime] = useState(0);
+  const requestRef = useRef(null);
+
+  const animate = useCallback((t) => {
+    setTime(prev => prev + 0.05);
+    requestRef.current = requestAnimationFrame(animate);
+  }, []);
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, [animate]);
+
+  // Generate Path Data
+  const generatePath = (amp, freq, phase, offset = 0) => {
+    let d = `M 0 ${MID_Y + offset}`;
+    const step = 2;
+    for (let x = 0; x <= CANVAS_W; x += step) {
+      const y = MID_Y + offset + amp * Math.sin((x / 20) * freq + (phase * Math.PI / 180) + time);
+      d += ` L ${x} ${y}`;
     }
     return d;
   };
 
-  const phaseA = tick * 0.2;
-  const phaseB = tick * 0.2 * (freqB/freqA);
+  const generateSumPath = () => {
+    let d = `M 0 ${MID_Y}`;
+    const step = 2;
+    for (let x = 0; x <= CANVAS_W; x += step) {
+      const y1 = amp1 * Math.sin((x / 20) * freq1 + (phase1 * Math.PI / 180) + time);
+      const y2 = amp2 * Math.sin((x / 20) * freq2 + (phase2 * Math.PI / 180) + time);
+      d += ` L ${x} ${MID_Y + y1 + y2}`;
+    }
+    return d;
+  };
 
-  const pathA = buildWave(freqA, ampA, phaseA);
-  const pathB = buildWave(freqB, ampB, phaseB);
+  const checkChallenges = () => {
+    const chal = CHALLENGES[activeChallenge];
+    let success = false;
+    
+    if (activeChallenge === 0) { // Destructive
+       if (freq1 === freq2 && amp1 === amp2 && Math.abs((phase1 - phase2) % 360) === 180) success = true;
+    }
+    if (activeChallenge === 1) { // Octave
+       if (freq2 / freq1 === 2) success = true;
+    }
+    if (activeChallenge === 2) { // Max
+       if (freq1 === freq2 && phase1 === phase2 && (amp1 + amp2) > 80) success = true;
+    }
+
+    if (success) {
+      const newStatus = [...challengeStatus];
+      if (!newStatus[activeChallenge].completed) {
+        newStatus[activeChallenge].completed = true;
+        setChallengeStatus(newStatus);
+        soundTrophy();
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkChallenges();
+  }, [amp1, freq1, phase1, amp2, freq2, phase2]);
 
   return (
-    <View style={styles.root}>
-      {/* Viewport */}
-      <Animated.View style={[styles.viewport, { height: H_VIEWPORT, transform: [{ translateX: shakeAnim }] }]}>
-        <Svg width="100%" height="100%">
+    <View style={styles.container}>
+      {/* 1. Status Cards */}
+      <View style={styles.header}>
+        <StatusCard 
+          label="FREQUENCY" 
+          value={freq1} 
+          unit="Hz" 
+          icon="activity" 
+          color="#4ECDC4" 
+        />
+        <StatusCard 
+          label="AMPLITUDE" 
+          value={amp1} 
+          unit="px" 
+          icon="link" 
+          color="#FF6B6B" 
+        />
+        <StatusCard 
+          label="INTERFERENCE" 
+          value={Math.abs(phase1 - phase2) === 180 ? "DESTRUCTIVE" : "PHASED"} 
+          unit="" 
+          icon="grid" 
+          color="#FFD166" 
+        />
+      </View>
+
+      {/* 2. Simulation Box */}
+      <SimBox>
+        <Svg width={CANVAS_W} height={CANVAS_H}>
           <Defs>
-            <SvgRadial id="bgGrad" cx="50%" cy="50%" r="50%">
-              <Stop offset="0%" stopColor="#112211" />
-              <Stop offset="100%" stopColor="#050A05" />
-            </SvgRadial>
+            <LinearGradient id="wave1Grad" x1="0" y1="0" x2="1" y2="0">
+              <Stop offset="0" stopColor="#4ECDC4" />
+              <Stop offset="1" stopColor="#00D4FF" />
+            </LinearGradient>
           </Defs>
-          <Rect width="100%" height="100%" fill="url(#bgGrad)" />
-          
-          {/* Grid */}
-          <Line x1={0} y1={cy} x2={width} y2={cy} stroke="#224422" strokeWidth={1} />
-          <Line x1={cx} y1={0} x2={cx} y2={height} stroke="#224422" strokeWidth={1} />
 
-          {/* Wave A */}
-          {ampA > 0 && <Path d={pathA} fill="none" stroke={PALETTE.cyan} strokeWidth={3} opacity={0.8} />}
-          
-          {/* Wave B */}
-          {ampB > 0 && <Path d={pathB} fill="none" stroke={PALETTE.amber} strokeWidth={3} opacity={0.6} strokeDasharray="5,5" />}
+          {/* Grid Background */}
+          {Array.from({ length: 10 }).map((_, i) => (
+             <Line key={i} x1="0" y1={(i * CANVAS_H) / 10} x2={CANVAS_W} y2={(i * CANVAS_H) / 10} stroke="#333" strokeOpacity={0.2} />
+          ))}
+          <Line x1="0" y1={MID_Y} x2={CANVAS_W} y2={MID_Y} stroke={isDark ? "#FFF" : "#000"} strokeOpacity={0.3} />
 
-          {/* Longitudinal Particle Simulation in Discovery Mode */}
-          {discoveryMode && (
-            <G y={cy + 80}>
-              <Rect x={0} y={-20} width={width} height={40} fill="#0A0A0A" opacity={0.8}/>
-              <Line x1={0} y1={0} x2={width} y2={0} stroke="#444" strokeWidth={1} />
-              {/* Simulate air particles compressing */}
-              {Array.from({length: 40}).map((_, i) => {
-                const px = (i / 40) * width;
-                const theta = (px / width) * Math.PI * 2 * (1 + (freqA/20000)*15) + phaseA;
-                const displacement = Math.sin(theta) * (ampA/100) * 20;
-                return <Circle key={i} cx={px + displacement} cy={Math.sin(i*7)*10} r={2} fill={PALETTE.green} opacity={0.7} />
-              })}
-              <SvgText x={10} y={-5} fill={PALETTE.green} fontSize={10}>Longitudinal Air Molecule View</SvgText>
-            </G>
+          {/* Trace 1 */}
+          <Path d={generatePath(amp1, freq1, phase1)} stroke="#4ECDC4" strokeWidth="2" fill="none" opacity={0.5} />
+          
+          {/* Trace 2 */}
+          <Path d={generatePath(amp2, freq2, phase2)} stroke="#FF6B6B" strokeWidth="2" fill="none" opacity={0.5} />
+          
+          {/* Sum Trace */}
+          {showSum && (
+            <Path d={generateSumPath()} stroke="#FFD166" strokeWidth="3" fill="none" />
           )}
 
+          {/* Scientist Mode Markers */}
           {scientistMode && (
             <G>
-              <SvgText x={10} y={30} fill={PALETTE.cyan} fontSize={12} fontFamily="monospace">
-                y₁ = {Math.round(ampA)}sin(2π({Math.round(freqA)})t)
-              </SvgText>
-              <SvgText x={10} y={50} fill={PALETTE.amber} fontSize={12} fontFamily="monospace">
-                y₂ = {Math.round(ampB)}sin(2π({Math.round(freqB)})t)
+              <Circle cx={CANVAS_W / 2} cy={MID_Y} r="4" fill={color} />
+              <SvgText x={CANVAS_W / 2 + 10} y={MID_Y - 10} fill={color} fontSize="10" fontFamily={FONTS.mono}>
+                NODE (Center)
               </SvgText>
             </G>
           )}
         </Svg>
-        
-        <TouchableOpacity style={styles.discoveryBtn} onPress={toggleDiscovery} activeOpacity={0.8}>
-          <Icon name="search" size={24} color={discoveryMode ? PALETTE.green : PALETTE.text} />
-        </TouchableOpacity>
-      </Animated.View>
 
-      {/* Control Panel */}
-      <View style={[styles.panel, { height: H_PANEL }]}>
-        <View style={styles.panelInner}>
-          
-          <ControlRow title="CHANNEL A (Cyan)" color={PALETTE.cyan} freq={freqA} setFreq={setFreqA} amp={ampA} setAmp={setAmpA} />
-          <View style={{ height: 1, backgroundColor: '#224422', marginVertical: 10 }} />
-          <ControlRow title="CHANNEL B (Amber)" color={PALETTE.amber} freq={freqB} setFreq={setFreqB} amp={ampB} setAmp={setAmpB} />
-
-        </View>
-      </View>
-
-      {/* Research Log Bar */}
-      <TouchableOpacity style={[styles.logBar, { height: H_LOG }]} activeOpacity={0.8} onPress={() => { soundTap(); setLogsOpen(true); }}>
-        <Icon name="search" size={20} color={PALETTE.text} />
-        <Text style={styles.logHintText} numberOfLines={1}>{logs.length > 0 ? `Log: ${logs[logs.length - 1].title}` : 'Mix waves to discover properties...'}</Text>
-        <View style={[styles.logBadge, { backgroundColor: logs.length > 0 ? PALETTE.amber : '#333' }]}><Text style={{ color: logs.length > 0 ? '#000' : '#888', fontSize: 11, fontWeight: 'bold' }}>{logs.length}</Text></View>
-      </TouchableOpacity>
-
-      {/* Logs Modal */}
-      <Modal visible={logsOpen} transparent animationType="slide">
-        <View style={styles.modalBg}>
-          <View style={[styles.modalContent, { backgroundColor: PALETTE.panel }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: PALETTE.text }]}>Research Log</Text>
-              <TouchableOpacity onPress={() => { soundTap(); setLogsOpen(false); }}>
-                <Icon name="x" size={24} color={PALETTE.text} />
+        <View style={styles.controls}>
+          <View style={styles.controlGroup}>
+            <Text style={[styles.groupTitle, { color: '#4ECDC4' }]}>WAVE A</Text>
+            <View style={styles.miniCtrl}>
+              <TouchableOpacity onPress={() => setFreq1(Math.max(1, freq1 - 1))} style={styles.miniBtn}>
+                <Icon name="minus" size={12} color="#FFF" />
+              </TouchableOpacity>
+              <Text style={styles.miniVal}>{freq1}Hz</Text>
+              <TouchableOpacity onPress={() => setFreq1(Math.min(10, freq1 + 1))} style={styles.miniBtn}>
+                <Icon name="plus" size={12} color="#FFF" />
               </TouchableOpacity>
             </View>
-            <ScrollView>
-              {logs.length === 0 ? (
-                <Text style={styles.emptyLog}>No discoveries yet. Try pushing amplitude and crossing specific frequencies!</Text>
-              ) : (
-                logs.map((l, i) => (
-                  <View key={i} style={[styles.logCard, { borderLeftColor: l.color }]}>
-                    <Text style={styles.logCardTitle}>{l.title}</Text>
-                    <Text style={styles.logCardDesc}>{l.entry}</Text>
-                  </View>
-                ))
-              )}
-              <View style={{ height: 30 }} />
-            </ScrollView>
+            <View style={styles.miniCtrl}>
+              <TouchableOpacity onPress={() => setAmp1(Math.max(0, amp1 - 10))} style={styles.miniBtn}>
+                <Icon name="minus" size={12} color="#FFF" />
+              </TouchableOpacity>
+              <Text style={styles.miniVal}>±{amp1}</Text>
+              <TouchableOpacity onPress={() => setAmp1(Math.min(80, amp1 + 10))} style={styles.miniBtn}>
+                <Icon name="plus" size={12} color="#FFF" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
-    </View>
-  );
-}
 
-function ControlRow({ title, color, freq, setFreq, amp, setAmp }) {
-  return (
-    <View style={styles.cRow}>
-      <Text style={[styles.cRowTitle, { color }]}>{title}</Text>
-      
-      <View style={styles.sliderWrap}>
-        <Text style={styles.sliderLabel}>FREQ: {Math.round(freq)} Hz</Text>
-        <View style={[styles.sliderBg, { borderColor: color}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-          const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-          const p = x / (width-40);
-          // Logarithmic scale for frequency 20 to 20000
-          setFreq(20 * Math.pow(1000, p));
-        }}>
-          <View style={[styles.sliderFill, { width: `${(Math.log(freq/20)/Math.log(1000))*100}%`, backgroundColor: color }]} />
-          <View style={[styles.sliderThumb, { left: `${(Math.log(freq/20)/Math.log(1000))*100}%` }]} />
-        </View>
-      </View>
+          <View style={styles.controlGroup}>
+             <Text style={[styles.groupTitle, { color: '#FF6B6B' }]}>WAVE B</Text>
+             <View style={styles.miniCtrl}>
+              <TouchableOpacity onPress={() => setFreq2(Math.max(1, freq2 - 1))} style={styles.miniBtn}>
+                <Icon name="minus" size={12} color="#FFF" />
+              </TouchableOpacity>
+              <Text style={styles.miniVal}>{freq2}Hz</Text>
+              <TouchableOpacity onPress={() => setFreq2(Math.min(10, freq2 + 1))} style={styles.miniBtn}>
+                <Icon name="plus" size={12} color="#FFF" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.miniCtrl}>
+              <TouchableOpacity onPress={() => setPhase2((phase2 + 45) % 360)} style={styles.phaseBtn}>
+                <Icon name="refresh" size={12} color="#FFF" />
+                <Text style={styles.phaseText}>{phase2}°</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-      <View style={styles.sliderWrap}>
-        <Text style={styles.sliderLabel}>AMP: {Math.round(amp)} dB</Text>
-        <View style={[styles.sliderBg, { borderColor: color}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-          const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-          setAmp((x / (width-40)) * 100);
-        }}>
-          <View style={[styles.sliderFill, { width: `${amp}%`, backgroundColor: color }]} />
-          <View style={[styles.sliderThumb, { left: `${amp}%` }]} />
+          <TouchableOpacity style={[styles.sumToggle, showSum && styles.activeSum]} onPress={() => setShowSum(!showSum)}>
+             <Icon name="activity" size={20} color={showSum ? "#000" : "#FFF"} />
+          </TouchableOpacity>
         </View>
+      </SimBox>
+
+      {/* 3. Scientist Card */}
+      {scientistMode && (
+        <ScientistCard title="Oscillation Metrics">
+          <View style={styles.sciGrid}>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Wavelength (λ)</Text>
+              <Text style={styles.sciValue}>{(343 / freq1).toFixed(2)} m</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Peak Superposition</Text>
+              <Text style={styles.sciValue}>{amp1 + amp2} px</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Period (T)</Text>
+              <Text style={styles.sciValue}>{(1 / freq1).toFixed(3)} s</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Interference</Text>
+              <Text style={[styles.sciValue, { color: Math.abs(phase1-phase2) === 180 ? '#FF3131' : '#39FF14' }]}>
+                {Math.abs(phase1-phase2) === 180 ? 'DESTRUCTIVE' : 'CONSTRUCTIVE'}
+              </Text>
+            </View>
+          </View>
+          <Text style={styles.formulaText}>y = A sin(kx - ωt + φ)</Text>
+        </ScientistCard>
+      )}
+
+      {/* 4. Challenges */}
+      <View style={styles.challengeBox}>
+         <ChallengeCard
+           title={CHALLENGES[activeChallenge].title}
+           instruction={CHALLENGES[activeChallenge].instruction}
+           completed={challengeStatus[activeChallenge].completed}
+           onNext={() => setActiveChallenge(prev => (prev + 1) % CHALLENGES.length)}
+         />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: PALETTE.bg },
-  viewport: { width: '100%', overflow: 'hidden' },
-  discoveryBtn: { position: 'absolute', bottom: 15, right: 15, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: PALETTE.steel },
-  panel: { backgroundColor: PALETTE.panel, borderTopWidth: 2, borderTopColor: PALETTE.steel },
-  panelInner: { flex: 1, paddingHorizontal: 20, paddingTop: 15 },
-  cRow: { marginBottom: 10 },
-  cRowTitle: { fontSize: 13, fontFamily: 'Outfit_700Bold', marginBottom: 10, letterSpacing: 1 },
-  sliderWrap: { width: '100%', marginBottom: 15 },
-  sliderLabel: { color: PALETTE.text, fontSize: 11, fontFamily: 'monospace', marginBottom: 6 },
-  sliderBg: { height: 16, backgroundColor: '#0A150A', borderRadius: 8, borderWidth: 1, justifyContent: 'center' },
-  sliderFill: { position: 'absolute', height: '100%', borderRadius: 8 },
-  sliderThumb: { position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: '#FFF', marginLeft: -10 },
-  logBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, backgroundColor: '#050A05', borderTopWidth: 1, borderTopColor: '#111', gap: 10 },
-  logHintText: { flex: 1, color: '#888', fontSize: 12, fontFamily: 'monospace', fontStyle: 'italic' },
-  logBadge: { minWidth: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.92)', justifyContent: 'flex-end' },
-  modalContent: { maxHeight: height * 0.7, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', fontFamily: 'Outfit_700Bold' },
-  emptyLog: { color: '#555', textAlign: 'center', marginTop: 40, fontFamily: 'monospace', fontSize: 13 },
-  logCard: { backgroundColor: '#050A05', padding: 14, borderRadius: 10, marginBottom: 10, borderLeftWidth: 3 },
-  logCardTitle: { color: PALETTE.text, fontWeight: 'bold', fontSize: 14, marginBottom: 5, fontFamily: 'Outfit_500Medium' },
-  logCardDesc: { color: '#AAA', fontSize: 13, lineHeight: 19 }
+  container: {
+    padding: SPACING.md,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: SPACING.md,
+  },
+  controls: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    padding: 10,
+    borderRadius: RADIUS.md,
+  },
+  controlGroup: {
+    alignItems: 'center',
+  },
+  groupTitle: {
+    fontSize: 9,
+    fontFamily: FONTS.bold,
+    marginBottom: 4,
+  },
+  miniCtrl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  miniVal: {
+    fontSize: 10,
+    color: '#FFF',
+    fontFamily: FONTS.mono,
+    marginHorizontal: 4,
+    minWidth: 25,
+    textAlign: 'center',
+  },
+  miniBtn: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 2,
+    borderRadius: 4,
+  },
+  phaseBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  phaseText: {
+    fontSize: 9,
+    color: '#FFF',
+    marginLeft: 4,
+  },
+  sumToggle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activeSum: {
+    backgroundColor: '#FFD166',
+  },
+  sciGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  sciItem: {
+    width: '48%',
+    marginBottom: 10,
+  },
+  sciLabel: {
+    fontSize: 10,
+    color: '#888',
+  },
+  sciValue: {
+    fontSize: 13,
+    color: '#FFF',
+    fontFamily: FONTS.mono,
+  },
+  formulaText: {
+    textAlign: 'center',
+    color: '#4ECDC4',
+    fontFamily: FONTS.mono,
+    fontSize: 12,
+    marginTop: 5,
+  },
+  challengeBox: {
+    marginTop: SPACING.xl,
+    marginBottom: 40,
+  }
 });

@@ -15,19 +15,17 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealed, setRevealed] = useState([]);
   const slideAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const revealAnims = useMemo(
     () => Array.from({ length: questions.length }, () => new Animated.Value(0)),
     []
   );
 
-  // Theme tokens
-  const bg     = theme.bg.surface;
   const txt1   = theme.text.primary;
   const txt2   = theme.text.secondary;
   const txtM   = theme.text.muted;
-  const glass1 = theme.glass.light;
-  const glass2 = theme.glass.medium;
+  const bg     = theme.bg.surface;
   const border = theme.glass.border;
   const gold   = theme.accent.gold;
 
@@ -40,7 +38,7 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setRevealed(prev => [...prev, currentIndex]);
     Animated.spring(revealAnims[currentIndex], {
-      toValue: 1, tension: 60, friction: 14, useNativeDriver: true,
+      toValue: 1, tension: 55, friction: 12, useNativeDriver: true,
     }).start();
   };
 
@@ -48,10 +46,16 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
     soundTap();
     Haptics.selectionAsync();
     Animated.sequence([
-      Animated.timing(slideAnim, { toValue: -50, duration: 200, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 0, useNativeDriver: true }),
-    ]).start();
-    setCurrentIndex(i => i + 1);
+      Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: -30, duration: 0, useNativeDriver: true }),
+    ]).start(() => {
+      setCurrentIndex(i => i + 1);
+      slideAnim.setValue(30);
+      Animated.parallel([
+        Animated.timing(fadeAnim, { toValue: 1, duration: 250, useNativeDriver: true }),
+        Animated.spring(slideAnim, { toValue: 0, tension: 70, friction: 14, useNativeDriver: true }),
+      ]).start();
+    });
   };
 
   if (!questions || questions.length === 0) return null;
@@ -60,129 +64,126 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
     <View style={[styles.root, { backgroundColor: bg }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={[styles.headerIconWrap, { backgroundColor: accentColor + '20', borderColor: accentColor + '30' }]}>
-            <Icon name="brain" size={28} color={accentColor} />
-          </View>
-          <Text style={[styles.headerLabel, { color: accentColor }]}>Do You Know Why?</Text>
-          <Text style={[styles.headerSub, { color: txtM }]}>Think about it, then reveal the answer</Text>
+        {/* ── Section Label ── */}
+        <View style={styles.sectionLabel}>
+          <View style={[styles.accentLine, { backgroundColor: accentColor }]} />
+          <Text style={[styles.sectionLabelText, { color: accentColor }]}>DO YOU KNOW WHY?</Text>
         </View>
 
-        {/* Progress pills */}
-        <View style={styles.progressRow}>
+        {/* ── Progress dots ── */}
+        <View style={styles.dotsRow}>
           {questions.map((_, i) => (
-            <View key={i} style={[
-              styles.progressPill,
-              {
-                backgroundColor: revealed.includes(i) ? accentColor + '30' : glass1,
-                borderColor: revealed.includes(i) ? accentColor : border,
-                flex: i === currentIndex ? 2 : 1,
-              }
-            ]}>
-              <Text style={[styles.progressPillText, { color: revealed.includes(i) ? accentColor : txtM }]}>
-                {revealed.includes(i) ? '✓' : i + 1}
-              </Text>
-            </View>
+            <View
+              key={i}
+              style={[
+                styles.dot,
+                {
+                  backgroundColor: i < currentIndex
+                    ? accentColor + '60'
+                    : i === currentIndex
+                    ? accentColor
+                    : isDark ? '#FFFFFF20' : '#00000015',
+                  width: i === currentIndex ? 24 : 8,
+                }
+              ]}
+            />
           ))}
         </View>
 
-        {/* Question card */}
-        <Animated.View style={[styles.questionWrap, { transform: [{ translateX: slideAnim }] }]}>
-          <LinearGradient
-            colors={[accentColor + '15', isDark ? theme.bg.elevated : '#F8F9FF']}
-            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-            style={[styles.questionCard, { borderColor: accentColor + '30' }]}
-          >
-            <View style={[styles.questionIconBadge, { backgroundColor: accentColor + '18', borderColor: accentColor + '30' }]}>
-              <Icon name="brain" size={26} color={accentColor} />
-            </View>
-            <Text style={[styles.questionNum, { color: accentColor }]}>
-              Question {currentIndex + 1} of {questions.length}
+        {/* ── Question ── */}
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateX: slideAnim }] }}>
+          <View style={styles.questionBlock}>
+            <Text style={[styles.counterText, { color: txtM }]}>
+              {currentIndex + 1} / {questions.length}
             </Text>
-            <MarkdownText style={[styles.questionText, { color: txt1 }]} highlightColor="#FFD166">{q.question}</MarkdownText>
+            <MarkdownText
+              style={[styles.questionText, { color: txt1 }]}
+              highlightColor={accentColor}
+            >
+              {q.question}
+            </MarkdownText>
+          </View>
 
-            {!isCurrentRevealed && (
-              <View style={[styles.thinkBox, { backgroundColor: glass1, borderColor: border }]}>
-                <Icon name="lightbulb" size={14} color={txtM} />
-                <Text style={[styles.thinkText, { color: txtM }]}>Take a moment to think...</Text>
+          {/* ── Divider ── */}
+          <View style={[styles.divider, { backgroundColor: isDark ? '#FFFFFF10' : '#00000010' }]} />
+
+          {/* ── Answer reveal ── */}
+          {isCurrentRevealed ? (
+            <Animated.View
+              style={{
+                opacity: revealAnims[currentIndex],
+                transform: [{
+                  translateY: revealAnims[currentIndex].interpolate({
+                    inputRange: [0, 1], outputRange: [12, 0],
+                  })
+                }]
+              }}
+            >
+              <View style={[styles.answerBlock, { borderLeftColor: accentColor }]}>
+                <Text style={[styles.answerLabel, { color: accentColor }]}>THE EXPLANATION</Text>
+                <MarkdownText
+                  style={[styles.answerText, { color: txt2 }]}
+                  highlightColor={accentColor}
+                >
+                  {q.answer}
+                </MarkdownText>
               </View>
-            )}
-          </LinearGradient>
+            </Animated.View>
+          ) : (
+            <Text style={[styles.thinkPrompt, { color: txtM }]}>
+              Think about it before revealing...
+            </Text>
+          )}
         </Animated.View>
 
-        {/* Answer reveal */}
-        {isCurrentRevealed && (
-          <Animated.View style={[
-            styles.answerCard,
-            {
-              opacity: revealAnims[currentIndex],
-              borderColor: accentColor + '40',
-              backgroundColor: glass2,
-              transform: [{
-                translateY: revealAnims[currentIndex].interpolate({
-                  inputRange: [0, 1], outputRange: [16, 0],
-                })
-              }]
-            }
-          ]}>
-            <View style={[styles.answerTop, { borderBottomColor: border }]}>
-              <View style={styles.answerLabelRow}>
-                <Icon name="lightbulb" size={16} color={accentColor} />
-                <Text style={[styles.answerLabel, { color: accentColor }]}>The Explanation</Text>
-              </View>
-            </View>
-            <MarkdownText style={[styles.answerText, { color: txt2 }]} highlightColor="#FFD166">{q.answer}</MarkdownText>
-          </Animated.View>
-        )}
-
-        <View style={styles.btnRow}>
+        {/* ── Actions ── */}
+        <View style={styles.actions}>
           {!isCurrentRevealed ? (
-            <View style={[styles.btnShadow, { shadowColor: accentColor }]}>
-              <TouchableOpacity onPress={handleReveal} activeOpacity={0.8} style={styles.revealBtn}>
-                <LinearGradient
-                  colors={[accentColor, accentColor + 'D0']}
-                  start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                  style={styles.revealBtnGrad}
-                >
-                  <View style={styles.revealBtnInner}>
-                    <Icon name="brain" size={20} color="#fff" />
-                    <Text style={styles.revealBtnText}>Reveal the explanation</Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={handleReveal}
+              activeOpacity={0.85}
+              style={[styles.primaryBtn, { backgroundColor: accentColor }]}
+            >
+              <Text style={styles.primaryBtnText}>Reveal Answer</Text>
+            </TouchableOpacity>
           ) : !isLast ? (
-            <TouchableOpacity onPress={goNext} activeOpacity={0.8}
-              style={[styles.nextBtn, { borderColor: accentColor + '60', backgroundColor: accentColor + '15' }]}>
-              <Text style={[styles.nextBtnText, { color: accentColor }]}>Next question →</Text>
+            <TouchableOpacity
+              onPress={goNext}
+              activeOpacity={0.85}
+              style={[styles.primaryBtn, { backgroundColor: accentColor }]}
+            >
+              <View style={styles.btnRow}>
+                <Text style={styles.primaryBtnText}>Next Question</Text>
+                <Icon name="forward" size={16} color="#fff" />
+              </View>
             </TouchableOpacity>
           ) : (
-            <View style={[styles.btnShadow, { shadowColor: gold }]}>
-              <TouchableOpacity onPress={() => { soundWhoosh(); onComplete(); }} activeOpacity={0.8} style={styles.quizBtn}>
-                <LinearGradient
-                  colors={[gold, '#FF9F1C']}
-                  start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                  style={styles.quizBtnGrad}
-                >
-                  <View style={styles.quizBtnInner}>
-                    <Icon name="trophy" size={20} color={isDark ? '#0D0F1E' : '#fff'} />
-                    <Text style={[styles.quizBtnText, { color: isDark ? '#0D0F1E' : '#fff' }]}>Ready for the Quiz!</Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() => { soundWhoosh(); onComplete(); }}
+              activeOpacity={0.85}
+              style={[styles.primaryBtn, { backgroundColor: gold }]}
+            >
+              <View style={styles.btnRow}>
+                <Icon name="trophy" size={18} color={isDark ? '#0D0F1E' : '#fff'} />
+                <Text style={[styles.primaryBtnText, { color: isDark ? '#0D0F1E' : '#fff' }]}>
+                  Take the Quiz
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+
+          {!isCurrentRevealed && (
+            <TouchableOpacity
+              onPress={() => { soundTap(); isLast ? onComplete() : goNext(); }}
+              activeOpacity={0.7}
+              style={styles.skipLink}
+            >
+              <Text style={[styles.skipLinkText, { color: txtM }]}>Skip →</Text>
+            </TouchableOpacity>
           )}
         </View>
 
-        <View style={[styles.nudgeBox, { backgroundColor: glass1, borderColor: border }]}>
-          <Icon name="sparkle" size={14} color={txtM} />
-          <Text style={[styles.nudgeText, { color: txtM }]}>
-            Understanding the "why" makes the quiz much easier — and makes the knowledge stick!
-          </Text>
-        </View>
-
-        <View style={{ height: 150 }} />
+        <View style={{ height: 120 }} />
       </ScrollView>
     </View>
   );
@@ -190,55 +191,103 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { paddingHorizontal: SPACING.lg, paddingTop: SPACING.md },
-  header: { alignItems: 'center', marginBottom: SPACING.lg },
-  headerIconWrap: {
-    width: 60, height: 60, borderRadius: 18,
-    alignItems: 'center', justifyContent: 'center', borderWidth: 1, marginBottom: 12,
+  content: { paddingHorizontal: SPACING.lg, paddingTop: SPACING.xl },
+
+  sectionLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: SPACING.xl,
   },
-  headerLabel: { fontFamily: FONTS.displayMedium, fontSize: 20, marginBottom: 6 },
-  headerSub: { fontFamily: FONTS.body, fontSize: 14 },
-  progressRow: { flexDirection: 'row', gap: 8, marginBottom: SPACING.lg, height: 32 },
-  progressPill: { borderRadius: RADIUS.full, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  progressPillText: { fontFamily: FONTS.bodyMedium, fontSize: 12 },
-  questionWrap: { marginBottom: SPACING.md },
-  questionCard: { borderRadius: RADIUS.xl, borderWidth: 1, padding: SPACING.lg },
-  questionIconBadge: {
-    width: 58, height: 58, borderRadius: 16,
-    alignItems: 'center', justifyContent: 'center', borderWidth: 1, marginBottom: SPACING.md,
+  accentLine: { width: 3, height: 18, borderRadius: 2 },
+  sectionLabelText: {
+    fontFamily: FONTS.displayMedium,
+    fontSize: 12,
+    letterSpacing: 2.5,
   },
-  questionNum: { fontFamily: FONTS.bodyMedium, fontSize: 12, marginBottom: 8, letterSpacing: 0.5 },
-  questionText: { fontFamily: FONTS.displayMedium, fontSize: 17, lineHeight: 26, marginBottom: SPACING.md },
-  thinkBox: {
-    borderRadius: RADIUS.md, padding: 12, borderWidth: 1,
-    flexDirection: 'row', alignItems: 'center', gap: 8,
+
+  dotsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: SPACING.xxl,
   },
-  thinkText: { fontFamily: FONTS.body, fontSize: 13, textAlign: 'center' },
-  answerCard: { borderRadius: RADIUS.lg, borderWidth: 1, overflow: 'hidden', marginBottom: SPACING.md },
-  answerTop: { padding: SPACING.md, borderBottomWidth: 1 },
-  answerLabel: { fontFamily: FONTS.displayMedium, fontSize: 13, letterSpacing: 0.5 },
-  answerLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  answerText: { fontFamily: FONTS.body, fontSize: 15, lineHeight: 24, padding: SPACING.md },
-  btnRow: { marginBottom: SPACING.md },
-  btnShadow: {
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    elevation: 8,
+  dot: {
+    height: 8,
+    borderRadius: 4,
   },
-  revealBtn: { borderRadius: RADIUS.xl, overflow: 'hidden' },
-  revealBtnGrad: { paddingVertical: 18, alignItems: 'center' },
-  revealBtnInner: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  revealBtnText: { fontFamily: FONTS.displayMedium, fontSize: 17, color: '#fff', letterSpacing: 0.5 },
-  nextBtn: { paddingVertical: 18, borderRadius: RADIUS.xl, borderWidth: 1, alignItems: 'center' },
-  nextBtnText: { fontFamily: FONTS.displayMedium, fontSize: 16, letterSpacing: 0.5 },
-  quizBtn: { borderRadius: RADIUS.xl, overflow: 'hidden' },
-  quizBtnGrad: { paddingVertical: 18, alignItems: 'center' },
-  quizBtnInner: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  quizBtnText: { fontFamily: FONTS.displayMedium, fontSize: 17, letterSpacing: 0.5 },
-  nudgeBox: {
-    borderRadius: RADIUS.md, padding: 14, borderWidth: 1,
-    flexDirection: 'row', alignItems: 'flex-start', gap: 8,
+
+  questionBlock: {
+    marginBottom: SPACING.xl,
   },
-  nudgeText: { fontFamily: FONTS.body, fontSize: 13, lineHeight: 18, flex: 1 },
+  counterText: {
+    fontFamily: FONTS.bodyMedium,
+    fontSize: 12,
+    letterSpacing: 1,
+    marginBottom: SPACING.md,
+  },
+  questionText: {
+    fontFamily: FONTS.displayMedium,
+    fontSize: 16,
+    lineHeight: 25,
+  },
+
+  divider: {
+    height: 1,
+    marginBottom: SPACING.xl,
+  },
+
+  thinkPrompt: {
+    fontFamily: FONTS.body,
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginBottom: SPACING.xxl,
+  },
+
+  answerBlock: {
+    borderLeftWidth: 3,
+    paddingLeft: SPACING.lg,
+    marginBottom: SPACING.xxl,
+  },
+  answerLabel: {
+    fontFamily: FONTS.displayMedium,
+    fontSize: 11,
+    letterSpacing: 2,
+    marginBottom: SPACING.md,
+  },
+  answerText: {
+    fontFamily: FONTS.body,
+    fontSize: 14,
+    lineHeight: 22,
+  },
+
+  actions: {
+    marginTop: SPACING.lg,
+    gap: SPACING.md,
+  },
+  primaryBtn: {
+    paddingVertical: 18,
+    borderRadius: RADIUS.full,
+    alignItems: 'center',
+  },
+  primaryBtnText: {
+    fontFamily: FONTS.displayMedium,
+    fontSize: 16,
+    color: '#fff',
+    letterSpacing: 0.5,
+  },
+  btnRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  skipLink: {
+    alignSelf: 'center',
+    paddingVertical: 8,
+  },
+  skipLinkText: {
+    fontFamily: FONTS.body,
+    fontSize: 14,
+    textDecorationLine: 'underline',
+  },
 });

@@ -1,3 +1,4 @@
+import { useTheme } from '../../context/ThemeContext';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
@@ -33,12 +34,23 @@ const H_LOG = height * 0.10;
 
 // ── COMPONENT ─────────────────────────────────────────────
 export default function PhysicsMultiLab({ scientistMode = false, accentColor = '#00D4FF', onLabBreaker }) {
+  const { theme } = useTheme();
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
+  const bg = (_themeObj || {}).bg?.base || '#0A0A0A';
   // Discovery layer overlay
   const [discoveryMode, setDiscoveryMode] = useState(false);
   const discoveryAnim = useRef(new Animated.Value(0)).current;
 
   // Danger Shake
   const shakeAnim = useRef(new Animated.Value(0)).current;
+  const isShaking = useRef(false);
 
   // Component local logs state
   const [logs, setLogs] = useState([]);
@@ -123,7 +135,8 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
 
     // DANGER STATE Check
     if (heat >= 290 && freq >= 19000 && angle <= 22) {
-      if (shakeAnim._value === 0) {
+      if (!isShaking.current) {
+        isShaking.current = true;
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         onLabBreaker && onLabBreaker();
         Animated.sequence([
@@ -131,7 +144,7 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
           Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
           Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
           Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true })
-        ]).start();
+        ]).start(() => { isShaking.current = false; });
       }
     }
   }, [angle, freq, heat, gravOn, fricOn, airOn]);
@@ -436,6 +449,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', 
     paddingHorizontal: 20, backgroundColor: '#050508', borderBottomWidth: 1, borderBottomColor: PALETTE.panel 
   },
+  headerTitleWrap: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   headerTitle: { color: PALETTE.text, fontFamily: 'Outfit_700Bold', letterSpacing: 2 },
   viewport: { width: '100%', overflow: 'hidden' },
   vignette: { 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import LottieView from 'lottie-react-native';
 import { StatusBar } from "expo-status-bar";
 import {
   useFonts,
@@ -12,6 +13,7 @@ import {
 
 import { COLORS } from "./constants/theme";
 import { ThemeProvider } from "./context/ThemeContext";
+import { LanguageProvider } from "./context/LanguageContext";
 import HomeScreen from "./screens/HomeScreen";
 import { initSounds } from "./utils/sounds";
 
@@ -37,7 +39,17 @@ export default function App() {
   if (!fontsLoaded || !soundsReady) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color={COLORS.accent} size="large" />
+        <LottieView
+          source={require('./assets/Smooth Triple Dot Loading.json')}
+          autoPlay
+          loop
+          style={{ width: 120, height: 120 }}
+          colorFilters={[
+            { keypath: "Shape Layer 1", color: COLORS.accent },
+            { keypath: "Shape Layer 2", color: COLORS.correct },
+            { keypath: "Shape Layer 3", color: COLORS.xpGold },
+          ]}
+        />
 
         <Text
           style={[
@@ -45,20 +57,23 @@ export default function App() {
             {
               fontFamily: "Outfit_600SemiBold",
               letterSpacing: 1,
+              marginTop: -20,
             },
           ]}
         >
-          Loading Curious Minds... 🚀
+          Loading Curious Minds...
         </Text>
       </View>
     );
   }
 
   return (
-    <ThemeProvider>
-      <StatusBar style="auto" />
-      <HomeScreen />
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <StatusBar style="auto" />
+        <HomeScreen />
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }
 

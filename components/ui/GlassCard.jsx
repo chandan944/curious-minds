@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { COLORS, RADIUS, SHADOWS } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
+import { RADIUS } from '../../constants/theme';
 
 // ─────────────────────────────────────────────
 //  GlassCard — Neo Glassmorphism card container
@@ -18,8 +19,10 @@ export default function GlassCard({
   radius = RADIUS.lg,
   padding = 20,
 }) {
+  const { theme, isDark } = useTheme();
+  
   return (
-    <View style={[styles.wrapper, { borderRadius: radius }, glow && SHADOWS.glow(glow), style]}>
+    <View style={[styles.wrapper, { borderRadius: radius }, glow && theme?.shadows?.glow(glow), style]}>
       {/* Outer glow ring */}
       {glow && (
         <View style={[
@@ -30,13 +33,18 @@ export default function GlassCard({
 
       <BlurView
         intensity={intensity}
-        tint="dark"
+        tint={isDark ? "dark" : "light"}
         style={[
           styles.blur,
-          { borderRadius: radius },
+          { 
+            borderRadius: radius,
+            backgroundColor: theme?.glass?.medium || 'rgba(255,255,255,0.05)'
+          },
           !noBorder && {
             borderWidth: 1,
-            borderColor: bright ? COLORS.glassBorderBright : COLORS.glassBorder,
+            borderColor: bright 
+              ? (theme?.glass?.borderBright || 'rgba(255,255,255,0.15)') 
+              : (theme?.glass?.border || 'rgba(255,255,255,0.08)'),
           },
         ]}
       >
@@ -56,7 +64,6 @@ const styles = StyleSheet.create({
   },
   blur: {
     overflow: 'hidden',
-    backgroundColor: COLORS.glass2,
   },
   glowRing: {
     ...StyleSheet.absoluteFillObject,

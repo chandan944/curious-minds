@@ -76,3 +76,6 @@ export const soundBadge       = () => playSound('badge');
 export const soundUnlock      = () => playSound('unlock');
 export const soundWhoosh      = () => playSound('whoosh');
 export const soundTick        = () => playSound('tick');
+// ── Aliases used by lab files ──
+export const soundSuccess     = () => playSound('celebration');
+export const soundTrophy      = () => playSound('badge');

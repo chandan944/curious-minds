@@ -168,8 +168,14 @@ export default function BrainStructureLab({
   onLabBreaker,
 }) {
   const { theme, isDark } = useTheme();
-  const txt1 = theme.text.primary, txt2 = theme.text.secondary, txtM = theme.text.muted;
-  const glass1 = theme.glass.light, glass2 = theme.glass.medium, border = theme.glass.border;
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
   // ── State ──────────────────────────────────
   const [modeIdx, setModeIdx]         = useState(0);
@@ -630,7 +636,7 @@ export default function BrainStructureLab({
                   <SvgText x={SIM_W / 2} y={SIM_H - 20} textAnchor="middle" fontSize="10" fill={act.color} fontWeight="bold">
                     {act.name}
                   </SvgText>
-                  <SvgText x={SIM_W / 2} y={SIM_H - 8} textAnchor="middle" fontSize="8" fill={txtM}>
+                  <SvgText x={SIM_W / 2} y={SIM_H - 8} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.6)">
                     {Object.keys(act.active).length} regions active — fMRI simulation
                   </SvgText>
                 </>
@@ -657,7 +663,7 @@ export default function BrainStructureLab({
                     <SvgText x={pos.cx} y={pos.cy - pos.ry - 6} textAnchor="middle" fontSize="8" fill={region?.color}>
                       {step.label}
                     </SvgText>
-                    <SvgText x={pos.cx} y={pos.cy + pos.ry + 12} textAnchor="middle" fontSize="7" fill={txtM}>
+                    <SvgText x={pos.cx} y={pos.cy + pos.ry + 12} textAnchor="middle" fontSize="7" fill="rgba(255,255,255,0.6)">
                       ~{step.delay}
                     </SvgText>
                     {/* Arrow to next */}
@@ -696,14 +702,14 @@ export default function BrainStructureLab({
                       <Rect x={startX + i * (barW + 2)} y={SIM_H - 30 - h} width={barW} height={h}
                         rx={3} fill={c} fillOpacity={isLast ? 0.8 : 0.35} />
                       <SvgText x={startX + i * (barW + 2) + barW / 2} y={SIM_H - 18}
-                        textAnchor="middle" fontSize="6" fill={txtM}>{t}</SvgText>
+                        textAnchor="middle" fontSize="6" fill="rgba(255,255,255,0.6)">{t}</SvgText>
                     </React.Fragment>
                   );
                 });
               })()}
 
               {rtState === 'idle' && rtResults.length === 0 && (
-                <SvgText x={SIM_W / 2} y={SIM_H / 2} textAnchor="middle" fontSize="11" fill={txtM}>
+                <SvgText x={SIM_W / 2} y={SIM_H / 2} textAnchor="middle" fontSize="11" fill="rgba(255,255,255,0.6)">
                   Tap "Start Test" to measure your reaction time!
                 </SvgText>
               )}

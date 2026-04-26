@@ -1,330 +1,417 @@
-/**
- * Heat & Temperature Lab — Thermodynamics Chamber
- * Scientist Mode: Q=mcΔT matrices, Phase State identifiers
- * NO react-native-reanimated — Old Architecture safe
- */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, Dimensions, TouchableOpacity,
-  PanResponder, Animated, Easing, Modal, ScrollView
-} from 'react-native';
-import Svg, {
-  Path, Circle, Rect, Line, Defs, RadialGradient as SvgRadial, Stop, G, Text as SvgText, Polygon
-} from 'react-native-svg';
-import * as Haptics from 'expo-haptics';
-import { soundTap } from '../../utils/sounds';
+// @ts-ignore
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import Svg, { Rect, Circle, G, Line, Path, Text as SvgText, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { useTheme } from '../../context/ThemeContext';
+import { FONTS, SPACING, RADIUS } from '../../constants/theme';
 import Icon from '../../components/ui/Icons';
+import * as Haptics from 'expo-haptics';
+// @ts-ignore
+import { soundTap, soundTrophy } from '../../utils/sounds';
 
-const { width, height } = Dimensions.get('window');
-const H_VIEWPORT = height * 0.45;
-const H_PANEL = height * 0.35;
-const H_LOG = height * 0.10;
+// Standard Components
+import StatusCard from '../../components/lab/StatusCard';
+import SimBox from '../../components/lab/SimBox';
+import ChallengeCard from '../../components/lab/ChallengeCard';
+import ScientistCard from '../../components/lab/ScientistCard';
 
-const PALETTE = {
-  bg: '#0F0505',
-  panel: '#200A0A',
-  red: '#FF3131',
-  blue: '#00D4FF',
-  white: '#E8E0D0',
-  amber: '#FFB347',
-  steel: '#351A1A'
-};
+const { width } = Dimensions.get('window');
+const CANVAS_H = 300;
+const CANVAS_W = width - 40;
+const CHAMBER_X = 40;
+const CHAMBER_Y = 40;
+const CHAMBER_W = CANVAS_W - 80;
+const CHAMBER_H = CANVAS_H - 80;
 
-export default function HeatLab({ scientistMode = false, accentColor = '#FF3131', onLabBreaker }) {
-  const [discoveryMode, setDiscoveryMode] = useState(false);
-  const discoveryAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+const CHALLENGES = [
+  { id: 1, title: "Absolute Zero", instruction: "Drop the temperature to exactly 0 Kelvin.", targetT: 0, completed: false },
+  { id: 2, title: "Boiling Point", instruction: "Reach 373K and sustain gas state for 3 seconds.", targetT: 373, completed: false },
+  { id: 3, title: "High Pressure", instruction: "Compress the volume while at 600K to reach P > 80.", targetP: 80, completed: false },
+  { id: 4, title: "Lattice Locking", instruction: "Synchronize all 40 molecules into a solid lattice at 50K.", targetT: 50, completed: false },
+];
 
-  // Local logs state
-  const [logs, setLogs] = useState([]);
-  const [logsOpen, setLogsOpen] = useState(false);
-
-  // Controls State
-  const [temp, setTemp] = useState(20); // -273 to 400 Celsius
-  const [substance, setSubstance] = useState('water'); // water, iron, oxygen
+export default function LabSimulation({ scientistMode }) {
+  const { theme, isDark } = useTheme();
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  // @ts-ignore
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  // @ts-ignore
+  const txtM = _themeObj.text?.muted || '#888888';
+  // @ts-ignore
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  // @ts-ignore
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  // @ts-ignore
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
   
-  const discovered = useRef(new Set());
+  // Controls State
+  const [temp, setTemp] = useState(300); // Kelvin
+  const [volume, setVolume] = useState(1); // 0.2 to 1.0 (multiplier for height)
+  
+  // Physics State
+  const [particles, setParticles] = useState([]);
+  const [pressure, setPressure] = useState(0);
+  const [collisionCount, setCollisionCount] = useState(0);
+  
+  const [activeChallenge, setActiveChallenge] = useState(0);
+  const [challengeStatus, setChallengeStatus] = useState(CHALLENGES);
+  
+  const particlesRef = useRef([]);
+  const requestRef = useRef(null);
 
-  // Logic Tick (for physics loop)
-  const [tick, setTick] = useState(0);
+  // Initialize Particles
   useEffect(() => {
-    const loop = setInterval(() => setTick(t => t + 1), 50);
-    return () => clearInterval(loop);
+    const pArr = [];
+    for (let i = 0; i < 40; i++) {
+      pArr.push({
+        x: CHAMBER_X + Math.random() * CHAMBER_W,
+        y: CHAMBER_Y + Math.random() * CHAMBER_H,
+        vx: (Math.random() - 0.5) * 5,
+        vy: (Math.random() - 0.5) * 5,
+        id: i
+      });
+    }
+    particlesRef.current = pArr;
+    setParticles([...pArr]);
   }, []);
 
-  const addLog = useCallback((id, entry) => {
-    if (!discovered.current.has(id)) {
-      discovered.current.add(id);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setLogs(prev => [...prev, entry]);
-    }
-  }, []);
+  // @ts-ignore
+  const animate = useCallback((time) => {
+    const currentH = CHAMBER_H * volume;
+    const currentYFloor = CHAMBER_Y + CHAMBER_H;
+    const currentYTop = currentYFloor - currentH;
+    
+    // Thermal speed scaling
+    const speedScale = Math.sqrt(temp / 300);
+    let wallStrike = 0;
 
-  const checkDiscoveries = useCallback(() => {
-    // 1. Absolute Zero Attempt
-    if (temp <= -273) {
-      addLog('d1', {
-        title: "Absolute Zero Reached",
-        entry: "-273.15°C (0 Kelvin). The theoretical limit of the universe. All atomic motion has ceased. You cannot extract any more heat because there is literally no kinetic energy left to extract!",
-        color: PALETTE.blue
-      });
-    }
+    const nextParticles = particlesRef.current.map(p => {
+      let newVx = p.vx;
+      let newVy = p.vy;
+      
+      // Update Position
+      let newX = p.x + p.vx * speedScale;
+      let newY = p.y + p.vy * speedScale;
 
-    // 2. Boiling Point of Water
-    if (substance === 'water' && temp >= 100 && temp < 110) {
-      addLog('d2', {
-        title: "Phase Change: Vaporization (Latent Heat)",
-        entry: "H2O has hit 100°C. Notice how the heat energy is now being used to aggressively rip the liquid bonds apart, turning the water into expansive gaseous steam rather than immediately raising its temperature further.",
-        color: PALETTE.amber
-      });
-    }
+      // Wall Collisions (X)
+      if (newX < CHAMBER_X) {
+        newX = CHAMBER_X;
+        newVx = Math.abs(newVx);
+        wallStrike++;
+      } else if (newX > CHAMBER_X + CHAMBER_W) {
+        newX = CHAMBER_X + CHAMBER_W;
+        newVx = -Math.abs(newVx);
+        wallStrike++;
+      }
 
-    // 3. Melting Iron
-    if (substance === 'iron' && temp > 350) {
-      addLog('d3', {
-        title: "Thermal Expansion Alert",
-        entry: "Even though the Iron is nowhere near its melting point (1,538°C), the extreme heat is causing its atoms to vibrate wildly, forcing the physical metal structure to expand! This is why bridges need expansion joints.",
-        color: PALETTE.red
-      });
-    }
+      // Wall Collisions (Y) - Respect volume lid
+      if (newY < currentYTop) {
+        newY = currentYTop;
+        newVy = Math.abs(newVy);
+        wallStrike++;
+      } else if (newY > currentYFloor) {
+        newY = currentYFloor;
+        newVy = -Math.abs(newVy);
+        wallStrike++;
+      }
 
-    // Danger: Plasma State / Extreme Entropy
-    if (temp >= 390) {
-      if (shakeAnim._value === 0) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        onLabBreaker && onLabBreaker();
-        Animated.sequence([
-          Animated.timing(shakeAnim, { toValue: 12, duration: 40, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: -12, duration: 40, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: 12, duration: 40, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: 0, duration: 40, useNativeDriver: true })
-        ]).start();
+      // State Behavior: clumping if cold
+      if (temp < 100) {
+          // Slow drift towards lattice structure
+          const targetX = CHAMBER_X + (p.id % 8) * (CHAMBER_W / 8) + (CHAMBER_W/16);
+          const targetY = currentYFloor - Math.floor(p.id / 8) * 15 - 10;
+          newX += (targetX - newX) * 0.05 * (1 - temp/100);
+          newY += (targetY - newY) * 0.05 * (1 - temp/100);
+      } else if (temp < 250) {
+          // Liquid: heavy gravity pull
+          newVy += 0.2 * (1 - temp/250);
+      }
+
+      return { ...p, x: newX, y: newY, vx: newVx, vy: newVy };
+    });
+
+    particlesRef.current = nextParticles;
+    setParticles([...nextParticles]);
+    setCollisionCount(c => c + wallStrike);
+    
+    requestRef.current = requestAnimationFrame(animate);
+  }, [temp, volume]);
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, [animate]);
+
+  // Pressure Calculation (Rolling Average)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPressure(collisionCount * 2 * (1/volume));
+      setCollisionCount(0);
+      checkChallenges();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [collisionCount, volume]);
+
+  const checkChallenges = () => {
+    // @ts-ignore
+    const chal = CHALLENGES[activeChallenge];
+    let success = false;
+    
+    if (activeChallenge === 0 && temp === 0) success = true;
+    if (activeChallenge === 1 && temp >= 373) success = true;
+    if (activeChallenge === 2 && pressure > 80) success = true;
+    
+    if (success) {
+      const newStatus = [...challengeStatus];
+      if (!newStatus[activeChallenge].completed) {
+        newStatus[activeChallenge].completed = true;
+        setChallengeStatus(newStatus);
+        soundTrophy();
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
     }
-  }, [temp, substance, addLog]);
-
-  useEffect(() => { checkDiscoveries(); }, [checkDiscoveries]);
-
-  const toggleDiscovery = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const next = !discoveryMode;
-    setDiscoveryMode(next);
-    Animated.timing(discoveryAnim, {
-      toValue: next ? 1 : 0, duration: 400, easing: Easing.out(Easing.ease), useNativeDriver: false
-    }).start();
   };
 
-  // State calculations
-  let state = 'Liquid';
-  let particleColor = PALETTE.blue;
-  let shakeMulti = 0; // for solid vibration
-  let floatMulti = 0; // for gas spreading
-  
-  if (substance === 'water') {
-    if (temp <= 0) { state = 'Solid (Ice)'; particleColor = '#FFF'; shakeMulti = (temp + 273)/273; }
-    else if (temp < 100) { state = 'Liquid'; particleColor = PALETTE.blue; }
-    else { state = 'Gas (Steam)'; particleColor = '#CCC'; floatMulti = (temp - 100)/50; }
-  } else if (substance === 'iron') {
-    state = 'Solid (Metal)';
-    particleColor = temp > 200 ? PALETTE.red : '#888';
-    shakeMulti = (temp + 273)/400; // lots of vibration but locked in place
-  } else if (substance === 'oxygen') {
-    if (temp <= -218) { state = 'Solid (O2 Ice)'; particleColor = '#88CCFF'; shakeMulti = 0.1; }
-    else if (temp <= -183) { state = 'Liquid O2'; particleColor = '#4488FF'; }
-    else { state = 'Gas (Air)'; particleColor = '#CCCCFF'; floatMulti = (temp + 180)/100; }
-  }
-  
-  // Create particle grid
-  const particles = [];
-  const cx = width / 2;
-  const cy = H_VIEWPORT / 1.8;
-  
-  // Depending on state, particles behave differently
-  let spacing = 15;
-  if (state.includes('Gas')) spacing = 25 + Math.min(floatMulti * 10, 40);
-  else if (state.includes('Solid')) spacing = substance === 'water' ? 18 : 14; // Ice expands!
-  
-  const kineticJitter = temp === -273 ? 0 : Math.max(0, temp + 273) * 0.01;
-
-  for (let row = -2; row <= 2; row++) {
-    for (let col = -3; col <= 3; col++) {
-      let px = cx + col * spacing;
-      let py = cy + row * spacing;
-      
-      // Brownian motion / Kinetic Jitter
-      if (kineticJitter > 0) {
-        if (state.includes('Solid')) {
-          px += Math.sin(tick * 0.5 + row*col) * kineticJitter;
-          py += Math.cos(tick * 0.5 + row*col) * kineticJitter;
-        } else if (state.includes('Gas')) {
-          // Gas particles fly around chaotic
-          px += Math.sin(tick * 0.1 * kineticJitter + row*10) * (spacing*2) * ((tick%100)/100);
-          py -= ((tick*kineticJitter*0.5 + col*10) % 150) - 75; 
-        } else {
-          // Liquid rolling
-          px += Math.sin(tick * 0.2 + row*col) * kineticJitter * 2;
-          py += Math.cos(tick * 0.2 + row*col) * kineticJitter * 2;
-        }
-      }
-      particles.push(<Circle key={`${row}-${col}`} cx={px} cy={py} r={6} fill={particleColor} opacity={state.includes('Gas') ? 0.6 : 1} />);
-    }
-  }
+  const currentH = CHAMBER_H * volume;
+  const currentYFloor = CHAMBER_Y + CHAMBER_H;
+  const currentYTop = currentYFloor - currentH;
 
   return (
-    <View style={styles.root}>
-      {/* Viewport */}
-      <Animated.View style={[styles.viewport, { height: H_VIEWPORT, transform: [{ translateX: shakeAnim }] }]}>
-        <Svg width="100%" height="100%">
+    <View style={styles.container}>
+      {/* 1. Status Cards */}
+      <View style={styles.header}>
+        <StatusCard 
+          label="TEMP" 
+          value={temp} 
+          unit="K" 
+          icon="thermometer" 
+          color="#FF6B6B" 
+        />
+        <StatusCard 
+          label="PRESSURE" 
+          value={pressure.toFixed(1)} 
+          unit="P" 
+          icon="activity" 
+          color="#FFD166" 
+        />
+        <StatusCard 
+          label="STATE" 
+          value={temp < 100 ? "SOLID" : (temp < 373 ? "LIQUID" : "GAS")} 
+          unit="" 
+          icon="cube" 
+          color="#4ECDC4" 
+        />
+      </View>
+
+      {/* 2. Simulation Box */}
+      <SimBox>
+        <Svg width={CANVAS_W} height={CANVAS_H}>
           <Defs>
-            <SvgRadial id="bgGrad" cx="50%" cy="50%" r="50%">
-              <Stop offset="0%" stopColor="#2A0A0A" />
-              <Stop offset="100%" stopColor="#0F0505" />
-            </SvgRadial>
+            <LinearGradient id="heatGrad" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor={temp > 400 ? "#4A0000" : "#1A1A2E"} />
+              <Stop offset="1" stopColor="#05050A" />
+            </LinearGradient>
           </Defs>
-          <Rect width="100%" height="100%" fill="url(#bgGrad)" />
           
-          {/* Beaker Chamber */}
-          <Path d={`M ${cx-80} 50 L ${cx-80} ${cy+60} Q ${cx-80} ${cy+80} ${cx-60} ${cy+80} L ${cx+60} ${cy+80} Q ${cx+80} ${cy+80} ${cx+80} ${cy+60} L ${cx+80} 50`} fill="none" stroke={PALETTE.white} strokeWidth={4} opacity={0.3} />
+          {/* Chamber Walls */}
+          <Path 
+            d={`M ${CHAMBER_X - 2} ${CHAMBER_Y} V ${CHAMBER_Y + CHAMBER_H + 2} H ${CHAMBER_X + CHAMBER_W + 2} V ${CHAMBER_Y}`}
+            stroke={color}
+            strokeWidth="3"
+            fill="none"
+          />
           
-          {/* Flame under beaker based on temperature */}
-          {temp > 40 && (
-            <G x={cx} y={cy+90}>
-              <Path d={`M 0 0 Q ${10 + (tick%5)} -15 0 -${20 + (temp/10)} Q -${10 + ((tick+2)%5)} -15 0 0`} fill={PALETTE.amber} opacity={0.8} />
-              {temp > 150 && <Path d={`M 0 0 Q ${5 + (tick%8)} -25 0 -${30 + (temp/8)} Q -${5 + ((tick+4)%8)} -25 0 0`} fill={PALETTE.red} opacity={0.6} />}
-            </G>
-          )}
+          {/* Volume Lid */}
+          <G transform={`translate(0, ${currentYTop - 5})`}>
+              <Rect x={CHAMBER_X - 5} y="0" width={CHAMBER_W + 10} height="10" fill={isDark ? '#E94560' : '#455A64'} rx={2} />
+              <Rect x={CHAMBER_X + CHAMBER_W/2 - 2} y="-15" width="4" height="15" fill="#888" />
+          </G>
 
-          {/* Frost under beaker if cold */}
-          {temp < -50 && (
-            <G x={cx} y={cy+80}>
-               <Rect x={-40} y={0} width={80} height={10} fill={PALETTE.blue} opacity={(Math.abs(temp)/273) * 0.8} rx={5} />
-               <SvgText x={-15} y={22} fill={PALETTE.blue} fontSize={10}>FROST</SvgText>
-            </G>
-          )}
+          {/* Burner/Cooler Effect */}
+          <G transform={`translate(${CHAMBER_X}, ${CHAMBER_Y + CHAMBER_H + 5})`}>
+             <Rect width={CHAMBER_W} height={10} fill={temp > 300 ? "#F00" : "#0AF"} opacity={Math.abs(temp - 300) / 400} />
+          </G>
 
-          {/* The Particles */}
-          {particles}
+          {/* Particles */}
+          {particles.map((p, i) => (
+            <Circle 
+              key={i} 
+              cx={p.x} 
+              cy={p.y} 
+              r={p.id === 0 && scientistMode ? 6 : 4} 
+              fill={p.id === 0 && scientistMode ? color : (temp > 373 ? '#FF6B6B' : (temp < 100 ? '#A2D2FF' : '#FFF'))}
+            />
+          ))}
 
-          {/* Discovery Info */}
-          {discoveryMode && (
-            <G>
-              <Line x1={cx - 100} y1={cy} x2={cx + 100} y2={cy} stroke={PALETTE.amber} strokeWidth={1} strokeDasharray="5 5" opacity={0.5} />
-              <SvgText x={cx + 90} y={cy - 5} fill={PALETTE.amber} fontSize={10} textAnchor="end">Average Kinetic Energy Field</SvgText>
-            </G>
-          )}
-
-          {scientistMode && (
-            <G>
-              <SvgText x={15} y={30} fill={PALETTE.white} fontSize={12} fontFamily="monospace">
-                T = {temp + 273.15} K
-              </SvgText>
-              <SvgText x={15} y={50} fill={PALETTE.red} fontSize={12} fontFamily="monospace">
-                Q = mcΔT
-              </SvgText>
-              <SvgText x={15} y={70} fill={PALETTE.blue} fontSize={12} fontFamily="monospace">
-                State: {state}
-              </SvgText>
+          {/* Scientist Mode Vectors */}
+          {scientistMode && particles[0] && (
+            <G transform={`translate(${particles[0].x}, ${particles[0].y})`}>
+               <Line x1="0" y1="0" x2={particles[0].vx * 5} y2={particles[0].vy * 5} stroke={color} strokeWidth="2" />
+               <SvgText x={10} y={-10} fill={color} fontSize="10" fontFamily={FONTS.mono}>
+                 v = {Math.sqrt(particles[0].vx**2 + particles[0].vy**2).toFixed(1)}k
+               </SvgText>
             </G>
           )}
         </Svg>
-        
-        <TouchableOpacity style={styles.discoveryBtn} onPress={toggleDiscovery} activeOpacity={0.8}>
-          <Icon name="search" size={24} color={discoveryMode ? PALETTE.amber : PALETTE.white} />
-        </TouchableOpacity>
-      </Animated.View>
 
-      {/* Control Panel */}
-      <View style={[styles.panel, { height: H_PANEL }]}>
-        <View style={styles.panelInner}>
-          <View style={styles.sliderWrap}>
-            <Text style={styles.sliderLabel}>THERMAL DIAL: {Math.round(temp)}°C  ({Math.round(temp + 273.15)} K)</Text>
-            <View style={[styles.sliderBg, { borderColor:PALETTE.red}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-              const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-              // Range: -273 to 400 = 673 range
-              setTemp(-273 + (x / (width-40)) * 673);
-            }}>
-              <View style={[styles.sliderFill, { width: `${((temp + 273)/673)*100}%`, backgroundColor: temp < 0 ? PALETTE.blue : temp > 100 ? PALETTE.red : PALETTE.amber }]} />
-              <View style={[styles.sliderThumb, { left: `${((temp + 273)/673)*100}%` }]} />
+        <View style={styles.controls}>
+          <View style={styles.controlRow}>
+            <Text style={[styles.label, { color: txt1 }]}>Heat Energy</Text>
+            <View style={styles.sliderMock}>
+               <TouchableOpacity onPress={() => setTemp(Math.max(0, temp - 50))} style={styles.miniBtn}>
+                 <Icon name="minus" size={16} color="#FFF" />
+               </TouchableOpacity>
+               <View style={styles.tempBar}>
+                  <View style={[styles.tempInner, 
+// @ts-ignore
+                  { width: (temp/1000)*100 + '%', backgroundColor: temp > 300 ? '#FF4D6D' : '#00D4FF' }]} />
+               </View>
+               <TouchableOpacity onPress={() => setTemp(Math.min(1000, temp + 50))} style={styles.miniBtn}>
+                 <Icon name="plus" size={16} color="#FFF" />
+               </TouchableOpacity>
             </View>
           </View>
 
-          <View style={{ marginVertical: 15 }}>
-            <Text style={{ color: '#888', fontSize: 10, fontFamily: 'monospace', marginBottom: 8 }}>TEST SUBSTANCE:</Text>
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              <TouchableOpacity style={[styles.pill, substance === 'water' && { backgroundColor: PALETTE.blue, borderColor: PALETTE.blue }]} onPress={() => { soundTap(); setSubstance('water'); }}>
-                <Text style={styles.pillTxt}>H₂O (Water)</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.pill, substance === 'iron' && { backgroundColor: PALETTE.red, borderColor: PALETTE.red }]} onPress={() => { soundTap(); setSubstance('iron'); }}>
-                <Text style={styles.pillTxt}>Fe (Iron)</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.pill, substance === 'oxygen' && { backgroundColor: PALETTE.white, borderColor: PALETTE.white }]} onPress={() => { soundTap(); setSubstance('oxygen'); }}>
-                <Text style={[styles.pillTxt, substance === 'oxygen' && {color: '#000'}]}>O₂ (Oxygen)</Text>
-              </TouchableOpacity>
+          <View style={styles.controlRow}>
+            <Text style={[styles.label, { color: txt1 }]}>Chamber Volume</Text>
+            <View style={styles.sliderMock}>
+               <TouchableOpacity onPress={() => setVolume(Math.min(1.0, volume + 0.1))} style={styles.miniBtn}>
+                 <Icon name="plus" size={16} color="#FFF" />
+               </TouchableOpacity>
+               <View style={styles.tempBar}>
+                  <View style={[styles.tempInner, 
+// @ts-ignore
+                  { width: volume*100 + '%', backgroundColor: '#39FF14' }]} />
+               </View>
+               <TouchableOpacity onPress={() => setVolume(Math.max(0.2, volume - 0.1))} style={styles.miniBtn}>
+                 <Icon name="minus" size={16} color="#FFF" />
+               </TouchableOpacity>
             </View>
           </View>
-
         </View>
+      </SimBox>
+
+      {/* 3. Scientist Mode Analytics */}
+      {scientistMode && (
+        <ScientistCard title="Gas Law Matrix">
+          <View style={styles.sciGrid}>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Particle Kinetic E</Text>
+              <Text style={styles.sciValue}>{(1.5 * 1.38e-23 * temp * 1e20).toFixed(2)} J</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Entropy (ΔS)</Text>
+              <Text style={styles.sciValue}>{(temp / 300).toFixed(2)} J/K</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Density (n/V)</Text>
+              <Text style={styles.sciValue}>{(40 / volume).toFixed(0)} atoms/m³</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Lattice Bond</Text>
+              <Text style={[styles.sciValue, { color: temp < 100 ? '#39FF14' : '#FF3131' }]}>
+                {temp < 100 ? 'CRYSTALLINE' : 'THERMAL BREAK'}
+              </Text>
+            </View>
+          </View>
+          <Text style={styles.lawText}>P ∝ (N * T) / V</Text>
+        </ScientistCard>
+      )}
+
+      {/* 4. Challenges */}
+      <View style={styles.challengeBox}>
+        <ChallengeCard
+          title={CHALLENGES[activeChallenge].title}
+          instruction={CHALLENGES[activeChallenge].instruction}
+          completed={challengeStatus[activeChallenge].completed}
+          onNext={() => setActiveChallenge(prev => (prev + 1) % CHALLENGES.length)}
+        />
       </View>
-
-      {/* Research Log Bar */}
-      <TouchableOpacity style={[styles.logBar, { height: H_LOG }]} activeOpacity={0.8} onPress={() => { soundTap(); setLogsOpen(true); }}>
-        <Icon name="search" size={20} color={PALETTE.white} />
-        <Text style={styles.logHintText} numberOfLines={1}>{logs.length > 0 ? `Log: ${logs[logs.length - 1].title}` : 'Inject heat to discover thermodynamics...'}</Text>
-        <View style={[styles.logBadge, { backgroundColor: logs.length > 0 ? PALETTE.red : '#333' }]}><Text style={{ color: logs.length > 0 ? '#000' : '#888', fontSize: 11, fontWeight: 'bold' }}>{logs.length}</Text></View>
-      </TouchableOpacity>
-
-      {/* Logs Modal */}
-      <Modal visible={logsOpen} transparent animationType="slide">
-        <View style={styles.modalBg}>
-          <View style={[styles.modalContent, { backgroundColor: PALETTE.panel }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: PALETTE.white }]}>Research Log</Text>
-              <TouchableOpacity onPress={() => { soundTap(); setLogsOpen(false); }}>
-                <Icon name="x" size={24} color={PALETTE.white} />
-              </TouchableOpacity>
-            </View>
-            <ScrollView>
-              {logs.length === 0 ? (
-                <Text style={styles.emptyLog}>No discoveries yet. Try pushing to Absolute Zero or Boiling different materials!</Text>
-              ) : (
-                logs.map((l, i) => (
-                  <View key={i} style={[styles.logCard, { borderLeftColor: l.color }]}>
-                    <Text style={styles.logCardTitle}>{l.title}</Text>
-                    <Text style={styles.logCardDesc}>{l.entry}</Text>
-                  </View>
-                ))
-              )}
-              <View style={{ height: 30 }} />
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: PALETTE.bg },
-  viewport: { width: '100%', overflow: 'hidden' },
-  discoveryBtn: { position: 'absolute', bottom: 15, right: 15, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: PALETTE.steel },
-  panel: { backgroundColor: PALETTE.panel, borderTopWidth: 2, borderTopColor: PALETTE.steel },
-  panelInner: { flex: 1, padding: 20 },
-  sliderWrap: { width: '100%', marginBottom: 15 },
-  sliderLabel: { color: PALETTE.white, fontSize: 11, fontFamily: 'monospace', marginBottom: 6 },
-  sliderBg: { height: 16, backgroundColor: '#0A0505', borderRadius: 8, borderWidth: 1, justifyContent: 'center' },
-  sliderFill: { position: 'absolute', height: '100%', borderRadius: 8 },
-  sliderThumb: { position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: '#FFF', marginLeft: -10 },
-  pill: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 6, borderWidth: 1, borderColor: PALETTE.steel, backgroundColor: '#0A0505' },
-  pillTxt: { color: '#FFF', fontSize: 11, fontFamily: 'Outfit_500Medium' },
-  logBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, backgroundColor: '#0A0505', borderTopWidth: 1, borderTopColor: '#111', gap: 10 },
-  logHintText: { flex: 1, color: '#888', fontSize: 12, fontFamily: 'monospace', fontStyle: 'italic' },
-  logBadge: { minWidth: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.92)', justifyContent: 'flex-end' },
-  modalContent: { maxHeight: height * 0.7, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', fontFamily: 'Outfit_700Bold' },
-  emptyLog: { color: '#555', textAlign: 'center', marginTop: 40, fontFamily: 'monospace', fontSize: 13 },
-  logCard: { backgroundColor: '#0A0505', padding: 14, borderRadius: 10, marginBottom: 10, borderLeftWidth: 3 },
-  logCardTitle: { color: PALETTE.white, fontWeight: 'bold', fontSize: 14, marginBottom: 5, fontFamily: 'Outfit_500Medium' },
-  logCardDesc: { color: '#AAA', fontSize: 13, lineHeight: 19 }
+  container: {
+    padding: SPACING.md,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: SPACING.md,
+  },
+  controls: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    right: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    padding: 10,
+    borderRadius: RADIUS.md,
+  },
+  controlRow: {
+    flex: 1,
+    paddingHorizontal: 5,
+  },
+  label: {
+    fontSize: 10,
+    fontFamily: FONTS.bold,
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  sliderMock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tempBar: {
+    flex: 1,
+    height: 8,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    marginHorizontal: 8,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  tempInner: {
+    height: '100%',
+  },
+  miniBtn: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 4,
+    borderRadius: 4,
+  },
+  sciGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  sciItem: {
+    width: '48%',
+    marginBottom: 10,
+  },
+  sciLabel: {
+    fontSize: 10,
+    color: '#888',
+    fontFamily: FONTS.regular,
+  },
+  sciValue: {
+    fontSize: 14,
+    color: '#FFF',
+    fontFamily: FONTS.mono,
+  },
+  lawText: {
+    textAlign: 'center',
+    color: '#FFD166',
+    fontFamily: FONTS.mono,
+    fontSize: 14,
+    marginTop: 5,
+  },
+  challengeBox: {
+    marginTop: SPACING.xl,
+    marginBottom: 40,
+  }
 });

@@ -4,225 +4,64 @@ export default {
   subtitle: 'The physics of getting real things done ⚙️',
   emoji: '⚙️',
   category: 'Foundations',
-  accentKey: 'electricity',
+  accentKey: 'speed',
 
   hook: {
-    question: "If you forcefully push against a massive concrete brick wall all single day until you pass out from total sheer physical exhaustion, exactly how much 'mechanical work' have you achieved according to rigorous physics equations? 🧱",
-    reveal: "Absolutely, fundamentally ZERO! In pure physics, Work = Force × Distance. If the heavy wall fundamentally didn't move an inch, the severe distance is exactly zero, fiercely meaning absolutely no physical mathematical work was done, strictly regardless of how vigorously your biological muscles desperately burned! 😮",
+    question: "If you push a concrete wall all day but it doesn't move, how much work have you done? 🧱",
+    reveal: "Mathematically, zero! Work only happens if there's displacement. Your muscles feel tired because they are doing internal biological work, but the wall hasn't gained any mechanical energy! 😮",
     emoji: '🏋️',
   },
 
   theory: [
-    { id: '1', title: 'What is Work?', color: '#00D4A0', bgGradient: ['#002A20', '#05050A'], icon: '⚙️', svgIcon: 'lightning', content: "**Work** is vigorously done exactly when a powerful force fundamentally causes a heavy object to definitively move violently in the severe direction of that exact force. It is measured exclusively in **Joules (J)**. \n\nThe severe equation is **W = F × d**. Lifting a solid 1kg heavy book intensely 1 meter into the atmospheric air violently requires approximately 10 Joules of physical rigorous work.", highlight: "Fierce Work is only mathematically done exactly if the dense object aggressively moves in the EXACT SAME direction as the heavy force severely applied! ⬆️" },
-    { id: '2', title: 'What is Power?', color: '#FFD166', bgGradient: ['#2A2000', '#05050A'], icon: '🏎️', svgIcon: 'zap', content: "**Power** entirely dictates the exact brutal RATE at which severe physical work is intensely done. It's measured mathematically in heavy **Watts (W)**, which equals strictly Joules per second! \n\nWalking aggressively up massive heavy stairs rigidly requires the exact same identical amount of total mathematical WORK as fiercely running up them. However, brutally running up them fiercely requires vastly more absolute **POWER** purely because the heavy severe work is being accomplished significantly and terrifyingly faster!", highlight: "1 single heavy horsepower is mathematically exactly equal to roughly 746 Watts — originally vigorously calculated by precisely observing exactly how much dense coal a literal horse could actively lift aggressively in a heavy mine! 🐎" },
-    { id: '3', title: 'Simple Machines', color: '#39FF14', bgGradient: ['#0A2A0A', '#05050A'], icon: '🔧', svgIcon: 'grid', content: "Vast massive Ramps, rigid powerful levers, and heavy distinct pulleys are heavily known as severe **Simple Machines**.\n\nThey absolutely do NOT magically change the massive total amount of work entirely required — they heavily manipulate the sheer intense **DISTANCE** over which you strictly apply the severe force, fiercely allowing you to fundamentally utilize vastly less raw muscle force! \n\nYou can effortlessly push a heavy dense block aggressively up a massive long ramp over a vast profound distance, rigorously requiring intensely less sheer raw lifting force than violently hoisting it straight violently up.", highlight: "Heavy simple machines actively mathematically grant you a severe distinct 'Mechanical Advantage', fiercely trading massive extra brutal distance for profoundly less brute raw physical force thoroughly required. 📐" },
-    { id: '4', title: 'Kinetic Energy (KE)', color: '#FF4D6D', bgGradient: ['#2A0A0A', '#05050A'], icon: '🏃', svgIcon: 'pulse', content: "**Kinetic Energy** is fundamentally the raw, intense massive energy of profound sheer motion. Any heavy severe object that violently naturally moves categorically possesses heavy fierce kinetic energy!\n\nMathematical severe equation: **KE = ½mv²**. The massive severe trick here is that velocity is strictly squared! Brutally driving a massive heavy car at wildly profound 60 mph is NOT physically twice as dangerous as 30 mph—it profoundly possesses exactly FOUR TIMES the exact total immense kinetic energy completely demanding catastrophic braking force! 🚗", highlight: "If you fundamentally completely triple the intense speed of any heavy object, its massive severe kinetic energy violently becomes 9 times greater! 💥" },
-    { id: '5', title: 'Gravitational Potential Energy (GPE)', color: '#A855F7', bgGradient: ['#1A0A2A', '#05050A'], icon: '🌀', svgIcon: 'cube', content: "**Potential Energy** is entirely massive profound raw stored physical energy! \n\nThe severe equation actively is **GPE = mgh** (mass × gravity × height). When you powerfully lift a hugely dense heavy massive boulder directly upwards against aggressive pure gravity, you actively severely firmly store all that physical brutal lifting work perfectly inside the heavy boulder as intensely stored potential energy. The profound second you furiously drop it, that absolute heavy stored severe energy is fiercely aggressively violently converted directly completely into massive kinetic descent velocity!", highlight: "Heavy fierce profound hydroelectric immense mega-dams literally strictly exclusively run on purely harvesting the extremely heavy massive strictly stored profound Gravitational Potential Energy inside heavy vast lakes! 💧" },
-    { id: '6', title: 'The Work-Energy Theorem', color: '#00D4FF', bgGradient: ['#001A2A', '#05050A'], icon: '⚖️', svgIcon: 'waves', content: "The brutal exact **Work-Energy Theorem** flawlessly states that the exact total intense profound massive net work furiously done intimately on any rigid dense heavy object fundamentally precisely exactly powerfully equals its mathematically severe intense immense exact change in vast kinetic motion energy.\n\nIf you aggressively deeply do 500 profound pure Joules of raw intense pushing work on a dense stationary mass sitting totally in a heavy raw perfect pure vacuum perfectly, it definitively will absolutely gain perfectly 500 fierce intense Joules of pure kinetic velocity energy simultaneously!", highlight: "Massive sheer profound Work and immense heavy specific Kinetic Energy are entirely fundamentally deeply mathematically equivalent physics concepts entirely! 🎯" },
-    { id: '7', title: 'Efficiency', color: '#FFB347', bgGradient: ['#2A1A00', '#05050A'], icon: '🔋', svgIcon: 'planet', content: "Nothing in the vast immense universe is thoroughly completely physically flawlessly perfect! \n\n**Efficiency** is fundamentally the intense absolute ratio of rigorously purely exactly perfectly useful heavy work aggressively pushed out thoroughly directly divided explicitly strictly by specifically the massive fierce total profound total energy strictly essentially pumped deeply rigorously actively in.\n\nA heavy pure severe incredibly hot aggressive petrol combustible car engine profoundly mathematically is only fundamentally ~25% completely perfectly specifically efficient. That fiercely terrifyingly literally profoundly implies that a severe absolutely astounding 75% of the incredible vast gasoline purely burns into absolutely totally absolutely profoundly absolutely intensely completely wildly useless intense intense heavy pure pure exhaust profound profound extreme intense profound deep profound extreme waste heavy profound completely heavy friction heat!", highlight: "Modern ultra-heavy brutal fiercely deep profound pure profound deep precisely incredibly massively fully extremely high-tech profound absolutely totally profound heavily profoundly electric powerful car motors deeply operate absolutely strictly intensely heavily commonly effectively over 90% purely aggressively furiously efficiently! ⚡" },
-    { id: '8', title: 'Elastic Potential Energy', color: '#FF3131', bgGradient: ['#2A000A', '#05050A'], icon: '🏹', svgIcon: 'target', content: "Stretching intensely profound physical extremely fiercely tightly bound massive purely intensely fundamentally dense solid heavy deep fierce fierce profoundly deep profoundly tight thick heavy completely massive vast distinct elastic thick distinct distinct severe thick thick intense completely utterly profoundly profoundly intensely profoundly utterly aggressively intensely heavy springs absolutely firmly densely completely profoundly thickly stores heavily densely thoroughly fiercely deeply absolutely dense profound heavy completely pure heavy fierce fiercely absolutely deeply completely extremely heavy utterly precisely deeply entirely deeply completely profound purely thoroughly utterly incredibly utterly sheer intense fierce raw energy!\n\nThe strict equation involves fiercely the intensely stiff fierce spring strictly heavy tight deep heavy profound tight heavy tight essentially rigid constant explicitly exactly perfectly perfectly entirely thoroughly deep profoundly strictly purely explicitly closely absolutely profoundly thoroughly entirely totally exactly rigorously explicitly explicitly thoroughly exactly precisely specifically precisely precisely specifically perfectly accurately explicitly fundamentally accurately precisely accurately accurately rigorously reliably accurately essentially exactly thoroughly exactly comprehensively strictly mathematically literally directly perfectly explicitly definitely perfectly securely securely heavily definitely explicitly accurately explicitly precisely literally perfectly exactly purely specifically definitively thoroughly absolutely flawlessly undeniably thoroughly unmistakably accurately definitely accurately precisely exactly absolutely specifically accurately exactly perfectly unquestionably definitively unequivocally exclusively explicitly accurately exactly completely uniquely undeniably correctly precisely fundamentally accurately exactly perfectly essentially perfectly precisely definitely truly strictly accurately comprehensively genuinely authentically exactly genuinely truly mathematically fully accurately accurately precisely definitively appropriately genuinely reliably correctly mathematically purely completely unequivocally reliably mathematically flawlessly rigorously truly exclusively mathematically definitely literally purely conclusively completely exclusively truly strictly legitimately conclusively absolutely properly realistically exactly unquestionably correctly successfully perfectly directly accurately completely exactly precisely accurately safely efficiently precisely essentially adequately precisely strictly directly precisely directly perfectly definitely efficiently perfectly perfectly effectively properly accurately sufficiently purely completely cleanly specifically practically directly sufficiently accurately exactly precisely precisely fundamentally totally definitely explicitly safely accurately precisely smoothly accurately perfectly practically precisely appropriately explicitly exclusively accurately accurately thoroughly ideally precisely appropriately safely specifically safely efficiently definitively securely efficiently perfectly securely safely firmly cleanly safely closely exactly precisely completely appropriately exactly totally dependably completely reliably completely definitely appropriately directly securely ideally explicitly perfectly reliably sufficiently perfectly safely optimally exactly specifically precisely exactly definitively accurately completely safely appropriately definitively flawlessly securely effectively perfectly practically correctly thoroughly properly safely completely accurately definitely clearly specifically exactly directly dependably completely effectively reliably practically smoothly strictly legitimately smoothly legitimately successfully exactly precisely accurately completely effectively fully explicitly smoothly properly effectively effectively explicitly successfully properly legitimately directly clearly correctly strictly exactly safely optimally successfully successfully closely optimally ideally cleanly precisely tightly perfectly optimally clearly smoothly precisely strictly accurately exactly precisely securely reliably correctly perfectly exactly explicitly accurately cleanly precisely reliably cleanly ideally securely practically fully effectively properly purely correctly fully carefully precisely genuinely directly specifically cleanly clearly seamlessly definitely ideally thoroughly legitimately exactly strictly dependably optimally safely successfully adequately smoothly accurately strictly safely perfectly safely absolutely perfectly seamlessly cleanly efficiently precisely absolutely definitively essentially absolutely properly precisely directly exactly successfully thoroughly rigorously truly perfectly effectively directly perfectly dependably exclusively adequately optimally efficiently correctly properly exactly precisely securely correctly carefully distinctly precisely ideally accurately directly directly smoothly perfectly effectively legitimately appropriately cleanly clearly safely adequately definitely thoroughly successfully clearly dependably absolutely perfectly precisely perfectly smoothly perfectly directly absolutely correctly safely correctly safely directly legitimately directly correctly perfectly strictly reliably correctly ideally carefully definitively properly effectively cleanly explicitly accurately adequately fully correctly clearly securely distinctly accurately exactly carefully clearly closely legitimately securely definitively adequately accurately safely correctly appropriately strictly flawlessly clearly adequately directly perfectly successfully precisely actively exactly correctly legitimately completely reliably actively ideally thoroughly accurately correctly smoothly smoothly reliably exactly correctly practically optimally reliably completely perfectly perfectly effectively definitively securely efficiently explicitly completely legitimately seamlessly fully exactly carefully fully rigorously explicitly strictly adequately appropriately correctly actively exactly strongly reliably rigorously practically flawlessly accurately explicitly properly clearly directly seamlessly precisely effectively uniquely perfectly perfectly exactly flawlessly efficiently essentially ideally truly seamlessly strictly exactly flawlessly legitimately strictly thoroughly precisely exactly precisely directly fully cleanly totally carefully exactly accurately properly securely precisely successfully practically ideally directly flawlessly purely fully legitimately cleanly definitely ideally exactly effectively successfully essentially completely genuinely seamlessly safely smoothly tightly rigorously exactly definitely completely rigorously seamlessly smoothly fully closely solidly precisely cleanly properly safely purely ideally directly strictly purely completely clearly carefully totally legitimately adequately directly genuinely correctly squarely precisely strictly reliably realistically effectively absolutely cleanly successfully correctly flawlessly uniquely strictly thoroughly purely flawlessly completely thoroughly specifically clearly genuinely exactly perfectly perfectly explicitly seamlessly definitively purely correctly definitively realistically carefully thoroughly specifically logically dependably rigorously squarely distinctly solidly clearly accurately strictly thoroughly explicitly thoroughly completely totally fully strictly distinctly definitely strictly explicitly cleanly squarely totally explicitly definitely solidly logically exactly purely safely solely purely cleanly exclusively carefully solely cleanly definitely clearly definitively definitely solely explicitly completely strictly explicitly plainly totally thoroughly uniquely fully thoroughly uniquely strictly thoroughly safely exactly strictly effectively strictly definitively purely clearly carefully solidly solely exactly directly securely plainly cleanly purely explicitly tightly securely strictly uniquely solidly explicitly heavily smoothly fully solely explicitly perfectly securely distinctly definitively purely correctly solely explicitly squarely thoroughly definitively successfully completely solidly legitimately directly entirely uniquely effectively smoothly strictly strictly safely exactly unequivocally correctly purely firmly solely successfully rigorously safely purely correctly rigorously explicitly cleanly smoothly ideally legitimately securely exactly cleanly solidly exactly definitely thoroughly completely accurately carefully purely optimally fully squarely perfectly solidly correctly absolutely precisely actively definitively absolutely solely safely firmly accurately strictly cleanly accurately completely thoroughly squarely completely ideally exactly logically correctly exactly safely uniquely thoroughly exclusively plainly ideally efficiently carefully completely strictly specifically fully completely actively rigorously solidly absolutely purely exclusively exactly precisely explicitly squarely precisely precisely thoroughly safely smoothly exactly strictly explicitly genuinely accurately ideally squarely definitively clearly actively safely clearly cleanly effectively exclusively seamlessly correctly distinctly securely firmly absolutely correctly smoothly accurately firmly rigorously totally accurately securely logically absolutely logically truly cleanly carefully definitely exactly distinctly securely appropriately squarely legitimately realistically directly safely effectively mathematically firmly cleanly precisely definitively strictly cleanly effectively purely realistically solidly logically exactly cleanly strictly uniquely completely exclusively purely definitely purely logically completely distinctly unequivocally purely purely purely firmly perfectly securely efficiently uniquely mathematically explicitly clearly practically absolutely explicitly correctly definitively completely cleanly definitively completely reliably definitely clearly securely theoretically uniquely practically logically strictly perfectly uniquely purely essentially strictly cleanly smoothly legitimately efficiently squarely practically purely rigorously squarely squarely mathematically reliably definitively realistically purely cleanly efficiently rigorously successfully successfully squarely objectively precisely safely strictly safely exactly squarely distinctly clearly fully safely squarely completely accurately uniquely precisely strictly completely fully optimally cleanly exclusively efficiently successfully precisely completely securely firmly safely purely smoothly strictly perfectly optimally logically explicitly purely practically legitimately cleanly neatly simply precisely effectively completely perfectly genuinely successfully strictly plainly precisely cleanly securely ideally precisely rigorously unequivocally fully effectively fully theoretically solidly fully functionally accurately optimally completely purely fundamentally exclusively fully simply strictly firmly unequivocally exclusively directly genuinely reliably objectively strictly definitively thoroughly cleanly seamlessly completely solidly purely explicitly legitimately truly precisely technically definitively securely objectively realistically thoroughly definitively fully completely perfectly actually exclusively absolutely perfectly legitimately truly entirely safely purely smoothly legally genuinely definitively seamlessly purely truly completely seamlessly genuinely uniquely legally really practically completely strictly successfully logically perfectly successfully clearly technically actually entirely correctly thoroughly perfectly seamlessly perfectly precisely fundamentally completely smoothly directly precisely correctly exclusively securely thoroughly technically correctly perfectly genuinely seamlessly strictly precisely uniquely logically successfully simply theoretically really entirely essentially specifically optimally correctly appropriately effectively definitively accurately accurately purely securely totally solely accurately perfectly perfectly truly highly accurately exactly completely accurately fully literally purely successfully quite practically correctly reliably literally reliably reliably firmly safely securely objectively really tightly carefully perfectly completely completely safely effectively closely directly genuinely solidly completely truly correctly essentially completely perfectly properly specifically well truly very exactly right completely completely exactly fully perfectly definitely correctly purely truly directly purely well highly greatly closely fully specifically purely successfully perfectly deeply actually strongly exclusively significantly significantly uniquely truly absolutely fully particularly totally purely fully substantially really well explicitly completely entirely thoroughly perfectly largely wholly genuinely absolutely mainly very closely entirely altogether perfectly thoroughly totally fully highly substantially wholly highly completely really fairly perfectly explicitly purely largely closely largely fully well exclusively perfectly particularly significantly truly clearly mainly accurately absolutely correctly uniquely totally correctly accurately precisely accurately appropriately totally wholly correctly nicely very perfectly optimally effectively successfully accurately perfectly clearly quite extremely fully optimally properly specifically greatly essentially exactly very exactly wholly perfectly accurately specifically completely precisely precisely correctly correctly exactly perfectly.", highlight: "; The law of reflection simply" }
+    { id: '1', title: 'What is Work?', color: '#00D4A0', bgGradient: ['#002A20', '#05050A'], icon: '⚙️', svgIcon: 'lightning', content: "**Work (W)** is defined as a force acting upon an object to cause a displacement. It is measured in **Joules (J)**.\n\nEquation: **Work = Force × Distance × cos(θ)**. If the force is perpendicular to the motion (like carrying a bucket while walking), no work is done on the bucket!", highlight: "No displacement means no work! 🧱" },
+    { id: '2', title: 'Mechanical Power', color: '#FFD166', bgGradient: ['#2A2000', '#05050A'], icon: '🏎️', svgIcon: 'zap', content: "**Power (P)** is the rate at which work is performed or energy is transferred. Its unit is the **Watt (W)**.\n\nRunning up stairs requires the same total work as walking, but it takes much more power because the time interval is smaller. Power = Work / Time.", highlight: "Power measures how *fast* you do work! ⏱️" },
+    { id: '3', title: 'Mechanical Advantage', color: '#39FF14', bgGradient: ['#0A2A0A', '#05050A'], icon: '🔧', svgIcon: 'grid', content: "Simple machines like levers and ramps provide **Mechanical Advantage**. They allow you to use less force to do the same amount of work by increasing the distance over which that force is applied.", highlight: "Machines trade distance for force! 📐" },
+    { id: '4', title: 'Kinetic Energy (KE)', color: '#FF4D6D', bgGradient: ['#2A0A0A', '#05050A'], icon: '🏃', svgIcon: 'pulse', content: "**Kinetic Energy** is the energy of motion. Formula: **KE = ½mv²**.\n\nBecause velocity is squared, doubling your speed doesn't double your energy—it quadruples it! This is why high-speed collisions are so destructive.", highlight: "Speed has an exponential impact on energy! 🚗" },
+    { id: '5', title: 'Gravitational Potential Energy', color: '#A855F7', bgGradient: ['#1A0A2A', '#05050A'], icon: '⛰️', svgIcon: 'cube', content: "**Potential Energy (GPE)** is stored energy based on an object's position in a gravitational field. Formula: **GPE = mgh**.\n\nWhen a roller coaster sits at the top of a hill, it has maximum potential energy and zero kinetic energy.", highlight: "Height equals stored energy! ⛰️" },
+    { id: '6', title: 'Conservation of Energy', color: '#6C5CE7', bgGradient: ['#1A0A2A', '#05050A'], icon: '♾️', svgIcon: 'link', content: "The **Law of Conservation of Energy** states that energy cannot be created or destroyed, only transformed. \n\nA falling ball converts its Potential Energy into Kinetic Energy. When it hits the ground, that energy turns into sound and heat.", highlight: "Energy is the ultimate universal currency! 🌌" },
+    { id: '7', title: 'Efficiency', color: '#FFB347', bgGradient: ['#2A1A00', '#05050A'], icon: '🔋', svgIcon: 'planet', content: "**Efficiency** is the ratio of useful work output to total energy input. No machine is 100% efficient because some energy is always 'lost' as heat due to friction.", highlight: "Friction is the enemy of efficiency! 🌡️" },
+    { id: '8', title: 'Elastic Potential', color: '#FF3131', bgGradient: ['#2A000A', '#05050A'], icon: '🏹', svgIcon: 'target', content: "Energy stored in objects that can be compressed or stretched is **Elastic Potential Energy**. Springs and rubber bands store energy when deformed, ready to snap back into their original shape.", highlight: "This is the 'spring' in your step! 🧬" },
+    { id: '9', title: 'Conservative Forces', color: '#00D4FF', bgGradient: ['#001A2A', '#05050A'], icon: '⚖️', svgIcon: 'waves', content: "Gravity is a **conservative force**. The work done moving an object between two points depends only on the points themselves, not the path taken. Lifting a box straight up or sliding it up a ramp to the same height takes the same energy!", highlight: "The path doesn't matter, only the start and end! 🎯" },
+    { id: '10', title: 'Horsepower vs Watts', color: '#55EFC4', bgGradient: ['#0A2A1A', '#05050A'], icon: '🐎', svgIcon: 'zap', content: "One **Horsepower (hp)** is about 746 Watts. James Watt invented the term to prove that his steam engines could do even more work than the horses people were used to using!", highlight: "Horsepower is a measure of 'work rate'! 🚂" }
   ],
-  "quiz": [
-    {
-      "question": "If you push a concrete wall all day but it doesn't move, how much mechanical work have you done?",
-      "options": [
-        "A lot",
-        "A little",
-        "Zero",
-        "It depends on your mass"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "What is the standard unit of measurement for Power?",
-      "options": [
-        "Joules",
-        "Watts",
-        "Newtons",
-        "Volts"
-      ],
-      "answer": 1
-    },
-    {
-      "question": "What does a simple machine like a ramp do to the work required?",
-      "options": [
-        "It increases the work required",
-        "It decreases the work required",
-        "It doesn't change the amount of work required",
-        "It eliminates the need for work"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "What happens to the kinetic energy of an object if you triple its speed?",
-      "options": [
-        "It triples",
-        "It becomes 9 times greater",
-        "It remains the same",
-        "It becomes 6 times greater"
-      ],
-      "answer": 1
-    },
-    {
-      "question": "What is the formula for Gravitational Potential Energy (GPE)?",
-      "options": [
-        "GPE = mgh",
-        "GPE = 1/2mv^2",
-        "GPE = Fd",
-        "GPE = ma"
-      ],
-      "answer": 0
-    },
-    {
-      "question": "What does the Work-Energy Theorem state?",
-      "options": [
-        "Work cannot be created or destroyed",
-        "Work equals force times distance",
-        "Net work done on an object equals its change in kinetic energy",
-        "Work is the rate at which power is done"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "If a car engine is 25% efficient, what happens to the remaining 75% of the energy?",
-      "options": [
-        "It is converted to useful work",
-        "It is lost as waste heat",
-        "It is stored as potential energy",
-        "It is converted to kinetic energy"
-      ],
-      "answer": 1
-    },
-    {
-      "question": "What type of energy is stored in a stretched spring?",
-      "options": [
-        "Kinetic Energy",
-        "Thermal Energy",
-        "Gravitational Potential Energy",
-        "Elastic Potential Energy"
-      ],
-      "answer": 3
-    },
-    {
-      "question": "Which of these devices operates based on harvesting Gravitational Potential Energy?",
-      "options": [
-        "Solar Panel",
-        "Hydroelectric Dam",
-        "Wind Turbine",
-        "Nuclear Reactor"
-      ],
-      "answer": 1
-    },
-    {
-      "question": "1 horsepower is equivalent to approximately how many Watts?",
-      "options": [
-        "100 Watts",
-        "500 Watts",
-        "746 Watts",
-        "1000 Watts"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "If an object moves in a direction opposite to the applied force, what is the work done?",
-      "options": [
-        "Positive",
-        "Zero",
-        "Negative",
-        "Infinite"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "Power is defined as?",
-      "options": [
-        "Force over a distance",
-        "Work done per unit time",
-        "Energy multiplied by mass",
-        "Force times acceleration"
-      ],
-      "answer": 1
-    },
-    {
-      "question": "Which of the following describes Kinetic Energy?",
-      "options": [
-        "Energy of a system at rest",
-        "Energy of motion",
-        "Energy of a compressed spring",
-        "Energy of a chemical bond"
-      ],
-      "answer": 1
-    },
-    {
-      "question": "What is the SI unit for Work?",
-      "options": [
-        "Newton",
-        "Watt",
-        "Joule",
-        "Pascal"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "The efficiency of a machine can never be exactly 100% due to?",
-      "options": [
-        "Gravity",
-        "Friction",
-        "Mass",
-        "Vacuum constraints"
-      ],
-      "answer": 1
-    },
-    {
-      "question": "A lever allows you to?",
-      "options": [
-        "Increase the total work done",
-        "Decrease the total work done",
-        "Apply less force over a greater distance",
-        "Apply more force over a smaller distance"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "Gravitational Potential Energy depends on an object's mass, gravity, and what else?",
-      "options": [
-        "Its velocity",
-        "Its volume",
-        "Its height",
-        "Its temperature"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "Driving a car at 60 mph compared to 30 mph means the car has how much more kinetic energy?",
-      "options": [
-        "Two times more",
-        "Three times more",
-        "Four times more",
-        "Eight times more"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "If a force of 10 Newtons is applied to move an object 5 meters, what is the work done?",
-      "options": [
-        "2 Joules",
-        "15 Joules",
-        "50 Joules",
-        "100 Joules"
-      ],
-      "answer": 2
-    },
-    {
-      "question": "What happens to the potential energy of a boulder when it is dropped from a cliff?",
-      "options": [
-        "It is converted into thermal energy immediately",
-        "It converts into kinetic energy as it falls",
-        "It remains constant until it hits the ground",
-        "It destroys its mass"
-      ],
-      "answer": 1
-    }
+
+  lab: {
+    title: "Incline Plane Master 🏋️",
+    description: "Master the mechanics of work and power using a variable-angle ramp. Calculate mechanical advantage, measure friction, and optimize your power output to move heavy loads.",
+    hint: "Increase the ramp angle to see how the 'Normal Force' and 'Gravity Component' arrows change.",
+    scientistModeHint: "Scientist Mode displays the Free Body Diagram and real-time Joule/Watt calculations.",
+  },
+
+  doYouKnowWhy: [
+    { id: 'dyk1', question: "Why is it easier to walk up a ramp than stairs? 📐", answer: "A ramp is a simple machine! It increases the distance you travel to reach a certain height, which significantly reduces the force your legs need to exert to lift your body weight.", emoji: '🚶' },
+    { id: 'dyk2', question: "Why do brakes get hot? 🔥", answer: "Friction! When you stop a car, the kinetic energy isn't destroyed—it's converted into thermal energy in the brake pads and rotors.", emoji: '♨️' },
+    { id: 'dyk3', question: "Why do heavy things fall at the same rate? ⚖️", answer: "In a vacuum, yes! Gravity pulls harder on heavier objects, but they also have more inertia (resistance to motion). These two effects perfectly cancel out, causing everything to accelerate at 9.8 m/s².", emoji: '🌍' },
+    { id: 'dyk4', question: "What is 'Latent Heat'? 🌡️", answer: "Energy used to change the state of matter (like melting ice) without changing its temperature. The energy goes into breaking atomic bonds instead of moving atoms faster.", emoji: '🧊' },
+    { id: 'dyk5', question: "Why do flywheels store energy? 🎡", answer: "Flywheels are heavy spinning wheels. They store energy as 'Rotational Kinetic Energy'. Once they are spinning, their inertia keeps them moving, allowing the energy to be retrieved later.", emoji: '⚙️' }
   ],
+
+  quiz: [
+    { id: 'q1', question: "What is the unit of Work?", options: ['Watt', 'Newton', 'Joule', 'Pascal'], answer: 2, explanation: "Work and Energy are both measured in Joules (J)." },
+    { id: 'q2', question: "Power is defined as Work divided by:", options: ['Distance', 'Mass', 'Time', 'Acceleration'], answer: 2, explanation: "Power is the rate of doing work (P = W/t)." },
+    { id: 'q3', question: "If motion is zero, how much work is done?", options: ['Infinite', 'Constant', 'Zero', 'Depends on Force'], answer: 2, explanation: "Work = Force × Displacement. No displacement = No work." },
+    { id: 'q4', question: "Potential energy depends on height and:", options: ['Speed', 'Mass', 'Color', 'Time'], answer: 1, explanation: "PE = mgh. Higher mass or height means more stored energy." },
+    { id: 'q5', question: "Kinetic energy depends on mass and:", options: ['Height', 'Volume', 'Velocity', 'Charge'], answer: 2, explanation: "KE = ½mv². Moving faster means more energy." },
+    { id: 'q6', question: "What happens to KE if you double the velocity?", options: ['Doubles', 'Triples', 'Quadruples', 'Stays same'], answer: 2, explanation: "Since v is squared, (2v)² = 4v². Energy quadruples." },
+    { id: 'q7', question: "A ramp is which type of simple machine?", options: ['Lever', 'Pulley', 'Incline Plane', 'Screw'], answer: 2, explanation: "A ramp is a classic incline plane." },
+    { id: 'q8', question: "Energy transformation in a falling apple:", options: ['KE to PE', 'PE to KE', 'Heat to Light', 'Mass to Sound'], answer: 1, explanation: "Potential energy at the top turns into Kinetic energy as it falls." },
+    { id: 'q9', question: "One Horsepower is approximately how many Watts?", options: ['100 W', '500 W', '746 W', '1000 W'], answer: 2, explanation: "1 hp = 746 Watts." },
+    { id: 'q10', question: "Why is 100% efficiency impossible?", options: ['Lack of gravity', 'Air pressure', 'Friction/Heat loss', 'Quantum effects'], answer: 2, explanation: "Friction always converts some useful energy into waste heat." },
+    { id: 'q11', question: "What acts as a conservative force?", options: ['Friction', 'Air Resistance', 'Gravity', 'Tension'], answer: 2, explanation: "Gravity's work only depends on displacement, not path." },
+    { id: 'q12', question: "Calculate Work: 10N force moves a box 5m.", options: ['2 J', '5 J', '50 J', '100 J'], answer: 2, explanation: "W = 10N × 5m = 50 Joules." },
+    { id: 'q13', question: "Machine A does 100J in 10s. Machine B does 100J in 5s. Which is more powerful?", options: ['Machine A', 'Machine B', 'Equal', 'Neither'], answer: 1, explanation: "Machine B does the same work in less time." },
+    { id: 'q14', question: "Normal Force acts in which direction?", options: ['Downwards', 'Towards motion', 'Perpendicular to surface', 'Opposite to friction'], answer: 2, explanation: "The surface pushes back perpendicularly." },
+    { id: 'q15', question: "What energy is stored in a compressed spring?", options: ['Kinetic', 'Chemical', 'Elastic Potential', 'Thermal'], answer: 2, explanation: "Elastic potential energy is stored in deformation." },
+    { id: 'q16', question: "If you carry a box horizontally at constant speed, work done by YOU is:", options: ['High', 'Negative', 'Zero', 'Infinite'], answer: 2, explanation: "Your force is upward, but motion is horizontal (90°). Cos(90) = 0." },
+    { id: 'q17', question: "Total mechanical energy is the sum of:", options: ['Power and Work', 'KE and PE', 'Mass and Velocity', 'Heat and Light'], answer: 1, explanation: "Total ME = KE + PE." },
+    { id: 'q18', question: "A watt is equal to one joule per:", options: ['Meter', 'Newton', 'Second', 'Kilogram'], answer: 2, explanation: "1 W = 1 J/s." },
+    { id: 'q19', question: "Mechanical Advantage helps us by:", options: ['Creating energy', 'Reducing total work', 'Reducing required force', 'Stopping friction'], answer: 2, explanation: "It makes work 'easier' by using less force over more distance." },
+    { id: 'q20', question: "What remains constant in the Conservation of Energy?", options: ['Kinetic Energy', 'Potential Energy', 'Total Energy', 'Heat'], answer: 2, explanation: "The total energy stays the same, it just changes forms." }
+  ],
+
   relatedTopics: ['forces_motion', 'energy_types'],
 };

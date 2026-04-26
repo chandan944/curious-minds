@@ -1,342 +1,428 @@
-/**
- * Work & Power Lab — Kinematic Incline Simulator
- * Scientist Mode: W=Fd, Friction Vectors
- * NO react-native-reanimated — Old Architecture safe
- */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, Dimensions, TouchableOpacity,
-  PanResponder, Animated, Easing, Modal, ScrollView
-} from 'react-native';
-import Svg, {
-  Path, Circle, Rect, Line, Defs, RadialGradient as SvgRadial, Stop, G, Text as SvgText, Polygon
-} from 'react-native-svg';
-import * as Haptics from 'expo-haptics';
-import { soundTap } from '../../utils/sounds';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import Svg, { Path, Rect, Circle, Line, G, Text as SvgText, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { useTheme } from '../../context/ThemeContext';
+import { FONTS, SPACING, RADIUS } from '../../constants/theme';
 import Icon from '../../components/ui/Icons';
+import * as Haptics from 'expo-haptics';
+import { soundTap, soundSuccess, soundTrophy } from '../../utils/sounds';
 
-const { width, height } = Dimensions.get('window');
-const H_VIEWPORT = height * 0.45;
-const H_PANEL = height * 0.35;
-const H_LOG = height * 0.10;
+// Standard Components
+import StatusCard from '../../components/lab/StatusCard';
+import SimBox from '../../components/lab/SimBox';
+import ChallengeCard from '../../components/lab/ChallengeCard';
+import ScientistCard from '../../components/lab/ScientistCard';
 
-const PALETTE = {
-  bg: '#0A1515',
-  panel: '#122020',
-  cyan: '#00D4FF',
-  green: '#39FF14',
-  amber: '#FFD166',
-  red: '#FF4D6D',
-  text: '#E8E0D0',
-  steel: '#1A3535'
-};
+const { width } = Dimensions.get('window');
+const CANVAS_H = 300;
+const CANVAS_W = width - 40;
+const RAMP_START_X = 50;
+const RAMP_END_X = CANVAS_W - 50;
+const RAMP_BASE_Y = CANVAS_H - 60;
 
-export default function WorkLab({ scientistMode = false, accentColor = '#39FF14', onLabBreaker }) {
-  const [discoveryMode, setDiscoveryMode] = useState(false);
-  const discoveryAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+const CHALLENGES = [
+  { id: 1, title: "Minimalist", instruction: "Climb the 30° ramp using exactly 150N of force or less.", angle: 30, mass: 40, mu: 0.1, completed: false },
+  { id: 2, title: "Power Burst", instruction: "Generate over 500 Watts of power during a high-speed climb.", angle: 15, mass: 50, mu: 0.2, completed: false },
+  { id: 3, title: "Static Hold", instruction: "Find the friction coefficient where a 45kg block stops sliding down a 20° ramp.", angle: 20, mass: 45, mu: 0.36, completed: false },
+  { id: 4, title: "Gravity Balance", instruction: "Match the downward gravity component exactly to freeze the block.", angle: 25, mass: 20, mu: 0, completed: false },
+];
 
-  // Local logs state
-  const [logs, setLogs] = useState([]);
-  const [logsOpen, setLogsOpen] = useState(false);
-
-  // Controls State
-  const [pushForce, setPushForce] = useState(0); // 0 to 100 Newtons
-  const [frictionOn, setFrictionOn] = useState(true);
-  const [mass, setMass] = useState(10); // kg
+export default function LabSimulation({ scientistMode }) {
+  const { theme, isDark } = useTheme();
+  const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
+  const color = _themeObj.accent?.primary || '#A855F7';
+  const txt1 = _themeObj.text?.primary || '#FFFFFF';
+  const txt2 = _themeObj.text?.secondary || '#AAAAAA';
+  const txtM = _themeObj.text?.muted || '#888888';
+  const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
+  const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
+  const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
   
-  const discovered = useRef(new Set());
-
-  // Kinematic state
-  const [blockPos, setBlockPos] = useState(0); // 0 to 1 distance up ramp
+  // Sim State
+  const [active, setActive] = useState(false);
+  const [angle, setAngle] = useState(30);
+  const [mass, setMass] = useState(20);
+  const [mu, setMu] = useState(0.2); // friction
+  const [appliedForce, setAppliedForce] = useState(0);
+  
+  // Physics State
+  const [pos, setPos] = useState(0); // distance along ramp (0 to max)
+  const [vel, setVel] = useState(0);
   const [workDone, setWorkDone] = useState(0);
+  const [power, setPower] = useState(0);
+  
+  // UI State
+  const [activeChallenge, setActiveChallenge] = useState(0);
+  const [challengeStatus, setChallengeStatus] = useState(CHALLENGES);
+  
+  const timerRef = useRef(null);
+  const lastTimeRef = useRef(Date.now());
 
-  // Logic Tick
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const loop = setInterval(() => setTick(t => t + 1), 50);
-    return () => clearInterval(loop);
-  }, []);
+  // Calculations
+  const g = 9.8;
+  const rad = (angle * Math.PI) / 180;
+  const rampLength = (RAMP_END_X - RAMP_START_X) / Math.cos(rad);
+  const height = (RAMP_END_X - RAMP_START_X) * Math.tan(rad);
+  
+  const fg_parallel = mass * g * Math.sin(rad);
+  const fn = mass * g * Math.cos(rad);
+  const ff = vel === 0 && appliedForce < fg_parallel ? Math.min(mu * fn, Math.abs(appliedForce - fg_parallel)) : mu * fn;
+  const f_net = appliedForce - fg_parallel - (vel > 0 ? ff : (vel < 0 ? -ff : 0));
 
-  const addLog = useCallback((id, entry) => {
-    if (!discovered.current.has(id)) {
-      discovered.current.add(id);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setLogs(prev => [...prev, entry]);
-    }
-  }, []);
+  const step = useCallback(() => {
+    const now = Date.now();
+    const dt = (now - lastTimeRef.current) / 1000;
+    lastTimeRef.current = now;
 
-  // Physics Engine
-  useEffect(() => {
-    // Ramp properties
-    const rampLength = 10; // meters
-    const rampAngle = 30 * (Math.PI / 180);
-    const g = 9.81;
-    
-    // Forces parallel to ramp (up is positive)
-    const gravityForce = - (mass * g * Math.sin(rampAngle));
-    let frictionForce = 0;
-    
-    if (frictionOn) {
-      // kinetic friction coefficient 0.3
-      const normalForce = mass * g * Math.cos(rampAngle);
-      frictionForce = -0.3 * normalForce * Math.sign(pushForce + gravityForce);
-      // Static friction edge case: if push isn't strong enough
-      if (Math.abs(pushForce) < Math.abs(gravityForce) && pushForce > 0) {
-        frictionForce = -pushForce; // static matching
-      }
-    }
+    if (active) {
+      setPos(p => {
+        const accel = f_net / mass;
+        const newVel = vel + accel * dt;
+        setVel(newVel);
+        
+        const newPos = p + newVel * dt * 20; // Scale for visual
+        
+        // Metrics
+        const instantWork = appliedForce * (newVel * dt);
+        setWorkDone(w => w + Math.max(0, instantWork));
+        setPower(instantWork / dt);
 
-    const netForce = pushForce + gravityForce + frictionForce;
-    const acceleration = netForce / mass;
-
-    // We do simple kinematic step
-    const dt = 0.05; // 50ms step
-    let newPos = blockPos;
-
-    if (netForce > 5) {
-      newPos += 0.02 * (netForce/100); 
-    } else if (netForce < -5) {
-      newPos -= 0.04; // slides down fast
-    }
-    
-    if (newPos > 1) { 
-        newPos = 1; 
-        if (!discovered.current.has('d1')) {
-           addLog('d1', {
-             title: "Summit Secured (Work Done)",
-             entry: `You pushed a ${mass}kg block to the top! Your total mechanical Work done was precisely ${Math.round(pushForce * rampLength)} Joules! W=Fd.`,
-             color: PALETTE.green
-           });
+        // Bounds
+        if (newPos <= 0) {
+           setVel(0);
+           return 0;
         }
-    }
-    if (newPos < 0) newPos = 0;
-    
-    setBlockPos(newPos);
-    
-    // Calculate live Work (F * d)
-    if (newPos > 0 && newPos <= 1 && pushForce > 0) {
-       setWorkDone((pushForce * (newPos * rampLength)));
-    }
-
-    // Discoveries
-    if (!frictionOn && newPos === 0 && pushForce === 0) {
-      addLog('d2', {
-        title: "Frictionless Vacuum",
-        entry: "With zero friction, the only force resisting you is Gravity. This mathematically simulates deep space conditions!",
-        color: PALETTE.cyan
+        if (newPos >= rampLength) {
+           setVel(0);
+           setActive(false);
+           checkChallengeCompletion();
+           return rampLength;
+        }
+        return newPos;
       });
     }
+  }, [active, f_net, mass, rampLength, vel, appliedForce]);
 
-    if (mass === 100 && pushForce === 100 && frictionOn) {
-       addLog('d3', {
-        title: "Static Friction Deadlock",
-        entry: "The heavy block refuses to move! The 100N of push force you are applying is being perfectly violently counter-acted by static friction locking it down.",
-        color: PALETTE.red
-      });
+  useEffect(() => {
+    if (active) {
+      timerRef.current = setInterval(step, 16);
+    } else {
+      clearInterval(timerRef.current);
     }
+    return () => clearInterval(timerRef.current);
+  }, [active, step]);
 
-    // DANGER: Massive Kinetic Impact returning to 0
-    if (newPos === 0 && mass === 100 && acceleration < -10) {
-      if (shakeAnim._value === 0) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        onLabBreaker && onLabBreaker();
-        Animated.sequence([
-          Animated.timing(shakeAnim, { toValue: 15, duration: 40, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: -15, duration: 40, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: 15, duration: 40, useNativeDriver: true }),
-          Animated.timing(shakeAnim, { toValue: 0, duration: 40, useNativeDriver: true })
-        ]).start();
-      }
+  const toggleSim = () => {
+    soundTap();
+    if (!active) {
+      lastTimeRef.current = Date.now();
+      setActive(true);
+    } else {
+      setActive(false);
     }
-
-  }, [pushForce, mass, frictionOn, tick]);
-
-
-  const toggleDiscovery = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const next = !discoveryMode;
-    setDiscoveryMode(next);
-    Animated.timing(discoveryAnim, {
-      toValue: next ? 1 : 0, duration: 400, easing: Easing.out(Easing.ease), useNativeDriver: false
-    }).start();
   };
 
-  // Rendering Mechanics
-  const cx = width / 2;
-  const cy = H_VIEWPORT / 1.5;
-  
-  // Ramp coords
-  const rampW = 200;
-  const rampH = 115; // roughly 30 degree angle
-  const rStartX = cx - 100;
-  const rStartY = cy + 50;
-  
-  const blockX = rStartX + blockPos * rampW;
-  const blockY = rStartY - blockPos * rampH;
+  const resetSim = () => {
+    soundTap();
+    setActive(false);
+    setPos(0);
+    setVel(0);
+    setWorkDone(0);
+    setPower(0);
+  };
+
+  const checkChallengeCompletion = () => {
+    const chal = CHALLENGES[activeChallenge];
+    let success = false;
+    
+    if (activeChallenge === 0 && appliedForce <= 150 && pos >= rampLength - 5) success = true;
+    if (activeChallenge === 1 && power > 500) success = true;
+    if (activeChallenge === 2 && Math.abs(f_net) < 1) success = true;
+    
+    if (success) {
+      const newStatus = [...challengeStatus];
+      if (!newStatus[activeChallenge].completed) {
+        newStatus[activeChallenge].completed = true;
+        setChallengeStatus(newStatus);
+        soundTrophy();
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    }
+  };
+
+  // SVG Coordinates for Block
+  const blockX = RAMP_START_X + pos * Math.cos(rad);
+  const blockY = RAMP_BASE_Y - pos * Math.sin(rad);
 
   return (
-    <View style={styles.root}>
-      {/* Viewport */}
-      <Animated.View style={[styles.viewport, { height: H_VIEWPORT, transform: [{ translateX: shakeAnim }] }]}>
-        <Svg width="100%" height="100%">
-          <Defs>
-            <SvgRadial id="bg" cx="50%" cy="50%" r="50%">
-              <Stop offset="0%" stopColor="#112222" />
-              <Stop offset="100%" stopColor={PALETTE.bg} />
-            </SvgRadial>
-          </Defs>
-          <Rect width="100%" height="100%" fill="url(#bg)" />
-          
-          {/* Ground */}
-          <Line x1={0} y1={rStartY} x2={width} y2={rStartY} stroke={PALETTE.steel} strokeWidth={4} />
+    <View style={styles.container}>
+      {/* 1. Status Bar */}
+      <View style={styles.header}>
+        <StatusCard 
+          label="NET FORCE" 
+          value={f_net.toFixed(1)} 
+          unit="N" 
+          icon="activity" 
+          color="#FF6B6B" 
+        />
+        <StatusCard 
+          label="WORK" 
+          value={workDone.toFixed(0)} 
+          unit="J" 
+          icon="zap" 
+          color="#FFD166" 
+        />
+        <StatusCard 
+          label="POWER" 
+          value={Math.abs(power).toFixed(0)} 
+          unit="W" 
+          icon="activity" 
+          color="#4ECDC4" 
+        />
+      </View>
 
+      {/* 2. Main Simulation Box */}
+      <SimBox>
+        <Svg width={CANVAS_W} height={CANVAS_H}>
           {/* Ramp */}
-          <Polygon points={`${rStartX},${rStartY} ${rStartX+rampW},${rStartY} ${rStartX+rampW},${rStartY-rampH}`} fill="#1A3535" stroke={PALETTE.cyan} strokeWidth={2} opacity={0.6}/>
-
-          {/* The Block */}
-          <G x={blockX} y={blockY - 35} rotation={-30} origin="15, 35">
-            <Rect x={0} y={5} width={30} height={30} fill={mass > 50 ? PALETTE.amber : PALETTE.text} stroke="#000" strokeWidth={2} />
-            
-            {/* Action Force Vector (Push) */}
-            {pushForce > 0 && <Line x1={-30} y1={20} x2={0} y2={20} stroke={PALETTE.green} strokeWidth={pushForce/20 + 1} markerEnd="url(#arrow)" />}
-            
-            {/* Discovery Physics Vectors */}
-            {discoveryMode && (
-              <G>
-                {/* Gravity Vector Down */}
-                <Line x1={15} y1={20} x2={15} y2={50} stroke={PALETTE.cyan} strokeWidth={2} strokeDasharray="4 4" />
-                <SvgText x={20} y={60} fill={PALETTE.cyan} fontSize={8}>mg</SvgText>
-                {/* Friction opposite to direction */}
-                {frictionOn && <Line x1={15} y1={35} x2={15 - 30} y2={35} stroke={PALETTE.red} strokeWidth={2} />}
-                {frictionOn && <SvgText x={-20} y={45} fill={PALETTE.red} fontSize={8}>Fk</SvgText>}
-              </G>
-            )}
+          <Path 
+            d={`M ${RAMP_START_X} ${RAMP_BASE_Y} L ${RAMP_END_X} ${RAMP_BASE_Y} L ${RAMP_END_X} ${RAMP_BASE_Y - height} Z`}
+            fill={isDark ? '#2A2A3E' : '#ECEFF1'}
+            stroke={color}
+            strokeWidth="2"
+          />
+          
+          {/* Block */}
+          <G transform={`translate(${blockX}, ${blockY}) rotate(${-angle})`}>
+             <Rect x="-15" y="-15" width="30" height="15" fill="#FF4D6D" rx={2} />
+             {scientistMode && (
+               <G>
+                 {/* Vector Arrows */}
+                 <Line x1="0" y1="0" x2="0" y2="30" stroke="#FF6B6B" strokeWidth="2" /> {/* Gravity */}
+                 <Line x1="0" y1="0" x2="0" y2="-25" stroke="#4ECDC4" strokeWidth="2" /> {/* Normal */}
+                 <Line x1="0" y1="0" x2={-30} y2="0" stroke="#FFD166" strokeWidth="2" /> {/* Friction */}
+                 <Line x1="0" y1="0" x2={appliedForce/5} y2="0" stroke="#39FF14" strokeWidth="2" /> {/* Applied */}
+               </G>
+             )}
           </G>
-
-          {scientistMode && (
-            <G>
-              <SvgText x={15} y={30} fill={PALETTE.green} fontSize={12} fontFamily="monospace">
-                Push: {Math.round(pushForce)} N
-              </SvgText>
-              <SvgText x={15} y={50} fill={PALETTE.amber} fontSize={12} fontFamily="monospace">
-                Mass: {mass} kg
-              </SvgText>
-              <SvgText x={15} y={70} fill={PALETTE.cyan} fontSize={14} fontFamily="monospace">
-                WORK: {Math.round(workDone)} J
-              </SvgText>
-            </G>
-          )}
-
-          {/* Steam from friction if fast moving */}
-          {frictionOn && pushForce > 50 && blockPos > 0.1 && blockPos < 0.9 && (
-            <Circle cx={blockX} cy={blockY} r={pushForce/10 + (tick%5)} fill={PALETTE.red} opacity={0.2} />
-          )}
-
         </Svg>
-        
-        <TouchableOpacity style={styles.discoveryBtn} onPress={toggleDiscovery} activeOpacity={0.8}>
-          <Icon name="search" size={24} color={discoveryMode ? PALETTE.cyan : PALETTE.text} />
-        </TouchableOpacity>
-      </Animated.View>
 
-      {/* Control Panel */}
-      <View style={[styles.panel, { height: H_PANEL }]}>
-        <View style={styles.panelInner}>
-
-          <View style={styles.sliderWrap}>
-            <Text style={styles.sliderLabel}>PUSH FORCE: {Math.round(pushForce)} Newtons</Text>
-            <View style={[styles.sliderBg, { borderColor: PALETTE.green}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-              const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-              setPushForce((x / (width-40)) * 100);
-            }}>
-              <View style={[styles.sliderFill, { width: `${pushForce}%`, backgroundColor: PALETTE.green }]} />
-              <View style={[styles.sliderThumb, { left: `${pushForce}%` }]} />
-            </View>
+        <View style={styles.controls}>
+          <View style={styles.controlRow}>
+            <Text style={[styles.controlLabel, { color: txt1 }]}>Angle: {angle}°</Text>
+            <TouchableOpacity onPress={() => setAngle(Math.max(0, angle - 5))} style={styles.miniBtn}>
+              <Icon name="minus" size={14} color="#FFF" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setAngle(Math.min(60, angle + 5))} style={styles.miniBtn}>
+              <Icon name="plus" size={14} color="#FFF" />
+            </TouchableOpacity>
           </View>
-
-          <View style={styles.sliderWrap}>
-            <Text style={styles.sliderLabel}>BLOCK MASS: {Math.round(mass)} kg</Text>
-            <View style={[styles.sliderBg, { borderColor: PALETTE.amber}]} onStartShouldSetResponder={() => true} onResponderMove={e => {
-              const x = Math.max(0, Math.min(width-40, e.nativeEvent.locationX));
-              setMass((x / (width-40)) * 100);
-            }}>
-              <View style={[styles.sliderFill, { width: `${mass}%`, backgroundColor: PALETTE.amber }]} />
-              <View style={[styles.sliderThumb, { left: `${mass}%` }]} />
-            </View>
-          </View>
-
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, marginTop: 15 }}>
-            <Text style={{ color: PALETTE.text, fontFamily: 'Outfit_500Medium' }}>KINETIC FRICTION</Text>
-            <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => { soundTap(); setFrictionOn(!frictionOn); }}>
-               <View style={[styles.switchTrack, frictionOn && { backgroundColor: PALETTE.red }]}>
-                 <View style={[styles.switchThumb, frictionOn ? { alignSelf: 'flex-end'} : { alignSelf: 'flex-start'}]} />
-               </View>
+          
+          <View style={styles.controlRow}>
+            <Text style={[styles.controlLabel, { color: txt1 }]}>Push: {appliedForce}N</Text>
+            <TouchableOpacity onPress={() => setAppliedForce(f => Math.max(-200, f - 20))} style={styles.miniBtn}>
+              <Icon name="minus" size={14} color="#FFF" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setAppliedForce(f => Math.min(500, f + 20))} style={styles.miniBtn}>
+              <Icon name="plus" size={14} color="#FFF" />
             </TouchableOpacity>
           </View>
 
+          <View style={styles.mainBtns}>
+            <TouchableOpacity style={styles.resetBtn} onPress={resetSim}>
+              <Icon name="refresh" size={18} color={txt1} />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.playBtn, { backgroundColor: active ? '#FF4D6D' : '#39FF14' }]} 
+              onPress={toggleSim}
+            >
+              <Icon name={active ? "pause" : "play"} size={20} color="#000" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SimBox>
+
+      {/* 3. Scientist Analytics */}
+      {scientistMode && (
+        <ScientistCard title="Free Body Analysis">
+          <View style={styles.sciGrid}>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Normal Force (Fn)</Text>
+              <Text style={styles.sciValue}>{fn.toFixed(1)} N</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Friction (Ff)</Text>
+              <Text style={styles.sciValue}>{ff.toFixed(1)} N</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Gravity (Fg ||)</Text>
+              <Text style={styles.sciValue}>{fg_parallel.toFixed(1)} N</Text>
+            </View>
+            <View style={styles.sciItem}>
+              <Text style={styles.sciLabel}>Mech Advantage</Text>
+              <Text style={styles.sciValue}>{(1 / Math.sin(rad)).toFixed(2)}x</Text>
+            </View>
+          </View>
+          <Text style={styles.formula}>ΣF = F_app - Fg_sinθ - Ff</Text>
+        </ScientistCard>
+      )}
+
+      {/* 4. Toggles */}
+      <View style={styles.configContainer}>
+        <View style={styles.toggleRow}>
+           <TouchableOpacity style={[styles.toggleBtn, mu === 0 && styles.activeToggle]} onPress={() => setMu(0)}>
+             <Text style={styles.toggleBtnText}>Ice (μ=0)</Text>
+           </TouchableOpacity>
+           <TouchableOpacity style={[styles.toggleBtn, mu === 0.2 && styles.activeToggle]} onPress={() => setMu(0.2)}>
+             <Text style={styles.toggleBtnText}>Wood (μ=0.2)</Text>
+           </TouchableOpacity>
+           <TouchableOpacity style={[styles.toggleBtn, mu === 0.6 && styles.activeToggle]} onPress={() => setMu(0.6)}>
+             <Text style={styles.toggleBtnText}>Rubber (μ=0.6)</Text>
+           </TouchableOpacity>
+        </View>
+        <View style={styles.massRow}>
+          <Text style={[styles.massLabel, { color: txt1 }]}>Mass: {mass}kg</Text>
+          <TouchableOpacity onPress={() => setMass(Math.max(5, mass - 5))} style={styles.miniBtn}>
+            <Icon name="minus" size={14} color="#FFF" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setMass(Math.min(100, mass + 5))} style={styles.miniBtn}>
+            <Icon name="plus" size={14} color="#FFF" />
+          </TouchableOpacity>
         </View>
       </View>
 
-      {/* Research Log Bar */}
-      <TouchableOpacity style={[styles.logBar, { height: H_LOG }]} activeOpacity={0.8} onPress={() => { soundTap(); setLogsOpen(true); }}>
-        <Icon name="search" size={20} color={PALETTE.text} />
-        <Text style={styles.logHintText} numberOfLines={1}>{logs.length > 0 ? `Log: ${logs[logs.length - 1].title}` : 'Push the block to calculate work...'}</Text>
-        <View style={[styles.logBadge, { backgroundColor: logs.length > 0 ? PALETTE.green : '#333' }]}><Text style={{ color: logs.length > 0 ? '#000' : '#888', fontSize: 11, fontWeight: 'bold' }}>{logs.length}</Text></View>
-      </TouchableOpacity>
-
-      {/* Logs Modal */}
-      <Modal visible={logsOpen} transparent animationType="slide">
-        <View style={styles.modalBg}>
-          <View style={[styles.modalContent, { backgroundColor: PALETTE.panel }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: PALETTE.text }]}>Research Log</Text>
-              <TouchableOpacity onPress={() => { soundTap(); setLogsOpen(false); }}>
-                <Icon name="x" size={24} color={PALETTE.text} />
-              </TouchableOpacity>
-            </View>
-            <ScrollView>
-              {logs.length === 0 ? (
-                <Text style={styles.emptyLog}>No discoveries yet. Try pushing massive blocks up the ramp!</Text>
-              ) : (
-                logs.map((l, i) => (
-                  <View key={i} style={[styles.logCard, { borderLeftColor: l.color }]}>
-                    <Text style={styles.logCardTitle}>{l.title}</Text>
-                    <Text style={styles.logCardDesc}>{l.entry}</Text>
-                  </View>
-                ))
-              )}
-              <View style={{ height: 30 }} />
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
+      {/* 5. Challenge Card */}
+      <View style={styles.challengeBox}>
+        <ChallengeCard
+          title={CHALLENGES[activeChallenge].title}
+          instruction={CHALLENGES[activeChallenge].instruction}
+          completed={challengeStatus[activeChallenge].completed}
+          onNext={() => setActiveChallenge(prev => (prev + 1) % CHALLENGES.length)}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: PALETTE.bg },
-  viewport: { width: '100%', overflow: 'hidden' },
-  discoveryBtn: { position: 'absolute', bottom: 15, right: 15, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: PALETTE.steel },
-  panel: { backgroundColor: PALETTE.panel, borderTopWidth: 2, borderTopColor: PALETTE.steel },
-  panelInner: { flex: 1, padding: 20 },
-  sliderWrap: { width: '100%', marginBottom: 20 },
-  sliderLabel: { color: PALETTE.text, fontSize: 11, fontFamily: 'monospace', marginBottom: 6 },
-  sliderBg: { height: 20, backgroundColor: '#050A0A', borderRadius: 10, borderWidth: 1, justifyContent: 'center' },
-  sliderFill: { position: 'absolute', height: '100%', borderRadius: 10 },
-  sliderThumb: { position: 'absolute', width: 26, height: 26, borderRadius: 13, backgroundColor: '#FFF', marginLeft: -13 },
-  switchTrack: { width: 44, height: 24, borderRadius: 12, backgroundColor: '#20202A', padding: 2, justifyContent: 'center' },
-  switchThumb: { width: 20, height: 20, borderRadius: 10, backgroundColor: PALETTE.text },
-  logBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, backgroundColor: '#050A0A', borderTopWidth: 1, borderTopColor: '#111', gap: 10 },
-  logHintText: { flex: 1, color: '#888', fontSize: 12, fontFamily: 'monospace', fontStyle: 'italic' },
-  logBadge: { minWidth: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.92)', justifyContent: 'flex-end' },
-  modalContent: { maxHeight: height * 0.7, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', fontFamily: 'Outfit_700Bold' },
-  emptyLog: { color: '#555', textAlign: 'center', marginTop: 40, fontFamily: 'monospace', fontSize: 13 },
-  logCard: { backgroundColor: '#050A0A', padding: 14, borderRadius: 10, marginBottom: 10, borderLeftWidth: 3 },
-  logCardTitle: { color: PALETTE.text, fontWeight: 'bold', fontSize: 14, marginBottom: 5, fontFamily: 'Outfit_500Medium' },
-  logCardDesc: { color: '#AAA', fontSize: 13, lineHeight: 19 }
+  container: {
+    padding: SPACING.md,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: SPACING.md,
+  },
+  controls: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    right: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    padding: 10,
+    borderRadius: RADIUS.md,
+  },
+  controlRow: {
+    alignItems: 'center',
+  },
+  controlLabel: {
+    fontSize: 10,
+    fontFamily: FONTS.bold,
+  },
+  miniBtn: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 6,
+    borderRadius: 6,
+    marginTop: 4,
+  },
+  mainBtns: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  playBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  resetBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sciGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  sciItem: {
+    width: '48%',
+    marginBottom: 8,
+  },
+  sciLabel: {
+    fontSize: 10,
+    color: '#888',
+    fontFamily: FONTS.regular,
+  },
+  sciValue: {
+    fontSize: 14,
+    fontFamily: FONTS.mono,
+    color: '#FFF',
+  },
+  formula: {
+    fontSize: 12,
+    fontFamily: FONTS.mono,
+    color: '#4ECDC4',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  configContainer: {
+    marginTop: SPACING.lg,
+  },
+  toggleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  toggleBtn: {
+    flex: 1,
+    padding: 8,
+    borderRadius: RADIUS.sm,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    alignItems: 'center',
+    marginHorizontal: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  activeToggle: {
+    backgroundColor: '#00D4FF',
+    borderColor: '#00D4FF',
+  },
+  toggleBtnText: {
+    fontSize: 10,
+    fontFamily: FONTS.bold,
+    color: '#FFF',
+  },
+  massRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  massLabel: {
+    fontSize: 14,
+    fontFamily: FONTS.bold,
+    marginRight: 10,
+  },
+  challengeBox: {
+    marginTop: SPACING.xl,
+    marginBottom: 40,
+  }
 });
