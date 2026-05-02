@@ -14,6 +14,7 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
   const { theme, isDark } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealed, setRevealed] = useState([]);
+  const [isAnimating, setIsAnimating] = useState(false);
   const slideAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -29,10 +30,10 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
   const border = theme.glass.border;
   const gold   = theme.accent.gold;
 
-  const q = questions[currentIndex];
-  const isCurrentRevealed = revealed.includes(currentIndex);
   const isLast = currentIndex === questions.length - 1;
 
+  const isCurrentRevealed = revealed.includes(currentIndex);
+  
   const handleReveal = () => {
     soundWhoosh();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -43,6 +44,8 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
   };
 
   const goNext = () => {
+    if (isAnimating || currentIndex >= questions.length - 1) return;
+    setIsAnimating(true);
     soundTap();
     Haptics.selectionAsync();
     Animated.sequence([
@@ -54,11 +57,18 @@ export default function DoYouKnowWhy({ questions, accentColor, onComplete }) {
       Animated.parallel([
         Animated.timing(fadeAnim, { toValue: 1, duration: 250, useNativeDriver: true }),
         Animated.spring(slideAnim, { toValue: 0, tension: 70, friction: 14, useNativeDriver: true }),
-      ]).start();
+      ]).start(() => setIsAnimating(false));
     });
   };
 
   if (!questions || questions.length === 0) return null;
+  
+  const q = questions[currentIndex];
+  if (!q) {
+    // Failsafe in case of rapid clicks bypassing the state
+    onComplete();
+    return null;
+  }
 
   return (
     <View style={[styles.root, { backgroundColor: bg }]}>

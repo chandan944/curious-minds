@@ -46,7 +46,7 @@ export default {
     {
       id: "sl_3",
       title: "White Dwarfs: The Dying Embers 🥚",
-      color: "#F1F5F9",
+      color: "#ddcf0dff",
       bgGradient: ["#151515", "#050D0A"],
       icon: "🥚",
       svgIcon: "target",

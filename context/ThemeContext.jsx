@@ -10,7 +10,7 @@ import { createTheme } from '../constants/theme';
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
   const theme = createTheme(isDark);
 
   const toggleTheme = useCallback(() => setIsDark(d => !d), []);

@@ -99,6 +99,26 @@ export default {
       content: "Not all anger must be suppressed. **Righteous Anger** is the fuel of social justice, revolutions, and vital boundary-setting.\n\nWhen you see someone being abused, the anger you feel is the correct ethical response. Suppressing this form of anger leads to apathy and cowardice.\n\nThe key is using the *energy* of anger, but filtering the *action* through the prefrontal cortex—turning rage into calculated reform. ✊",
       highlight: "Rage destroys blindly. Righteous anger builds fiercely.",
     },
+    {
+      id: 'halt_method',
+      title: 'The HALT Method 🛑',
+      color: '#3498DB',
+      bgGradient: ['#001828', '#05050A'],
+      icon: 'alert-circle',
+      svgIcon: 'shield',
+      content: "Before reacting to a triggering event, psychologists recommend checking your biological dashboard using the **HALT** acronym:\n\nAre you:\n**H**ungry?\n**A**ngry (already holding onto prior resentment)?\n**L**onely?\n**T**ired?\n\nIf any of these biological needs are unmet, your Amygdala is already on high alert, making you infinitely more susceptible to an irrational explosion. Fixing the biology often fixes the psychology. 🥪🛌",
+      highlight: "Never make a permanent decision based on temporary biological exhaustion.",
+    },
+    {
+      id: 'venting_myth',
+      title: 'The Venting Myth 🥊',
+      color: '#E74C3C',
+      bgGradient: ['#2C0B0E', '#05050A'],
+      icon: 'activity',
+      svgIcon: 'zap',
+      content: "For decades, people believed in the 'Catharsis Hypothesis'—the idea that you need to physically 'let out' your anger by punching a pillow or screaming in a car, like releasing steam from a kettle.\n\nModern neuroscience has completely debunked this. \n\nViolently 'venting' actually reinforces the neural pathways for aggression in your brain. It tells your nervous system: 'Yes, we are fighting a war right now!', keeping your cortisol and heart rate high. The healthiest way to process anger is slow breathing and distraction, allowing the neurochemicals to naturally dissipate.",
+      highlight: "Punching a pillow doesn't release your anger; it just trains your brain to punch things when you are angry. 🥊"
+    }
   ],
 
   lab: {

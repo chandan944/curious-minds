@@ -1,144 +1,172 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import Svg, { Circle, Path, Defs, RadialGradient, Stop, Rect, Group } from 'react-native-svg';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Pressable, Animated, Dimensions, Easing, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../context/ThemeContext';
+import { FONTS, RADIUS, SPACING } from '../../constants/theme';
+
+const { width } = Dimensions.get('window');
 
 const MAX_ENERGY = 100;
-const DRAIN_RATE = 2.5;
+const START_ENERGY = 60;
+const DRAIN_RATE = 2; // Energy drains per tick
 
-// Scenarios mapping negative thoughts to CBT concepts
+// Translated Scenarios
 const SCENARIOS = [
   {
-    thought: "My friend canceled our plans. They secretly hate me.",
-    distortion: "Mind Reading",
+    distortion_en: "Mind Reading", distortion_hi: "माइंड रीडिंग (मन पढ़ना)",
+    thought_en: "My friend canceled our plans. They secretly hate me.",
+    thought_hi: "मेरे दोस्त ने प्लान कैंसिल कर दिया। वे अंदर ही अंदर मुझसे नफरत करते हैं।",
     options: [
-      { text: "They probably found something better to do.", correct: false, energyEffect: -15 },
-      { text: "They might just be tired. I should ask if they're okay.", correct: true, energyEffect: 20 },
-      { text: "I'll just never make plans with them again.", correct: false, energyEffect: -10 }
+      { text_en: "They probably found something better to do.", text_hi: "शायद उन्हें कोई बेहतर काम मिल गया है।", correct: false, energyEffect: -15 },
+      { text_en: "They might just be tired. I should ask if they're okay.", text_hi: "शायद वे थके हुए हों। मुझे पूछना चाहिए कि क्या वे ठीक हैं।", correct: true, energyEffect: 25 },
+      { text_en: "I'll just never make plans with them again.", text_hi: "मैं अब उनके साथ कभी कोई प्लान नहीं बनाऊंगा।", correct: false, energyEffect: -10 }
     ],
-    truth: "You can't read minds. Canceling plans is often about the other person's energy, not your worth."
+    truth_en: "You can't read minds. Canceling plans is often about the other person's energy, not your worth.",
+    truth_hi: "आप मन नहीं पढ़ सकते। प्लान कैंसिल करना अक्सर दूसरे व्यक्ति की ऊर्जा पर निर्भर करता है, आपकी अहमियत पर नहीं।"
   },
   {
-    thought: "I made a mistake at work. I'm going to get fired and lose everything.",
-    distortion: "Catastrophizing",
+    distortion_en: "Catastrophizing", distortion_hi: "विनाशकारी सोच",
+    thought_en: "I made a mistake at work. I'm going to get fired and lose everything.",
+    thought_hi: "मुझसे काम पर एक गलती हो गई। मुझे निकाल दिया जाएगा और मैं सब कुछ खो दूंगा।",
     options: [
-      { text: "I need to start looking for a new job today.", correct: false, energyEffect: -15 },
-      { text: "I am a total failure.", correct: false, energyEffect: -20 },
-      { text: "Everyone makes mistakes. I will learn from this and fix it.", correct: true, energyEffect: 20 }
+      { text_en: "I need to start looking for a new job today.", text_hi: "मुझे आज ही नई नौकरी खोजना शुरू कर देना चाहिए।", correct: false, energyEffect: -15 },
+      { text_en: "Everyone makes mistakes. I will learn from this and fix it.", text_hi: "गलतियां सबसे होती हैं। मैं इससे सीखूंगा और इसे ठीक करूंगा।", correct: true, energyEffect: 25 },
+      { text_en: "I am a total failure.", text_hi: "मैं पूरी तरह से असफल इंसान हूं।", correct: false, energyEffect: -20 }
     ],
-    truth: "Catastrophizing jumps to the worst possible outcome. Reality is usually much more forgiving."
+    truth_en: "Catastrophizing jumps to the worst possible outcome. Reality is usually much more forgiving.",
+    truth_hi: "विनाशकारी सोच आपको सबसे बुरे परिणाम की कल्पना कराती है। असल जिंदगी अक्सर कहीं अधिक क्षमाशील होती है।"
   },
   {
-    thought: "I didn't exercise today. The whole day is ruined and I'm lazy.",
-    distortion: "All-Or-Nothing Thinking",
+    distortion_en: "All-Or-Nothing", distortion_hi: "सब-कुछ या कुछ-नहीं की सोच",
+    thought_en: "I didn't exercise today. The whole day is ruined and I'm lazy.",
+    thought_hi: "मैंने आज व्यायाम नहीं किया। पूरा दिन बर्बाद हो गया और मैं आलसी हूं।",
     options: [
-      { text: "I'll just eat junk food since today is ruined anyway.", correct: false, energyEffect: -15 },
-      { text: "I might not have exercised, but I still got some work done.", correct: true, energyEffect: 20 },
-      { text: "I'll never get into shape. It's pointless.", correct: false, energyEffect: -20 }
+      { text_en: "I might not have exercised, but I still got some work done.", text_hi: "भले ही मैंने व्यायाम नहीं किया, लेकिन मैंने अपना कुछ काम तो किया है।", correct: true, energyEffect: 25 },
+      { text_en: "I'll just eat junk food since today is ruined anyway.", text_hi: "मैं जंक फूड खा लेता हूं क्योंकि आज का दिन वैसे भी बर्बाद हो चुका है।", correct: false, energyEffect: -15 },
+      { text_en: "I'll never get into shape. It's pointless.", text_hi: "मैं कभी फिट नहीं हो पाऊंगा। यह सब बेकार है।", correct: false, energyEffect: -20 }
     ],
-    truth: "Life isn't black and white. Missing one habit doesn't erase your other achievements."
+    truth_en: "Life isn't black and white. Missing one habit doesn't erase your other achievements.",
+    truth_hi: "जीवन केवल सफेद या काला नहीं है। एक आदत चूकने से आपकी बाकी उपलब्धियां खत्म नहीं होतीं।"
   },
   {
-    thought: "They didn't text back immediately. I must have said something annoying.",
-    distortion: "Personalization",
+    distortion_en: "Personalization", distortion_hi: "व्यक्तिगतकरण",
+    thought_en: "They didn't text back immediately. I must have said something annoying.",
+    thought_hi: "उन्होंने तुरंत मैसेज का जवाब नहीं दिया। मैंने जरूर कुछ परेशान करने वाला कहा होगा।",
     options: [
-      { text: "They are probably just busy or their phone is away.", correct: true, energyEffect: 20 },
-      { text: "I should text them again and apologize.", correct: false, energyEffect: -10 },
-      { text: "Nobody ever wants to talk to me.", correct: false, energyEffect: -15 }
+      { text_en: "They are probably just busy or their phone is away.", text_hi: "वे शायद व्यस्त होंगे या उनका फोन दूर होगा।", correct: true, energyEffect: 25 },
+      { text_en: "I should text them again and apologize.", text_hi: "मुझे उन्हें फिर से मैसेज करके माफी मांगनी चाहिए।", correct: false, energyEffect: -10 },
+      { text_en: "Nobody ever wants to talk to me.", text_hi: "मुझसे कोई बात करना ही नहीं चाहता।", correct: false, energyEffect: -15 }
     ],
-    truth: "Personalization makes you take the blame for things entirely out of your control."
+    truth_en: "Personalization makes you take the blame for things entirely out of your control.",
+    truth_hi: "व्यक्तिगतकरण आपको उन चीजों के लिए खुद को दोषी मानने पर मजबूर करता है जो पूरी तरह से आपके नियंत्रण से बाहर हैं।"
   },
   {
-    thought: "I feel incredibly guilty right now, so I must be a terrible person.",
-    distortion: "Emotional Reasoning",
+    distortion_en: "Emotional Reasoning", distortion_hi: "भावनात्मक तर्क",
+    thought_en: "I feel incredibly guilty right now, so I must be a terrible person.",
+    thought_hi: "मुझे इस वक्त बहुत अपराधबोध हो रहा है, इसलिए मैं जरूर एक भयानक इंसान हूं।",
     options: [
-      { text: "I deserve to feel this way.", correct: false, energyEffect: -20 },
-      { text: "Feelings aren't facts. Why exactly do I feel guilty?", correct: true, energyEffect: 20 },
-      { text: "I'm a toxic person.", correct: false, energyEffect: -15 }
+      { text_en: "I deserve to feel this way.", text_hi: "मैं ऐसा ही महसूस करने के लायक हूं।", correct: false, energyEffect: -20 },
+      { text_en: "I'm a toxic person.", text_hi: "मैं एक जहरीला (टॉक्सिक) इंसान हूं।", correct: false, energyEffect: -15 },
+      { text_en: "Feelings aren't facts. Why exactly do I feel guilty?", text_hi: "भावनाएं तथ्य नहीं होतीं। मुझे असल में अपराधबोध क्यों हो रहा है?", correct: true, energyEffect: 25 }
     ],
-    truth: "Emotional reasoning assumes that because you feel a negative emotion, it must reflect reality."
+    truth_en: "Emotional reasoning assumes that because you feel a negative emotion, it must reflect reality.",
+    truth_hi: "भावनात्मक तर्क यह मान लेता है कि अगर आप कोई नकारात्मक भावना महसूस करते हैं, तो वह सच्चाई ही होगी।"
   }
 ];
 
-export default function DepressionLab({ onComplete, isHindi }) {
-  const { isDarkMode } = useTheme();
+export default function DepressionLab({ onComplete, isScientistMode, isHindi }) {
+  const { theme, isDark } = useTheme();
   
-  const [energy, setEnergy] = useState(60); // Start with partial spoons
+  const [energy, setEnergy] = useState(START_ENERGY); 
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [gameState, setGameState] = useState('playing'); // playing, feedback, gameover, won
   const [feedback, setFeedback] = useState(null);
   
-  const [cloudAnim] = useState(new Animated.Value(1));
-  const [shakeAnim] = useState(new Animated.Value(0));
+  // Animated Values
+  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const energyAnim = useRef(new Animated.Value(START_ENERGY)).current;
+  const lightAnim = useRef(new Animated.Value(0)).current; // 0 = dark cloud, 1 = bright light
 
-  const pulseCloud = () => {
-    Animated.sequence([
-      Animated.timing(cloudAnim, { toValue: 1.1, duration: 1000, useNativeDriver: true }),
-      Animated.timing(cloudAnim, { toValue: 1, duration: 1000, useNativeDriver: true })
-    ]).start(() => {
-      if (gameState === 'playing') pulseCloud();
-    });
-  };
-
-  const shakeScreen = () => {
-    Animated.sequence([
-      Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
-    ]).start();
-  };
-
+  // ── Core Loop (The Black Dog Drain) ──
   useEffect(() => {
-    pulseCloud();
-    
-    // Constant energy drain representing the "Black Dog" / Depression tax
-    const drainInterval = setInterval(() => {
-      if (gameState === 'playing') {
+    let drainInterval;
+    if (gameState === 'playing') {
+      drainInterval = setInterval(() => {
         setEnergy(prev => {
           const newEnergy = prev - DRAIN_RATE;
           if (newEnergy <= 0) {
             clearInterval(drainInterval);
-            setGameState('gameover');
+            handleGameOver();
             return 0;
           }
           return newEnergy;
         });
-      }
-    }, 1000);
-
+      }, 1000); // drain every second
+    }
     return () => clearInterval(drainInterval);
   }, [gameState]);
 
+  // Sync Animated Energy
   useEffect(() => {
-    if (energy >= 100) {
+    Animated.timing(energyAnim, {
+      toValue: energy,
+      duration: 500,
+      useNativeDriver: false
+    }).start();
+
+    // Map energy (0-100) to lightAnim (0-1)
+    Animated.timing(lightAnim, {
+      toValue: Math.max(0, Math.min(1, energy / 100)),
+      duration: 1000,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: false
+    }).start();
+
+    if (energy >= MAX_ENERGY && gameState !== 'won') {
       setGameState('won');
-      if (onComplete) {
-        setTimeout(onComplete, 2000);
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (onComplete) setTimeout(onComplete, 4000);
     }
   }, [energy]);
+
+  const handleGameOver = () => {
+    setGameState('gameover');
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  };
+
+  const triggerShake = () => {
+    Animated.sequence([
+      Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: false }),
+      Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: false }),
+      Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: false }),
+      Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: false }),
+    ]).start();
+  };
 
   const handleOptionSelect = (option) => {
     const newEnergy = Math.min(Math.max(energy + option.energyEffect, 0), MAX_ENERGY);
     setEnergy(newEnergy);
     
     if (option.correct) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setFeedback({
-        title: isHindi ? 'सुंदर रीफ्रेम!' : 'Excellent Reframe!',
-        message: SCENARIOS[currentScenarioIndex].truth,
+        title_en: 'Beautiful Reframe!', title_hi: 'शानदार रीफ्रेम!',
+        message_en: SCENARIOS[currentScenarioIndex].truth_en,
+        message_hi: SCENARIOS[currentScenarioIndex].truth_hi,
         isSuccess: true
       });
     } else {
-      shakeScreen();
+      triggerShake();
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       setFeedback({
-        title: isHindi ? 'यह अवसाद बोल रहा है' : 'That\'s the Depression Talking',
-        message: isHindi ? `यह एक '${SCENARIOS[currentScenarioIndex].distortion}' है। फिर से कोशिश करें!` : `This is a classic case of '${SCENARIOS[currentScenarioIndex].distortion}'. The thought drained your energy.`,
+        title_en: "That's the Depression Talking", title_hi: 'यह अवसाद बोल रहा है',
+        message_en: `This is '${SCENARIOS[currentScenarioIndex].distortion_en}'. The thought drained your energy.`,
+        message_hi: `यह '${SCENARIOS[currentScenarioIndex].distortion_hi}' है। इस विचार ने आपकी ऊर्जा खींच ली।`,
         isSuccess: false
       });
     }
-    
     setGameState('feedback');
   };
 
@@ -148,253 +176,330 @@ export default function DepressionLab({ onComplete, isHindi }) {
         setCurrentScenarioIndex(prev => prev + 1);
         setGameState('playing');
       } else {
-        setGameState('won');
-        if (onComplete) onComplete();
+        setEnergy(MAX_ENERGY); // Force win state
       }
     } else {
-      setGameState('playing'); // Let them try again
+      // If wrong, they must try again, energy keeps draining from where it left off
+      if (energy <= 0) handleGameOver();
+      else setGameState('playing'); 
     }
   };
 
   const restartLab = () => {
-    setEnergy(60);
+    setEnergy(START_ENERGY);
     setCurrentScenarioIndex(0);
     setGameState('playing');
   };
 
   const scenario = SCENARIOS[currentScenarioIndex];
 
-  // Theme colors
-  const bgColor = isDarkMode ? '#121212' : '#F5F7FA';
-  const textColor = isDarkMode ? '#E0E0E0' : '#333333';
-  const cardBg = isDarkMode ? '#1E1E1E' : '#FFFFFF';
-  
-  // Dynamic color based on energy level
-  const energyColor = energy > 70 ? '#4CAF50' : energy > 30 ? '#FFC107' : '#F44336';
-  
-  // Cloud color gets darker as energy gets lower
-  const cloudColor = energy > 70 ? (isDarkMode ? '#555' : '#CCC') : 
-                     energy > 30 ? (isDarkMode ? '#333' : '#888') : 
-                     (isDarkMode ? '#111' : '#444');
+  // Colors Interpolation for Background Visualizer
+  const bgDark = '#0a0f1c'; // Deep depressive blue-black
+  const bgCloud = '#1c2538'; // Heavy cloud color
+  const bgLight = theme.accent.gold; // Sunlight breakthrough
+
+  const overlayBg1 = lightAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [bgDark, '#2c3e50']
+  });
+
+  const overlayBg2 = lightAnim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [bgCloud, '#4ca1af', bgLight]
+  });
+
+  const energyColor = energy > 60 ? '#4CAF50' : energy > 30 ? theme.accent.gold : '#FF4D6D';
 
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
+    <View style={[styles.root, { backgroundColor: theme.bg.base }]}>
       
-      {/* Energy / Spoon Meter */}
-      <View style={styles.header}>
-        <View style={styles.energyLabelRow}>
+      {/* ── Visual Metaphor: The Cloud vs The Light ── */}
+      <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: overlayBg1, transform: [{ translateX: shakeAnim }] }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, { opacity: 0.8 }]}>
+           {/* We use a simple Animated View wrapping a LinearGradient since we can't easily animate gradient stops directly in RN without reanimated.
+               We overlay two colors and fade them. */}
+           <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: overlayBg2, opacity: lightAnim }]} />
+        </Animated.View>
+        
+        {/* Subtle noise/texture overlay for the cloud */}
+        <View style={styles.noiseOverlay} />
+      </Animated.View>
+
+      {/* ── Energy "Spoons" HUD ── */}
+      <View style={styles.hudArea}>
+        <View style={styles.hudLabelRow}>
           <Feather name="battery" size={20} color={energyColor} />
-          <Text style={[styles.energyLabel, { color: textColor }]}>
+          <Text style={[styles.hudLabel, { color: '#FFF' }]}>
             {isHindi ? 'मानसिक ऊर्जा (Spoons):' : 'Mental Energy (Spoons):'} {Math.ceil(energy)}%
           </Text>
         </View>
-        <View style={styles.energyBarContainer}>
-          <View style={[styles.energyBar, { width: `${energy}%`, backgroundColor: energyColor }]} />
+        <View style={[styles.barTrack, { backgroundColor: 'rgba(255,255,255,0.1)' }]}>
+          <Animated.View style={[styles.barFill, { 
+              width: energyAnim.interpolate({ inputRange: [0, 100], outputRange: ['0%', '100%'] }), 
+              backgroundColor: energyColor 
+            }]} 
+          />
         </View>
       </View>
 
-      <Animated.View style={{ flex: 1, transform: [{ scale: cloudAnim }, { translateX: shakeAnim }] }}>
-        
-        {/* Visualizer - The heavy cloud */}
-        <View style={styles.visualizer}>
-           <Svg height="150" width="100%" viewBox="0 0 200 150">
-             <Defs>
-               <RadialGradient id="grad" cx="50%" cy="50%" rx="50%" ry="50%">
-                 <Stop offset="0%" stopColor={cloudColor} stopOpacity="0.8" />
-                 <Stop offset="100%" stopColor={bgColor} stopOpacity="0" />
-               </RadialGradient>
-             </Defs>
-             
-             {/* The Rumination Cloud */}
-             <Circle cx="100" cy="75" r={60 + (100 - energy)/2} fill="url(#grad)" />
-             
-             {/* Floating bad thoughts if energy is low */}
-             {energy <= 60 && <Circle cx="50" cy="50" r="5" fill="#F44336" opacity="0.6" />}
-             {energy <= 40 && <Circle cx="150" cy="90" r="8" fill="#F44336" opacity="0.6" />}
-             {energy <= 20 && <Circle cx="80" cy="120" r="6" fill="#F44336" opacity="0.6" />}
-             
-             <Text x="100" y="80" fill={energy < 30 ? '#fff' : textColor} fontSize="14" textAnchor="middle" fontWeight="bold">
-                {scenario.distortion}
-             </Text>
-           </Svg>
-        </View>
-
-        {/* Game Area */}
-        <View style={[styles.card, { backgroundColor: cardBg }]}>
+      {/* ── Main Content Area ── */}
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={[styles.glassCard, { backgroundColor: 'rgba(25,30,45,0.7)', borderColor: 'rgba(255,255,255,0.1)' }]}>
+          
           {gameState === 'playing' && (
             <>
-              <Text style={[styles.scenarioThought, { color: textColor }]}>
-                "{scenario.thought}"
-              </Text>
-              <Text style={styles.instruction}>
-                {isHindi ? 'इस अस्वस्थ विचार को चुनौती दें:' : 'Challenge this distorted thought:'}
+              <View style={styles.thoughtBox}>
+                <Feather name="cloud-rain" size={24} color="#A0AAB5" style={{ marginBottom: 12 }} />
+                <Text style={[styles.distortionLabel, { color: theme.accent.gold }]}>
+                  {isHindi ? scenario.distortion_hi : scenario.distortion_en}
+                </Text>
+                <Text style={styles.thoughtText}>
+                  "{isHindi ? scenario.thought_hi : scenario.thought_en}"
+                </Text>
+              </View>
+              
+              <Text style={styles.instructionText}>
+                {isHindi ? 'इस अस्वस्थ विचार को चुनौती दें (समय बीत रहा है):' : 'Challenge this dark thought (time is draining):'}
               </Text>
               
-              {scenario.options.map((opt, idx) => (
-                <TouchableOpacity 
-                  key={idx} 
-                  style={[styles.optionBtn, { borderColor: isDarkMode ? '#444' : '#E0E0E0' }]}
-                  onPress={() => handleOptionSelect(opt)}
-                >
-                  <Text style={[styles.optionText, { color: textColor }]}>{opt.text}</Text>
-                </TouchableOpacity>
-              ))}
+              <View style={styles.optionsWrap}>
+                {scenario.options.map((opt, idx) => (
+                  <Pressable 
+                    key={idx} 
+                    style={({pressed}) => [
+                      styles.optionBtn, 
+                      { 
+                        backgroundColor: pressed ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
+                        borderColor: pressed ? theme.accent.gold : 'rgba(255,255,255,0.1)'
+                      }
+                    ]}
+                    onPress={() => handleOptionSelect(opt)}
+                  >
+                    <Text style={styles.optionText}>{isHindi ? opt.text_hi : opt.text_en}</Text>
+                  </Pressable>
+                ))}
+              </View>
             </>
           )}
 
           {gameState === 'feedback' && feedback && (
-            <View style={styles.feedbackContainer}>
+            <View style={styles.feedbackWrap}>
               <Feather 
-                name={feedback.isSuccess ? 'check-circle' : 'alert-circle'} 
-                size={48} 
-                color={feedback.isSuccess ? '#4CAF50' : '#F44336'} 
-                style={styles.feedbackIcon}
+                name={feedback.isSuccess ? 'sun' : 'cloud-lightning'} 
+                size={54} 
+                color={feedback.isSuccess ? theme.accent.gold : '#FF4D6D'} 
+                style={{ marginBottom: 20 }}
               />
-              <Text style={[styles.feedbackTitle, { color: feedback.isSuccess ? '#4CAF50' : '#F44336' }]}>
-                {feedback.title}
+              <Text style={[styles.feedbackTitle, { color: feedback.isSuccess ? theme.accent.gold : '#FF4D6D' }]}>
+                {isHindi ? feedback.title_hi : feedback.title_en}
               </Text>
-              <Text style={[styles.feedbackMessage, { color: textColor }]}>
-                {feedback.message}
+              <Text style={styles.feedbackMessage}>
+                {isHindi ? feedback.message_hi : feedback.message_en}
               </Text>
-              <TouchableOpacity 
-                style={[styles.nextBtn, { backgroundColor: feedback.isSuccess ? '#4CAF50' : '#F44336' }]}
+              <Pressable 
+                style={({pressed}) => [
+                  styles.continueBtn, 
+                  { backgroundColor: feedback.isSuccess ? theme.accent.gold : '#FF4D6D', opacity: pressed ? 0.8 : 1 }
+                ]}
                 onPress={handleNext}
               >
-                <Text style={styles.nextBtnText}>{isHindi ? 'आगे बढ़ें' : 'Continue'}</Text>
-              </TouchableOpacity>
+                <Text style={styles.continueBtnText}>
+                  {feedback.isSuccess 
+                    ? (isHindi ? 'आगे बढ़ें' : 'CONTINUE') 
+                    : (isHindi ? 'पुनः प्रयास करें' : 'TRY AGAIN')}
+                </Text>
+              </Pressable>
             </View>
           )}
 
           {gameState === 'gameover' && (
-            <View style={styles.feedbackContainer}>
-              <Feather name="battery-x" size={48} color="#F44336" style={styles.feedbackIcon} />
-              <Text style={[styles.feedbackTitle, { color: '#F44336' }]}>
-                {isHindi ? 'ऊर्जा समाप्त' : 'Energy Depleted'}
+            <View style={styles.feedbackWrap}>
+              <Feather name="zap-off" size={54} color="#FF4D6D" style={{ marginBottom: 20 }} />
+              <Text style={[styles.feedbackTitle, { color: '#FF4D6D' }]}>
+                {isHindi ? 'ऊर्जा समाप्त' : 'ENERGY DEPLETED'}
               </Text>
-              <Text style={[styles.feedbackMessage, { color: textColor }]}>
+              <Text style={styles.feedbackMessage}>
                 {isHindi 
-                  ? 'अवसाद के भारीपन ने आपकी सारी ऊर्जा (Spoons) खत्म कर दी है। यह आपकी गलती नहीं है। जब आप तैयार हों, तो फिर से कोशिश करें।' 
-                  : 'The weight of the depression drained all your spoons. It happens, and it\'s not your fault. Rest, and try again.'}
+                  ? 'अवसाद के भारीपन ने आपकी सारी मानसिक ऊर्जा खत्म कर दी है। यह आपकी गलती नहीं है। जब आप तैयार हों, तो आराम करें और फिर से कोशिश करें।' 
+                  : "The weight of the depression drained all your spoons. It happens, and it's not your fault. Rest, and try again when you're ready."}
               </Text>
-              <TouchableOpacity style={[styles.nextBtn, { backgroundColor: '#2196F3' }]} onPress={restartLab}>
-                <Text style={styles.nextBtnText}>{isHindi ? 'पुनः प्रयास करें' : 'Try Again'}</Text>
-              </TouchableOpacity>
+              <Pressable 
+                style={({pressed}) => [styles.continueBtn, { backgroundColor: '#FF4D6D', opacity: pressed ? 0.8 : 1 }]}
+                onPress={restartLab}
+              >
+                <Text style={styles.continueBtnText}>{isHindi ? 'पुनः प्रयास करें' : 'RESTART BATTLE'}</Text>
+              </Pressable>
             </View>
           )}
 
           {gameState === 'won' && (
-            <View style={styles.feedbackContainer}>
-              <Feather name="sun" size={48} color="#FFC107" style={styles.feedbackIcon} />
-              <Text style={[styles.feedbackTitle, { color: '#FFC107' }]}>
-                {isHindi ? 'कोहरा छंट रहा है!' : 'The Fog is Lifting!'}
+            <View style={styles.feedbackWrap}>
+              <Feather name="sun" size={64} color={theme.accent.gold} style={{ marginBottom: 20 }} />
+              <Text style={[styles.feedbackTitle, { color: theme.accent.gold }]}>
+                {isHindi ? 'कोहरा छंट रहा है!' : 'THE FOG IS LIFTING!'}
               </Text>
-              <Text style={[styles.feedbackMessage, { color: textColor }]}>
+              <Text style={styles.feedbackMessage}>
                 {isHindi 
-                  ? 'आपने अपनी ऊर्जा बचाई और अवसाद के झूठ को तार्किक विचारों से सफलतापूर्वक चुनौती दी। यही न्यूरोप्लास्टिसिटी है!' 
-                  : 'You successfully defended your energy and rewired those negative pathways using CBT principles. This is neuroplasticity in action!'}
+                  ? 'आपने अपनी ऊर्जा बचाई और अवसाद के झूठ को तार्किक विचारों से सफलतापूर्वक चुनौती दी। आपने अंधेरे को पीछे धकेल दिया है। यही न्यूरोप्लास्टिसिटी है!' 
+                  : 'You successfully defended your energy and rewired those negative pathways using CBT principles. You pushed back the dark cloud. This is neuroplasticity in action!'}
               </Text>
             </View>
           )}
+
         </View>
-      </Animated.View>
+      </ScrollView>
+
+      {/* ── Scientist Mode ── */}
+      {isScientistMode && (
+        <View style={styles.sciPanel}>
+          <Text style={styles.sciText}>State: {gameState}</Text>
+          <Text style={styles.sciText}>Drain Rate: {DRAIN_RATE}/sec</Text>
+          <Text style={styles.sciText}>Energy: {energy}</Text>
+          <Text style={styles.sciText}>Scenario: {currentScenarioIndex + 1}/{SCENARIOS.length}</Text>
+        </View>
+      )}
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    borderRadius: 16,
-    overflow: 'hidden',
+  root: { flex: 1, paddingBottom: 100 },
+  noiseOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)'
   },
-  header: {
-    marginBottom: 20,
+  
+  hudArea: {
+    padding: SPACING.lg,
+    paddingTop: SPACING.xl + 20,
+    zIndex: 10
   },
-  energyLabelRow: {
+  hudLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
-  energyLabel: {
+  hudLabel: {
+    fontFamily: FONTS.displayBold,
     fontSize: 16,
-    fontWeight: 'bold',
     marginLeft: 8,
+    textShadowColor: 'rgba(0,0,0,0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3
   },
-  energyBarContainer: {
+  barTrack: {
     height: 12,
-    backgroundColor: '#333',
-    borderRadius: 6,
+    borderRadius: RADIUS.full,
     overflow: 'hidden',
-  },
-  energyBar: {
-    height: '100%',
-    borderRadius: 6,
-  },
-  visualizer: {
-    height: 150,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  card: {
-    padding: 20,
-    borderRadius: 16,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  scenarioThought: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  instruction: {
-    fontSize: 14,
-    color: '#888',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  optionBtn: {
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    borderColor: 'rgba(255,255,255,0.2)'
+  },
+  barFill: {
+    height: '100%',
+    borderRadius: RADIUS.full,
+  },
+
+  scrollContent: {
+    flexGrow: 1,
+    padding: SPACING.lg,
+    justifyContent: 'center'
+  },
+  glassCard: {
+    padding: SPACING.xl,
+    borderRadius: RADIUS.xl,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 10
+  },
+
+  thoughtBox: {
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+    paddingBottom: SPACING.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.1)'
+  },
+  distortionLabel: {
+    fontFamily: FONTS.displayBold,
+    fontSize: 12,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    marginBottom: SPACING.sm
+  },
+  thoughtText: {
+    fontFamily: FONTS.displayMedium,
+    fontSize: 20,
+    lineHeight: 28,
+    color: '#FFF',
+    textAlign: 'center',
+    fontStyle: 'italic'
+  },
+  instructionText: {
+    fontFamily: FONTS.body,
+    fontSize: 14,
+    color: '#A0AAB5',
+    textAlign: 'center',
+    marginBottom: SPACING.md
+  },
+
+  optionsWrap: { gap: SPACING.sm },
+  optionBtn: {
+    padding: SPACING.lg,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
   },
   optionText: {
-    fontSize: 15,
+    fontFamily: FONTS.body,
+    fontSize: 16,
+    lineHeight: 22,
+    color: '#FFF'
   },
-  feedbackContainer: {
+
+  feedbackWrap: {
     alignItems: 'center',
-    padding: 20,
-  },
-  feedbackIcon: {
-    marginBottom: 16,
+    paddingVertical: SPACING.md
   },
   feedbackTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 12,
+    fontFamily: FONTS.displayBold,
+    fontSize: 24,
     textAlign: 'center',
+    marginBottom: SPACING.md
   },
   feedbackMessage: {
+    fontFamily: FONTS.body,
     fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 24,
     lineHeight: 24,
-  },
-  nextBtn: {
-    paddingHorizontal: 32,
-    paddingVertical: 14,
-    borderRadius: 24,
-  },
-  nextBtnText: {
     color: '#FFF',
+    textAlign: 'center',
+    marginBottom: SPACING.xl
+  },
+  continueBtn: {
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: RADIUS.full,
+  },
+  continueBtnText: {
+    fontFamily: FONTS.displayBold,
     fontSize: 16,
-    fontWeight: 'bold',
+    color: '#FFF',
+    letterSpacing: 1
+  },
+
+  sciPanel: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 8
+  },
+  sciText: {
+    fontFamily: FONTS.mono,
+    fontSize: 10,
+    color: '#0F0'
   }
 });

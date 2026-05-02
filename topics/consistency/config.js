@@ -50,6 +50,116 @@ export default {
       svgIcon: "brain",
       content: "The human brain struggles to comprehend exponential growth. We expect linear progress (I worked out for 3 days, I should see 3 days of muscle).\n\nWhen we don't see immediate results, we fall into the **Valley of Disappointment** and quit.\n\nBut habits are the compound interest of self-improvement. If you get 1% better every day for one year, you won't be 365% better—due to compounding, you will be **37 times better** by the time you are done.\n\nThe most powerful outcomes are always delayed. You must focus on the system (the daily action) rather than the goal (the final result).",
       highlight: "You do not rise to the level of your goals. You fall to the level of your systems. 📈"
+    },
+    {
+      id: "identity_shift",
+      title: "The Identity Shift 🎭",
+      color: "#9B59B6",
+      bgGradient: ["#1A0B2E", "#05050A"],
+      icon: "user",
+      svgIcon: "user",
+      content: "True behavior change is identity change.\n\nImagine two people trying to quit smoking. When offered a cigarette:\nPerson A says: *\"No thanks, I'm trying to quit.\"*\nPerson B says: *\"No thanks, I'm not a smoker.\"*\n\nPerson A still identifies as a smoker who is currently resisting. Person B has shifted their identity. The brain seeks to avoid cognitive dissonance; it wants your actions to match who you believe you are. If you truly believe 'I am an athlete', going to the gym isn't a chore, it's simply what athletes do.",
+      highlight: "The ultimate form of intrinsic motivation is when a habit becomes part of your identity. 🪞"
+    },
+    {
+      id: "habit_stacking",
+      title: "Habit Stacking 🥞",
+      color: "#E67E22",
+      bgGradient: ["#2E1500", "#05050A"],
+      icon: "layers",
+      svgIcon: "zap",
+      content: "One of the best ways to build a new habit is to identify a current habit you already do every day and then stack your new behavior on top of it.\n\nThis is called **Habit Stacking**.\nFormula: *'After [CURRENT HABIT], I will [NEW HABIT].'*\n\n• *After I pour my morning coffee, I will meditate for one minute.*\n• *After I take off my work shoes, I will immediately change into workout clothes.*\n\nThe old habit acts as a trigger, utilizing existing neural pathways rather than forcing you to build entirely new ones from scratch.",
+      highlight: "Don't build a new road; just add a lane to an existing highway in your brain. 🛣️"
+    },
+    {
+      id: "implementation_intentions",
+      title: "Implementation Intentions 🗺️",
+      color: "#1ABC9C",
+      bgGradient: ["#0B2E24", "#05050A"],
+      icon: "map-pin",
+      svgIcon: "map",
+      content: "Saying 'I will exercise more' is too vague. Your brain doesn't know what to do with it.\n\nAn **Implementation Intention** is a specific plan that clearly dictates *when* and *where* you will act.\nFormula: *'I will [BEHAVIOR] at [TIME] in [LOCATION].'*\n\nStudies show that people who write down 'I will exercise for 20 minutes at 5 PM on Monday at the local gym' are 2 to 3 times more likely to actually follow through. It removes the need for in-the-moment decision making.",
+      highlight: "Many people think they lack motivation when what they really lack is clarity. 🎯"
+    },
+    {
+      id: "dopamine_anticipation",
+      title: "Dopamine & Anticipation 🤤",
+      color: "#E84393",
+      bgGradient: ["#220515", "#05050A"],
+      icon: "zap",
+      svgIcon: "sparkle",
+      content: "Dopamine is not the chemical of pleasure; it is the chemical of **desire and anticipation**.\n\nIn experiments, rats experience the highest dopamine spike *before* they get the reward, not after. It's the anticipation that drives action.\n\nTo make a habit stick, you need to make it attractive. You must associate a positive dopamine spike with the *start* of the habit. This is why having a satisfying pre-workout ritual or a beautiful study aesthetic can be so effective. You train your brain to crave the initiation process.",
+      highlight: "It is the anticipation of a reward—not the fulfillment of it—that gets us to take action. 🚀"
+    },
+    {
+      id: "temptation_bundling",
+      title: "Temptation Bundling 🎁",
+      color: "#FF9FF3",
+      bgGradient: ["#220022", "#05050A"],
+      icon: "gift",
+      svgIcon: "heart",
+      content: "How do you make a difficult habit more attractive? **Temptation Bundling**.\n\nThis involves linking an action you *want* to do with an action you *need* to do.\n\n• *I will only watch my favorite Netflix show while I am on the treadmill.*\n• *I will only listen to my favorite podcast while doing the dishes.*\n\nBy bundling the temptation (Netflix) with the friction (treadmill), you hijack your brain's dopamine system to actually look forward to the hard work.",
+      highlight: "Pair an action you love with an action you need. Make the medicine taste sweet. 🍬"
+    },
+    {
+      id: "environment_design",
+      title: "Environment Design 🏗️",
+      color: "#34495E",
+      bgGradient: ["#111822", "#05050A"],
+      icon: "layout",
+      svgIcon: "eye",
+      content: "Motivation is overrated; environment often matters more.\n\nWe like to think we are in complete control of our choices, but human behavior is heavily shaped by the physical environment. If there are cookies on the counter, you will eat them. If your guitar is in the closet, you won't play it.\n\n**Design your environment for success:** Make the cues for good habits obvious and visible (leave your guitar on a stand in the living room). Make the cues for bad habits invisible (put the TV remote in a drawer).",
+      highlight: "You don't need more willpower; you need a better environment. 🏗️"
+    },
+    {
+      id: "seinfeld_strategy",
+      title: "Don't Break the Chain 🔗",
+      color: "#F1C40F",
+      bgGradient: ["#221A05", "#05050A"],
+      icon: "link",
+      svgIcon: "target",
+      content: "Comedian Jerry Seinfeld used a famous strategy to consistently write jokes. He bought a giant wall calendar. Every day he wrote a joke, he put a big red 'X' over that day.\n\nAfter a few days, he had a chain. His only goal became: **Don't break the chain.**\n\nThis works because humans are highly visual creatures. Seeing the chain grow provides an immediate sense of satisfaction and a visual dopamine hit, sustaining the habit long before the actual results (like getting fit or becoming a great writer) manifest.",
+      highlight: "Your only job is to put an X on the calendar. Don't break the chain. ❌"
+    },
+    {
+      id: "plateau_of_latent_potential",
+      title: "The Bamboo Tree Effect 🎋",
+      color: "#00D4A0",
+      bgGradient: ["#001A1A", "#05050A"],
+      icon: "trending-up",
+      svgIcon: "leaf",
+      content: "The Chinese Bamboo tree shows no visible growth above ground for the first five years. It spends all that time building a massive root system. Then, in the fifth year, it shoots up 90 feet in six weeks.\n\nHabits work exactly the same way. You might go to the gym for a month and see zero changes in the mirror. You are in the **Plateau of Latent Potential**.\n\nYour work is not being wasted; it is being stored. You are building the root system. If you quit in the valley, you will never see the explosive growth.",
+      highlight: "When nothing seems to happen, you are building the roots. Keep watering. 🌱"
+    },
+    {
+      id: "process_vs_outcome",
+      title: "Process vs Outcome 🏁",
+      color: "#95A5A6",
+      bgGradient: ["#1A1A1A", "#05050A"],
+      icon: "flag",
+      svgIcon: "target",
+      content: "Goals are about the results you want to achieve. Systems are about the processes that lead to those results.\n\nIf you are a coach, your goal is to win the championship. Your system is how you recruit and run practices. If you completely ignored the goal and *only* focused on running the best practices every day, would you still win? Yes.\n\nGoals cause a yo-yo effect (you run a marathon, achieve the goal, and then stop running). Systems create lifelong change.",
+      highlight: "Fall in love with the process, and the outcome will take care of itself. ⚙️"
+    },
+    {
+      id: "never_miss_twice",
+      title: "Never Miss Twice 🔄",
+      color: "#D35400",
+      bgGradient: ["#220A00", "#05050A"],
+      icon: "refresh-ccw",
+      svgIcon: "shield",
+      content: "Perfection is an illusion. Everyone misses a workout, eats a bad meal, or fails to study. The difference between successful people and failures isn't perfection; it's recovery speed.\n\nThe golden rule of consistency is: **Never miss twice.**\n\nMissing once is an accident. Missing twice is the start of a new habit. If you eat a donut for breakfast, you haven't ruined the day. Just ensure your lunch is healthy. Reclaim your identity immediately.",
+      highlight: "A mistake doesn't ruin the system. A spiraling string of mistakes does. Snap back immediately. 🛡️"
+    },
+    {
+      id: "the_goldilocks_rule",
+      title: "The Goldilocks Rule 🐻",
+      color: "#8E44AD",
+      bgGradient: ["#150B22", "#05050A"],
+      icon: "activity",
+      svgIcon: "brain",
+      content: "How do you stay motivated once a habit becomes boring?\n\nHumans experience peak motivation when working on tasks that are right on the edge of their current abilities. Not too hard, not too easy. Just right.\n\nThis is the **Goldilocks Rule**. If you play tennis against a 4-year-old, you get bored. If you play against Roger Federer, you give up. You need to play someone just slightly better than you to stay engaged. To maintain a long-term habit, constantly tweak the difficulty so it remains challenging but achievable.",
+      highlight: "Boredom is the greatest threat to success. Keep the challenge right on the edge of your ability. ⚖️"
     }
   ],
   lab: {
@@ -76,6 +186,18 @@ export default {
       question: "Do you know why missing one day doesn't ruin your progress? 📉",
       answer: "Neurologically, the brain's pathways don't instantly decay. The rule of consistency is 'Never miss twice'. Missing one day is an accident; missing two days is the start of a new habit.",
       emoji: "📉"
+    },
+    {
+      id: "dykw4",
+      question: "Do you know why motivation spikes late at night but disappears in the morning? 🌙",
+      answer: "At night, there is no immediate action required, so the brain freely daydreams and releases dopamine about how great tomorrow will be. In the morning, actual physical effort is required, which triggers the amygdala's natural resistance to energy expenditure. This is why you plan to run at 11 PM but hit snooze at 6 AM.",
+      emoji: "🧠"
+    },
+    {
+      id: "dykw5",
+      question: "Do you know why physically marking an 'X' on a calendar works so well? ❌",
+      answer: "Humans are highly visual creatures who crave immediate feedback. When you are building a new habit, the physical results (like weight loss or wealth) are delayed by months. Marking an 'X' provides an immediate visual dopamine hit that sustains the habit during the painful waiting period.",
+      emoji: "📅"
     }
   ],
   quiz: [
@@ -138,6 +260,186 @@ export default {
       ],
       answer: 2,
       explanation: "Perfection is impossible. The key to consistency is simply getting right back on track so a mistake doesn't compound into failure."
+    },
+    {
+      id: "q6",
+      question: "What does it mean to undergo an 'Identity Shift'?",
+      options: [
+        "Changing your name",
+        "Moving to a new city to start over",
+        "Changing your internal belief from 'I am trying to run' to 'I am a runner'",
+        "Changing your clothes to match your goal"
+      ],
+      answer: 2,
+      explanation: "Behavior change is easiest when it aligns with your identity. If you believe you are an athlete, exercising isn't a chore; it's just what you do."
+    },
+    {
+      id: "q7",
+      question: "What is 'Habit Stacking'?",
+      options: [
+        "Doing 5 habits at the exact same time",
+        "Tying a new habit to an existing daily habit (e.g., 'After I brush my teeth, I will meditate')",
+        "Reading a book about habits",
+        "Writing a list of habits"
+      ],
+      answer: 1,
+      explanation: "Habit stacking uses existing neural pathways (like brushing your teeth) as a reliable trigger for a new behavior."
+    },
+    {
+      id: "q8",
+      question: "How do 'Implementation Intentions' help you achieve your goals?",
+      options: [
+        "They make you feel guilty if you fail",
+        "They remove decision fatigue by defining exactly WHEN and WHERE you will take action",
+        "They cost money to write down",
+        "They involve a legal contract"
+      ],
+      answer: 1,
+      explanation: "Saying 'I will exercise' is vague. Saying 'I will exercise at 5 PM in the gym' removes the need to make a decision later."
+    },
+    {
+      id: "q9",
+      question: "When does dopamine peak in relation to a habit?",
+      options: [
+        "Hours after the habit is done",
+        "During the anticipation phase BEFORE you even start the habit",
+        "While doing the habit",
+        "Dopamine is not related to habits"
+      ],
+      answer: 1,
+      explanation: "Dopamine is the chemical of desire. The anticipation of the reward drives the action far more than the reward itself."
+    },
+    {
+      id: "q10",
+      question: "What is 'Temptation Bundling'?",
+      options: [
+        "Buying snacks in bulk",
+        "Pairing an action you WANT to do (Netflix) with an action you NEED to do (treadmill)",
+        "Resisting temptation using pure willpower",
+        "Giving into your temptations once a week"
+      ],
+      answer: 1,
+      explanation: "By bundling a hard task with a highly rewarding one, you hijack your dopamine system to look forward to the hard work."
+    },
+    {
+      id: "q11",
+      question: "In the context of habit building, what does 'Environment Design' refer to?",
+      options: [
+        "Painting your walls green",
+        "Physically altering your surroundings to make good habits obvious and bad habits invisible",
+        "Moving to a different country",
+        "Working outside in nature"
+      ],
+      answer: 1,
+      explanation: "If cookies are on the counter, you eat them. If your guitar is visible, you play it. Design your space to support your goals."
+    },
+    {
+      id: "q12",
+      question: "What is the core idea behind the 'Seinfeld Strategy'?",
+      options: [
+        "Being funny",
+        "Marking an X on a calendar every day you complete your habit to create a visual chain you don't want to break",
+        "Working only 30 minutes a day",
+        "Watching TV instead of working"
+      ],
+      answer: 1,
+      explanation: "Seeing a long visual chain of X's provides immediate satisfaction and psychological pressure to 'not break the chain'."
+    },
+    {
+      id: "q13",
+      question: "What does the 'Bamboo Tree Effect' (Plateau of Latent Potential) teach us about consistency?",
+      options: [
+        "Bamboo grows very slowly",
+        "Effort is never wasted; it is stored. Massive results often appear suddenly after a long period of invisible foundational work.",
+        "You should only work on habits in the spring",
+        "Some habits are impossible to build"
+      ],
+      answer: 1,
+      explanation: "Like roots growing underground, you might not see physical results for months, but the internal system is building."
+    },
+    {
+      id: "q14",
+      question: "Why should you focus on 'Systems' rather than 'Goals'?",
+      options: [
+        "Goals are illegal",
+        "Goals cause a yo-yo effect (stopping after you reach it). Systems create lifelong, sustainable change.",
+        "Systems are easier to spell",
+        "You shouldn't have any goals at all"
+      ],
+      answer: 1,
+      explanation: "A goal is winning the championship. A system is practicing every day. The system is what actually produces the result."
+    },
+    {
+      id: "q15",
+      question: "According to the 'Goldilocks Rule', how do you maintain motivation long-term?",
+      options: [
+        "Eat porridge every morning",
+        "Only do things that are incredibly easy",
+        "Work on tasks that are right on the edge of your current ability—not too hard, not too easy",
+        "Sleep 8 hours a day"
+      ],
+      answer: 2,
+      explanation: "Peak engagement occurs when a task perfectly matches your skill level. If it's too easy, you get bored. If it's too hard, you quit."
+    },
+    {
+      id: "q16",
+      question: "Why do we naturally gravitate toward bad habits like scrolling on our phones?",
+      options: [
+        "Because of the Law of Least Effort; bad habits usually have zero friction and instant rewards",
+        "Because our phones emit mind-control waves",
+        "Because we secretly want to fail",
+        "Because bad habits burn more calories"
+      ],
+      answer: 0,
+      explanation: "Scrolling requires moving your thumb. Working out requires driving to the gym. We biologically prefer the path of least resistance."
+    },
+    {
+      id: "q17",
+      question: "If you want to break a bad habit of eating junk food, what is the best friction-based strategy?",
+      options: [
+        "Simply tell yourself to stop eating it",
+        "Keep it in the house but put a sticky note on it",
+        "Do not buy it at the grocery store, ensuring it is never in your house",
+        "Only eat it on weekends"
+      ],
+      answer: 2,
+      explanation: "By keeping it out of the house, you maximize the friction. To eat junk food, you would have to drive to the store, which is often enough friction to stop the urge."
+    },
+    {
+      id: "q18",
+      question: "What is 'Decision Fatigue'?",
+      options: [
+        "A muscle condition",
+        "The deterioration of the quality of decisions made by an individual after a long session of decision making",
+        "Being too tired to go to the gym",
+        "Not knowing what to eat for dinner"
+      ],
+      answer: 1,
+      explanation: "Your willpower drains with every choice you make. By the end of the day, your brain seeks the easiest, lowest-effort option."
+    },
+    {
+      id: "q19",
+      question: "How does 'Habit Stacking' differ from 'Implementation Intentions'?",
+      options: [
+        "Habit stacking uses an existing behavior as the trigger, while implementation intentions use a specific time and location",
+        "They are the exact same thing",
+        "Habit stacking is only for physical exercises",
+        "Implementation intentions require writing a contract"
+      ],
+      answer: 0,
+      explanation: "Stacking: 'After I brush my teeth, I will meditate.' Implementation: 'I will meditate at 8:00 AM in my bedroom.'"
+    },
+    {
+      id: "q20",
+      question: "Why is 'Boredom' considered the greatest threat to success?",
+      options: [
+        "Boredom makes you sleepy",
+        "Once a habit becomes easy and automatic, it loses its novelty and dopamine kick, leading people to quit just because they are bored",
+        "Boredom causes physical pain",
+        "It isn't; failure is the greatest threat"
+      ],
+      answer: 1,
+      explanation: "Mastery requires doing the exact same thing a thousand times. You have to fall in love with the boredom to succeed."
     }
   ],
   relatedTopics: ["addiction", "study_tips", "mastery_expertise", "emotions_motivation"]

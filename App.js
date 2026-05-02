@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+// ─────────────────────────────────────────────
+//  App.js — Root with Auth-gated navigation
+// ─────────────────────────────────────────────
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
-import { StatusBar } from "expo-status-bar";
+import { StatusBar } from 'expo-status-bar';
 import {
   useFonts,
   Outfit_300Light,
@@ -9,34 +12,21 @@ import {
   Outfit_500Medium,
   Outfit_600SemiBold,
   Outfit_700Bold,
-} from "@expo-google-fonts/outfit";
+} from '@expo-google-fonts/outfit';
 
-import { COLORS } from "./constants/theme";
-import { ThemeProvider } from "./context/ThemeContext";
-import { LanguageProvider } from "./context/LanguageContext";
-import HomeScreen from "./screens/HomeScreen";
-import { initSounds } from "./utils/sounds";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { COLORS } from './constants/theme';
+import { ThemeProvider }    from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import HomeScreen  from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import { initSounds } from './utils/sounds';
 
-export default function App() {
-  const [soundsReady, setSoundsReady] = useState(false);
+function MainAppContent({ isFontsReady }) {
+  const { isAuthenticated, isLoading } = useAuth();
 
-  const [fontsLoaded] = useFonts({
-    Outfit_300Light,
-    Outfit_400Regular,
-    Outfit_500Medium,
-    Outfit_600SemiBold,
-    Outfit_700Bold,
-  });
-
-  useEffect(() => {
-    async function loadSounds() {
-      await initSounds();
-      setSoundsReady(true);
-    }
-    loadSounds();
-  }, []);
-
-  if (!fontsLoaded || !soundsReady) {
+  if (!isFontsReady || isLoading) {
     return (
       <View style={styles.loading}>
         <LottieView
@@ -45,49 +35,61 @@ export default function App() {
           loop
           style={{ width: 120, height: 120 }}
           colorFilters={[
-            { keypath: "Shape Layer 1", color: COLORS.accent },
-            { keypath: "Shape Layer 2", color: COLORS.correct },
-            { keypath: "Shape Layer 3", color: COLORS.xpGold },
+            { keypath: 'Shape Layer 1', color: COLORS.accent },
+            { keypath: 'Shape Layer 2', color: COLORS.correct },
+            { keypath: 'Shape Layer 3', color: COLORS.xpGold },
           ]}
         />
-
-        <Text
-          style={[
-            styles.loadingText,
-            {
-              fontFamily: "Outfit_600SemiBold",
-              letterSpacing: 1,
-              marginTop: -20,
-            },
-          ]}
-        >
-          Loading Curious Minds...
-        </Text>
       </View>
     );
   }
 
+  return isAuthenticated ? <HomeScreen /> : <LoginScreen />;
+}
+
+// ── Root component ────────────────────────────
+export default function App() {
+  const [fontsLoaded, fontError] = useFonts({
+    Outfit_300Light,
+    Outfit_400Regular,
+    Outfit_500Medium,
+    Outfit_600SemiBold,
+    Outfit_700Bold,
+  });
+
+  const [forceLoad, setForceLoad] = useState(false);
+
+  useEffect(() => {
+    initSounds().catch(console.error);
+
+    // Fallback: If fonts take longer than 5 seconds, force the app to load anyway
+    const timer = setTimeout(() => {
+      setForceLoad(true);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isFontsReady = fontsLoaded || forceLoad;
+
   return (
-    <LanguageProvider>
-      <ThemeProvider>
-        <StatusBar style="auto" />
-        <HomeScreen />
-      </ThemeProvider>
-    </LanguageProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <ThemeProvider>
+            <StatusBar style="auto" />
+            <MainAppContent isFontsReady={isFontsReady} />
+          </ThemeProvider>
+        </LanguageProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   loading: {
     flex: 1,
-    backgroundColor: COLORS.bg1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 16,
-  },
-  loadingText: {
-    color: COLORS.textMuted,
-    fontSize: 14,
-    fontFamily: "Outfit_400Regular",
+    backgroundColor: '#F4F6F9',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

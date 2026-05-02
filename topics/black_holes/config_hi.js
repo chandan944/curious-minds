@@ -20,7 +20,7 @@ export default {
     {
       "id": "bh_0",
       "title": "ब्लैक होल क्या है? 🌑",
-      "color": "#F1F5F9",
+      "color": "#0e0f0fff",
       "bgGradient": [
         "#000000",
         "#050D0A"

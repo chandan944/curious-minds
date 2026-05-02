@@ -1,20 +1,15 @@
 export default {
-  // ── IDENTITY ────────────────────────────────
   id: 'brain_structure',
   title: 'Brain Anatomy & Functions',
   subtitle: 'Map your mind — lobes, neurons & signals 🧠',
   emoji: '🧠',
   category: 'Psychology',
   accentKey: 'brain',
-
-  // ── CURIOSITY HOOK ──────────────────────────
   hook: {
     question: "You're using your brain right now to try to understand… your brain 🧠🤯 Isn't that the most meta thing ever? Can the brain TRULY understand itself?",
     reveal: "Your brain has *86 billion neurons*, each connected to up to 10,000 others — that's over 100 TRILLION connections, more than stars in the Milky Way! 🌌 Despite being only 2% of your body weight, it devours 20% of all your energy. And here's the wildest part: the brain *named itself*. The word 'brain' is what the brain decided to call itself! Santiago Ramón y Cajal first drew individual neurons in 1888 — winning the 1906 Nobel Prize and founding modern neuroscience. 🤯",
     emoji: '💭',
   },
-
-  // ── THEORY CARDS ────────────────────────────
   theory: [
     {
       id: 'what_is_brain',
@@ -64,20 +59,66 @@ export default {
       bgGradient: ['#2A0D18', '#0D0D1A'],
       icon: '🔮',
       svgIcon: 'sparkle',
-      content: "Your brain is NOT fixed — it rewires itself constantly. This is called *neuroplasticity*. Every experience, thought, and habit physically changes your brain's structure! 🏗️\n\nStunning examples:\n\n🎻 Violinists have *enlarged motor cortex areas* for their left hand from years of practice\n🚕 London taxi drivers develop *bigger hippocampi* from memorizing 25,000 streets\n🧘 Meditators show *thicker prefrontal cortex* and shrunk amygdalae — literally less reactive to stress\n🕹️ Action gamers have *faster visual processing* in their occipital lobes\n\nThe brain can even *reassign* damaged areas. If the visual cortex is damaged early in life, those neurons can be recruited for hearing or touch — blind people often have enhanced hearing because their occipital lobe processes sound instead!\n\nCutting-edge research includes *Brain-Computer Interfaces* (BCIs): Neuralink (2023) implanted a chip letting a paralyzed patient control a cursor with thought alone. The future may include direct brain-to-brain communication. 🤖\n\nThe Human Brain Project and the BRAIN Initiative are mapping every connection — the *connectome*. We may fully understand consciousness within our lifetime! 🌟",
+      content: "Your brain is NOT fixed — it rewires itself constantly. This is called *neuroplasticity*. Every experience, thought, and habit physically changes your brain's structure! 🏗️\n\nStunning examples:\n\n🎻 Violinists have *enlarged motor cortex areas* for their left hand from years of practice\n🚕 London taxi drivers develop *bigger hippocampi* from memorizing 25,000 streets\n🧘 Meditators show *thicker prefrontal cortex* and shrunk amygdalae — literally less reactive to stress\n🕹️ Action gamers have *faster visual processing* in their occipital lobes\n\nThe brain can even *reassign* damaged areas. If the visual cortex is damaged early in life, those neurons can be recruited for hearing or touch — blind people often have enhanced hearing because their occipital lobe processes sound instead!\n\nCutting-edge research includes *Brain-Computer Interfaces* (BCIs): Neuralink (2023) implanted a chip letting a paralyzed patient control a cursor with thought alone. The future may include direct brain-to-brain communication. 🤖",
       highlight: "Neuroplasticity means your brain rewires with every experience — London cabbies literally grow bigger hippocampi! 🔮",
     },
+    {
+      id: 'the_prefrontal_cortex',
+      title: 'The Prefrontal Cortex: The CEO 👔',
+      color: '#E74C3C',
+      bgGradient: ['#2C0B0E', '#05050A'],
+      icon: 'briefcase',
+      svgIcon: 'target',
+      content: "The **Prefrontal Cortex (PFC)** is the front-most part of your frontal lobe. Think of it as the 'CEO' of the brain.\n\nIt handles *Executive Function*: planning for the future, weighing consequences, and suppressing biological urges (impulse control).\n\nFascinatingly, the PFC is the *last* part of the human brain to fully mature, typically not finishing development until age 25! This biological reality explains why teenagers and young adults are statistically more prone to risk-taking behavior—they literally lack the neurological hardware to fully predict long-term consequences.",
+      highlight: "Your brain's logic and consequence center doesn't fully finish wiring itself until you are 25 years old. 👔"
+    },
+    {
+      id: 'the_amygdala',
+      title: 'The Amygdala: The Sentinel 🚨',
+      color: '#F1C40F',
+      bgGradient: ['#221A05', '#05050A'],
+      icon: 'alert-triangle',
+      svgIcon: 'zap',
+      content: "Deep within the temporal lobe are two almond-shaped clusters called the **Amygdala**.\n\nThis is your brain's threat detection center. It constantly scans your environment for danger. When it detects a threat, it triggers the 'fight or flight' response in milliseconds, flooding your body with adrenaline *before* your conscious brain even understands what is happening.\n\nThis can lead to an **Amygdala Hijack**: when an intense emotional response (like sudden rage or extreme panic) completely overrides the logical Prefrontal Cortex, causing you to act irrationally.",
+      highlight: "The amygdala can react to a threat in 12 milliseconds, hijacking your logic before you even realize you are afraid. 🚨"
+    },
+    {
+      id: 'the_hippocampus',
+      title: 'The Hippocampus: The Save Button 💾',
+      color: '#2ECC71',
+      bgGradient: ['#0B2415', '#05050A'],
+      icon: 'save',
+      svgIcon: 'brain',
+      content: "The **Hippocampus** is a seahorse-shaped structure responsible for learning and memory.\n\nIt acts like the brain's 'save button'. It takes short-term working memory and encodes it into long-term storage in the cortex. This transfer process primarily happens *while you sleep*.\n\nWithout a hippocampus, you can't form new memories. The famous patient H.M. had his hippocampus surgically removed to cure seizures. Afterward, he could remember his childhood perfectly, but was completely unable to form any new memories for the rest of his life.",
+      highlight: "The hippocampus transfers your daily experiences into permanent storage, but it mostly does this work while you are sleeping. 💾"
+    },
+    {
+      id: 'the_cerebellum',
+      title: 'The Cerebellum: The Little Brain 🩰',
+      color: '#3498DB',
+      bgGradient: ['#001828', '#05050A'],
+      icon: 'activity',
+      svgIcon: 'activity',
+      content: "At the base of your skull sits the **Cerebellum** (Latin for 'little brain').\n\nAlthough it makes up only 10% of the brain's volume, it contains over *50% of the brain's total neurons*!\n\nIts primary job is motor control, balance, and coordination. When you learn a complex physical skill (like playing piano, riding a bike, or typing), the cerebellum fine-tunes the timing and precision of those movements until they become automatic.",
+      highlight: "The cerebellum contains more than half of all your neurons just to ensure you can walk, type, and balance without falling over. 🩰"
+    },
+    {
+      id: 'blood_brain_barrier',
+      title: 'The Blood-Brain Barrier 🛡️',
+      color: '#9B59B6',
+      bgGradient: ['#1A0B2E', '#05050A'],
+      icon: 'shield',
+      svgIcon: 'shield',
+      content: "Your brain is so vital that it has a microscopic security checkpoint called the **Blood-Brain Barrier (BBB)**.\n\nIt is a highly selective membrane that separates circulating blood from the brain's extracellular fluid. It allows water, oxygen, and glucose to pass through, but blocks bacteria, toxins, and large molecules.\n\nThis protects the brain from infections, but it also creates a massive challenge for doctors: 98% of potential brain-saving drugs cannot pass the Blood-Brain Barrier to treat diseases like Alzheimer's or brain tumors!",
+      highlight: "The ultimate security system: The Blood-Brain Barrier blocks 98% of drugs, making neurological diseases extremely hard to treat. 🛡️"
+    }
   ],
-
-  // ── LAB DESCRIPTION ─────────────────────────
   lab: {
     title: "Brain Explorer Lab 🧠🔬",
     description: "Tap brain regions, scan activities, test YOUR reaction time & visualize brain waves! 🧪",
     hint: "Try the Reaction Test mode — it measures YOUR actual neural processing speed in milliseconds! Then explore the Brain Map to see which regions made that reaction possible ⚡",
     scientistModeHint: "In Scientist Mode 🧑‍🔬: unlock neural signal speed calculations, synaptic delay modeling, and myelination effects on conduction velocity!",
   },
-
-  // ── DO YOU KNOW WHY ─────────────────────────
   doYouKnowWhy: [
     {
       id: 'dyk1',
@@ -97,9 +138,19 @@ export default {
       answer: "Your amygdala (fear center) activates, flooding your brain with adrenaline and triggering hyper-encoding — your brain records WAY more detail than normal. When you recall the event, the dense memory feels longer. Time didn't slow — your brain just took more snapshots per second, like switching from 30fps to 120fps video! 📸",
       emoji: '💡',
     },
+    {
+      id: 'dyk4',
+      question: "Do you know why you get 'brain freeze' from eating ice cream too fast? 🍦",
+      answer: "The brain itself has no pain receptors! When something cold hits the roof of your mouth, it rapidly constricts the blood vessels there. The trigeminal nerve senses this intense change and sends a signal to the brain. The brain misinterprets the signal's origin, making you feel the pain in your forehead instead of your mouth. This is called 'referred pain'.",
+      emoji: '🥶'
+    },
+    {
+      id: 'dyk5',
+      question: "Do you know why teenagers are biologically more prone to risky behavior? 🛹",
+      answer: "The brain develops from the back to the front. The amygdala (which processes emotion and reward) matures during early puberty, but the prefrontal cortex (which handles logic, impulse control, and predicting consequences) isn't fully wired until age 25. Teenagers literally have a fully functioning engine but no brakes.",
+      emoji: '🏎️'
+    }
   ],
-
-  // ── QUIZ ────────────────────────────────────
   quiz: [
     {
       id: 'q1',
@@ -185,8 +236,62 @@ export default {
       answer: 1,
       explanation: "Neuroplasticity = the brain physically rewires itself based on experience. London taxi drivers grow larger hippocampi, violinists enlarge their motor cortex — your brain shape changes with practice! 🧠",
     },
+    {
+      id: 'q13',
+      question: "Which brain region is considered the 'CEO', handling impulse control and future planning?",
+      options: ['Cerebellum', 'Prefrontal Cortex', 'Amygdala', 'Occipital Lobe'],
+      answer: 1,
+      explanation: "The Prefrontal Cortex handles executive function. It is the last part of the brain to develop, finishing around age 25."
+    },
+    {
+      id: 'q14',
+      question: "What is the primary function of the Blood-Brain Barrier?",
+      options: ['To keep the brain from moving inside the skull', 'To produce red blood cells', 'To act as a security checkpoint, preventing toxins and pathogens from entering the brain', 'To cool the brain down'],
+      answer: 2,
+      explanation: "The Blood-Brain Barrier is highly selective, protecting the brain from infections but also making it difficult for doctors to deliver medicine to the brain."
+    },
+    {
+      id: 'q15',
+      question: "Why do we experience 'brain freeze' when eating cold things quickly?",
+      options: ['The brain itself gets too cold and hurts', 'The trigeminal nerve misinterprets rapid blood vessel constriction in the mouth as head pain', 'Ice cream is toxic to neurons', 'The stomach sends an alarm to the brain'],
+      answer: 1,
+      explanation: "The brain has no pain receptors. It's 'referred pain', where the brain misjudges where the nerve signal from the roof of your mouth is coming from."
+    },
+    {
+      id: 'q16',
+      question: "Which brain structure acts as the 'Save Button' for encoding new long-term memories? 💾",
+      options: ['Amygdala', 'Hippocampus', 'Thalamus', 'Medulla'],
+      answer: 1,
+      explanation: "The Hippocampus takes short-term information and 'saves' it into long-term storage in the cortex, a process called consolidation. 💾"
+    },
+    {
+      id: 'q17',
+      question: "What percentage of the human brain is made of water? 💧",
+      options: ['25%', '50%', '73%', '95%'],
+      answer: 2,
+      explanation: "The brain is roughly 73% water! This is why even mild dehydration can significantly affect your concentration and memory. 💧"
+    },
+    {
+      id: 'q18',
+      question: "Which part of the brain contains 50% of all its neurons despite being only 10% of its volume? 🩰",
+      options: ['Cerebrum', 'Cerebellum', 'Brainstem', 'Hypothalamus'],
+      answer: 1,
+      explanation: "The Cerebellum (Little Brain) is packed with neurons to handle the incredible complexity of balance and coordination. 🩰"
+    },
+    {
+      id: 'q19',
+      question: "A neuron's signal is an 'All-or-Nothing' event. What is it called? ⚡",
+      options: ['Power Surge', 'Action Potential', 'Synaptic Jump', 'Thought Pulse'],
+      answer: 1,
+      explanation: "An Action Potential is the fundamental electrical spike that carries information down the axon. It either happens completely or not at all. ⚡"
+    },
+    {
+      id: 'q20',
+      question: "Which neurotransmitter is the brain's main 'Brake Pedal' (inhibitory)? 🛑",
+      options: ['Glutamate', 'Adrenaline', 'GABA', 'Dopamine'],
+      answer: 2,
+      explanation: "GABA (Gamma-Aminobutyric Acid) is the main inhibitory transmitter. It calms neural activity; without it, neurons fire uncontrollably! 🛑"
+    }
   ],
-
-  // ── RELATED TOPICS ──────────────────────────
   relatedTopics: ['memory_how_it_works', 'cognitive_biases', 'emotions_motivation', 'nervous_system_brain'],
 };

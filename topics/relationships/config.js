@@ -10,7 +10,7 @@ export default {
   subtitle: 'Attachment Styles, Emotional Bids, and the Gottman Method 🤝',
   emoji: '🤝',
   category: 'Personal Development',
-  accentKey: 'relationships', // Use a blue or pinkish hue, we'll map it to primary if needed
+  accentKey: 'relationships', 
 
   hook: {
     question: "Can mathematics predict with 94% accuracy whether a couple will break up within 3 years just by watching them talk for 15 minutes? 📊💔",
@@ -80,6 +80,16 @@ export default {
       highlight: "Love is built or destroyed in micro-moments of attention.",
     },
     {
+      id: 'the_5_1_ratio',
+      title: 'The Magic Ratio (5:1) ⚖️',
+      color: '#00D4A0',
+      bgGradient: ['#001A1A', '#05050A'],
+      icon: 'percent',
+      svgIcon: 'trending-up',
+      content: "How much positivity do you need to counteract a negative interaction?\n\nBecause the human brain has a built-in **Negativity Bias** (we remember bad things much more strongly than good things for survival purposes), a 1:1 ratio doesn't work. If you say one mean thing and one nice thing, your partner only remembers the mean thing.\n\nDr. Gottman found the golden rule for a stable relationship is the **5:1 Ratio**. For every ONE negative interaction (conflict, criticism, eye-roll) there must be at least FIVE positive interactions (compliments, physical touch, turning toward bids) to balance the emotional bank account.",
+      highlight: "It takes five positive interactions to repair the emotional damage of one negative interaction. ⚖️"
+    },
+    {
       id: 'four_horsemen_1',
       title: 'The 4 Horsemen: Criticism & Contempt 🐎',
       color: '#FF007F',
@@ -99,6 +109,16 @@ export default {
       content: "3. **Defensiveness:** Playing the victim and making excuses to avoid taking responsibility. ('I wouldn't have yelled if you weren't late!').\n4. **Stonewalling:** Totally withdrawing from the interaction, shutting down, and refusing to respond (often because the heart rate has spiked over 100 BPM and the body is flooded with stress).\n\n*Antidote:* Take ownership of at least a small part of the problem, and take a 20-minute timeout to calm the nervous system. 🧘‍♂️",
       highlight: "Stonewalling is not a lack of caring; it is biological emotional flooding.",
     },
+    {
+      id: 'love_languages',
+      title: 'The 5 Love Languages 🎁',
+      color: '#E84393',
+      bgGradient: ['#2E001A', '#05050A'],
+      icon: 'heart',
+      svgIcon: 'heart',
+      content: "Dr. Gary Chapman theorized that people give and receive love in 5 distinct 'languages':\n\n1. **Words of Affirmation:** Compliments, verbal support, saying 'I love you.'\n2. **Quality Time:** Undivided attention, deep conversations without phones.\n3. **Receiving Gifts:** Visual symbols of love and thoughtfulness.\n4. **Acts of Service:** Doing chores, cooking, making life easier.\n5. **Physical Touch:** Hugs, holding hands, physical intimacy.\n\nMost relationship friction occurs when partners speak different languages. If your language is Quality Time, but your partner's is Acts of Service, they might clean the whole house to show love, while you feel unloved because they didn't sit and talk with you. You must learn to speak *their* language.",
+      highlight: "Don't love your partner the way YOU want to be loved. Love them the way THEY want to be loved. 🎁"
+    }
   ],
 
   lab: {
@@ -161,7 +181,7 @@ export default {
     { id: 'q17', question: "The tragedy of the Anxious attachment style is that their desperate pursuit of closeness often:", options: ["Makes them rich", "Ironically smothers the partner, causing the exact abandonment they were terrified of", "Makes the partner love them immediately", "Cures anxiety"], answer: 1, explanation: "By holding on too tightly, they accidentally crush the relationship they are trying to save! 🏃‍♂️💨" },
     { id: 'q18', question: "What happens to the immune system of someone who is constantly subjected to Contempt by their partner?", options: ["It becomes super strong", "It crashes profoundly due to constant cortisol, leaving them prone to infectious diseases", "Nothing", "It heals allergies"], answer: 1, explanation: "Toxic communication isn't just emotionally painful; it is physically destructive to human biology. 🦠" },
     { id: 'q19', question: "Which action is an example of 'Turning Against' an emotional bid?", options: ["Smiling at them", "Looking at your phone silently", "Snapping 'Can't you see I'm busy right now?!'", "Buying flowers"], answer: 2, explanation: "Turning Against isn't just ignoring them; it's actively creating hostility in response to a bid for connection. ⚔️" },
-    { id: 'q20', question: "If you want to heal an Anxious-Avoidant dynamic, the goal should be for both partners to move toward:", options: ["Complete isolation", "Earned Secure Attachment (through therapy, boundaries, and safe communication)", "More arguing", "Ignoring attachment theory"], answer: 1, explanation: "Attachment styles CAN change! Neuroplasticity allows us to build 'Secure' patterns with conscious effort! 🌱" },
+    { id: 'q20', question: "According to Gottman's 'Magic Ratio', how many positive interactions are needed to balance out one negative interaction?", options: ["1", "2", "5", "10"], answer: 2, explanation: "Because of our negativity bias, a 1:1 ratio isn't enough. You need FIVE positive moments to repair the damage of one negative moment. ⚖️" },
   ],
 
   relatedTopics: ['science_of_emotion', 'manipulation_tactics', 'anger'],

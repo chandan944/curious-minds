@@ -31,7 +31,7 @@ export default {
     {
       id: "sl_1",
       title: "मेन सीक्वेंस (Main Sequence): लंबा सफर ☀️",
-      color: "#FFD166",
+      color: "#ffb407ff",
       bgGradient: ["#202000", "#050D0A"],
       icon: "☀️",
       svgIcon: "sun",
@@ -52,7 +52,7 @@ export default {
     {
       id: "sl_3",
       title: "वाइट ड्वार्फ (White Dwarfs): बुझते अंगारे 🥚",
-      color: "#F1F5F9",
+      color: "#1cda45ff",
       bgGradient: ["#151515", "#050D0A"],
       icon: "🥚",
       svgIcon: "target",

@@ -99,6 +99,26 @@ export default {
       content: "The ultimate tool for letting go is forcing **Empathy**. (Note: Empathy does not equal endorsement).\n\nIf someone betrays you, forcing your brain to imagine *why* they did it—perhaps they are deeply insecure, terrified, traumatized from childhood, or just stupid—changes the framing.\n\nThey stop being an 'Evil Mastermind' who ruined your life, and become a 'Flawed, Broken Human.' It is much easier to let go of anger against a broken person than an evil genius. 🛠️",
       highlight: "Hurt people hurt people. Recognizing their pain removes their power over you.",
     },
+    {
+      id: 'the_90_second_rule',
+      title: 'The 90-Second Rule ⏱️',
+      color: '#F1C40F',
+      bgGradient: ['#221A05', '#05050A'],
+      icon: 'watch',
+      svgIcon: 'zap',
+      content: "Scientifically, when an emotion like anger is triggered, it takes exactly **90 seconds** for the chemical components to flush through your bloodstream. \n\nAny anger you feel *after* 90 seconds is because you are choosing to stimulate the circuitry with your thoughts. You are 'feeding the fire' by re-imagining the offense.\n\n**The Hack:** If you can simply observe the physical sensation of anger for 90 seconds without reacting or thinking about the cause, the emotion will die a natural death. 🌊",
+      highlight: "Biology lasts 90 seconds. Wrath is what happens when you keep the chemistry alive with your mind."
+    },
+    {
+      id: 'boundaries_vs_wrath',
+      title: 'Boundaries vs. Resentment 🛡️',
+      color: '#3498DB',
+      bgGradient: ['#001828', '#05050A'],
+      icon: 'shield',
+      svgIcon: 'lock',
+      content: "Wrath is often the result of **Unspoken Boundaries**. When we say 'yes' when we want to say 'no', we feel used and small. Over time, this suppressed frustration boils into explosive wrath.\n\nForgiveness does NOT mean being a doormat. In fact, to forgive effectively, you must set fierce boundaries to ensure you aren't hurt again.\n\n**The Hack:** Healthy anger is a signal that your boundaries have been crossed. Use that energy to set a clear boundary *now*, so you don't have to carry a grudge *later*. 🚧",
+      highlight: "A clear 'No' today prevents a decade of resentment tomorrow."
+    }
   ],
 
   lab: {

@@ -72,8 +72,7 @@ export default function CuriosityHook({ hook, accentColor, topicTitle, onContinu
         />
 
         {/* ── Giant faded number ── */}
-        <Text style={[styles.bigNumber, { color: color + (isDark ? '18' : '10') }]}>01</Text>
-
+       
         {/* ── Question — left aligned, editorial ── */}
         <Animated.View style={{ transform: [{ translateY: textAnim }] }}>
           <Text style={[styles.questionLabel, { color: txtM }]}>Question</Text>

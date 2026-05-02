@@ -127,7 +127,7 @@ export default function QuizEngine({ quiz, accentColor, onComplete }) {
       soundCorrect();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      const xp = XP_REWARDS.quizCorrect + (newStreak > 2 ? newStreak * 5 : 0);
+      const xp = 10;
       setXpAmount(xp);
       setShowXP(true);
       setTimeout(() => setShowXP(false), 2000);

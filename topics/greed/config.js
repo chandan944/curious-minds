@@ -99,6 +99,26 @@ export default {
       content: "The biological antidote to the Scarcity Trap is Generosity.\n\nWhen you give something away—time, money, or knowledge—you are sending a powerful signal to your own subconscious brain: *'I have enough.'*\n\nThis shuts down the 'survive winter' alarm in the Amygdala. It lowers cortisol, spikes oxytocin, and pulls you entirely off the Hedonic Treadmill. It is the ultimate psychological hack. 💡",
       highlight: "Generosity is the ultimate proof to your own brain that you have survived.",
     },
+    {
+      id: 'wealth_paradox',
+      title: 'The Wealth Paradox 🧩',
+      color: '#F39C12',
+      bgGradient: ['#2A1A00', '#05050A'],
+      icon: 'help-circle',
+      svgIcon: 'eye',
+      content: "We assume that getting richer will solve all our problems. But psychologists have discovered the **Wealth Paradox**: as your wealth increases, your problems don't disappear; they just change form.\n\nInstead of worrying about paying rent, you worry about inflation, taxes, lawsuits, and whether your friends actually like you or just like your money.\n\nGreed promises an endpoint of 'zero stress', but this endpoint is a mathematical impossibility. Wealth buys comfort, but it does not buy peace.",
+      highlight: "Money buys you a better class of problems, but it doesn't eliminate problems."
+    },
+    {
+      id: 'freedom_metric',
+      title: 'The Freedom Metric ⏳',
+      color: '#9B59B6',
+      bgGradient: ['#1A0B2E', '#05050A'],
+      icon: 'clock',
+      svgIcon: 'star',
+      content: "The ultimate cure for greed is redefining how you measure wealth.\n\nMost people measure wealth in dollars. The truly wealthy measure it in **Time and Freedom**.\n\nIf you make $500,000 a year but work 80 hours a week and hate your life, you are time-poor. If you make $60,000 a year but control your own schedule, have dinner with your family, and sleep 8 hours, you are infinitely wealthier.\n\nStop hoarding paper and start hoarding your own time.",
+      highlight: "True wealth is waking up and saying: 'I can do whatever I want today.' ⏳"
+    }
   ],
 
   lab: {

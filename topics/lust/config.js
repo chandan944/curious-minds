@@ -99,6 +99,26 @@ export default {
       content: "Desire and lust carry massive amounts of biological energy. You cannot simply 'destroy' this energy, but you can redirect it.\n\nThinkers from Napoleon Hill to modern athletes practice **Energy Transmutation**—taking the restless, aggressive energy of biological urge and pouring it directly into: \n• Heavy physical workouts\n• Deep creative work\n• Business building\n\nWhen you stop leaking your energy into digital screens, you become a powerhouse of ambition in the real world. 🚀",
       highlight: "Do not fight the energy. Channel it into building your dream life.",
     },
+    {
+      id: 'chaser_effect',
+      title: 'The Chaser Effect 🏃‍♂️',
+      color: '#E74C3C',
+      bgGradient: ['#2C0B0E', '#05050A'],
+      icon: 'activity',
+      svgIcon: 'zap',
+      content: "Have you ever abstained from a bad habit for weeks, finally gave in 'just once,' and suddenly found yourself bingeing uncontrollably for days?\n\nThis is neurobiologically known as the **Chaser Effect**.\n\nThat single hit of the supernormal stimulus doesn't satisfy the brain; it re-awakens the dormant neural pathways. The brain gets a taste of the extreme dopamine and instantly demands more, creating a massive spike in cravings for the next 48 to 72 hours. 'Just once' is a biological lie.",
+      highlight: "One hit is too many, and a thousand is never enough."
+    },
+    {
+      id: 'neuroplastic_healing',
+      title: 'The 90-Day Reset 🧠',
+      color: '#3498DB',
+      bgGradient: ['#001828', '#05050A'],
+      icon: 'refresh-ccw',
+      svgIcon: 'shield',
+      content: "The brain is highly adaptable (Neuroplasticity). Just as it down-regulated receptors to protect you from too much dopamine, it can up-regulate them when you stop.\n\nNeuroscientists agree that it takes approximately **90 days** of total abstinence from a supernormal stimulus (like junk food, gambling, or synthetic media) for the brain's reward circuitry to fully heal and return to baseline.\n\nAround day 30, the 'flatline' (depression and zero motivation) lifts, and by day 90, normal life activities feel deeply satisfying again.",
+      highlight: "Give your brain 90 days to heal, and it will give you your life back."
+    }
   ],
 
   lab: {

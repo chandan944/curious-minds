@@ -99,6 +99,26 @@ export default {
       content: "When we fail and procrastinate, we usually beat ourselves up: *'I am so lazy. I am a failure.'*\n\nStudies show that guilt and shame actually *increase* future procrastination! Why? Because guilt is a massive negative emotion. And what does the brain do when facing negative emotions? It seeks instant distraction!\n\nForgiving yourself instantly removes the negative emotion, breaking the cycle and allowing the logical brain to resume control. 💡",
       highlight: "Beating yourself up for being lazy guarantees you will be lazy again tomorrow.",
     },
+    {
+      id: 'parkinsons_law',
+      title: "Hack 4: Parkinson's Law ⏳",
+      color: '#E84393',
+      bgGradient: ['#2E001A', '#05050A'],
+      icon: 'hourglass',
+      svgIcon: 'target',
+      content: "Have you ever noticed that if you have a week to write an essay, it takes a week. But if you have 3 hours until the deadline, you finish it in 3 hours?\n\nThis is **Parkinson's Law**: *'Work expands to fill the time available for its completion.'*\n\nIf you give yourself too much time, your brain will introduce procrastination and overthinking to fill the space. \n\n**The Hack:** Set aggressive, artificial deadlines. Give yourself exactly half the time you think you need. The artificial time constraint forces the brain into deep focus and eliminates perfectionism.",
+      highlight: "If you give yourself 30 days to clean your room, it takes 30 days. Give yourself 30 minutes, and it takes 30 minutes. ⌛"
+    },
+    {
+      id: 'decision_fatigue',
+      title: 'Decision Fatigue 🧠🔋',
+      color: '#3498DB',
+      bgGradient: ['#001828', '#05050A'],
+      icon: 'battery',
+      svgIcon: 'shield',
+      content: "Every choice you make—from what to wear to what to eat—drains a tiny bit of your Prefrontal Cortex's energy. This is **Decision Fatigue**.\n\nBy 6:00 PM, your PFC is 'empty,' and the lazy Limbic system takes full control. This is why it's so easy to study at 9:00 AM but almost impossible at 9:00 PM.\n\n**The Hack:** Do your hardest, most anxiety-inducing work in the first 2 hours of your day. Save the easy, automatic tasks for when your 'willpower battery' is low. 🌅",
+      highlight: "Your willpower is a finite resource. Use it on your most important task before the battery runs out."
+    }
   ],
 
   lab: {

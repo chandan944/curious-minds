@@ -14,6 +14,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
+import { useAuth } from "../context/AuthContext";
 import { FONTS, RADIUS, SPACING } from "../constants/theme";
 import { TOPIC_REGISTRY } from "../constants/topicRegistry";
 import { TOPIC_CONFIGS_HI } from "../constants/topicTranslationsMap";
@@ -200,7 +201,7 @@ const TOPIC_CONFIGS = {
   stoicism: () => require("../topics/stoicism/config").default,
   existentialism: () => require("../topics/existentialism/config").default,
   enlightenment: () => require("../topics/enlightenment/config").default,
-  greatest_philosophers: () => require("../topics/greatest_philosophers/config").default,
+  great_philosophers: () => require("../topics/greatest_philosophers/config").default,
   ethics_morality: () => require("../topics/ethics_morality/config").default,
   free_will: () => require("../topics/free_will/config").default,
   consciousness: () => require("../topics/consciousness/config").default,
@@ -366,7 +367,7 @@ const LAB_COMPONENTS = {
   stoicism: () => require("../topics/stoicism/LabSimulation").default,
   existentialism: () => require("../topics/existentialism/LabSimulation").default,
   enlightenment: () => require("../topics/enlightenment/LabSimulation").default,
-  greatest_philosophers: () => require("../topics/greatest_philosophers/LabSimulation").default,
+  great_philosophers: () => require("../topics/greatest_philosophers/LabSimulation").default,
   ethics_morality: () => require("../topics/ethics_morality/LabSimulation").default,
   free_will: () => require("../topics/free_will/LabSimulation").default,
   consciousness: () => require("../topics/consciousness/LabSimulation").default,
@@ -374,7 +375,7 @@ const LAB_COMPONENTS = {
 };
 
 const STEPS = ["hook", "theory", "lab", "dyk", "quiz", "results"];
-const STEP_LABELS = ["Hook", "Learn", "Lab", "Why", "Quiz", "Done"];
+const STEP_LABELS = [" ", "Learn", "Lab", "Why", "Quiz", "Done"];
 const STEP_ICONS = {
   hook: "sparkle",
   theory: "book",
@@ -387,6 +388,7 @@ const STEP_ICONS = {
 export default function TopicScreen({ topicId, onBack }) {
   const { theme, isDark } = useTheme();
   const { isHindi } = useLanguage();
+  const { refreshUser } = useAuth();
   const [step, setStep] = useState("hook");
   const [topicConfig, setTopicConfig] = useState(null);
   const [LabComponent, setLabComponent] = useState(null);
@@ -485,15 +487,17 @@ export default function TopicScreen({ topicId, onBack }) {
   }, [topicId, isHindi]);
 
   // ── Theme tokens ───────────────────────────────
-  const bg = theme.bg.base;
-  const glass1 = theme.glass.light;
-  const glass2 = theme.glass.medium;
-  const border = theme.glass.border;
-  const borderBr = theme.glass.borderBright;
-  const txt1 = theme.text.primary;
-  const txt2 = theme.text.secondary;
-  const txtM = theme.text.muted;
-  const accent = theme.accent.primary;
+  // ── Theme tokens ───────────────────────────────
+  const bg = theme?.bg?.base || '#08090F';
+  const glass1 = theme?.glass?.light || 'rgba(255,255,255,0.03)';
+  const glass2 = theme?.glass?.medium || 'rgba(255,255,255,0.06)';
+  const border = theme?.glass?.border || 'rgba(255,255,255,0.1)';
+  const borderBr = theme?.glass?.borderBright || 'rgba(255,255,255,0.2)';
+  const txt1 = theme?.text?.primary || '#FFFFFF';
+  const txt2 = theme?.text?.secondary || 'rgba(255,255,255,0.8)';
+  const txtM = theme?.text?.muted || 'rgba(255,255,255,0.6)';
+  const accent = theme?.accent?.primary || '#7B6FFF';
+
 
   // ── Loading / Error screen ─────────────────────
   if (!topicConfig || !topicMeta) {
@@ -550,70 +554,76 @@ export default function TopicScreen({ topicId, onBack }) {
     );
   }
 
-  const topicColors = theme.topics;
+  const topicColors = theme?.topics || {};
   const colorKey =
     Object.keys(topicColors).find((k) => topicId.startsWith(k)) || "default";
-  const accentColor = (topicColors[colorKey] || topicColors.default).primary;
+  const accentColor = (topicColors[colorKey] || topicColors?.default || { primary: '#7B6FFF' }).primary;
+
 
   // ── Handlers ──────────────────────────────────
   const handleTheoryComplete = async () => {
     debugLog(`Theory complete → advancing to lab`);
     await updateTopicProgress(topicId, { theoryRead: true });
-    await addXP(XP_REWARDS.theoryRead);
-    setEarnedXP((p) => p + XP_REWARDS.theoryRead);
     setStep("lab");
   };
 
   const handleLabContinue = async () => {
     debugLog(`Lab continue → advancing to dyk`);
     await updateTopicProgress(topicId, { labVisited: true });
-    await addXP(XP_REWARDS.labInteraction);
-    setEarnedXP((p) => p + XP_REWARDS.labInteraction);
     setStep("dyk");
   };
 
   const handleDYKComplete = async () => {
     debugLog(`DYK complete → advancing to quiz`);
     await updateTopicProgress(topicId, { dykAnswered: true });
-    await addXP(XP_REWARDS.dykAnswered);
-    setEarnedXP((p) => p + XP_REWARDS.dykAnswered);
     setStep("quiz");
   };
 
-  const handleQuizComplete = async (score, total, timeSeconds, isPerfect) => {
+  const handleQuizComplete = (score, total, timeSeconds, isPerfect) => {
     debugLog(
       `Quiz complete — score: ${score}/${total}, time: ${timeSeconds}s, perfect: ${isPerfect}`,
     );
-    const xpEarned =
-      score * XP_REWARDS.quizCorrect +
-      XP_REWARDS.quizComplete +
-      (isPerfect ? XP_REWARDS.quizPerfect : 0) +
-      (timeSeconds < 60 ? 20 : 0);
+    // +10 points per correct answer, no other bonuses
+    const quizXp = score * 10;
 
-    await addXP(xpEarned);
-    setEarnedXP((p) => p + xpEarned);
-
-    const badges = [];
-    if (isPerfect) {
-      const a = await awardBadge(BADGES.perfect_quiz.id);
-      if (a) badges.push(BADGES.perfect_quiz);
-    }
-    if (timeSeconds < 60 && score === total) {
-      const a = await awardBadge(BADGES.speed_demon.id);
-      if (a) badges.push(BADGES.speed_demon);
-    }
-    if (labBreakerTriggered) {
-      const a = await awardBadge(BADGES.lab_breaker.id);
-      if (a) badges.push(BADGES.lab_breaker);
-    }
-    await updateTopicProgress(topicId, {
-      quizBestScore: score,
-      quizAttempts: 1,
-      completedAt: Date.now(),
-    });
-    setNewBadges(badges);
-    setQuizResult({ score, total, timeSeconds, isPerfect, xpEarned });
+    // ── 1. SHOW RESULTS IMMEDIATELY (no awaits blocking the UI) ──
+    setEarnedXP(quizXp);
+    setNewBadges([]);
+    setQuizResult({ score, total, timeSeconds, isPerfect, xpEarned: quizXp });
     setStep("results");
+
+    // ── 2. SYNC TO BACKEND IN BACKGROUND (fire-and-forget) ──
+    (async () => {
+      try {
+        await addXP(quizXp, 'topic_complete');
+
+        const badges = [];
+        if (isPerfect) {
+          const a = await awardBadge(BADGES.perfect_quiz.id);
+          if (a) badges.push(BADGES.perfect_quiz);
+        }
+        if (timeSeconds < 60 && score === total) {
+          const a = await awardBadge(BADGES.speed_demon.id);
+          if (a) badges.push(BADGES.speed_demon);
+        }
+        if (labBreakerTriggered) {
+          const a = await awardBadge(BADGES.lab_breaker.id);
+          if (a) badges.push(BADGES.lab_breaker);
+        }
+        if (badges.length > 0) setNewBadges(badges);
+
+        await updateTopicProgress(topicId, {
+          quizBestScore: score,
+          quizAttempts: 1,
+          completedAt: Date.now(),
+        });
+
+        // Refresh AuthContext user so HomeScreen shows updated points
+        refreshUser().catch(() => {});
+      } catch (e) {
+        debugErr(`Error saving quiz results: ${e?.message}`);
+      }
+    })();
   };
 
   const handleRetryQuiz = () => {
@@ -897,6 +907,7 @@ export default function TopicScreen({ topicId, onBack }) {
             <LabComponent
               scientistMode={scientistMode}
               accentColor={accentColor}
+              isHindi={isHindi}
               onLabBreaker={() => {
                 debugLog("Lab breaker triggered!");
                 setLabBreakerTriggered(true);
@@ -950,54 +961,8 @@ export default function TopicScreen({ topicId, onBack }) {
           <View style={{ height: 120 }} />
         </ScrollView>
 
-        {/* ─── AI Tutor Floating Action Button ─── */}
-        <Animated.View
-          style={[
-            styles.tutorFab,
-            {
-              backgroundColor: accentColor,
-              shadowColor: accentColor,
-              transform: [{ scale: tutorFabScale }],
-            },
-          ]}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              soundTap();
-              Animated.sequence([
-                Animated.spring(tutorFabScale, { toValue: 0.88, tension: 300, friction: 10, useNativeDriver: true }),
-                Animated.spring(tutorFabScale, { toValue: 1, tension: 200, friction: 8, useNativeDriver: true }),
-              ]).start();
-              setShowAiTutor(true);
-            }}
-            activeOpacity={1}
-            style={styles.tutorFabInner}
-          >
-            <Icon name="robot" size={22} color="#FFF" />
-            <Text style={styles.tutorFabText}>AI Tutor</Text>
-          </TouchableOpacity>
-        </Animated.View>
         </>
       )}
-
-      {/* ─── AI Tutor Chat Modal ─── */}
-      <Modal
-        visible={showAiTutor}
-        animationType="slide"
-        transparent={false}
-        onRequestClose={() => setShowAiTutor(false)}
-        statusBarTranslucent
-      >
-        <View style={[styles.tutorModal, { backgroundColor: isDark ? '#08090F' : '#F4F6F9' }]}>
-          <AiTutorChat
-            topicTitle={topicConfig?.title || topicId}
-            topicId={topicId}
-            accentColor={accentColor}
-            onClose={() => setShowAiTutor(false)}
-          />
-        </View>
-      </Modal>
-
       {step === "dyk" && (
         <DoYouKnowWhy
           questions={topicConfig.doYouKnowWhy || []}

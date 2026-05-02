@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 
 const MAX_PANIC = 100;
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function AnxietyLab({ onComplete, isHindi }) {
   const { isDarkMode } = useTheme();
@@ -181,7 +182,7 @@ export default function AnxietyLab({ onComplete, isHindi }) {
            {/* Visualizing the "Alarm System" */}
            <Circle cx="100" cy="75" r={30 + (panicLevel/2)} fill="url(#amygdalaGrad)" />
            {gameState === 'breathing' && (
-             <Animated.Circle 
+             <AnimatedCircle 
                cx="100" 
                cy="75" 
                r="15" 

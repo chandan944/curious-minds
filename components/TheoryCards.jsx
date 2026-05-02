@@ -1,13 +1,15 @@
 import React, { useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Animated, Dimensions, Platform,
+  Animated, Dimensions, Platform, Share
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../constants/theme';
 import { soundTap, soundWhoosh } from '../utils/sounds';
 import * as Haptics from 'expo-haptics';
+import { captureRef } from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
 import Icon from './ui/Icons';
 import MarkdownText from './ui/MarkdownText';
 
@@ -141,15 +143,61 @@ function TheoryCard({ card, index, total, isDark, txt1, txt2, accentColor, onPre
   const bgGrad = isDark
     ? (card.bgGradient || ['#1A1040', '#0D0D1A'])
     : ['#FFFFFF', '#F5F5FF'];
+  
+  const cardRef = useRef(null);
+  const [isSharing, setIsSharing] = useState(false);
+
+  const handleShare = async () => {
+    try {
+      setIsSharing(true);
+      
+      // Wait for state to update and re-render without share/count UI
+      setTimeout(async () => {
+        try {
+          const uri = await captureRef(cardRef, {
+            format: 'png',
+            quality: 1.0,
+            scale: 3, // Increase resolution significantly to prevent it from looking zoomed out/blurry
+          });
+          
+          setIsSharing(false);
+          
+          // Share the image
+          await Sharing.shareAsync(uri, {
+            dialogTitle: `Share Theory Card`,
+            mimeType: 'image/png',
+          });
+        } catch (error) {
+          setIsSharing(false);
+          console.error(error.message);
+        }
+      }, 150);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.9} style={{ flex: 1 }}>
-      <LinearGradient
-        colors={bgGrad}
-        start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-        style={[styles.card, { borderColor: card.color + (isDark ? '40' : '30') }]}
+    <TouchableOpacity onPress={onPress} activeOpacity={0.9} style={{ width: '100%' }}>
+      <View 
+        ref={cardRef} 
+        collapsable={false} 
+        style={
+          isSharing ? {
+            width: width + 32,
+            backgroundColor: '#0A0A14', // Premium dark space
+            paddingHorizontal: 40,
+            paddingVertical: 60,
+            marginLeft: -40, // Centers it within the ScrollView's 24px padding
+          } : { width: '100%' }
+        }
       >
-      {/* Top accent bar */}
+        <LinearGradient
+          colors={bgGrad}
+          start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+          style={[styles.card, { borderColor: card.color + (isDark ? '40' : '30'), width: '100%' }]}
+        >
+        {/* Top accent bar */}
       <View style={[styles.accentBar, { backgroundColor: card.color }]} />
 
       {/* Card header */}
@@ -157,8 +205,24 @@ function TheoryCard({ card, index, total, isDark, txt1, txt2, accentColor, onPre
         <View style={[styles.cardIconWrap, { backgroundColor: card.color + '20', borderColor: card.color + '30' }]}>
           <Icon name={card.svgIcon || 'sparkle'} size={28} color={card.color} />
         </View>
-        <View style={[styles.cardIndexBadge, { borderColor: card.color + '50', backgroundColor: card.color + '15' }]}>
-          <Text style={[styles.cardIndexText, { color: card.color }]}>{index + 1}/{total}</Text>
+        <View style={styles.headerRight}>
+          {!isSharing ? (
+            <>
+              <TouchableOpacity 
+                onPress={handleShare}
+                style={[styles.shareBtn, { backgroundColor: card.color + '15', borderColor: card.color + '30' }]}
+              >
+                <Icon name="share" size={16} color={card.color} />
+              </TouchableOpacity>
+              
+            </>
+          ) : (
+            <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center', paddingRight: 4 }}>
+              <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: '#FF5F56' }} />
+              <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: '#FFBD2E' }} />
+              <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: '#27C93F' }} />
+            </View>
+          )}
         </View>
       </View>
 
@@ -187,7 +251,15 @@ function TheoryCard({ card, index, total, isDark, txt1, txt2, accentColor, onPre
           <MarkdownText style={[styles.highlightText, { color: card.color }]} highlightColor="#FFD166">{card.highlight}</MarkdownText>
         </View>
       )}
-      </LinearGradient>
+        </LinearGradient>
+        
+        {/* Watermark Logo when sharing */}
+        {isSharing && (
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 24, gap: 8 }}>
+            <Text style={{ fontFamily: FONTS.displayMedium, fontSize: 16, color: card.color }}>By Curious Minds</Text>
+          </View>
+        )}
+      </View>
     </TouchableOpacity>
   );
 }
@@ -223,6 +295,13 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'center', marginBottom: SPACING.md, marginTop: 8,
+  },
+  headerRight: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+  },
+  shareBtn: {
+    width: 32, height: 32, borderRadius: RADIUS.full, borderWidth: 1,
+    alignItems: 'center', justifyContent: 'center',
   },
   cardIconWrap: {
     width: 56, height: 56, borderRadius: 14,

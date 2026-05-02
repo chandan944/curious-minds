@@ -1,31 +1,66 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { syncXpToServer } from '../services/leaderboardService';
+import { getToken } from './authStorage';
 
 const KEYS = {
-  XP: '@cm_xp',
   BADGES: '@cm_badges',
   PROGRESS: '@cm_progress',  // per-topic progress
-  STREAK: '@cm_streak',
   LAST_OPEN: '@cm_last_open',
   QUIZ_SCORES: '@cm_quiz_scores',
   LAB_DATA: '@cm_lab_data',
 };
 
+// ── Max XP allowed per action type (must match backend) ──
+const MAX_XP_PER_REASON = {
+  quiz_correct:   15,
+  quiz_perfect:   50,
+  theory_read:    10,
+  lab_complete:   20,
+  dyk_complete:   10,
+  streak_bonus:   25,
+  topic_complete: 30,
+  local_earn:     15,
+};
+const MAX_SINGLE_SYNC = 100;
+
 // ── XP ──────────────────────────────────────
 
 export const getXP = async () => {
-  try {
-    const val = await AsyncStorage.getItem(KEYS.XP);
-    return val ? parseInt(val) : 0;
-  } catch { return 0; }
+  return 0; // Legacy function, points are now managed via AuthContext & Backend
 };
 
-export const addXP = async (amount) => {
+export const addXP = async (amount, reason = 'topic_complete') => {
   try {
-    const current = await getXP();
-    const newXP = current + amount;
-    await AsyncStorage.setItem(KEYS.XP, String(newXP));
-    return newXP;
-  } catch { return 0; }
+    // ── Client-side validation ───────────────────────────────
+    if (typeof amount !== 'number' || amount <= 0 || !Number.isFinite(amount)) {
+      console.warn('⚠️ Invalid XP amount:', amount);
+      return 0;
+    }
+
+    const validAmount = Math.floor(amount);
+
+    if (validAmount <= 0) {
+      console.warn('⚠️ XP amount rounded to 0, skipping');
+      return 0;
+    }
+
+    // Sync with server directly
+    const token = await getToken();
+    if (token) {
+      // Send 0 for streak to let backend manage it exclusively
+      const serverRes = await syncXpToServer(token, validAmount, reason, 0);
+      if (serverRes && serverRes.success && typeof serverRes.totalPoints === 'number') {
+        return serverRes.totalPoints;
+      }
+    } else {
+      console.warn('⚠️ Cannot add XP: User not logged in.');
+    }
+    
+    return 0;
+  } catch (e) { 
+    console.warn('Error syncing XP to server', e?.message);
+    return 0; 
+  }
 };
 
 // ── BADGES ──────────────────────────────────
@@ -113,35 +148,12 @@ export const getAllQuizScores = async () => {
 // ── STREAK ───────────────────────────────────
 
 export const checkAndUpdateStreak = async () => {
-  try {
-    const streakVal = await AsyncStorage.getItem(KEYS.STREAK);
-    const lastOpenVal = await AsyncStorage.getItem(KEYS.LAST_OPEN);
-    const streak = streakVal ? parseInt(streakVal) : 0;
-    const lastOpen = lastOpenVal ? parseInt(lastOpenVal) : 0;
-    const now = Date.now();
-    const oneDayMs = 86400000;
-    const daysSince = Math.floor((now - lastOpen) / oneDayMs);
-
-    let newStreak = streak;
-    if (daysSince === 1) {
-      newStreak = streak + 1; // Consecutive day
-    } else if (daysSince > 1) {
-      newStreak = 1; // Reset
-    } else if (daysSince === 0 && streak === 0) {
-      newStreak = 1; // First time
-    }
-
-    await AsyncStorage.setItem(KEYS.STREAK, String(newStreak));
-    await AsyncStorage.setItem(KEYS.LAST_OPEN, String(now));
-    return newStreak;
-  } catch { return 0; }
+  // Legacy function, streak is now managed by the backend exclusively.
+  return 0;
 };
 
 export const getStreak = async () => {
-  try {
-    const val = await AsyncStorage.getItem(KEYS.STREAK);
-    return val ? parseInt(val) : 0;
-  } catch { return 0; }
+  return 0; // Legacy function, streak is managed via AuthContext & Backend
 };
 
 // ── FULL STATS (for Progress Dashboard) ──────

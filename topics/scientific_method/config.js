@@ -166,6 +166,48 @@ export default {
     { id: 'q8', question: "What is a key red flag that identifies pseudoscience? 🚩", options: ['Proposes a new, untested idea', 'Makes unfalsifiable claims that cannot be disproven by any experiment', 'Uses mathematical models to make predictions', 'Conflicts with established scientific consensus'], answer: 1, explanation: "Unfalsifiability is the core red flag. 'The energy cannot be measured by regular instruments' conveniently makes the claim immune to testing. Real science INVITES being tested and proven wrong! 🚨" },
     { id: 'q9', question: "Why must a control group be included in an experiment? 🧫", options: ['It provides extra data to make results more impressive', 'It is required by law for scientific studies', 'It provides a baseline comparison so you know the treatment caused the effect', 'Control groups double-check the measurements of instruments'], answer: 2, explanation: "Without a control group, you have no baseline. People often improve on their own over time (spontaneous recovery)! The control group shows you whether your treatment caused improvement or whether it would have happened anyway. 🎯" },
     { id: 'q10', question: "What is 'Open Science' and why is it important? 🌍", options: ['Science available only to universities', 'Science accessible to everyone, with open data and pre-registration to prevent bias', 'Science that has no government funding', 'Science that has already been peer-reviewed and accepted'], answer: 1, explanation: "Open Science = open access papers, open data, and pre-registration of hypotheses BEFORE data collection. Pre-registration prevents p-hacking (fishing for results). COVID vaccines were developed 10x faster using open science collaboration methods! 💉" },
+    { id: 'q11', question: "What is a 'Null Hypothesis' (H₀)? 🎯", options: ['The main hypothesis the scientist wants to prove', 'The default position that there is no relationship or effect', 'A hypothesis that has already been disproven', 'A hypothesis about empty space'], answer: 1, explanation: "The Null Hypothesis is the starting assumption: 'This drug does NOT work.' Scientists try to reject the null hypothesis with evidence. It forces objectivity! 🎯" },
+    { id: 'q12', question: "What is 'Occam's Razor'? 🪒", options: ['A tool used for dissecting specimens', 'The principle that the simplest explanation is usually the correct one', 'A law about light reflection', 'The rule that experiments must be sharp and fast'], answer: 1, explanation: "Occam's Razor suggests that when multiple hypotheses explain the data, we should prefer the simplest one with the fewest assumptions. 🪒" },
+    {
+    "id": "q13",
+    "question": "Why are 'Control Variables' necessary? 🟡",
+    "options": [
+      "To make the experiment more difficult",
+      "To ensure that ONLY the independent variable is affecting the results",
+      "To increase the sample size",
+      "To change the outcome of the experiment"
+    ],
+    "answer": 1,
+    "explanation": "Control variables are factors kept constant (like temperature or time of day). If they changed, you wouldn't know if your result was caused by your test or by the environment! 🟡"
+  },
+  {
+    "id": "q14",
+    "question": "What happens during 'Peer Review'? 🏅",
+    "options": [
+      "The scientist's friends check the spelling",
+      "Independent experts in the same field check the study for errors and logic before it is published",
+      "The government decides if the results are allowed",
+      "The public votes on the results"
+    ],
+    "answer": 1,
+    "explanation": "Peer review is science's quality control. Other experts look for flaws in the method, data, or logic to ensure only high-quality work is published. 🏅"
+  },
+  {
+    "id": "q15",
+    "question": "What is 'Quantitative Data'? 📊",
+    "options": [
+      "Descriptive data like colors or smells",
+      "Data that can be measured and expressed with numbers",
+      "Data that is high quality",
+      "Data that is secret"
+    ],
+    "answer": 1,
+    "explanation": "Quantitative = Quantity. It's anything you can count or measure, like '5.2 cm' or '10 seconds'. Science prefers it because it's precise and objective! 📊"
+  },{ id: 'q16', question: "What is 'Qualitative Data'? 📝", options: ['Numerical measurements', 'Descriptive observations like the liquid turned blue', 'Data that is incorrect', 'Data about the quality of the lab equipment'], answer: 1, explanation: "Qualitative = Quality. It describes characteristics that can't be easily measured with numbers, like 'the bubbles were large' or 'the patient felt happy'. 📝" },
+    { id: 'q17', question: "What is 'Bias' in a scientific context? 🧠", options: ['A type of laboratory equipment', 'A preference or prejudice that prevents impartial consideration of evidence', 'The speed of light in a vacuum', 'The error margin of a thermometer'], answer: 1, explanation: "Bias is when a scientist's expectations or desires influence how they collect or interpret data. Double-blind studies are used specifically to eliminate this! 🧠" },
+    { id: 'q18', question: "Why is 'Random Sampling' important? 🎲", options: ['It makes the experiment more fun', 'It ensures the group being studied represents the larger population fairly', 'It saves time and money', 'It prevents the equipment from breaking'], answer: 1, explanation: "If you only test people who volunteer, your results might be biased. Random sampling ensures that every type of person has an equal chance of being included. 🎲" },
+    { id: 'q19', question: "What does 'falsifiability' mean? ❌", options: ['The ability to lie about data', 'The requirement that a claim could be proven wrong by an experiment', 'The process of making a theory popular', 'The speed at which a theory is accepted'], answer: 1, explanation: "Falsifiability is the heart of science. If there is NO possible way to prove a claim wrong, it's not science — it's faith or opinion. ❌" },
+    { id: 'q20', question: "What is the status of a 'Scientific Theory'? 👑", options: ['A simple guess that hasn"t been tested', 'The highest level of explanation, backed by vast amounts of evidence', 'A law that has been proven wrong', 'A secret document shared only among scientists'], answer: 1, explanation: "In science, 'Theory' is a massive title! It means an explanation (like Germ Theory or Evolution) has been tested thousands of times and consistently found to be true. 👑" },
   ],
 
   relatedTopics: ['measurement_units', 'matter_states', 'atoms_molecules', 'energy_types'],

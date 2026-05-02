@@ -289,6 +289,13 @@ export default {
       answer: 1,
       explanation: "A Burette allows for precise, drop-by-drop delivery of titration fluids! 💧",
     },
+    {
+      id: "q20",
+      question: "What is an 'Amphoteric' substance? 🦎",
+      options: ["A substance that can only be an acid", "A substance that can act as BOTH an acid and a base", "A substance that is frozen", "A substance that doesn't react"],
+      answer: 1,
+      explanation: "Amphoteric substances (like Water!) are chemical chameleons — they can give OR take protons depending on the situation! 🦎",
+    },
     
   ],
 

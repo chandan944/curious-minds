@@ -38,37 +38,9 @@ export default function SatyagrahaLab({ scientistMode = false, onLabBreaker }) {
 
      if (!gameOver && activeMovement) {
         interval = setInterval(() => {
-           setEmpireEconomy(prev => {
-              const newEco = prev - (activeMovement === 'boycott' ? 2 : activeMovement === 'salt_march' ? 4 : 8);
-              if (newEco <= 0) {
-                 setGameOver(true);
-                 setResultMsg('BRITISH ECONOMY COLLAPSED. INDIA IS FREE! 🎆🇮🇳');
-                 soundSuccess();
-                 if(onLabBreaker) onLabBreaker();
-                 return 0;
-              }
-              return newEco;
-           });
-
-           setEmpirePanic(prev => {
-              const newPanic = prev + (activeMovement === 'boycott' ? 3 : activeMovement === 'salt_march' ? 5 : 10);
-              return Math.min(100, newPanic);
-           });
-
-           setRadicalization(prev => {
-              // Radialization goes up faster if Panic is high
-              const inc = empirePanic > 70 ? 4 : 2;
-              const newRad = prev + inc;
-              if (newRad >= 100 && !gameOver) {
-                 setGameOver(true);
-                 setResultMsg('PROTESTS TURNED VIOLENT. IMPERIAL ARMY CRACKDOWN. MOVEMENT CRUSHED. 🩸');
-                 soundWhoosh();
-                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-                 return 100;
-              }
-              return newRad;
-           });
-
+           setEmpireEconomy(prev => Math.max(0, prev - (activeMovement === 'boycott' ? 2 : activeMovement === 'salt_march' ? 4 : 8)));
+           setEmpirePanic(prev => Math.min(100, prev + (activeMovement === 'boycott' ? 3 : activeMovement === 'salt_march' ? 5 : 10)));
+           setRadicalization(prev => prev + (empirePanic > 70 ? 4 : 2));
            setYear(y => Math.min(1947, y + 1));
         }, 800); 
      } else if (!gameOver && !activeMovement) {
@@ -82,6 +54,23 @@ export default function SatyagrahaLab({ scientistMode = false, onLabBreaker }) {
 
      return () => clearInterval(interval);
   }, [activeMovement, gameOver, empirePanic]);
+
+  // Handle Game Over Conditions
+  useEffect(() => {
+     if (gameOver) return;
+     
+     if (empireEconomy <= 0) {
+         setGameOver(true);
+         setResultMsg('BRITISH ECONOMY COLLAPSED. INDIA IS FREE! 🎆🇮🇳');
+         soundSuccess();
+         if(onLabBreaker) onLabBreaker();
+     } else if (radicalization >= 100) {
+         setGameOver(true);
+         setResultMsg('PROTESTS TURNED VIOLENT. IMPERIAL ARMY CRACKDOWN. MOVEMENT CRUSHED. 🩸');
+         soundWhoosh();
+         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+     }
+  }, [empireEconomy, radicalization, gameOver, onLabBreaker]);
 
   // ── Actions ──────────────────────────────────────
   const triggerMovement = (type) => {

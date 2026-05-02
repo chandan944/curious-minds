@@ -99,6 +99,26 @@ export default {
       content: "The only way to permanently hack the Comparison Engine is to change the target.\n\nStop comparing yourself to your neighbor. Start comparing yourself to *who you were yesterday*.\n\nIf you read one more page today than yesterday, you won. If you lifted one more pound, you won. By making your past self your only rival, you guarantee a Positive-Sum game where you are entirely in control of your status. 🏆",
       highlight: "There is nothing noble in being superior to your fellow man; true nobility is being superior to your former self.",
     },
+    {
+      id: 'zero_sum_fallacy',
+      title: 'The Zero-Sum Fallacy 📉',
+      color: '#E74C3C',
+      bgGradient: ['#2C0B0E', '#05050A'],
+      icon: 'pie-chart',
+      svgIcon: 'target',
+      content: "Envy thrives on a cognitive distortion known as the **Zero-Sum Fallacy**.\n\nThis is the false belief that success, wealth, or happiness is a finite pie. If your friend gets a massive slice, you subconsciously believe there is less pie left for you.\n\nIn reality, human achievement is a **Positive-Sum Game**. A friend starting a successful business actually expands the economy, creates opportunities, and expands your network. Their success literally makes you *more* likely to succeed, not less.",
+      highlight: "Another person's success is not your failure. The pie is infinite. 🥧"
+    },
+    {
+      id: 'gratitude_protocol',
+      title: 'The Gratitude Protocol 🙏',
+      color: '#2ECC71',
+      bgGradient: ['#0B2415', '#05050A'],
+      icon: 'heart',
+      svgIcon: 'leaf',
+      content: "Neurologically, it is impossible to feel deep Envy and deep Gratitude at the exact same moment. They utilize mutually exclusive neural pathways.\n\nWhen you focus heavily on what someone else has, your brain enters a state of scarcity. When you focus on what you *already* have, your brain enters a state of abundance.\n\nA daily gratitude practice (writing down 3 specific things you are thankful for) physically rewires your brain to spot abundance, starving the Comparison Engine of its fuel.",
+      highlight: "Gratitude is the biological kryptonite to Envy. 🙏"
+    }
   ],
 
   lab: {

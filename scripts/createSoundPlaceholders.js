@@ -13,7 +13,7 @@ if (!fs.existsSync(soundsDir)) {
   fs.mkdirSync(soundsDir, { recursive: true });
 }
 
-// Minimal valid MP3 (silent ~0.1s) — real MP3 header, won't crash expo-av
+// Minimal valid MP3 (silent ~0.1s) — real MP3 header, won't crash expo-audio
 const SILENT_MP3_HEX =
   'fffb9000000000000000000000000000000000000000000000000000000000000000' +
   '0000000000000000000000000000000000000000000000000000000000000000000000' +

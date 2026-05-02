@@ -1,4 +1,4 @@
-import { Audio } from 'expo-av';
+import { createAudioPlayer } from 'expo-audio';
 
 // ─────────────────────────────────────────────
 //  SOUND MANAGER — safe version
@@ -23,18 +23,11 @@ const SOUND_FILES = {
 
 export const initSounds = async () => {
   try {
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      staysActiveInBackground: false,
-      playsInSilentModeIOS: false,
-      shouldDuckAndroid: true,
-    });
-
     for (const [key, getFile] of Object.entries(SOUND_FILES)) {
       try {
         const file = getFile();
-        const { sound } = await Audio.Sound.createAsync(file, { volume: 1.0 });
-        sounds[key] = sound;
+        const player = createAudioPlayer(file);
+        sounds[key] = player;
       } catch (e) {
         // Sound file missing or failed — just skip it, app still works
       }
@@ -46,11 +39,11 @@ export const initSounds = async () => {
 
 export const playSound = async (name) => {
   if (isMuted) return;
-  const sound = sounds[name];
-  if (!sound) return;
+  const player = sounds[name];
+  if (!player) return;
   try {
-    await sound.setPositionAsync(0);
-    await sound.playAsync();
+    player.seekTo(0);
+    player.play();
   } catch (e) {
     // Ignore — sound is non-critical
   }
@@ -60,8 +53,8 @@ export const setMuted = (val) => { isMuted = val; };
 export const getMuted = () => isMuted;
 
 export const unloadSounds = async () => {
-  for (const sound of Object.values(sounds)) {
-    try { await sound.unloadAsync(); } catch {}
+  for (const player of Object.values(sounds)) {
+    try { player.release(); } catch {}
   }
   sounds = {};
 };

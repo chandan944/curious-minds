@@ -20,9 +20,9 @@ export default {
     {
       "id": "bb_0",
       "title": "विलक्षणता 🧶",
-      "color": "#F1F5F9",
+      "color": "#171718ff",
       "bgGradient": [
-        "#000000",
+        "#131212ff",
         "#050D0A"
       ],
       "icon": "🧶",

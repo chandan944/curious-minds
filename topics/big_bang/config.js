@@ -16,7 +16,7 @@ export default {
     {
       id: "bb_0",
       title: "The Singularity 🧶",
-      color: "#F1F5F9",
+      color: "#0c0d0eff",
       bgGradient: ["#000000", "#050D0A"],
       icon: "🧶",
       svgIcon: "blackhole",
