@@ -221,6 +221,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
   },
+  receptorIcon: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   warningText: {
     fontFamily: FONTS.bodyMedium,
     fontSize: 12,

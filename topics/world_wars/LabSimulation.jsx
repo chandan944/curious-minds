@@ -11,9 +11,6 @@ import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
   Animated, ScrollView,
 } from 'react-native';
-import Svg, {
-  Circle, Line, Text as SvgText, Path,
-  Defs, LinearGradient as SvgLG, Stop, Polygon
 import Svg, { Circle, Line, Path, Polygon, Defs, Stop, Text as SvgText, LinearGradient as SvgLG } from 'react-native-svg';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';

@@ -142,7 +142,7 @@ export default function ConsciousnessLab({ onComplete, isHindi }) {
               </Text>
            </View>
 
-           <View style={{ width: '100%', height: 1, backgroundColor: isDarkMode ? '#444' : '#E0E0E0', my: 20 }} />
+           <View style={{ width: '100%', height: 1, backgroundColor: isDarkMode ? '#444' : '#E0E0E0', marginVertical: 20 }} />
 
            <Text style={[styles.title, { color: '#F44336', marginTop: 24 }]}>
              {isHindi ? 'लेकिन... क्या आपने सच में समझा?' : 'BUT... DID YOU REALLY UNDERSTAND?'}

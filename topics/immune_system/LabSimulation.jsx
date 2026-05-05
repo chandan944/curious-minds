@@ -8,9 +8,6 @@ import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
   ScrollView, Animated, Modal,
 } from 'react-native';
-import Svg, {
-  Circle, Rect, Ellipse, G, Defs, RadialGradient, Stop,
-  Text as SvgText, Path,
 import Svg, { Circle, Rect, G, Defs, Stop, RadialGradient, Text as SvgText } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { soundTap } from '../../utils/sounds';

@@ -86,7 +86,7 @@ export default function SyndromeLab({ scientistMode = false, onLabBreaker }) {
   const renderMarker = () => {
     // @ts-ignore: style prop on AnimatedG causes false positive TS error
     return (
-      <AnimatedG style={{ transform: [{ translateX: dotAnim.x }, { translateY: dotAnim.y }] }}>
+      <AnimatedG {...{ style: { transform: [{ translateX: dotAnim.x }, { translateY: dotAnim.y }] } }}>
         <Circle r={40} fill="url(#glow)" />
         <Circle r={8} fill={diagnosis.color} stroke="#fff" strokeWidth="2" />
         <SvgText x="12" y="4" fill="#fff" fontSize="10" fontWeight="bold">YOU</SvgText>

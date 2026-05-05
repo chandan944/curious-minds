@@ -246,7 +246,7 @@ export default function LoveLabExt({ scientistMode = false, onLabBreaker }) {
       {scientistMode && (
          <View style={[styles.sciPanel, { borderColor: border }]}>
             <Text style={{ color: '#FF007F', fontSize: 9, fontFamily: 'monospace' }}>TRI_AREA_DENSITY: {Math.floor(area)}</Text>
-            <Text style={{ color: '#FF007F', fontSize: 9, fontFamily: 'monospace' }}>DECAY_ALGO: $\Delta P=-4$ ($t>12$), ENTROPY_BIAS_ACTIVE</Text>
+            <Text style={{ color: '#FF007F', fontSize: 9, fontFamily: 'monospace' }}>DECAY_ALGO: $\Delta P=-4$ ($t{'>'}12$), ENTROPY_BIAS_ACTIVE</Text>
          </View>
       )}
     </View>

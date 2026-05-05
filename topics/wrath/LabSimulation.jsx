@@ -164,7 +164,7 @@ export default function WrathLabExt({ scientistMode = false, onLabBreaker }) {
                        <Rect key={i} x="10" y={40 + (i * 12)} width="40" height="10" fill="#FF4444" rx="2" />
                    ))}
                    <Circle cx="30" cy="20" r="16" fill="#555" />
-                   <Text x="30" y="24" fill="#111" fontSize="10" fontFamily={FONTS.displayBold} textAnchor="middle">ENEMY</Text>
+                   <SvgText x="30" y="24" fill="#111" fontSize="10" fontFamily={FONTS.displayBold} textAnchor="middle">ENEMY</SvgText>
                 </Svg>
             </Animated.View>
 
@@ -178,12 +178,12 @@ export default function WrathLabExt({ scientistMode = false, onLabBreaker }) {
                    {Array.from({ length: grudgeCount }).map((_, i) => (
                        <G key={i} y={40 + (i * 15)}>
                            <Rect x="10" width="40" height="14" fill="#D4A74A" rx="4" />
-                           <Text x="30" y="10" fill="#111" fontSize="8" fontFamily="monospace" textAnchor="middle">GRUDGE</Text>
+                           <SvgText x="30" y="10" fill="#111" fontSize="8" fontFamily="monospace" textAnchor="middle">GRUDGE</SvgText>
                        </G>
                    ))}
                    
                    <Circle cx="30" cy="20" r="16" fill={boxColor} />
-                   <Text x="30" y="24" fill={isDark ? '#000' : '#FFF'} fontSize="10" fontFamily={FONTS.displayBold} textAnchor="middle">YOU</Text>
+                   <SvgText x="30" y="24" fill={isDark ? '#000' : '#FFF'} fontSize="10" fontFamily={FONTS.displayBold} textAnchor="middle">YOU</SvgText>
                 </Svg>
             </Animated.View>
 

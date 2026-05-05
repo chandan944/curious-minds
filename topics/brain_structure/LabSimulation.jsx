@@ -19,9 +19,6 @@ import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
   Animated, ScrollView,
 } from 'react-native';
-import Svg, {
-  Circle, Line, Text as SvgText, Rect, Path,
-  Defs, RadialGradient, LinearGradient as SvgLinearGradient, Stop, Ellipse,
 import Svg, { Rect, Line, Path, Ellipse, Defs, Stop, RadialGradient, Text as SvgText, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';

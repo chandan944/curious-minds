@@ -110,8 +110,8 @@ export default function EmotionLab({ scientistMode = false, onLabBreaker }) {
   const renderAffectPoint = () => {
     // @ts-ignore: style prop on AnimatedG/AnimatedCircle causes false positive TS error
     return (
-      <AnimatedG style={{ transform: [{ translateX: dotAnim.x }, { translateY: dotAnim.y }] }}>
-        <AnimatedCircle r={150} fill="url(#affectGlow)" style={{ transform: [{ scale: pulseAnim }] }} />
+      <AnimatedG {...{ style: { transform: [{ translateX: dotAnim.x }, { translateY: dotAnim.y }] } }}>
+        <AnimatedCircle r={150} fill="url(#affectGlow)" {...{ style: { transform: [{ scale: pulseAnim }] } }} />
         <Circle r="10" fill={constructedEmotion.color} stroke="#fff" strokeWidth="2" />
       </AnimatedG>
     );

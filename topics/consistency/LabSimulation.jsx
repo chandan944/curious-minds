@@ -179,7 +179,7 @@ export default function ConsistencyLab({ isScientistMode }) {
         <View style={[styles.sciPanel, { backgroundColor: theme.glass.light, borderColor: theme.glass.border }]}>
           <Text style={[styles.sciTitle, { color: color }]}>System Math</Text>
           <Text style={[styles.sciText, { color: theme.text.secondary }]}>
-            Success Condition: Motivation >= Friction
+            Success Condition: Motivation {'>='} Friction
           </Text>
           <Text style={[styles.sciText, { color: theme.text.secondary }]}>
             Motivation Decay: Base = 50 + cos(t*0.5)*30

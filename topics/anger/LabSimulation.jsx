@@ -204,7 +204,7 @@ export default function AngerLabExt({ scientistMode = false, onLabBreaker }) {
 
             {/* Amygdala Core (Pulsing) */}
             <AnimatedCircle cx={SIM_CX} cy={SIM_CY + 20} r="15" fill={volcanoColor} 
-                style={{ transform: [{ scale: pulseAnim }, { translateX: SIM_CX }, { translateY: SIM_CY + 20 }] }} 
+                {...{ style: { transform: [{ scale: pulseAnim }, { translateX: SIM_CX }, { translateY: SIM_CY + 20 }] } }} 
                 translateX={-SIM_CX} translateY={-(SIM_CY + 20)}
             />
 

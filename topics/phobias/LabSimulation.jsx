@@ -126,7 +126,7 @@ export default function PhobiaLab({ scientistMode = false, onLabBreaker }) {
   const renderTarget = () => {
     // @ts-ignore: style prop on AnimatedG causes false positive TS error
     return (
-      <AnimatedG style={{ transform: [{ scale: 1 + ((10 - distance) * 0.2) }, { translateX: SIM_W/2 }, { translateY: 100 }] }}>
+      <AnimatedG {...{ style: { transform: [{ scale: 1 + ((10 - distance) * 0.2) }, { translateX: SIM_W/2 }, { translateY: 100 }] } }}>
         <Circle r="20" fill="url(#redGlow)" />
         <Path d="M -10 10 L -20 20 M -5 10 L -10 25 M 5 10 L 10 25 M 10 10 L 20 20" stroke="#FFD166" strokeWidth="2" fill="none" />
         <Circle cx="0" cy="0" r="10" fill="#222" stroke="#FFD166" strokeWidth="2" />

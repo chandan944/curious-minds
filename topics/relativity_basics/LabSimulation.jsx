@@ -1,4 +1,4 @@
-﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //  LAB: Special Relativity v2.0 (Extreme)
 //  Relativistic Chronometer & Space-Time Warp
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -8,8 +8,6 @@ import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
   Animated, ScrollView, Easing
 } from 'react-native';
-import Svg, {
-  Circle, Line, Rect, Path, Defs, RadialGradient, Stop, G, Text as SvgText, LinearGradient as SvgLinearGradient
 import Svg, { Circle, Rect, Path, G, Text as SvgText, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
@@ -173,11 +171,11 @@ export default function RelativityLab({ scientistMode = false, accentColor = '#A
   const renderShip = () => {
     // @ts-ignore: style prop on AnimatedG causes false positive TS error
     return (
-      <AnimatedG style={{ 
+      <AnimatedG {...{ style: { 
         transform: [{ 
           translateX: shipPos.interpolate({ inputRange: [0, 1], outputRange: [60, SIM_W - 100] }) 
         }] 
-      }}>
+      } }}>
          <Rect 
             x={0} y={SIM_H/2 - 10} 
             width={shipLength} height={20} 

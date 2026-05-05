@@ -89,7 +89,7 @@ export default function EthicsLab({ scientistMode = false, onLabBreaker }) {
   const renderTrolley = () => {
     // @ts-ignore: style prop on AnimatedG causes false positive TS error
     return (
-      <AnimatedG style={{ transform: [{ translateX: trainPosX }, { translateY: Animated.subtract(trainPosY, 150) }] }}>
+      <AnimatedG {...{ style: { transform: [{ translateX: trainPosX }, { translateY: Animated.subtract(trainPosY, 150) }] } }}>
         <Rect x="10" y="150" width="40" height="20" fill="#FFD166" rx="4" />
         <Rect x="40" y="150" width="10" height="20" fill="#A855F7" rx="2" />
         <Circle cx="20" cy="175" r="4" fill="#6C63FF" />

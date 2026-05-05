@@ -10,6 +10,7 @@ import Icon from '../../components/ui/Icons';
 const { width } = Dimensions.get('window');
 const GRID_SIZE = (width - 60) / 10; // Show first 10 columns for mobile view
 const SIM_H = 340;
+const AnimatedG = Animated.createAnimatedComponent(G);
 
 // ── Simplified Data ───────────────────────────
 const ELEMENTS = [
@@ -184,7 +185,7 @@ export default function PeriodicLab({ scientistMode = false }) {
         {scientistMode && selected && (
           <View style={styles.sciOverlay}>
              <Text style={styles.sciTitle}>HYDROGENIC MODEL ANALYSIS 🧑‍🔬</Text>
-             <Text style={styles.sciPoint}>Effective Nuclear Charge ($Z_{eff}$): {(selected.ie / 1312).toFixed(2)} units</Text>
+             <Text style={styles.sciPoint}>Effective Nuclear Charge ({"$Z_{eff}$"}): {(selected.ie / 1312).toFixed(2)} units</Text>
              <Text style={styles.sciPoint}>Trend Gradient: {(-(selected.p / 10)).toFixed(2)} Δ/atomic_unit</Text>
           </View>
         )}

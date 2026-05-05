@@ -131,7 +131,7 @@ export default function AlgorithmLab({ scientistMode = false, onLabBreaker }) {
   const renderScreenContent = () => {
     // @ts-ignore: style prop on AnimatedG causes false positive TS error
     return (
-      <AnimatedG style={{ transform: [{ translateY: screenScrollAnim }] }}>
+      <AnimatedG {...{ style: { transform: [{ translateY: screenScrollAnim }] } }}>
          {/* Content Blocks */}
          <Rect x={(SIM_W - 90)/2} y="40" width="90" height="50" rx="5" fill={lastFeedItem ? (lastFeedItem.includes('RAGE') ? '#FF4444' : '#00D4A0') : '#444'} opacity={0.8} />
          <Rect x={(SIM_W - 90)/2} y="100" width="90" height="50" rx="5" fill="#333" />

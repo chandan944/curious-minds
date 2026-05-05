@@ -85,6 +85,7 @@ export default function NihilismLab({ onComplete, isHindi }) {
           <View style={styles.centerBox}>
             <Animated.View style={{ opacity: fadeAnim, transform: [{ scale: scaleAnim }], alignItems: 'center' }}>
               <View style={[styles.iconWrapper, { backgroundColor: scale.color + '22' }]}>
+                {/* @ts-ignore */}
                 <Feather name={scale.icon} size={48} color={scale.color} />
               </View>
               

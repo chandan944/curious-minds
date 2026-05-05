@@ -8,9 +8,6 @@ import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
   Animated, ScrollView, Easing
 } from 'react-native';
-import Svg, {
-  Circle, Path, Defs, RadialGradient, Stop, G, Rect, Text as SvgText,
-  LinearGradient as SvgLinearGradient
 import Svg, { Circle, Rect, G, Defs, Stop, RadialGradient, Text as SvgText, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';

@@ -1,12 +1,10 @@
-﻿import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContext';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
   PanResponder, Animated, Easing, Modal, ScrollView
 } from 'react-native';
-import Svg, {
-  Path, Circle, Rect, Line, Polygon, Defs, RadialGradient as SvgRadial, Stop, G, Text as SvgText, Ellipse, Mask
-import Svg, { Circle, Rect, Line, Path, G, Polygon, Defs, Stop, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Rect, Line, Path, G, Polygon, Defs, Stop, Text as SvgText, RadialGradient } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { soundTap } from '../../utils/sounds';
 import Icon from '../../components/ui/Icons';
@@ -182,10 +180,10 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
       ]}>
         <Svg width="100%" height="100%">
           <Defs>
-            <SvgRadial id="bgGrad" cx="50%" cy="50%" r="50%">
+            <RadialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
               <Stop offset="0%" stopColor="#1A1A2E" />
               <Stop offset="100%" stopColor={PALETTE.bg} />
-            </SvgRadial>
+            </RadialGradient>
           </Defs>
           <Rect width="100%" height="100%" fill="url(#bgGrad)" />
 

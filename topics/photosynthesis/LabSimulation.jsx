@@ -15,9 +15,6 @@ import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
   ScrollView, Animated, Modal,
 } from 'react-native';
-import Svg, {
-  Circle, Rect, Path, G, Ellipse, Defs,
-  RadialGradient, Stop, Text as SvgText, Line,
 import Svg, { Circle, Rect, Ellipse, Defs, Stop, RadialGradient, Text as SvgText } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';

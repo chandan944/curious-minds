@@ -4,6 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function EasternPhilosophyLab({ onComplete, isHindi }) {
   const { isDarkMode } = useTheme();
@@ -163,7 +164,8 @@ export default function EasternPhilosophyLab({ onComplete, isHindi }) {
 
               {/* Instructions */}
               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingLeft: 20 }}>
-                <TouchableOpacity 
+                {/* @ts-ignore */}
+                <AnimatedTouchable 
                   style={[styles.tapZone, { borderColor: indicatorColor }]}
                   activeOpacity={0.5}
                   onPress={handleTap}
@@ -171,7 +173,7 @@ export default function EasternPhilosophyLab({ onComplete, isHindi }) {
                   <Text style={[styles.tapText, { color: textColor }]}>
                     {isHindi ? 'टैप/TAP' : 'TAP'}
                   </Text>
-                </TouchableOpacity>
+                </AnimatedTouchable>
               </View>
 
            </View>

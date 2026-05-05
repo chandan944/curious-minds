@@ -183,14 +183,14 @@ export default function EnvyLabExt({ scientistMode = false, onLabBreaker }) {
 
             {/* Peer Avatar */}
             <Circle cx={LADDER_X + 50} cy={ladderY(peerStatus)} r="15" fill="#FF9F1C" />
-            <Text x={LADDER_X + 75} y={ladderY(peerStatus) + 4} fill="#FF9F1C" fontSize="12" fontFamily="monospace">Peer {Math.floor(peerStatus)}</Text>
+            <SvgText x={LADDER_X + 75} y={ladderY(peerStatus) + 4} fill="#FF9F1C" fontSize="12" fontFamily="monospace">Peer {Math.floor(peerStatus)}</SvgText>
             
             {/* Instagram Highlight Reel / Billionaire */}
             {showBillionaire && (
                 <G>
                    <Circle cx={LADDER_X + 90} cy={ladderY(billionaireStatus)} r="20" fill="#00E5FF" opacity="0.8" />
                    <Path d={`M ${LADDER_X + 90} ${ladderY(billionaireStatus) + 20} L ${LADDER_X} ${ladderY(perceivedStatus)}`} stroke="#00E5FF" strokeWidth="2" strokeDasharray="4 4" opacity="0.3" />
-                   <Text x={LADDER_X + 120} y={ladderY(billionaireStatus) + 4} fill="#00E5FF" fontSize="10" fontFamily="monospace">Celeb 99</Text>
+                   <SvgText x={LADDER_X + 120} y={ladderY(billionaireStatus) + 4} fill="#00E5FF" fontSize="10" fontFamily="monospace">Celeb 99</SvgText>
                 </G>
             )}
 
@@ -198,7 +198,7 @@ export default function EnvyLabExt({ scientistMode = false, onLabBreaker }) {
             <Animated.View style={{ transform: [{ translateX: LADDER_X - 60 }, { translateY: playerYAnim }] }}>
                 <Svg width="40" height="40">
                    <Circle cx="20" cy="20" r="15" fill={vibeColor} />
-                   <Text x="20" y="24" fill="#000" fontSize="10" fontFamily={FONTS.displayBold} textAnchor="middle">YOU</Text>
+                   <SvgText x="20" y="24" fill="#000" fontSize="10" fontFamily={FONTS.displayBold} textAnchor="middle">YOU</SvgText>
                 </Svg>
             </Animated.View>
 
