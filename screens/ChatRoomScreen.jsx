@@ -19,6 +19,16 @@ const STATUS_BAR_H = Platform.OS === 'android' ? StatusBar.currentHeight || 36 :
 
 const formatTime = (isoString) => {
   if (!isoString) return '';
+  // Safely extract time from "YYYY-MM-DDTHH:mm:ss" avoiding iOS/Hermes UTC offset bugs
+  const match = isoString.match(/T(\d{2}):(\d{2})/);
+  if (match) {
+    let h = parseInt(match[1], 10);
+    const m = match[2];
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12;
+    h = h ? h : 12;
+    return `${h}:${m} ${ampm}`;
+  }
   return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 

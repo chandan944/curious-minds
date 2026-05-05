@@ -339,7 +339,6 @@ export default function HomeScreen() {
                   maxToRenderPerBatch={5}
                   windowSize={5}
                   removeClippedSubviews={true}
-                  getItemLayout={(_, index) => ({ length: CARD_W + 20, offset: (CARD_W + 20) * index, index })}
                 />
               </View>
             );
