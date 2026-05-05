@@ -1,10 +1,10 @@
-// ─────────────────────────────────────────────────────────────
-//  LAB: Industrial Revolution — Steam, Steel & Cities
+﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  LAB: Industrial Revolution â€” Steam, Steel & Cities
 //
-//  MODE 1 — 3D Engine: True 3D Steam Engine using @react-three/fiber
-//  MODE 2 — Factory: Connect transmission belts from engine to looms
-//  MODE 3 — Urbanization: Timeline map showing city population growth
-// ─────────────────────────────────────────────────────────────
+//  MODE 1 â€” 3D Engine: True 3D Steam Engine using @react-three/fiber
+//  MODE 2 â€” Factory: Connect transmission belts from engine to looms
+//  MODE 3 â€” Urbanization: Timeline map showing city population growth
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import React, { useState, useRef, useMemo } from 'react';
 import {
@@ -14,7 +14,7 @@ import {
 import Svg, {
   Circle, Line, Text as SvgText, Rect, Path,
   Defs, RadialGradient, LinearGradient as SvgLG, Stop, Polygon
-} from 'react-native-svg';
+import Svg, { Circle, Rect, Line, Path, Defs, Stop, Text as SvgText, LinearGradient as SvgLG } from 'react-native-svg';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
 import { soundTap, soundWhoosh, soundBadge } from '../../utils/sounds';
@@ -28,9 +28,9 @@ const { width: W_SCREEN } = Dimensions.get('window');
 const SIM_W = W_SCREEN - SPACING.md * 4;
 const SIM_H = 300;
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  3D STEAM ENGINE (REACT-THREE-FIBER)
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function SteamEngine3D({ heatLevel, isDark }) {
   const flywheelRef = useRef(null);
@@ -142,9 +142,9 @@ function SteamEngine3D({ heatLevel, isDark }) {
   );
 }
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  DATA & CONSTANTS
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const MODES = [
   { id: 'engine',  name: '3D Steam Engine', icon: 'fire',    color: '#FF4444' },
@@ -181,9 +181,9 @@ const COAL_MINES = [
   { cx: 165, cy: 140 }, { cx: 175, cy: 160 }, { cx: 130, cy: 120 }, { cx: 200, cy: 100 }
 ];
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  COMPONENT
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 export default function IndustrialRevolutionLab({
   scientistMode = false,
@@ -200,7 +200,7 @@ export default function IndustrialRevolutionLab({
   const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
   const wire = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
 
-  // ── State ──────────────────────────────────
+  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const [modeIdx, setModeIdx] = useState(0);
   const [heatLevel, setHeatLevel] = useState(0); // 0 to 1
   
@@ -220,7 +220,7 @@ export default function IndustrialRevolutionLab({
   // Derived
   const mode = MODES[modeIdx];
 
-  // ── Handlers ───────────────────────────────
+  // â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const unlockCh = (id) => {
     if (completedCh.includes(id)) return;
     const next = [...completedCh, id];
@@ -259,7 +259,7 @@ export default function IndustrialRevolutionLab({
     if (y >= 1900 && !completedCh.includes('time_travel')) unlockCh('time_travel');
   };
 
-  // ── Fun fact ───────────────────────────────
+  // â”€â”€ Fun fact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const funFact = (() => {
     if (mode.id === 'engine') return "The steam engine allowed us to convert stored chemical energy (coal) into kinetic energy (motion).";
     if (mode.id === 'factory') return "One massive steam engine via leather belts could power hundreds of looms simultaneously.";
@@ -267,13 +267,13 @@ export default function IndustrialRevolutionLab({
     return "Industrialization fundamentally changed how humans work, travel, and live.";
   })();
 
-  // ═══════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   //  RENDER
-  // ═══════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   return (
     <View style={s.root}>
 
-      {/* ── Mode Tabs ─────────────────────── */}
+      {/* â”€â”€ Mode Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.tabRow}>
         {MODES.map((m, i) => (
           <TouchableOpacity key={m.id} onPress={() => switchMode(i)}
@@ -284,7 +284,7 @@ export default function IndustrialRevolutionLab({
         ))}
       </ScrollView>
 
-      {/* ── MAIN CANVAS AREA ────────────────── */}
+      {/* â”€â”€ MAIN CANVAS AREA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <View style={[s.canvasOuter, { borderColor: border }]}>
 
         {/* MODE 1: 3D ENGINE */}
@@ -318,7 +318,7 @@ export default function IndustrialRevolutionLab({
                    <View style={s.scienceRow}>
                      <SLabel icon="pressure" label={`Psi: ${Math.round(heatLevel * 120)}`} color="#00D4A0" txtM={txtM} />
                      <SLabel icon="refresh" label={`RPM: ${Math.round(heatLevel * 600)}`} color="#FF9F1C" txtM={txtM} />
-                     <SLabel icon="thermometer" label={`Temp: ${Math.round(100 + heatLevel * 300)}°C`} color="#FF4444" txtM={txtM} />
+                     <SLabel icon="thermometer" label={`Temp: ${Math.round(100 + heatLevel * 300)}Â°C`} color="#FF4444" txtM={txtM} />
                    </View>
                  )}
               </View>
@@ -431,14 +431,14 @@ export default function IndustrialRevolutionLab({
         )})()}
       </View>
 
-      {/* ── Stats Bar ─────────────────────── */}
+      {/* â”€â”€ Stats Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <View style={s.statsRow}>
         <Stat icon="fire" color="#FF4444" label="Steam PSI" val={Math.round(heatLevel * 120)} t1={txt1} tM={txtM} />
         <Stat icon="factory" color="#FF9F1C" label="Active Looms" val={connectedLooms.size} t1={txt1} tM={txtM} />
         <Stat icon="person" color="#00D4A0" label="Pop. Growth" val={`+${Math.round(((year-1750)/150)*400)}%`} t1={txt1} tM={txtM} />
       </View>
 
-      {/* ── Fun Fact ───────────────────────── */}
+      {/* â”€â”€ Fun Fact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <View style={[s.fact, { borderColor: accentColor + '25', backgroundColor: accentColor + '08' }]}>
         <View style={[s.factIco, { backgroundColor: accentColor + '18' }]}>
           <Icon name="lightbulb" size={14} color={accentColor} />
@@ -446,7 +446,7 @@ export default function IndustrialRevolutionLab({
         <Text style={[s.factTxt, { color: txt2 }]}>{funFact}</Text>
       </View>
 
-      {/* ── Challenge toast ─────────────── */}
+      {/* â”€â”€ Challenge toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <Animated.View style={[s.toast, { backgroundColor: accentColor + '18', borderColor: accentColor + '50',
         opacity: chAnim, transform: [{ translateY: chAnim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) }],
       }]}>
@@ -454,7 +454,7 @@ export default function IndustrialRevolutionLab({
         <Text style={[s.toastTxt, { color: accentColor }]}>{lastChMsg}</Text>
       </Animated.View>
 
-      {/* ── Challenges ───────────────────── */}
+      {/* â”€â”€ Challenges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <TouchableOpacity onPress={() => { soundTap(); setShowCh(v => !v); }}
         style={[s.chToggle, { borderColor: border, backgroundColor: glass1 }]}>
         <View style={s.chToggleInner}>
@@ -492,9 +492,9 @@ export default function IndustrialRevolutionLab({
   );
 }
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  SUB-COMPONENTS & HELPERS
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function SLabel({ icon, label, color, txtM }) {
   return (
@@ -519,9 +519,9 @@ function Stat({ icon, color, label, val, t1, tM }) {
 
 function metalColor(isDark) { return isDark ? '#7a7a7a' : '#555555'; }
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  STYLES
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const s = StyleSheet.create({
   root: { gap: SPACING.sm },

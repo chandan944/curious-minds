@@ -2,6 +2,7 @@
 //  App.js — Root with Auth-gated navigation
 // ─────────────────────────────────────────────
 import React, { useEffect, useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { View, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -35,9 +36,9 @@ function MainAppContent({ isFontsReady }) {
           loop
           style={{ width: 120, height: 120 }}
           colorFilters={[
-            { keypath: 'Shape Layer 1', color: COLORS.accent },
-            { keypath: 'Shape Layer 2', color: COLORS.correct },
-            { keypath: 'Shape Layer 3', color: COLORS.xpGold },
+            { keypath: 'Shape Layer 1', color: '#FF6B6B' },
+            { keypath: 'Shape Layer 2', color: '#FFD166' },
+            { keypath: 'Shape Layer 3', color: '#4ADE80' },
           ]}
         />
       </View>
@@ -46,6 +47,8 @@ function MainAppContent({ isFontsReady }) {
 
   return isAuthenticated ? <HomeScreen /> : <LoginScreen />;
 }
+
+const queryClient = new QueryClient();
 
 // ── Root component ────────────────────────────
 export default function App() {
@@ -72,16 +75,18 @@ export default function App() {
   const isFontsReady = fontsLoaded || forceLoad;
 
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <LanguageProvider>
-          <ThemeProvider>
-            <StatusBar style="auto" />
-            <MainAppContent isFontsReady={isFontsReady} />
-          </ThemeProvider>
-        </LanguageProvider>
-      </AuthProvider>
-    </SafeAreaProvider>
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <ThemeProvider>
+              <StatusBar style="auto" />
+              <MainAppContent isFontsReady={isFontsReady} />
+            </ThemeProvider>
+          </LanguageProvider>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </QueryClientProvider>
   );
 }
 

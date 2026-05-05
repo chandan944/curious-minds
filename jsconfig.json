@@ -8,5 +8,5 @@
     "noEmit": true,
     "strict": false
   },
-  "include": ["topics/**/*.jsx", "topics/**/*.js"]
+  "include": ["topics/**/*.jsx", "topics/**/*.js", "declarations.d.ts"]
 }

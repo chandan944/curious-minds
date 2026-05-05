@@ -5,12 +5,12 @@ const { width, height } = Dimensions.get('window');
 
 // ─────────────────────────────────────────────
 //  StarBackground — subtle animated particles
-//  for the deep-space aesthetic
+//  Optimized: reduced count, memoized
 // ─────────────────────────────────────────────
 
-const NUM_STARS = 60;
+const NUM_STARS = 20;
 
-function Star({ x, y, size, opacity, duration, delay }) {
+const Star = React.memo(function Star({ x, y, size, opacity, duration, delay }) {
   const anim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -51,7 +51,7 @@ function Star({ x, y, size, opacity, duration, delay }) {
       ]}
     />
   );
-}
+});
 
 const stars = Array.from({ length: NUM_STARS }, (_, i) => ({
   id: i,
@@ -63,13 +63,15 @@ const stars = Array.from({ length: NUM_STARS }, (_, i) => ({
   delay: Math.random() * 4000,
 }));
 
-export default function StarBackground() {
+const StarBackground = React.memo(function StarBackground() {
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
       {stars.map(s => <Star key={s.id} {...s} />)}
     </View>
   );
-}
+});
+
+export default StarBackground;
 
 const styles = StyleSheet.create({
   star: {
@@ -77,3 +79,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
 });
+

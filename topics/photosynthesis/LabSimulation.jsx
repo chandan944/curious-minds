@@ -1,11 +1,11 @@
-/**
- * PhotosynthesisLab — rewritten WITHOUT react-native-reanimated.
+﻿/**
+ * PhotosynthesisLab â€” rewritten WITHOUT react-native-reanimated.
  *
  * Root cause of the previous crash:
  *   react-native-reanimated v4 requires the New Architecture (Fabric/JSI).
  *   Expo Go on Android without New Architecture throws:
  *     "TurboModule method installTurboModule called with 1 arguments (expected 0)"
- *   …which crashes the entire module at require() time, making .default === undefined.
+ *   â€¦which crashes the entire module at require() time, making .default === undefined.
  *
  * Fix: use only React Native's built-in Animated API + setInterval + useState.
  *       These work on both Old and New Architecture with Expo Go.
@@ -18,7 +18,7 @@ import {
 import Svg, {
   Circle, Rect, Path, G, Ellipse, Defs,
   RadialGradient, Stop, Text as SvgText, Line,
-} from 'react-native-svg';
+import Svg, { Circle, Rect, Ellipse, Defs, Stop, RadialGradient, Text as SvgText } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
@@ -28,11 +28,11 @@ import Icon from '../../components/ui/Icons';
 
 const { width, height } = Dimensions.get('window');
 
-// ── Layout constants ─────────────────────────────────────────────────────────
+// â”€â”€ Layout constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const VIEWPORT_H = Math.min(height * 0.40, 260);
 const PANEL_H    = 240;
 
-// ── Scientific colour palette ────────────────────────────────────────────────
+// â”€â”€ Scientific colour palette â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const C = {
   amber:  '#FFB347',
   cyan:   '#00D4FF',
@@ -45,55 +45,55 @@ const C = {
   panel:  '#12121A',
 };
 
-// ── Light wavelength options ─────────────────────────────────────────────────
+// â”€â”€ Light wavelength options â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const WAVE_OPTIONS = [
-  { label: 'RED 660nm',  color: '#FF3131', wFactor: 1.0, description: 'Red light — absorbed by PS I & PS II' },
-  { label: 'WHITE MIX',  color: '#FFFFFF', wFactor: 0.9, description: 'Full spectrum — broad absorption' },
-  { label: 'GREEN 550nm', color: C.green,  wFactor: 0.1, description: 'Green light — mostly reflected by leaves' },
+  { label: 'RED 660nm',  color: '#FF3131', wFactor: 1.0, description: 'Red light â€” absorbed by PS I & PS II' },
+  { label: 'WHITE MIX',  color: '#FFFFFF', wFactor: 0.9, description: 'Full spectrum â€” broad absorption' },
+  { label: 'GREEN 550nm', color: C.green,  wFactor: 0.1, description: 'Green light â€” mostly reflected by leaves' },
 ];
 
-// ── Discovery log data ───────────────────────────────────────────────────────
+// â”€â”€ Discovery log data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const DISCOVERIES = [
   {
     id: 'd1', minLight: 1200, maxCo2: 200, minCo2: -1, minTemp: -99, maxTemp: 99, wave: -1,
     title: 'Light Saturation Limiting',
-    entry: "Even intense light can't make more sugar if CO₂ runs out — the light reactions outrun the Calvin cycle.",
+    entry: "Even intense light can't make more sugar if COâ‚‚ runs out â€” the light reactions outrun the Calvin cycle.",
     rarity: 'Uncommon',
   },
   {
     id: 'd2', minLight: -1, maxCo2: 9999, minCo2: -1, minTemp: -99, maxTemp: 99, wave: 2,
     title: "Chlorophyll's Green Paradox",
-    entry: "Leaves appear green because they REFLECT green light — the one wavelength they cannot use.",
+    entry: "Leaves appear green because they REFLECT green light â€” the one wavelength they cannot use.",
     rarity: 'Common',
   },
   {
     id: 'd3', minLight: 800, maxCo2: 9999, minCo2: 800, minTemp: 24, maxTemp: 26, wave: -1,
     title: 'Optimal Photosynthesis State',
-    entry: "At 25 °C with abundant CO₂ and saturating light, enzymes hit peak efficiency — like a rainforest leaf at noon.",
-    rarity: 'Rare ✨',
+    entry: "At 25 Â°C with abundant COâ‚‚ and saturating light, enzymes hit peak efficiency â€” like a rainforest leaf at noon.",
+    rarity: 'Rare âœ¨',
   },
   {
     id: 'd4', minLight: -1, maxCo2: 150, minCo2: -1, minTemp: -99, maxTemp: 99, wave: -1,
-    title: 'CO₂ Starvation',
-    entry: "The light reactions keep producing energy, but RuBisCO runs in reverse — wasting energy in photorespiration.",
+    title: 'COâ‚‚ Starvation',
+    entry: "The light reactions keep producing energy, but RuBisCO runs in reverse â€” wasting energy in photorespiration.",
     rarity: 'Uncommon',
   },
   {
     id: 'd5', minLight: 1000, maxCo2: 9999, minCo2: -1, minTemp: -99, maxTemp: 99, wave: 0,
     title: 'Two-Photon Boost',
-    entry: "One photon isn't enough — plants chain two photosystems to give electrons enough energy to make NADPH.",
-    rarity: 'Rare ✨',
+    entry: "One photon isn't enough â€” plants chain two photosystems to give electrons enough energy to make NADPH.",
+    rarity: 'Rare âœ¨',
   },
 ];
 
-// ── Photon particle state (8 particles) ─────────────────────────────────────
+// â”€â”€ Photon particle state (8 particles) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const PARTICLE_COUNT = 8;
 const GLUCOSE_OFFSETS = [
   { x: 0, y: -22 }, { x: 19, y: -11 }, { x: 19, y: 11 }, { x: 0, y: 22 },
   { x: -19, y: 11 }, { x: -19, y: -11 },
 ];
 
-// ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
+// â”€â”€â”€ MAIN COMPONENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function PhotosynthesisLab({
   scientistMode = false,
   accentColor   = '#39FF14',
@@ -110,42 +110,42 @@ export default function PhotosynthesisLab({
   const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
   const bg = (_themeObj || {}).bg?.base || '#0A0A0A';
 
-  // ── Instrument values (0-100 slider percentages) ─────────────────────────
-  const [lightPct, setLightPct]   = useState(0);    // 0–100 → 0–2000 μmol
-  const [co2Pct,   setCo2Pct]     = useState(27);   // 0–100 → 50–1500 ppm
-  const [tempPct,  setTempPct]    = useState(40);   // 0–100 → 0–50 °C
+  // â”€â”€ Instrument values (0-100 slider percentages) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  const [lightPct, setLightPct]   = useState(0);    // 0â€“100 â†’ 0â€“2000 Î¼mol
+  const [co2Pct,   setCo2Pct]     = useState(27);   // 0â€“100 â†’ 50â€“1500 ppm
+  const [tempPct,  setTempPct]    = useState(40);   // 0â€“100 â†’ 0â€“50 Â°C
   const [waveIdx,  setWaveIdx]    = useState(1);    // 0=red, 1=white, 2=green
 
-  // ── Computed real values ──────────────────────────────────────────────────
-  const lightVal = Math.round(lightPct * 20);        // 0–2000
-  const co2Val   = Math.round(50 + co2Pct * 14.5);  // 50–1500
-  const tempVal  = Math.round(tempPct * 0.5);        // 0–50
+  // â”€â”€ Computed real values â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  const lightVal = Math.round(lightPct * 20);        // 0â€“2000
+  const co2Val   = Math.round(50 + co2Pct * 14.5);  // 50â€“1500
+  const tempVal  = Math.round(tempPct * 0.5);        // 0â€“50
 
-  // ── Animation frame (JS-side, uses setInterval) ───────────────────────────
-  const frameRef       = useRef(0);        // 0–1 cycling
+  // â”€â”€ Animation frame (JS-side, uses setInterval) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  const frameRef       = useRef(0);        // 0â€“1 cycling
   const [frame, setFrame] = useState(0);  // triggers re-render for particle positions
 
-  // ── Danger state ─────────────────────────────────────────────────────────
+  // â”€â”€ Danger state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const [danger, setDanger] = useState(false);
   const dangerAnim = useRef(new Animated.Value(0)).current;
   const shakeAnim  = useRef(new Animated.Value(0)).current;
 
-  // ── Discovery log ─────────────────────────────────────────────────────────
+  // â”€â”€ Discovery log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const [unlockedLogs,  setUnlockedLogs]  = useState([]);
   const [logsOpen,      setLogsOpen]      = useState(false);
   const [activeHint,    setActiveHint]    = useState(
     'Slide the Light dial up to send photons into the chloroplast. Watch the grana wake up!'
   );
 
-  // ── Discovery log: track which ones unlocked ─────────────────────────────
+  // â”€â”€ Discovery log: track which ones unlocked â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const discLocks = useRef({});
 
-  // ── Animated values for shake ────────────────────────────────────────────
+  // â”€â”€ Animated values for shake â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const shakeX = shakeAnim.interpolate({
     inputRange: [-1, 0, 1], outputRange: [-5, 0, 5],
   });
 
-  // ── Frame loop: runs at ~30fps on JS thread ───────────────────────────────
+  // â”€â”€ Frame loop: runs at ~30fps on JS thread â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     const tFactor = tempVal < 10 ? 0.3 : tempVal > 42 ? 0.15 : 1.0;
     const lFactor = lightVal < 100 ? 0.05 : lightVal < 1500 ? 0.5 + (lightVal - 100) / 1400 : 1.5;
@@ -161,7 +161,7 @@ export default function PhotosynthesisLab({
     return () => clearInterval(id);
   }, [lightVal, co2Val, tempVal, waveIdx]);
 
-  // ── Temperature danger ────────────────────────────────────────────────────
+  // â”€â”€ Temperature danger â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     const isDanger = tempVal > 45;
     setDanger(isDanger);
@@ -181,7 +181,7 @@ export default function PhotosynthesisLab({
           Animated.timing(shakeAnim, { toValue: 0,  duration: 50, useNativeDriver: true }),
         ])
       ).start();
-      setActiveHint('🔥 Temperature too high! Enzymes are denaturing — lower the heat!');
+      setActiveHint('ðŸ”¥ Temperature too high! Enzymes are denaturing â€” lower the heat!');
     } else {
       dangerAnim.stopAnimation();
       shakeAnim.stopAnimation();
@@ -189,11 +189,11 @@ export default function PhotosynthesisLab({
       shakeAnim.setValue(0);
     }
     if (tempVal > 40 && tempVal <= 45) {
-      setActiveHint('⚠️ Enzymes approaching thermal limit. Lower the temperature!');
+      setActiveHint('âš ï¸ Enzymes approaching thermal limit. Lower the temperature!');
     }
   }, [tempVal]);
 
-  // ── Discovery checks (every 1.5 s) ───────────────────────────────────────
+  // â”€â”€ Discovery checks (every 1.5 s) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     const id = setInterval(() => {
       DISCOVERIES.forEach(d => {
@@ -209,14 +209,14 @@ export default function PhotosynthesisLab({
           discLocks.current[d.id] = true;
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           setUnlockedLogs(prev => [{ ...d }, ...prev]);
-          setActiveHint(`🔬 Discovery: ${d.title}`);
+          setActiveHint(`ðŸ”¬ Discovery: ${d.title}`);
         }
       });
     }, 1500);
     return () => clearInterval(id);
   }, [lightVal, co2Val, tempVal, waveIdx]);
 
-  // ── Derived display values ────────────────────────────────────────────────
+  // â”€â”€ Derived display values â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const wave        = WAVE_OPTIONS[waveIdx];
   const glucoseLevel = Math.min(1,
     (lightVal / 1200) * (co2Val / 800) *
@@ -225,7 +225,7 @@ export default function PhotosynthesisLab({
   );
   const granaGlow = Math.min(1, lightVal / 800);
 
-  // ── Photon particle positions ─────────────────────────────────────────────
+  // â”€â”€ Photon particle positions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const photons = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
     const slot = (frame + i / PARTICLE_COUNT) % 1;
     const yPos = slot * VIEWPORT_H;
@@ -240,7 +240,7 @@ export default function PhotosynthesisLab({
     return { cx, cy: yPos, opacity, color: wave.color };
   });
 
-  // ── Glucose shatter (danger) ──────────────────────────────────────────────
+  // â”€â”€ Glucose shatter (danger) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const glucoseNodes = GLUCOSE_OFFSETS.map((off, i) => {
     const cx = width * 0.72 + (danger ? off.x * 3 : off.x);
     const cy = VIEWPORT_H * 0.5 + (danger ? off.y * 3 : off.y);
@@ -248,7 +248,7 @@ export default function PhotosynthesisLab({
     return { cx, cy, opacity };
   });
 
-  // ── Chloroplast body color ────────────────────────────────────────────────
+  // â”€â”€ Chloroplast body color â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const chloroFill = danger ? '#8B8B5C' :
     tempVal < 10 ? '#0A1A0A' :
     tempVal < 25 ? '#112211' : '#1A3A1A';
@@ -256,7 +256,7 @@ export default function PhotosynthesisLab({
   return (
     <View style={styles.container}>
 
-      {/* ── VIEWPORT ───────────────────────────────────────────────────── */}
+      {/* â”€â”€ VIEWPORT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <Animated.View style={[
         styles.viewport,
         { transform: [{ translateX: shakeX }] },
@@ -341,34 +341,34 @@ export default function PhotosynthesisLab({
         <View style={[styles.led, { backgroundColor: danger ? C.red : lightVal > 50 ? C.green : '#444' }]} />
       </Animated.View>
 
-      {/* ── CONTROL PANEL ──────────────────────────────────────────────── */}
+      {/* â”€â”€ CONTROL PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <View style={[styles.panel, { backgroundColor: C.panel }]}>
 
-        {/* Row 1: Light + CO₂ */}
+        {/* Row 1: Light + COâ‚‚ */}
         <View style={styles.panelRow}>
 
           {/* Light intensity slider */}
           <View style={styles.instBox}>
-            <Text style={styles.instLabel}>☀️ Light</Text>
+            <Text style={styles.instLabel}>â˜€ï¸ Light</Text>
             <SliderControl
               value={lightPct}
               onChange={v => { setLightPct(v); soundTap(); }}
               color={C.amber}
               trackColor="#1A1A1A"
             />
-            <Text style={styles.lcdText}>LIGHT: {lightVal} μmol</Text>
+            <Text style={styles.lcdText}>LIGHT: {lightVal} Î¼mol</Text>
           </View>
 
-          {/* CO₂ slider */}
+          {/* COâ‚‚ slider */}
           <View style={styles.instBox}>
-            <Text style={styles.instLabel}>💨 CO₂</Text>
+            <Text style={styles.instLabel}>ðŸ’¨ COâ‚‚</Text>
             <SliderControl
               value={co2Pct}
               onChange={v => { setCo2Pct(v); soundTap(); }}
               color={C.cyan}
               trackColor="#1A1A1A"
             />
-            <Text style={styles.lcdText}>CO₂: {co2Val} ppm</Text>
+            <Text style={styles.lcdText}>COâ‚‚: {co2Val} ppm</Text>
           </View>
         </View>
 
@@ -377,7 +377,7 @@ export default function PhotosynthesisLab({
 
           {/* Temperature slider */}
           <View style={styles.instBox}>
-            <Text style={styles.instLabel}>🌡️ Temp</Text>
+            <Text style={styles.instLabel}>ðŸŒ¡ï¸ Temp</Text>
             <SliderControl
               value={tempPct}
               onChange={v => { setTempPct(v); soundTap(); }}
@@ -385,13 +385,13 @@ export default function PhotosynthesisLab({
               trackColor="#1A1A1A"
             />
             <Text style={[styles.lcdText, tempVal > 42 && { color: C.red }]}>
-              TEMP: {tempVal}°C {tempVal > 42 ? '🔥' : ''}
+              TEMP: {tempVal}Â°C {tempVal > 42 ? 'ðŸ”¥' : ''}
             </Text>
           </View>
 
           {/* Wavelength toggle */}
           <View style={styles.instBox}>
-            <Text style={styles.instLabel}>🌈 Wavelength</Text>
+            <Text style={styles.instLabel}>ðŸŒˆ Wavelength</Text>
             <View style={styles.waveToggleRow}>
               {WAVE_OPTIONS.map((w, i) => (
                 <TouchableOpacity
@@ -413,7 +413,7 @@ export default function PhotosynthesisLab({
         </View>
       </View>
 
-      {/* ── LIVE READOUT BAR ────────────────────────────────────────────── */}
+      {/* â”€â”€ LIVE READOUT BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <View style={[styles.readoutBar, { backgroundColor: '#0D0D14', borderColor: '#1A1A2A' }]}>
         <ReadoutPill label="Glucose" value={`${Math.round(glucoseLevel * 100)}%`} color={C.amber} />
         <ReadoutPill label="Grana glow" value={`${Math.round(granaGlow * 100)}%`} color={C.green} />
@@ -426,7 +426,7 @@ export default function PhotosynthesisLab({
         <ReadoutPill label="Discoveries" value={`${unlockedLogs.length}/5`} color={C.cyan} />
       </View>
 
-      {/* ── HINT / LOG BAR ──────────────────────────────────────────────── */}
+      {/* â”€â”€ HINT / LOG BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <TouchableOpacity
         style={[styles.logBar, { backgroundColor: '#1A1A1A', borderColor: '#2A2A3A' }]}
         onPress={() => { setLogsOpen(true); soundTap(); }}
@@ -440,23 +440,23 @@ export default function PhotosynthesisLab({
         )}
       </TouchableOpacity>
 
-      {/* ── SCIENTIST MODE: wavelength info ─────────────────────────────── */}
+      {/* â”€â”€ SCIENTIST MODE: wavelength info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {scientistMode && (
         <View style={[styles.sciBox, { backgroundColor: '#0D1520', borderColor: C.cyan + '40' }]}>
           <Icon name="flask" size={14} color={C.cyan} />
           <Text style={[styles.sciText, { color: C.cyan + 'CC' }]}>
             {wave.description}
-            {waveIdx === 1 && ` — CO₂ rate: ${Math.round(glucoseLevel * 100)}% of max`}
+            {waveIdx === 1 && ` â€” COâ‚‚ rate: ${Math.round(glucoseLevel * 100)}% of max`}
           </Text>
         </View>
       )}
 
-      {/* ── RESEARCH LOG MODAL ──────────────────────────────────────────── */}
+      {/* â”€â”€ RESEARCH LOG MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <Modal visible={logsOpen} animationType="slide" transparent>
         <View style={styles.modalBg}>
           <View style={[styles.modalContent, { backgroundColor: C.panel }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: C.amber }]}>Research Logs 📓</Text>
+              <Text style={[styles.modalTitle, { color: C.amber }]}>Research Logs ðŸ““</Text>
               <TouchableOpacity onPress={() => { setLogsOpen(false); soundTap(); }}>
                 <Icon name="close" size={24} color={C.text} />
               </TouchableOpacity>
@@ -465,10 +465,10 @@ export default function PhotosynthesisLab({
               {unlockedLogs.length === 0 ? (
                 <View style={styles.emptyLogWrap}>
                   <Text style={styles.emptyLog}>
-                    🔬 Explore the controls to discover hidden scientific facts!
+                    ðŸ”¬ Explore the controls to discover hidden scientific facts!
                   </Text>
                   <Text style={[styles.emptyLogHint, { color: '#555' }]}>
-                    Tip: try extreme temperature, low CO₂, or green light wavelength
+                    Tip: try extreme temperature, low COâ‚‚, or green light wavelength
                   </Text>
                 </View>
               ) : (
@@ -493,7 +493,7 @@ export default function PhotosynthesisLab({
   );
 }
 
-// ─── SliderControl: touch-friendly slider using layout measurement ───────────
+// â”€â”€â”€ SliderControl: touch-friendly slider using layout measurement â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SliderControl({ value, onChange, color, trackColor }) {
   const trackRef = useRef(null);
   const trackWidth = useRef(0);
@@ -531,7 +531,7 @@ function SliderControl({ value, onChange, color, trackColor }) {
   );
 }
 
-// ─── ReadoutPill ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ ReadoutPill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ReadoutPill({ label, value, color }) {
   return (
     <View style={styles.readoutPill}>
@@ -541,7 +541,7 @@ function ReadoutPill({ label, value, color }) {
   );
 }
 
-// ─── STYLES ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ STYLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: C.bg },
 

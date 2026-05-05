@@ -1,7 +1,7 @@
-// ─────────────────────────────────────────────────────────
+﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //  LAB: Magnetism & Electromagnetism v2.0 (Extreme)
 //  Lorentz Force Particle Accelerator & B-Field Simulator
-// ─────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Svg, {
   Circle, Line, Rect, Path, Defs, RadialGradient, Stop, G, Text as SvgText
-} from 'react-native-svg';
+import Svg, { Rect, Path, Text as SvgText } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
@@ -22,7 +22,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 320;
 
-// ── Particle Data & Config ──────────────────────────────
+// â”€â”€ Particle Data & Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const PARTICLES = [
   { id: 'electron', name: 'Electron', mass: 1, charge: -1, color: '#00E5FF', icon: 'zap' },
@@ -41,7 +41,7 @@ const CHALLENGES = [
   { id: 'mass_driver', title: 'Mass Driver', desc: 'Fire a Heavy Ion at max velocity', icon: 'truck', color: '#A855F7' },
 ];
 
-// ── Unified UI Components ──────────────────────────────
+// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -74,7 +74,7 @@ const ChallengeCard = ({ challenge, isDone }) => (
   </View>
 );
 
-// ── Main Simulation Component ───────────────────────────
+// â”€â”€ Main Simulation Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function MagnetismLab({ scientistMode = false, accentColor = '#00E5FF' }) {
   const { isDark } = useTheme();
@@ -92,7 +92,7 @@ export default function MagnetismLab({ scientistMode = false, accentColor = '#00
   const posRef = useRef({ x: SIM_W/2, y: SIM_H - 40, vx: 0, vy: -5 });
   const pathRef = useRef('');
 
-  // ── Physics Engine ─────────────────────────────────────
+  // â”€â”€ Physics Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const calculateLorentz = useCallback(() => {
     if (!firing) return;
@@ -181,7 +181,7 @@ export default function MagnetismLab({ scientistMode = false, accentColor = '#00
     return () => clearInterval(interval.current);
   }, [firing, calculateLorentz]);
 
-  // ── Render ─────────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   return (
     <View style={styles.root}>
@@ -207,7 +207,7 @@ export default function MagnetismLab({ scientistMode = false, accentColor = '#00
               fill={bField >= 0 ? '#00E5FF40' : '#FF4D6D40'} 
               fontSize="12"
             >
-              {bField > 0 ? '•' : bField < 0 ? 'x' : ''}
+              {bField > 0 ? 'â€¢' : bField < 0 ? 'x' : ''}
             </SvgText>
           ))}
 
@@ -273,7 +273,7 @@ export default function MagnetismLab({ scientistMode = false, accentColor = '#00
           <Text style={styles.sectionTitle}>SCIENTIFIC ANALYTICS</Text>
           <View style={styles.sciGrid}>
             <ScientistCard 
-              formula="F = q(v × B)" 
+              formula="F = q(v Ã— B)" 
               description="Lorentz Force (Vector Cross Product)" 
               value={`${selectedParticle.charge} * (${velocity} * ${bField}) = Force Vector`}
               color={selectedParticle.color}

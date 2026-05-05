@@ -1,7 +1,7 @@
-// ─────────────────────────────────────────────────────────
+﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //  LAB: Chemical Reactions v2.0 (Extreme)
 //  The Stoichiometric Reactor
-// ─────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -11,7 +11,7 @@ import {
 import Svg, {
   Circle, Path, Defs, RadialGradient, Stop, G, Rect, Text as SvgText,
   LinearGradient as SvgLinearGradient
-} from 'react-native-svg';
+import Svg, { Circle, Rect, G, Defs, Stop, RadialGradient, Text as SvgText, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
@@ -23,40 +23,40 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 340;
 
-// ── Reaction Data ─────────────────────────────────────
+// â”€â”€ Reaction Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const REACTIONS = [
   {
     id: 'water',
     title: 'Synthesis of Water',
-    equation: 'H₂ + O₂ → H₂O',
+    equation: 'Hâ‚‚ + Oâ‚‚ â†’ Hâ‚‚O',
     balanced: [2, 1, 2],
     reactants: [{ id: 'H2', color: '#FF9F1C' }, { id: 'O2', color: '#00D4FF' }],
     product: { id: 'H2O', color: '#3B82F6' },
     type: 'Synthesis',
-    enthalpy: 'Exothermic (ΔH = -484 kJ)',
+    enthalpy: 'Exothermic (Î”H = -484 kJ)',
     animation: 'merge'
   },
   {
     id: 'methane',
     title: 'Combustion of Methane',
-    equation: 'CH₄ + O₂ → CO₂ + H₂O',
+    equation: 'CHâ‚„ + Oâ‚‚ â†’ COâ‚‚ + Hâ‚‚O',
     balanced: [1, 2, 1, 2],
     reactants: [{ id: 'CH4', color: '#FF3131' }, { id: 'O2', color: '#00D4FF' }],
     product: { id: 'CO2 + H2O', color: '#888' },
     type: 'Combustion',
-    enthalpy: 'Exothermic (ΔH = -891 kJ)',
+    enthalpy: 'Exothermic (Î”H = -891 kJ)',
     animation: 'explode'
   },
   {
     id: 'ammonia',
     title: 'Haber Process (Ammonia)',
-    equation: 'N₂ + H₂ → NH₃',
+    equation: 'Nâ‚‚ + Hâ‚‚ â†’ NHâ‚ƒ',
     balanced: [1, 3, 2],
     reactants: [{ id: 'N2', color: '#A855F7' }, { id: 'H2', color: '#FF9F1C' }],
     product: { id: 'NH3', color: '#39FF14' },
     type: 'Synthesis',
-    enthalpy: 'Exothermic (ΔH = -92 kJ)',
+    enthalpy: 'Exothermic (Î”H = -92 kJ)',
     animation: 'merge'
   }
 ];
@@ -68,7 +68,7 @@ const CHALLENGES = [
   { id: 'perfect_ignite', title: 'Stoic Perfection', desc: 'Ignite a reaction on the first try', icon: 'check', color: '#F59E0B' },
 ];
 
-// ── Unified UI Components ──────────────────────────────
+// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -95,11 +95,11 @@ const CoefficientControl = ({ value, onChange, label, color }) => (
   </View>
 );
 
-// ── AnimatedCircle must be defined before JSX use ──────
+// â”€â”€ AnimatedCircle must be defined before JSX use â”€â”€â”€â”€â”€â”€
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedG = Animated.createAnimatedComponent(G);
 
-// ── Main Component ─────────────────────────────────────
+// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function ReactionLab({ scientistMode = false }) {
   const { isDark } = useTheme();
@@ -120,7 +120,7 @@ export default function ReactionLab({ scientistMode = false }) {
   const reactAnim = useRef(new Animated.Value(0)).current;
   const shakeAnim = useRef(new Animated.Value(0)).current;
 
-  // ── Functions ────────────────────────────────────────
+  // â”€â”€ Functions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const updateCoeff = (idx, val) => {
     soundTap();
@@ -175,7 +175,7 @@ export default function ReactionLab({ scientistMode = false }) {
     }
   };
 
-  // ── Render Parts ─────────────────────────────────────
+  // â”€â”€ Render Parts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const renderParticles = (color, offsetX) => {
     const opacity = reactAnim.interpolate({
@@ -293,7 +293,7 @@ export default function ReactionLab({ scientistMode = false }) {
            <Text style={styles.sectionTitle}>REACTION KINETICS</Text>
            <View style={styles.sciGrid}>
               <View style={[styles.sciCard, { borderColor: '#FF313160' }]}>
-                 <Text style={styles.sciFormula}>ΔH = ΣHpdts - ΣHrctnts</Text>
+                 <Text style={styles.sciFormula}>Î”H = Î£Hpdts - Î£Hrctnts</Text>
                  <Text style={styles.sciDesc}>Enthalpy change determines energy release.</Text>
                  <View style={styles.barWrap}><View style={[styles.bar, { width: '80%', backgroundColor: '#FF3131' }]} /></View>
               </View>

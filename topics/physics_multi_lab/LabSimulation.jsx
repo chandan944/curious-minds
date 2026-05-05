@@ -1,4 +1,4 @@
-import { useTheme } from '../../context/ThemeContext';
+﻿import { useTheme } from '../../context/ThemeContext';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
@@ -6,14 +6,14 @@ import {
 } from 'react-native';
 import Svg, {
   Path, Circle, Rect, Line, Polygon, Defs, RadialGradient as SvgRadial, Stop, G, Text as SvgText, Ellipse, Mask
-} from 'react-native-svg';
+import Svg, { Circle, Rect, Line, Path, G, Polygon, Defs, Stop, Text as SvgText } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { soundTap } from '../../utils/sounds';
 import Icon from '../../components/ui/Icons';
 
 const { width, height } = Dimensions.get('window');
 
-// ── PALETTE ──────────────────────────────────────────────
+// â”€â”€ PALETTE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const PALETTE = {
   bg: '#0A0A0F',
   panel: '#12121A',
@@ -26,13 +26,13 @@ const PALETTE = {
   glass: 'rgba(232,224,208,0.1)'
 };
 
-// ── FIXED LAYOUT HEIGHTS ──────────────────────────────────
+// â”€â”€ FIXED LAYOUT HEIGHTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const H_HEADER = height * 0.08;
 const H_VIEWPORT = height * 0.52;
 const H_PANEL = height * 0.30;
 const H_LOG = height * 0.10;
 
-// ── COMPONENT ─────────────────────────────────────────────
+// â”€â”€ COMPONENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function PhysicsMultiLab({ scientistMode = false, accentColor = '#00D4FF', onLabBreaker }) {
   const { theme } = useTheme();
   const _themeObj = typeof theme !== "undefined" && theme ? theme : {};
@@ -77,7 +77,7 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
     return () => clearInterval(loop);
   }, []);
 
-  // ── Discovery Checks ──
+  // â”€â”€ Discovery Checks â”€â”€
   const checkDiscoveries = useCallback(() => {
     // 1. Rainbow Threshold (Angle 42)
     if (Math.abs(angle - 42) <= 1 && !discovered.current.has('d1')) {
@@ -85,7 +85,7 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setLogs(prev => [...prev, {
         title: "Total Internal Reflection",
-        entry: "Light cannot exit glass above the critical angle (42°) — this is how fiber-optic cables carry the internet! 🌈",
+        entry: "Light cannot exit glass above the critical angle (42Â°) â€” this is how fiber-optic cables carry the internet! ðŸŒˆ",
         color: PALETTE.cyan,
       }]);
     }
@@ -96,7 +96,7 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       setLogs(prev => [...prev, {
         title: "Resonance (440 Hz)",
-        entry: "Concert A! When energy input matches a system's natural frequency, amplitude explodes. 🔊",
+        entry: "Concert A! When energy input matches a system's natural frequency, amplitude explodes. ðŸ”Š",
         color: PALETTE.amber,
       }]);
     }
@@ -107,7 +107,7 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       setLogs(prev => [...prev, {
         title: "Newton's First Law",
-        entry: "Without gravity, projectiles travel in straight lines forever! Curved paths only exist because Earth pulls continuously. 🪐",
+        entry: "Without gravity, projectiles travel in straight lines forever! Curved paths only exist because Earth pulls continuously. ðŸª",
         color: PALETTE.text,
       }]);
     }
@@ -118,7 +118,7 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       setLogs(prev => [...prev, {
         title: "Heat Engine Principle",
-        entry: "Thermal Energy → Mechanical Work! This powers every steam engine, car, and rocket ever built. 🔥⚙️",
+        entry: "Thermal Energy â†’ Mechanical Work! This powers every steam engine, car, and rocket ever built. ðŸ”¥âš™ï¸",
         color: PALETTE.amber,
       }]);
     }
@@ -128,7 +128,7 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
       discovered.current.add('d5');
       setLogs(prev => [...prev, {
         title: "Ultrasound Mode",
-        entry: "Frequencies above >18kHz are inaudible to humans, but bats & medical scanners use them to 'see'! 🦇",
+        entry: "Frequencies above >18kHz are inaudible to humans, but bats & medical scanners use them to 'see'! ðŸ¦‡",
         color: PALETTE.green,
       }]);
     }
@@ -270,7 +270,7 @@ export default function PhysicsMultiLab({ scientistMode = false, accentColor = '
   );
 }
 
-// ── SUBCOMPONENTS: SCENES ─────────────────────────────────
+// â”€â”€ SUBCOMPONENTS: SCENES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function SceneOptics({ angle, discoveryAnim, scientistMode }) {
   // Top-left
@@ -287,7 +287,7 @@ function SceneOptics({ angle, discoveryAnim, scientistMode }) {
       <Line x1={30} y1={20} x2={30 + Math.cos(-spread*Math.PI/180)*40} y2={20 + Math.sin(-spread*Math.PI/180)*40} stroke={PALETTE.green} strokeWidth={2} />
       
       {scientistMode && (
-        <SvgText x={40} y={60} fill={PALETTE.cyan} fontSize={10}>n₁sin(θ₁)=n₂sin(θ₂)</SvgText>
+        <SvgText x={40} y={60} fill={PALETTE.cyan} fontSize={10}>nâ‚sin(Î¸â‚)=nâ‚‚sin(Î¸â‚‚)</SvgText>
       )}
     </G>
   );
@@ -329,7 +329,7 @@ function SceneHeat({ heat, tick, discoveryAnim, scientistMode }) {
       <Circle cx={cx + 5} cy={p2y} r={3} fill={heat > 250 ? PALETTE.red : PALETTE.amber} />
       
       {isBoiling && <Circle cx={cx} cy={cy - 30 - (tick % 20)} r={2} fill={PALETTE.text} opacity={0.5} />}
-      {scientistMode && <SvgText x={cx - 20} y={cy + 40} fill={PALETTE.amber} fontSize={10}>Q = mcΔT</SvgText>}
+      {scientistMode && <SvgText x={cx - 20} y={cy + 40} fill={PALETTE.amber} fontSize={10}>Q = mcÎ”T</SvgText>}
     </G>
   );
 }
@@ -350,7 +350,7 @@ function SceneWork({ heat, fricOn, tick, discoveryAnim, scientistMode }) {
       <Polygon points={`${basex},${basey} ${basex+60},${basey} ${basex+60},${basey-30}`} fill="none" stroke={PALETTE.steel} strokeWidth={2} />
       <Rect x={slideX} y={slideY - 10} width={10} height={10} fill={PALETTE.green} rotation={-25} origin={`${slideX},${slideY}`} />
       
-      {scientistMode && <SvgText x={basex} y={basey + 20} fill={PALETTE.green} fontSize={10}>W = F·d</SvgText>}
+      {scientistMode && <SvgText x={basex} y={basey + 20} fill={PALETTE.green} fontSize={10}>W = FÂ·d</SvgText>}
     </G>
   );
 }
@@ -380,12 +380,12 @@ function SceneMotion({ gravOn, airOn, tick, discoveryAnim, scientistMode }) {
       {!gravOn && <Line x1={startX} y1={startY} x2={startX-60} y2={startY-80} stroke={PALETTE.text} strokeWidth={1} strokeDasharray="3 3" opacity={0.4} />}
       
       <Circle cx={projX} cy={projY} r={4} fill={PALETTE.text} />
-      {scientistMode && <SvgText x={startX - 40} y={startY + 20} fill={PALETTE.cyan} fontSize={10}>y=x*tan(θ)-gx²/(2v²)</SvgText>}
+      {scientistMode && <SvgText x={startX - 40} y={startY + 20} fill={PALETTE.cyan} fontSize={10}>y=x*tan(Î¸)-gxÂ²/(2vÂ²)</SvgText>}
     </G>
   );
 }
 
-// ── SUBCOMPONENTS: PANEL ──────────────────────────────────
+// â”€â”€ SUBCOMPONENTS: PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ControlPanel(props) {
   return (
     <View style={styles.panelInner}>

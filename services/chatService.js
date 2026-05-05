@@ -89,22 +89,29 @@ class ChatService {
     this.isConnected = false;
   }
 
-  send(target, content) {
+  send(target, content, replyTo = null) {
     if (!this.isConnected || !this.ws) {
       console.warn('⚠️ Cannot send message, WS not connected');
       return false;
     }
     const msg = { type: 'SEND', target, content };
+    
+    if (replyTo) {
+      msg.replyToId = replyTo.id;
+      msg.replyToContent = replyTo.content;
+      msg.replyToSenderName = replyTo.senderName;
+    }
+    
     this.ws.send(JSON.stringify(msg));
     return true;
   }
 
-  sendGlobal(content) {
-    return this.send('GLOBAL', content);
+  sendGlobal(content, replyTo = null) {
+    return this.send('GLOBAL', content, replyTo);
   }
 
-  sendDirect(userId, content) {
-    return this.send(userId.toString(), content);
+  sendDirect(userId, content, replyTo = null) {
+    return this.send(userId.toString(), content, replyTo);
   }
 
   markAsRead(messageId) {

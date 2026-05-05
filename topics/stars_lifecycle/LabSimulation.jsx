@@ -141,7 +141,7 @@ export default function StarsLifecycleLab({ scientistMode = false }) {
   const renderStar = () => {
     // @ts-ignore: style prop on AnimatedG causes false positive TS error
     return (
-      <AnimatedG style={{ transform: [{ scale: starScale }] }}>
+      <AnimatedG {...{ style: { transform: [{ scale: starScale }] } }}>
         <Circle cx={SIM_W/2} cy={SIM_H/2} r="20" fill="url(#starGlow)" />
         {stage !== 'cloud' && <Circle cx={SIM_W/2} cy={SIM_H/2} r="18" fill={starColor} />}
       </AnimatedG>

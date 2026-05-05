@@ -113,7 +113,9 @@ export default function MentalHealthLab({ scientistMode = false, isHindi = false
           activeLens === 1 && { transform: [{ translateX: shakeAnim }] },
           activeLens === 2 && { opacity: 0.7 } // Dimmer for depression
         ]}>
-          <Icon name="eye" size={24} color={lensData.color} style={{ alignSelf: 'center', marginBottom: 10 }} />
+          <View style={{ alignSelf: 'center', marginBottom: 10 }}>
+            <Icon name="eye" size={24} color={lensData.color} />
+          </View>
           
           <Text style={styles.scenarioLabel}>
             {isHindi ? "उद्देश्य परिदृश्य (Objective Scenario):" : "Objective Scenario:"}

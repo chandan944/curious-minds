@@ -6,6 +6,8 @@ import { FONTS, RADIUS } from '../../constants/theme';
 import { soundTap, soundWhoosh, soundSuccess } from '../../utils/sounds';
 import * as Haptics from 'expo-haptics';
 
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
 const { width } = Dimensions.get('window');
 const SIM_size = width - 60;
 const SIM_CX = SIM_size / 2;

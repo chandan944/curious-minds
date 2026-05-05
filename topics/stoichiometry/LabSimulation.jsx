@@ -7,6 +7,8 @@ import { soundTap, soundWhoosh, soundBadge, soundSuccess } from '../../utils/sou
 import * as Haptics from 'expo-haptics';
 import Icon from '../../components/ui/Icons';
 
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
 const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 420;

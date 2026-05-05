@@ -5,15 +5,18 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity, Image, StyleSheet,
   Animated, ActivityIndicator, Platform, StatusBar, Dimensions,
+  InteractionManager,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { fetchLeaderboard } from '../services/leaderboardService';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { FONTS, RADIUS, SPACING } from '../constants/theme';
 import Icon from '../components/ui/Icons';
 import ProfileModal from '../components/ui/ProfileModal';
 import NotificationsModal from '../components/ui/NotificationsModal';
+import SkeletonLoader from '../components/ui/SkeletonLoader';
 import socialService from '../services/socialService';
 import chatService from '../services/chatService';
 
@@ -30,27 +33,17 @@ const RANK_COLORS = ['#FFD700', '#C0C0C0', '#CD7F32'];
 const PAGE_SIZE   = 20;
 
 // ── Skeleton row while loading ───────────────────────────────────────────────
-function SkeletonRow({ isDark }) {
-  const opacity = useRef(new Animated.Value(0.4)).current;
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, { toValue: 1, duration: 700, useNativeDriver: true }),
-        Animated.timing(opacity, { toValue: 0.4, duration: 700, useNativeDriver: true }),
-      ])
-    ).start();
-  }, []);
-  const bg = isDark ? '#2A2C3A' : '#E5E7EB';
+function SkeletonRow() {
   return (
-    <Animated.View style={[styles.skeletonRow, { opacity }]}>
-      <View style={[styles.skeletonRank, { backgroundColor: bg }]} />
-      <View style={[styles.skeletonAvatar, { backgroundColor: bg }]} />
+    <View style={styles.skeletonRow}>
+      <SkeletonLoader width={36} height={28} borderRadius={8} />
+      <SkeletonLoader width={40} height={40} circle />
       <View style={{ flex: 1, gap: 6 }}>
-        <View style={[styles.skeletonLine, { width: '60%', backgroundColor: bg }]} />
-        <View style={[styles.skeletonLine, { width: '40%', backgroundColor: bg }]} />
+        <SkeletonLoader width="60%" height={12} />
+        <SkeletonLoader width="40%" height={12} />
       </View>
-      <View style={[styles.skeletonPoints, { backgroundColor: bg }]} />
-    </Animated.View>
+      <SkeletonLoader width={60} height={20} borderRadius={8} />
+    </View>
   );
 }
 
@@ -114,12 +107,25 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
   const { user, token } = useAuth();
 
   const [period, setPeriod]       = useState('all');
-  const [data, setData]           = useState([]);
-  const [page, setPage]           = useState(0);
-  const [totalPages, setTotal]    = useState(1);
-  const [loading, setLoading]     = useState(true);
-  const [loadingMore, setMore]    = useState(false);
-  const [error, setError]         = useState(null);
+
+  const {
+    data: queryData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    refetch
+  } = useInfiniteQuery({
+    queryKey: ['leaderboard', period],
+    queryFn: ({ pageParam = 0 }) => fetchLeaderboard(period, pageParam, PAGE_SIZE),
+    getNextPageParam: (lastPage) => {
+      return (lastPage.currentPage + 1 < lastPage.totalPages) ? lastPage.currentPage + 1 : undefined;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  const data = queryData ? queryData.pages.flatMap(page => page.content) : [];
 
   // Profile modal
   const [profileTargetId, setProfileTargetId] = useState(null);
@@ -142,47 +148,13 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
 
   useEffect(() => {
     Animated.spring(headerAnim, { toValue: 1, tension: 60, friction: 14, useNativeDriver: true }).start();
-    // Fetch unread count
-    socialService.getUnreadCount()
-      .then(res => setUnreadCount(res.unreadCount || 0))
-      .catch(() => {});
-
-    // Subscribe to real-time notifications for badge count
-    const unsub = chatService.addNotificationListener(() => {
-      setUnreadCount(prev => prev + 1);
-    });
-    return () => unsub();
   }, []);
 
-  useEffect(() => {
-    setData([]);
-    setPage(0);
-    loadPage(0, true);
-  }, [period]);
-
-  const loadPage = useCallback(async (pageNum, reset = false) => {
-    if (reset) setLoading(true);
-    else setMore(true);
-    setError(null);
-    try {
-      const result = await fetchLeaderboard(period, pageNum, PAGE_SIZE);
-      const items = result.content || [];
-      setData(prev => reset ? items : [...prev, ...items]);
-      setPage(pageNum);
-      setTotal(result.totalPages || 1);
-    } catch (e) {
-      setError('Could not load leaderboard. Check your connection.');
-    } finally {
-      setLoading(false);
-      setMore(false);
-    }
-  }, [period]);
-
   const loadMore = useCallback(() => {
-    if (!loadingMore && page + 1 < totalPages) {
-      loadPage(page + 1, false);
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
-  }, [loadingMore, page, totalPages, loadPage]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // ── Profile Modal ─────────────────────────────
   const handleAvatarPress = (item) => {
@@ -209,7 +181,7 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
   ), [user, isDark, gold]);
 
   const renderFooter = () => {
-    if (!loadingMore) return null;
+    if (!isFetchingNextPage) return null;
     return <ActivityIndicator color={accent} style={{ paddingVertical: 20 }} />;
   };
 
@@ -255,7 +227,7 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
       </View>
 
       {/* ── Top 3 Podium ──────────────────────────── */}
-      {!loading && data.length >= 3 && (
+      {!isLoading && data.length >= 3 && (
         <LinearGradient
           colors={isDark ? ['#1A1B23', '#13141C'] : ['#F8FAFC', '#FFFFFF']}
           style={[styles.podium, { borderColor: border }]}
@@ -290,15 +262,15 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
       )}
 
       {/* ── Full List ───────────────────────────────── */}
-      {loading ? (
+      {isLoading ? (
         <View style={{ flex: 1, paddingHorizontal: SPACING.lg, paddingTop: 8 }}>
-          {[...Array(8)].map((_, i) => <SkeletonRow key={i} isDark={isDark} />)}
+          {[...Array(8)].map((_, i) => <SkeletonRow key={i} />)}
         </View>
-      ) : error ? (
+      ) : isError ? (
         <View style={styles.center}>
           <Icon name="alert" size={36} color={txtM} />
-          <Text style={[styles.errorText, { color: txtM }]}>{error}</Text>
-          <TouchableOpacity onPress={() => loadPage(0, true)} style={[styles.retryBtn, { backgroundColor: accent }]}>
+          <Text style={[styles.errorText, { color: txtM }]}>Could not load leaderboard. Check your connection.</Text>
+          <TouchableOpacity onPress={() => refetch()} style={[styles.retryBtn, { backgroundColor: accent }]}>
             <Text style={styles.retryLabel}>Retry</Text>
           </TouchableOpacity>
         </View>
@@ -317,9 +289,10 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
           onEndReached={loadMore}
           onEndReachedThreshold={0.4}
           ListFooterComponent={renderFooter}
-          initialNumToRender={10}
-          windowSize={5}
-          maxToRenderPerBatch={10}
+          initialNumToRender={5}
+          windowSize={3}
+          maxToRenderPerBatch={5}
+          removeClippedSubviews={true}
         />
       )}
 

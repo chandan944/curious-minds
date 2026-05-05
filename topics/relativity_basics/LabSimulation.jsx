@@ -1,7 +1,7 @@
-// ─────────────────────────────────────────────────────────
+﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //  LAB: Special Relativity v2.0 (Extreme)
 //  Relativistic Chronometer & Space-Time Warp
-// ─────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Svg, {
   Circle, Line, Rect, Path, Defs, RadialGradient, Stop, G, Text as SvgText, LinearGradient as SvgLinearGradient
-} from 'react-native-svg';
+import Svg, { Circle, Rect, Path, G, Text as SvgText, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
@@ -22,7 +22,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 340;
 
-// ── Constants & Data ─────────────────────────────────
+// â”€â”€ Constants & Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const VELOCITIES = [
   { val: 0.1, label: '0.1c', desc: 'Solar Sail Speed', color: '#39FF14' },
@@ -35,11 +35,11 @@ const VELOCITIES = [
 const CHALLENGES = [
   { id: 'time_skip', title: 'Century Jumper', desc: 'Achieve a speed where 100 years pass on Earth while you age < 10 years', icon: 'clock', color: '#FF3131' },
   { id: 'contract_king', title: 'The Shrinking Ship', desc: 'Contract your spaceship to < 10% of its normal length', icon: 'zap', color: '#A855F7' },
-  { id: 'gamma_master', title: 'Gamma Master', desc: 'Reach a Lorentz Factor (γ) of 20 or higher', icon: 'shield', color: '#00E5FF' },
+  { id: 'gamma_master', title: 'Gamma Master', desc: 'Reach a Lorentz Factor (Î³) of 20 or higher', icon: 'shield', color: '#00E5FF' },
   { id: 'photon_edge', title: 'Edge of Light', desc: 'Operate at 0.999c velocity', icon: 'key', color: '#FFD166' },
 ];
 
-// ── Unified UI Components ──────────────────────────────
+// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -72,10 +72,10 @@ const ChallengeCard = ({ challenge, isDone }) => (
   </View>
 );
 
-// ── AnimatedG must be defined before JSX use ───────────
+// â”€â”€ AnimatedG must be defined before JSX use â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const AnimatedG = Animated.createAnimatedComponent(G);
 
-// ── Main Simulation Component ───────────────────────────
+// â”€â”€ Main Simulation Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function RelativityLab({ scientistMode = false, accentColor = '#A855F7' }) {
   const { isDark } = useTheme();
@@ -91,7 +91,7 @@ export default function RelativityLab({ scientistMode = false, accentColor = '#A
   const shipPos = useRef(new Animated.Value(0)).current;
   const loopInterval = useRef(null);
 
-  // ── Physics Calculations ───────────────────────────────
+  // â”€â”€ Physics Calculations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const gamma = useMemo(() => {
     return 1 / Math.sqrt(1 - Math.pow(velocity, 2));
@@ -102,7 +102,7 @@ export default function RelativityLab({ scientistMode = false, accentColor = '#A
     return 80 / gamma;
   }, [gamma]);
 
-  // ── Engine ─────────────────────────────────────────────
+  // â”€â”€ Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const startMission = () => {
     soundWhoosh();
@@ -168,7 +168,7 @@ export default function RelativityLab({ scientistMode = false, accentColor = '#A
 
   useEffect(() => () => clearInterval(loopInterval.current), []);
 
-  // ── Render Helpers ─────────────────────────────────────
+  // â”€â”€ Render Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const renderShip = () => {
     // @ts-ignore: style prop on AnimatedG causes false positive TS error
@@ -253,19 +253,19 @@ export default function RelativityLab({ scientistMode = false, accentColor = '#A
           <Text style={styles.sectionTitle}>RELATIVISTIC ANALYTICS</Text>
           <View style={styles.sciGrid}>
             <ScientistCard 
-              formula="γ = 1 / √(1 - v²/c²)" 
+              formula="Î³ = 1 / âˆš(1 - vÂ²/cÂ²)" 
               description="Lorentz Transformation Factor" 
-              value={`Current γ (Gamma): ${gamma.toFixed(4)}`}
+              value={`Current Î³ (Gamma): ${gamma.toFixed(4)}`}
               color="#A855F7"
             />
             <ScientistCard 
-              formula="Δt' = Δt / γ" 
+              formula="Î”t' = Î”t / Î³" 
               description="Time Dilation Equation" 
               value={`Ship Time: ${shipTime.toFixed(2)} yrs / Earth Time: ${earthTime.toFixed(2)} yrs`}
               color="#FFD166"
             />
             <ScientistCard 
-              formula="L = L0 / γ" 
+              formula="L = L0 / Î³" 
               description="Lorentz Length Contraction" 
               value={`Proper Length: 80 units / Relativistic: ${shipLength.toFixed(1)} units`}
               color="#00E5FF"

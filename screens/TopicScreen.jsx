@@ -10,6 +10,7 @@ import {
   Platform,
   Modal,
   Animated,
+  InteractionManager,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../context/ThemeContext";
@@ -416,15 +417,13 @@ export default function TopicScreen({ topicId, onBack }) {
       return;
     }
 
-    // ── Load config ──────────────────────────────
+    // ── Load config (lightweight, do immediately) ──────────────────
     let getConfig = TOPIC_CONFIGS[topicId];
-    let isHindiLoaded = false;
     let fallbackToEn = false;
     
     if (isHindi) {
        if (TOPIC_CONFIGS_HI[topicId]) {
          getConfig = TOPIC_CONFIGS_HI[topicId];
-         isHindiLoaded = true;
          debugLog(`Selected HINDI config for "${topicId}"`);
        } else {
          fallbackToEn = true;
@@ -435,55 +434,38 @@ export default function TopicScreen({ topicId, onBack }) {
     if (!getConfig) {
       const msg = `"${topicId}" is NOT in TOPIC_CONFIGS map — add it to TopicScreen.jsx`;
       debugErr(msg);
-      debugErr(
-        "Currently registered config keys:",
-        Object.keys(TOPIC_CONFIGS).join(", "),
-      );
       setLoadError(msg);
-      // Don't return — still try to load lab, and show error on screen
     } else {
-      debugLog(`Config loader found for "${topicId}" ✅`);
       try {
         const cfg = getConfig();
         debugLog(`Config loaded successfully ✅ — title: "${cfg?.title}"`);
-        debugLog(`Theory cards: ${cfg?.theory?.length ?? 0}`);
-        debugLog(`Quiz questions: ${cfg?.quiz?.length ?? 0}`);
-        debugLog(`DYK questions: ${cfg?.doYouKnowWhy?.length ?? 0}`);
         setTopicConfig(cfg);
         setHindiPending(fallbackToEn);
       } catch (e) {
         const msg = `Config require() crashed for "${topicId}": ${e?.message}`;
         debugErr(msg);
-        debugErr("Full error:", e);
         setLoadError(msg);
       }
     }
 
-    // ── Load lab ─────────────────────────────────
-    const getLab = LAB_COMPONENTS[topicId];
-    if (!getLab) {
-      debugWarn(
-        `"${topicId}" is NOT in LAB_COMPONENTS map — lab will show "Coming Soon"`,
-      );
-      debugWarn(
-        "Currently registered lab keys:",
-        Object.keys(LAB_COMPONENTS).join(", "),
-      );
-      // Not a fatal error — we show "Coming Soon" gracefully
-    } else {
-      debugLog(`Lab loader found for "${topicId}" ✅`);
-      try {
-        const LabComp = getLab();
-        debugLog(`Lab component loaded successfully ✅`);
-        setLabComponent(() => LabComp);
-      } catch (e) {
-        debugErr(`Lab require() crashed for "${topicId}": ${e?.message}`);
-        debugErr("Full error:", e);
-        // Not fatal — lab shows "Coming Soon" if component fails
+    // ── Defer lab loading (heavy SVG component) until UI is idle ──
+    const task = InteractionManager.runAfterInteractions(() => {
+      const getLab = LAB_COMPONENTS[topicId];
+      if (!getLab) {
+        debugWarn(`"${topicId}" is NOT in LAB_COMPONENTS map — lab will show "Coming Soon"`);
+      } else {
+        try {
+          const LabComp = getLab();
+          debugLog(`Lab component loaded successfully ✅`);
+          setLabComponent(() => LabComp);
+        } catch (e) {
+          debugErr(`Lab require() crashed for "${topicId}": ${e?.message}`);
+        }
       }
-    }
+      debugLog(`==== LOAD SEQUENCE COMPLETE for "${topicId}" ====`);
+    });
 
-    debugLog(`==== LOAD SEQUENCE COMPLETE for "${topicId}" ====`);
+    return () => task.cancel();
   }, [topicId, isHindi]);
 
   // ── Theme tokens ───────────────────────────────

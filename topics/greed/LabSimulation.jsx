@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated, Easing } from 'react-native';
-import Svg, { Circle, Rect, Text as SvgText, Path, LinearGradient, Stop, Defs } from 'react-native-svg';
+import Svg, { Circle, Rect, Text as SvgText, Path, LinearGradient, Stop, Defs, G } from 'react-native-svg';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS } from '../../constants/theme';
 import { soundTap, soundWhoosh, soundSuccess } from '../../utils/sounds';
@@ -20,7 +20,7 @@ export default function GreedLabExt({ scientistMode = false, onLabBreaker }) {
   const glass1 = _themeObj.glass?.light || 'rgba(255,255,255,0.05)';
   const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
-  // ── GAME STATE ──
+  // â”€â”€ GAME STATE â”€â”€
   const [wealth, setWealth] = useState(10);         // Absolute wealth
   const [baseline, setBaseline] = useState(10);     // Hedonic baseline
   const [happiness, setHappiness] = useState(80);   // Score (0-100)
@@ -154,7 +154,7 @@ export default function GreedLabExt({ scientistMode = false, onLabBreaker }) {
          <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 10, fontFamily: FONTS.displayBold, color: txtM }}>HAPPINESS GAUGE</Text>
             <Text style={{ fontSize: 16, fontFamily: FONTS.displayBold, color: joyColor }}>
-                {gameState === 'FREE' ? 'ABUNDANCE 🕊️' : Math.floor(happiness) + '%'}
+                {gameState === 'FREE' ? 'ABUNDANCE ðŸ•Šï¸' : Math.floor(happiness) + '%'}
             </Text>
             <View style={[styles.barBg, { backgroundColor: glass1, width: '80%', marginTop: 2 }]}>
                  <View style={{ height: '100%', width: `${happiness}%`, backgroundColor: joyColor }} />
@@ -225,20 +225,20 @@ export default function GreedLabExt({ scientistMode = false, onLabBreaker }) {
           <TouchableOpacity 
               style={[styles.btn, { backgroundColor: '#D4A74A20', borderColor: '#D4A74A' }]}
               onPress={hustle}>
-              <Text style={[styles.btnTxt, { color: '#D4A74A' }]}>🏃‍♂️ Work (Earn $)</Text>
+              <Text style={[styles.btnTxt, { color: '#D4A74A' }]}>ðŸƒâ€â™‚ï¸ Work (Earn $)</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
               style={[styles.btn, { backgroundColor: '#FF444420', borderColor: '#FF4444' }]}
               onPress={statusPurchase}>
-              <Text style={[styles.btnTxt, { color: '#FF4444' }]}>👑 Buy Status ($-)</Text>
+              <Text style={[styles.btnTxt, { color: '#FF4444' }]}>ðŸ‘‘ Buy Status ($-)</Text>
           </TouchableOpacity>
 
           <View style={{ width: '100%', alignItems: 'center', marginTop: 8 }}>
              <TouchableOpacity 
                  style={[styles.btn, { backgroundColor: '#81C78420', borderColor: '#81C784', width: '80%' }]}
                  onPress={donate}>
-                 <Text style={[styles.btnTxt, { color: '#81C784' }]}>🕊️ Generosity (Give Away $)</Text>
+                 <Text style={[styles.btnTxt, { color: '#81C784' }]}>ðŸ•Šï¸ Generosity (Give Away $)</Text>
              </TouchableOpacity>
           </View>
       </View>
@@ -249,14 +249,14 @@ export default function GreedLabExt({ scientistMode = false, onLabBreaker }) {
 
       {(gameState === 'TRAPPED' || gameState === 'FREE') && (
          <TouchableOpacity style={styles.resetBtn} onPress={resetGame}>
-            <Text style={{ color: "#FFF", fontFamily: FONTS.displayBold }}>Reset Simulation 🔄</Text>
+            <Text style={{ color: "#FFF", fontFamily: FONTS.displayBold }}>Reset Simulation ðŸ”„</Text>
          </TouchableOpacity>
       )}
 
       {scientistMode && (
          <View style={[styles.sciPanel, { borderColor: border }]}>
             <Text style={{ color: '#FFD166', fontSize: 9, fontFamily: 'monospace' }}>UTILITY_GAP: {(wealth - baseline).toFixed(2)} units</Text>
-            <Text style={{ color: '#FFD166', fontSize: 9, fontFamily: 'monospace' }}>ADAPTATION_COEFFICIENT: {(Math.max(0.5, (wealth - baseline) * 0.05)).toFixed(2)} Δ/sec</Text>
+            <Text style={{ color: '#FFD166', fontSize: 9, fontFamily: 'monospace' }}>ADAPTATION_COEFFICIENT: {(Math.max(0.5, (wealth - baseline) * 0.05)).toFixed(2)} Î”/sec</Text>
             <Text style={{ color: '#FFD166', fontSize: 9, fontFamily: 'monospace' }}>MARGINAL_ROI: {(Math.max(1, 10 - (wealth * 0.02))).toFixed(2)} $/click</Text>
          </View>
       )}

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, 
-  Linking, Modal, TextInput, KeyboardAvoidingView, Platform, ScrollView
+  Linking, Modal, KeyboardAvoidingView, Platform, ScrollView, Image, Dimensions,
+  InteractionManager
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import api from '../services/api';
@@ -11,6 +12,8 @@ import Icon from '../components/ui/Icons';
 import { SPACING, RADIUS, FONTS } from '../constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 
+const { width } = Dimensions.get('window');
+
 export default function EbookScreen({ onOpenPdf }) {
   const { user } = useAuth();
   const { theme, isDark } = useTheme();
@@ -19,32 +22,34 @@ export default function EbookScreen({ onOpenPdf }) {
   
   // Modal State
   const [modalVisible, setModalVisible] = useState(false);
-  const [editingEbook, setEditingEbook] = useState(null); // If null, we are uploading
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [editingEbook, setEditingEbook] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedCoverImage, setSelectedCoverImage] = useState(null);
   const [processing, setProcessing] = useState(false);
 
   const isAdmin = user?.role === 'ADMIN' || user?.email === 'chandanprajapati6307@gmail.com';
 
   const txt1 = theme?.text?.primary || '#FFFFFF';
+  const txt2 = theme?.text?.secondary || 'rgba(255,255,255,0.85)';
   const txtM = theme?.text?.muted || 'rgba(255,255,255,0.6)';
   const accent = theme?.accent?.primary || '#7B6FFF';
   const bg = theme?.bg?.base || '#08090F';
   const cardBg = theme?.bg?.card || '#1C1D26';
   const border = theme?.glass?.border || 'rgba(255,255,255,0.1)';
+  const gold = theme?.accent?.gold || '#FFD166';
 
   useEffect(() => {
-    fetchEbooks();
+    const task = InteractionManager.runAfterInteractions(() => {
+      fetchEbooks();
+    });
+    return () => task.cancel();
   }, []);
 
   const fetchEbooks = async () => {
     try {
       const res = await api.get('/api/ebooks');
       setEbooks(res.data);
-    } catch (e) {
-      console.error('Failed to fetch ebooks', e);
-    } finally {
+    } catch (e) {} finally {
       setLoading(false);
     }
   };
@@ -55,52 +60,59 @@ export default function EbookScreen({ onOpenPdf }) {
         type: 'application/pdf',
         copyToCacheDirectory: true,
       });
-
       if (result.canceled || !result.assets || result.assets.length === 0) return;
-      
       const file = result.assets[0];
       setSelectedFile(file);
-      if (!title) setTitle(file.name.replace(/\.pdf$/i, ''));
     } catch (e) {
       Alert.alert('Error', 'Failed to pick file');
     }
   };
 
+  const handlePickCoverImage = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'image/*',
+        copyToCacheDirectory: true,
+      });
+      if (result.canceled || !result.assets || result.assets.length === 0) return;
+      setSelectedCoverImage(result.assets[0]);
+    } catch (e) {
+      Alert.alert('Error', 'Failed to pick cover image');
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!title.trim()) return Alert.alert('Error', 'Please enter a title');
-    
     setProcessing(true);
     try {
       if (editingEbook) {
-        // UPDATE
-        await api.put(`/api/ebooks/${editingEbook.id}`, { title, description });
+        await api.put(`/api/ebooks/${editingEbook.id}`, {});
         Alert.alert('Success', 'Ebook updated successfully');
       } else {
-        // UPLOAD
         if (!selectedFile) {
           setProcessing(false);
           return Alert.alert('Error', 'Please select a PDF file');
         }
-
         const formData = new FormData();
         formData.append('file', {
           uri: selectedFile.uri,
           name: selectedFile.name,
           type: selectedFile.mimeType || 'application/pdf',
         });
-        formData.append('title', title);
-        formData.append('description', description);
-
+        if (selectedCoverImage) {
+          formData.append('coverImage', {
+            uri: selectedCoverImage.uri,
+            name: selectedCoverImage.name,
+            type: selectedCoverImage.mimeType || 'image/jpeg',
+          });
+        }
         await api.post('/api/ebooks/upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         Alert.alert('Success', 'Ebook uploaded successfully');
       }
-      
       closeModal();
       fetchEbooks();
     } catch (e) {
-      console.error('Operation failed', e);
       Alert.alert('Error', e.response?.data?.message || 'Operation failed');
     } finally {
       setProcessing(false);
@@ -131,77 +143,78 @@ export default function EbookScreen({ onOpenPdf }) {
 
   const openEditModal = (ebook) => {
     setEditingEbook(ebook);
-    setTitle(ebook.title);
-    setDescription(ebook.description || '');
     setSelectedFile(null);
+    setSelectedCoverImage(null);
     setModalVisible(true);
   };
 
   const closeModal = () => {
     setModalVisible(false);
     setEditingEbook(null);
-    setTitle('');
-    setDescription('');
     setSelectedFile(null);
+    setSelectedCoverImage(null);
   };
 
-  const openEbook = (url, title) => {
+  const openEbook = (url, ebookTitle) => {
     if (onOpenPdf) {
-      onOpenPdf(url, title);
+      onOpenPdf(url, ebookTitle);
     } else {
       Linking.openURL(url).catch(() => Alert.alert('Error', 'Could not open this eBook'));
     }
   };
 
-  const renderEbook = ({ item }) => {
-    return (
-      <View style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-        <TouchableOpacity 
-          style={styles.cardMain}
-          onPress={() => openEbook(item.fileUrl, item.title)}
-          activeOpacity={0.7}
-        >
-          <View style={[styles.iconBox, { backgroundColor: accent + '15' }]}>
-            <Icon name="book" size={28} color={accent} />
-          </View>
-          
-          <View style={styles.cardContent}>
-            <Text style={[styles.title, { color: txt1 }]} numberOfLines={2}>
-              {item.title}
-            </Text>
-            {item.description ? (
-              <Text style={[styles.desc, { color: txtM }]} numberOfLines={2}>
-                {item.description}
-              </Text>
-            ) : null}
-            <Text style={[styles.date, { color: txtM }]}>
-              {new Date(item.uploadedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
-            </Text>
-          </View>
-        </TouchableOpacity>
+  // ── Premium Single-Column Book Card ──────────────
+  const renderEbook = ({ item, index }) => {
+    const accentColors = [accent, '#FF9F1C', '#4ECDC4', '#E879F9', '#22C55E'];
+    const cardAccent = accentColors[index % accentColors.length];
 
+    return (
+      <TouchableOpacity 
+        style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}
+        onPress={() => openEbook(item.fileUrl, item.title)}
+        activeOpacity={0.85}
+      >
+        {/* Cover / Placeholder */}
+        {item.coverImageUrl ? (
+          <Image source={{ uri: item.coverImageUrl }} style={styles.coverImage} />
+        ) : (
+          <LinearGradient
+            colors={[cardAccent + '25', cardAccent + '08']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.coverPlaceholder}
+          >
+            <View style={[styles.coverIconWrap, { backgroundColor: cardAccent + '20' }]}>
+              <Icon name="book-open" size={32} color={cardAccent} />
+            </View>
+          </LinearGradient>
+        )}
+
+        {/* Card is just the image (and admin actions if applicable) */}
+
+        {/* Admin Actions */}
         {isAdmin && (
-          <View style={[styles.adminActions, { borderTopColor: border }]}>
+          <View style={[styles.adminBar, { borderTopColor: border }]}>
             <TouchableOpacity 
-              style={styles.actionBtn} 
+              style={styles.adminBtn} 
               onPress={() => openEditModal(item)}
             >
-              <Icon name="edit" size={16} color={accent} />
-              <Text style={[styles.actionText, { color: accent }]}>Edit</Text>
+              <Icon name="edit" size={14} color={accent} />
+              <Text style={[styles.adminBtnText, { color: accent }]}>Edit</Text>
             </TouchableOpacity>
             
-            <View style={[styles.divider, { backgroundColor: border }]} />
+            <View style={[styles.adminDivider, { backgroundColor: border }]} />
             
             <TouchableOpacity 
-              style={styles.actionBtn} 
+              style={styles.adminBtn} 
               onPress={() => handleDelete(item.id)}
             >
-              <Icon name="trash" size={16} color="#EF4444" />
-              <Text style={[styles.actionText, { color: '#EF4444' }]}>Delete</Text>
+              <Icon name="trash" size={14} color="#EF4444" />
+              <Text style={[styles.adminBtnText, { color: '#EF4444' }]}>Delete</Text>
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -215,10 +228,13 @@ export default function EbookScreen({ onOpenPdf }) {
 
   return (
     <View style={[styles.container, { backgroundColor: bg }]}>
+      {/* Header */}
       <View style={styles.header}>
         <View>
           <Text style={[styles.headerTitle, { color: txt1 }]}>Library</Text>
-          <Text style={[styles.headerSub, { color: txtM }]}>Premium Knowledge Vault</Text>
+          <Text style={[styles.headerSub, { color: txtM }]}>
+            {ebooks.length > 0 ? `${ebooks.length} Books Available` : 'Premium Knowledge Vault'}
+          </Text>
         </View>
         
         {isAdmin && (
@@ -234,7 +250,7 @@ export default function EbookScreen({ onOpenPdf }) {
 
       {ebooks.length === 0 ? (
         <View style={styles.emptyState}>
-          <View style={[styles.emptyIconBox, { backgroundColor: cardBg }]}>
+          <View style={[styles.emptyIconBox, { backgroundColor: cardBg, borderColor: border }]}>
             <Icon name="book" size={48} color={txtM} />
           </View>
           <Text style={[styles.emptyTitle, { color: txt1 }]}>Library is Empty</Text>
@@ -242,11 +258,16 @@ export default function EbookScreen({ onOpenPdf }) {
         </View>
       ) : (
         <FlatList
+          key="single-col"
           data={ebooks}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderEbook}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
+          initialNumToRender={4}
+          windowSize={3}
+          maxToRenderPerBatch={3}
+          removeClippedSubviews={true}
         />
       )}
 
@@ -272,25 +293,6 @@ export default function EbookScreen({ onOpenPdf }) {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text style={[styles.label, { color: txtM }]}>Book Title</Text>
-              <TextInput
-                style={[styles.input, { backgroundColor: bg, color: txt1, borderColor: border }]}
-                value={title}
-                onChangeText={setTitle}
-                placeholder="Enter book title..."
-                placeholderTextColor={txtM}
-              />
-
-              <Text style={[styles.label, { color: txtM }]}>Description</Text>
-              <TextInput
-                style={[styles.input, styles.textArea, { backgroundColor: bg, color: txt1, borderColor: border }]}
-                value={description}
-                onChangeText={setDescription}
-                placeholder="Briefly describe the contents..."
-                placeholderTextColor={txtM}
-                multiline
-                numberOfLines={4}
-              />
 
               {!editingEbook && (
                 <>
@@ -304,6 +306,28 @@ export default function EbookScreen({ onOpenPdf }) {
                       {selectedFile ? selectedFile.name : 'Select PDF Document'}
                     </Text>
                   </TouchableOpacity>
+
+                  <Text style={[styles.label, { color: txtM }]}>Cover Image (Optional)</Text>
+                  {selectedCoverImage ? (
+                    <TouchableOpacity onPress={handlePickCoverImage} activeOpacity={0.85}>
+                      <Image 
+                        source={{ uri: selectedCoverImage.uri }} 
+                        style={[styles.coverPreview, { borderColor: accent }]} 
+                      />
+                      <View style={[styles.coverPreviewOverlay, { backgroundColor: accent + '22' }]}>
+                        <Icon name="edit" size={16} color={accent} />
+                        <Text style={[styles.coverPreviewText, { color: accent }]}>Tap to change</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity 
+                      style={[styles.filePicker, { backgroundColor: bg, borderColor: border, borderStyle: 'dashed' }]}
+                      onPress={handlePickCoverImage}
+                    >
+                      <Icon name="image" size={24} color={accent} />
+                      <Text style={[styles.filePickerText, { color: txtM }]}>Select Cover Image</Text>
+                    </TouchableOpacity>
+                  )}
                 </>
               )}
 
@@ -331,7 +355,7 @@ export default function EbookScreen({ onOpenPdf }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 , marginTop:-45},
+  container: { flex: 1, marginTop: -45 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: {
     flexDirection: 'row',
@@ -339,7 +363,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.xl + 10,
-    paddingBottom: SPACING.lg,
+    paddingBottom: SPACING.md,
   },
   headerTitle: { fontFamily: FONTS.display, fontSize: 32 },
   headerSub: { fontFamily: FONTS.body, fontSize: 13, marginTop: -2 },
@@ -358,53 +382,60 @@ const styles = StyleSheet.create({
   },
   uploadBtnText: { color: '#FFF', fontFamily: FONTS.displayMedium, fontSize: 14 },
   listContent: { paddingHorizontal: SPACING.lg, paddingBottom: 120 },
+
+  // ── Premium Single-Column Card ────────────────
   card: {
     borderRadius: RADIUS.xl,
     borderWidth: 1,
-    marginBottom: SPACING.lg,
     overflow: 'hidden',
-    elevation: 3,
+    marginBottom: 16,
+    elevation: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
   },
-  cardMain: {
-    flexDirection: 'row',
-    padding: 16,
-    gap: 16,
+  coverImage: {
+    width: '100%',
+    height: 380,
+    resizeMode: 'cover',
   },
-  iconBox: {
-    width: 60,
-    height: 80,
-    borderRadius: RADIUS.md,
+  coverPlaceholder: {
+    width: '100%',
+    height: 140,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  cardContent: { flex: 1, justifyContent: 'center' },
-  title: { fontFamily: FONTS.displayMedium, fontSize: 17, marginBottom: 4 },
-  desc: { fontFamily: FONTS.body, fontSize: 13, marginBottom: 8, lineHeight: 18 },
-  date: { fontFamily: FONTS.body, fontSize: 11, opacity: 0.8 },
-  adminActions: {
+  coverIconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // ── Admin Actions ─────────────────────────────
+  adminBar: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    paddingVertical: 12,
+    paddingVertical: 10,
   },
-  actionBtn: {
+  adminBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
   },
-  actionText: { fontFamily: FONTS.bodyMedium, fontSize: 13 },
-  divider: { width: 1, height: '60%', alignSelf: 'center' },
+  adminBtnText: { fontFamily: FONTS.bodyMedium, fontSize: 13 },
+  adminDivider: { width: 1, height: '60%', alignSelf: 'center' },
+
+  // ── Empty State ───────────────────────────────
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40, gap: 12 },
-  emptyIconBox: { width: 100, height: 100, borderRadius: 50, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
+  emptyIconBox: { width: 100, height: 100, borderRadius: 50, borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
   emptyTitle: { fontFamily: FONTS.displayMedium, fontSize: 20 },
   emptyText: { fontFamily: FONTS.body, fontSize: 15, textAlign: 'center', opacity: 0.7 },
   
-  // Modal Styles
+  // ── Modal Styles ──────────────────────────────
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   modalContent: {
     borderTopLeftRadius: 30,
@@ -425,13 +456,13 @@ const styles = StyleSheet.create({
   },
   textArea: { height: 100, textAlignVertical: 'top' },
   filePicker: {
-    height: 100,
+    height: 90,
     borderRadius: RADIUS.lg,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   filePickerText: { fontFamily: FONTS.bodyMedium, fontSize: 14 },
   submitBtn: {
@@ -439,6 +470,30 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.lg,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 10,
   },
   submitBtnText: { color: '#FFF', fontFamily: FONTS.displayBold, fontSize: 16 },
+
+  // ── Cover Image Crop Preview ──────────────
+  coverPreview: {
+    width: '100%',
+    height: 180,
+    borderRadius: RADIUS.lg,
+    borderWidth: 2,
+    resizeMode: 'cover',
+    marginBottom: 4,
+  },
+  coverPreviewOverlay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: RADIUS.md,
+    marginBottom: 20,
+  },
+  coverPreviewText: {
+    fontFamily: FONTS.bodyMedium,
+    fontSize: 13,
+  },
 });

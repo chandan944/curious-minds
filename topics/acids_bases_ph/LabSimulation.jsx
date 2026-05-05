@@ -1,17 +1,14 @@
-// ─────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //  LAB: Acids & Bases v2.0 (Extreme)
 //  The Titration Station
-// ─────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
   Animated, ScrollView, Easing
 } from 'react-native';
-import Svg, {
-  Circle, Path, Rect, G, Line, Polyline, Defs, RadialGradient, Stop,
-  Text as SvgText, LinearGradient as SvgLinearGradient
-} from 'react-native-svg';
+import Svg, { Circle, Path, Rect, G, Line, Polyline, Defs, RadialGradient, Stop, Text as SvgText, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
@@ -23,7 +20,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 380;
 
-// ── Titration Data ─────────────────────────────────────
+// â”€â”€ Titration Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const SAMPLES = [
   { id: 'hcl', name: 'Stomach Acid (HCl)', type: 'Strong Acid', ph: 1.5, color: '#FF3131' },
@@ -39,7 +36,7 @@ const CHALLENGES = [
   { id: 'extreme_analyst', title: 'Extreme Analyst', desc: 'Neutralize the Strongest Acid (HCl)', icon: 'activity', color: '#FF3131' },
 ];
 
-// ── Unified UI Components ──────────────────────────────
+// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -60,10 +57,10 @@ const ScientistCard = ({ formula, value, description, color }) => (
   </View>
 );
 
-// ── AnimatedCircle must be defined before JSX use ──────────
+// â”€â”€ AnimatedCircle must be defined before JSX use â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-// ── Main Component ─────────────────────────────────────
+// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function TitrationLab({ scientistMode = false }) {
   const { isDark } = useTheme();
@@ -93,7 +90,7 @@ export default function TitrationLab({ scientistMode = false }) {
     return '#8A2BE2';
   }, [currentPH]);
 
-  // ── Handlers ─────────────────────────────────────────
+  // â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const handleReset = () => {
     soundWhoosh();
@@ -169,7 +166,7 @@ export default function TitrationLab({ scientistMode = false }) {
      setHistory(prev => [...prev.slice(-40), { vol: volumeAdded, ph: currentPH }]);
   }, [volumeAdded]);
 
-  // ── Render ───────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   return (
     <View style={styles.container}>

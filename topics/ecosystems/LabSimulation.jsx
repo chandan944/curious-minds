@@ -1,5 +1,5 @@
-/**
- * Ecosystems Lab — interactive simulation
+﻿/**
+ * Ecosystems Lab â€” interactive simulation
  * NO react-native-reanimated (incompatible with Old Architecture Expo Go)
  * Uses only: RN Animated API, setInterval, useState, useRef
  */
@@ -11,7 +11,7 @@ import {
 import Svg, {
   Circle, Rect, Ellipse, G, Defs, RadialGradient, Stop,
   Text as SvgText, Path,
-} from 'react-native-svg';
+import Svg, { Circle, Rect, G, Ellipse, Defs, Stop, RadialGradient, Text as SvgText } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { soundTap } from '../../utils/sounds';
 import Icon from '../../components/ui/Icons';
@@ -25,11 +25,11 @@ const CY = VIEWPORT_H / 2;
 const PLANT_ANGLES = Array.from({ length: 14 }, (_, i) => (i / 14) * Math.PI * 2);
 
 const DISCOVERIES = [
-  { id: 'ec1', cond: s => s.predator > 80 && s.prey < 15, title: 'Trophic Cascade', entry: 'Predator overpopulation drives prey to near-extinction, then itself collapses from starvation — the Lotka-Volterra predator-prey cycle. This is what happened when wolves returned to Yellowstone.', rarity: 'Common' },
-  { id: 'ec2', cond: s => s.resource < 20 && s.prey > 65, title: 'Carrying Capacity Crash', entry: 'When prey population exceeds the resource base, density-dependent feedback triggers mass starvation — restoring equilibrium. Nature has a hard limit on population size.', rarity: 'Uncommon' },
-  { id: 'ec3', cond: s => s.co2 > 72 && s.resource < 38, title: 'Ecosystem Collapse', entry: 'High pollution degrades primary producers — without plants the entire food chain unravels from the bottom up. This trophic bottom-up collapse is the most common mechanism of ecosystem failure.', rarity: 'Common' },
-  { id: 'ec4', cond: s => s.predator > 50 && s.prey > 70 && s.resource > 62, title: 'Trophic Balance', entry: 'All three trophic levels in dynamic equilibrium — this is the stable state ecologists call a healthy trophic structure. Populations oscillate gently without collapse.', rarity: 'Rare ✨' },
-  { id: 'ec5', cond: s => s.co2 < 18 && s.resource > 82 && s.prey > 52, title: 'Carbon Sequestration', entry: 'Dense plant cover with healthy prey and low pollution creates maximum biological carbon storage — the natural climate solution more powerful than any technology yet invented.', rarity: 'Rare ✨' },
+  { id: 'ec1', cond: s => s.predator > 80 && s.prey < 15, title: 'Trophic Cascade', entry: 'Predator overpopulation drives prey to near-extinction, then itself collapses from starvation â€” the Lotka-Volterra predator-prey cycle. This is what happened when wolves returned to Yellowstone.', rarity: 'Common' },
+  { id: 'ec2', cond: s => s.resource < 20 && s.prey > 65, title: 'Carrying Capacity Crash', entry: 'When prey population exceeds the resource base, density-dependent feedback triggers mass starvation â€” restoring equilibrium. Nature has a hard limit on population size.', rarity: 'Uncommon' },
+  { id: 'ec3', cond: s => s.co2 > 72 && s.resource < 38, title: 'Ecosystem Collapse', entry: 'High pollution degrades primary producers â€” without plants the entire food chain unravels from the bottom up. This trophic bottom-up collapse is the most common mechanism of ecosystem failure.', rarity: 'Common' },
+  { id: 'ec4', cond: s => s.predator > 50 && s.prey > 70 && s.resource > 62, title: 'Trophic Balance', entry: 'All three trophic levels in dynamic equilibrium â€” this is the stable state ecologists call a healthy trophic structure. Populations oscillate gently without collapse.', rarity: 'Rare âœ¨' },
+  { id: 'ec5', cond: s => s.co2 < 18 && s.resource > 82 && s.prey > 52, title: 'Carbon Sequestration', entry: 'Dense plant cover with healthy prey and low pollution creates maximum biological carbon storage â€” the natural climate solution more powerful than any technology yet invented.', rarity: 'Rare âœ¨' },
 ];
 
 export default function EcosystemsLab({ scientistMode = false, accentColor = '#2ECC71', onLabBreaker }) {
@@ -40,7 +40,7 @@ export default function EcosystemsLab({ scientistMode = false, accentColor = '#2
   const [frame,    setFrame]    = useState(0);
   const [danger,   setDanger]   = useState(false);
   const [logs,     setLogs]     = useState([]);
-  const [hint,     setHint]     = useState('Adjust prey population — watch the preditor-prey Lotka-Volterra cycle emerge! Push predators to 80%+ with low prey for a trophic cascade.');
+  const [hint,     setHint]     = useState('Adjust prey population â€” watch the preditor-prey Lotka-Volterra cycle emerge! Push predators to 80%+ with low prey for a trophic cascade.');
   const [logsOpen, setLogsOpen] = useState(false);
   const [discMode, setDiscMode] = useState(false);
 
@@ -77,7 +77,7 @@ export default function EcosystemsLab({ scientistMode = false, accentColor = '#2
         Animated.timing(shakeAnim, { toValue: 0, duration: 55, useNativeDriver: true }),
       ]));
       shakeLoop.current.start();
-      setHint('💀 ECOSYSTEM COLLAPSE — Prey extinct! Predators will starve. Reduce predator pressure!');
+      setHint('ðŸ’€ ECOSYSTEM COLLAPSE â€” Prey extinct! Predators will starve. Reduce predator pressure!');
     } else {
       dangerLoop.current?.stop();
       shakeLoop.current?.stop();
@@ -95,7 +95,7 @@ export default function EcosystemsLab({ scientistMode = false, accentColor = '#2
           discLocks.current[d.id] = true;
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           setLogs(p => [d, ...p]);
-          setHint(`🌍 Discovery: ${d.title}`);
+          setHint(`ðŸŒ Discovery: ${d.title}`);
         }
       });
     }, 1200);
@@ -218,12 +218,12 @@ export default function EcosystemsLab({ scientistMode = false, accentColor = '#2
 
       <View style={styles.panel}>
         <View style={styles.panelRow}>
-          <SliderControl label="🐇 Prey Pop." value={prey} onChange={v => { setPrey(v); soundTap(); }} color="#2ECC71" displayVal={`${prey}%`} />
-          <SliderControl label="🐺 Predators" value={predator} onChange={v => { setPredator(v); soundTap(); }} color={predator > 80 ? '#E74C3C' : '#E74C3C'} displayVal={`${predator}%`} />
+          <SliderControl label="ðŸ‡ Prey Pop." value={prey} onChange={v => { setPrey(v); soundTap(); }} color="#2ECC71" displayVal={`${prey}%`} />
+          <SliderControl label="ðŸº Predators" value={predator} onChange={v => { setPredator(v); soundTap(); }} color={predator > 80 ? '#E74C3C' : '#E74C3C'} displayVal={`${predator}%`} />
         </View>
         <View style={styles.panelRow}>
-          <SliderControl label="🌿 Resources" value={resource} onChange={v => { setResource(v); soundTap(); }} color="#F39C12" displayVal={`${resource}%`} />
-          <SliderControl label="💨 CO₂/Pollution" value={co2} onChange={v => { setCo2(v); soundTap(); }} color={co2 > 70 ? '#E74C3C' : '#778899'} displayVal={`${co2}%`} />
+          <SliderControl label="ðŸŒ¿ Resources" value={resource} onChange={v => { setResource(v); soundTap(); }} color="#F39C12" displayVal={`${resource}%`} />
+          <SliderControl label="ðŸ’¨ COâ‚‚/Pollution" value={co2} onChange={v => { setCo2(v); soundTap(); }} color={co2 > 70 ? '#E74C3C' : '#778899'} displayVal={`${co2}%`} />
         </View>
       </View>
 
@@ -244,7 +244,7 @@ export default function EcosystemsLab({ scientistMode = false, accentColor = '#2
         <View style={styles.modalBg}>
           <View style={[styles.modalContent, { backgroundColor: '#071510' }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: '#2ECC71' }]}>Research Logs 📓</Text>
+              <Text style={[styles.modalTitle, { color: '#2ECC71' }]}>Research Logs ðŸ““</Text>
               <TouchableOpacity onPress={() => { setLogsOpen(false); soundTap(); }}>
                 <Icon name="close" size={22} color="#D5F5E3" />
               </TouchableOpacity>

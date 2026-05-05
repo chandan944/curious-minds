@@ -1,17 +1,18 @@
 // ─────────────────────────────────────────────
-//  HomeScreen v4 — Bottom Nav with Home, Chat, Leaderboard, Settings
+//  HomeScreen v5 — Performance-optimized navigation
 // ─────────────────────────────────────────────
 
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList,
-  Dimensions, Animated, Platform, StatusBar, TextInput, Image
+  Dimensions, Animated, Platform, StatusBar, Image,
+  InteractionManager, ActivityIndicator
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 
-
 import api from '../services/api';
+import chatService from '../services/chatService';
 
 const STATUS_BAR_H = Platform.OS === 'android' ? ((StatusBar.currentHeight || 36) + 10) : 0;
 import { LinearGradient } from 'expo-linear-gradient';
@@ -21,21 +22,29 @@ import { TOPIC_REGISTRY, CATEGORIES } from '../constants/topicRegistry';
 import { getLevelForXP, getLevelProgress, getNextLevel } from '../constants/xpSystem';
 import { soundTap, soundWhoosh } from '../utils/sounds';
 
-// Sub-screens
-import TopicScreen from './TopicScreen';
+// ── Lazy-loaded heavy screens (only loaded when actually navigated to) ──
+const TopicScreen = lazy(() => import('./TopicScreen'));
+const PdfViewerScreen = lazy(() => import('./PdfViewerScreen'));
+const ChatRoomScreen = lazy(() => import('./ChatRoomScreen'));
+
+// ── Lightweight tab screens (kept as eager since they use display:none persistence) ──
 import ChatHubScreen from './ChatHubScreen';
 import LeaderboardScreen from './LeaderboardScreen';
 import SettingsScreen from './SettingsScreen';
 import EbookScreen from './EbookScreen';
 import DiscoverScreen from './DiscoverScreen';
-import PdfViewerScreen from './PdfViewerScreen';
-import ChatRoomScreen from './ChatRoomScreen';
-
 
 import Icon from '../components/ui/Icons';
 import { useTheme } from '../context/ThemeContext';
 import ProfileModal from '../components/ui/ProfileModal';
 import NotificationsModal from '../components/ui/NotificationsModal';
+
+// ── Minimal loading fallback for lazy screens ──
+const ScreenLoader = () => (
+  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#08090F' }}>
+    <ActivityIndicator size="large" color="#7B6FFF" />
+  </View>
+);
 
 const { width } = Dimensions.get('window');
 const CARD_W = width * 0.75;
@@ -45,8 +54,10 @@ export default function HomeScreen() {
   const { theme, isDark } = useTheme();
   
   // Navigation State
-  const [activeTab, setActiveTab] = useState('home'); // home | chat | leaderboard | discover | settings | ebook
+  const [activeTab, setActiveTab] = useState('home');
+  const [visitedTabs, setVisitedTabs] = useState(['home']);
   const [selectedTopic, setSelectedTopic] = useState(null);
+  const [isNavigating, setIsNavigating] = useState(false); // Prevents double-tap lag
   
   // User Stats
   const xp = user?.points || 0;
@@ -61,36 +72,83 @@ export default function HomeScreen() {
   const [chatConfig, setChatConfig] = useState(null); // { targetId, chatTitle }
   const [unreadNotifs, setUnreadNotifs] = useState(0);
   const [pendingFriendCount, setPendingFriendCount] = useState(0);
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
 
   useEffect(() => {
-    refreshUser();
-    fetchPendingFriendCount();
     Animated.timing(headerFade, {
       toValue: 1,
       duration: 800,
       useNativeDriver: true,
     }).start();
+    // Defer network calls so the UI renders instantly
+    const task = InteractionManager.runAfterInteractions(() => {
+      refreshUser();
+      fetchPendingFriendCount();
+    });
+    return () => task.cancel();
   }, []);
 
-  // Re-fetch pending count when switching back to home or discover
+  // Re-fetch counts when switching tabs
   useEffect(() => {
     if (activeTab === 'home' || activeTab === 'discover') {
       fetchPendingFriendCount();
     }
+    if (activeTab === 'home' || activeTab === 'chat') {
+      fetchUnreadChatCount();
+    }
+    
+    // Lazy-load mechanism: Add newly visited tab to our tracker
+    if (!visitedTabs.includes(activeTab)) {
+      setVisitedTabs(prev => [...prev, activeTab]);
+    }
   }, [activeTab]);
 
+  const lastFetchTime = useRef(0);
   const fetchPendingFriendCount = () => {
+    const now = Date.now();
+    if (now - lastFetchTime.current < 10000) return; // 10 second cooldown
+    lastFetchTime.current = now;
+    
     api.get('/api/social/requests/pending')
       .then(res => setPendingFriendCount(Array.isArray(res.data) ? res.data.length : 0))
       .catch(() => {});
   };
 
+  const lastChatFetchTime = useRef(0);
+  const fetchUnreadChatCount = () => {
+    if (!user?.id) return;
+    const now = Date.now();
+    if (now - lastChatFetchTime.current < 5000) return; // 5 second cooldown
+    lastChatFetchTime.current = now;
+
+    api.get('/chat/unread-count')
+      .then(res => setUnreadChatCount(res.data.unreadCount || 0))
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchUnreadChatCount();
+      fetchPendingFriendCount();
+    }
+    const unsubscribe = chatService.addListener((msg) => {
+      // Real-time unread increment for direct messages
+      if (msg.type === 'MESSAGE' && msg.target !== 'GLOBAL' && msg.senderId !== user?.id) {
+        setUnreadChatCount(prev => prev + 1);
+      }
+    });
+    return () => unsubscribe();
+  }, [user?.id]);
+
   // Fetch unread count when user is available or when modal closes
   useEffect(() => {
     if (user?.id && !notifsVisible) {
-      api.get('/api/social/notifications/unread-count')
-        .then(res => setUnreadNotifs(res.data.unreadCount || 0))
-        .catch(e => console.warn('Notif count error', e?.message));
+      const task = InteractionManager.runAfterInteractions(() => {
+        api.get('/api/social/notifications/unread-count')
+          .then(res => setUnreadNotifs(res.data.unreadCount || 0))
+          .catch(() => {});
+      });
+      return () => task.cancel();
     }
   }, [user?.id, notifsVisible]);
 
@@ -103,24 +161,41 @@ export default function HomeScreen() {
     setProfileVisible(true);
   };
 
-  const openChat = (targetId, chatTitle) => {
+  const openChat = useCallback((targetId, chatTitle) => {
     setChatConfig({ targetId, chatTitle });
     setActiveTab('chatRoom');
-  };
+  }, []);
 
+  // ── Deferred topic navigation (prevents UI freeze) ──
+  const navigateToTopic = useCallback((topic) => {
+    if (isNavigating) return;
+    setIsNavigating(true);
+    soundWhoosh();
+    // Let the UI breathe before mounting the heavy TopicScreen
+    requestAnimationFrame(() => {
+      setSelectedTopic(topic);
+      setIsNavigating(false);
+    });
+  }, [isNavigating]);
 
   if (selectedTopic) {
-    return <TopicScreen topicId={selectedTopic.id} onBack={() => setSelectedTopic(null)} />;
+    return (
+      <Suspense fallback={<ScreenLoader />}>
+        <TopicScreen topicId={selectedTopic.id} onBack={() => setSelectedTopic(null)} />
+      </Suspense>
+    );
   }
 
 
   if (viewingPdf) {
     return (
-      <PdfViewerScreen 
-        url={viewingPdf.url} 
-        title={viewingPdf.title} 
-        onBack={() => setViewingPdf(null)} 
-      />
+      <Suspense fallback={<ScreenLoader />}>
+        <PdfViewerScreen 
+          url={viewingPdf.url} 
+          title={viewingPdf.title} 
+          onBack={() => setViewingPdf(null)} 
+        />
+      </Suspense>
     );
   }
 
@@ -128,12 +203,14 @@ export default function HomeScreen() {
   
   if (activeTab === 'chatRoom') {
     return (
-      <ChatRoomScreen 
-        targetId={chatConfig?.targetId} 
-        chatTitle={chatConfig?.chatTitle || 'Chat'} 
-        onBack={() => setActiveTab('chat')}
-        onStartDirectChat={openChat}
-      />
+      <Suspense fallback={<ScreenLoader />}>
+        <ChatRoomScreen 
+          targetId={chatConfig?.targetId} 
+          chatTitle={chatConfig?.chatTitle || 'Chat'} 
+          onBack={() => setActiveTab('chat')}
+          onStartDirectChat={openChat}
+        />
+      </Suspense>
     );
   }
 
@@ -250,14 +327,19 @@ export default function HomeScreen() {
                   snapToInterval={CARD_W + 20}
                   decelerationRate="fast"
                   contentContainerStyle={{ paddingHorizontal: SPACING.lg }}
-                  keyExtractor={item => item.id}
+                  keyExtractor={keyExtractor}
                   renderItem={({ item }) => (
                     <TopicCard
                       topic={item}
-                      onPress={() => { soundWhoosh(); setSelectedTopic(item); }}
+                      onPress={() => navigateToTopic(item)}
                       theme={theme}
                     />
                   )}
+                  initialNumToRender={3}
+                  maxToRenderPerBatch={5}
+                  windowSize={5}
+                  removeClippedSubviews={true}
+                  getItemLayout={(_, index) => ({ length: CARD_W + 20, offset: (CARD_W + 20) * index, index })}
                 />
               </View>
             );
@@ -266,26 +348,26 @@ export default function HomeScreen() {
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'discover' ? 'flex' : 'none' }}>
-        <DiscoverScreen onOpenProfile={openProfile} onStartChat={openChat} />
+        {visitedTabs.includes('discover') && <DiscoverScreen onOpenProfile={openProfile} onStartChat={openChat} />}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'chat' ? 'flex' : 'none' }}>
-        <ChatHubScreen onOpenChat={openChat} />
+        {visitedTabs.includes('chat') && <ChatHubScreen onOpenChat={openChat} />}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'leaderboard' ? 'flex' : 'none' }}>
-        <LeaderboardScreen onBack={() => setActiveTab('home')} onStartChat={openChat} />
+        {visitedTabs.includes('leaderboard') && <LeaderboardScreen onBack={() => setActiveTab('home')} onStartChat={openChat} />}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'settings' ? 'flex' : 'none' }}>
-        <SettingsScreen onBack={() => setActiveTab('home')} />
+        {visitedTabs.includes('settings') && <SettingsScreen onBack={() => setActiveTab('home')} />}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'ebook' ? 'flex' : 'none' }}>
-        <EbookScreen onOpenPdf={(url, title) => setViewingPdf({ url, title })} />
+        {visitedTabs.includes('ebook') && <EbookScreen onOpenPdf={(url, title) => setViewingPdf({ url, title })} />}
       </View>
 
-      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} isDark={isDark} pendingFriendCount={pendingFriendCount} />
+      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} isDark={isDark} pendingFriendCount={pendingFriendCount} unreadChatCount={unreadChatCount} />
 
       <ProfileModal 
         visible={profileVisible} 
@@ -304,14 +386,16 @@ export default function HomeScreen() {
   );
 }
 
-// ── Topic Card Component ──────────────────────
-function TopicCard({ topic, onPress, theme }) {
+// ── Stable keyExtractor (avoids inline arrow) ──
+const keyExtractor = (item) => item.id;
+
+// ── Topic Card Component (Memoized) ──────────────────────
+const TopicCard = React.memo(function TopicCard({ topic, onPress, theme }) {
   const cardBg = theme?.bg?.card || '#1C1D26';
   const txt1 = theme?.text?.primary || '#FFFFFF';
   const txtM = theme?.text?.muted || 'rgba(255,255,255,0.6)';
   const border = theme?.glass?.border || 'rgba(255,255,255,0.1)';
   
-  // Get topic-specific accent color
   const topicColors = theme?.topics || {};
   const colorKey = Object.keys(topicColors).find(k => topic.id.startsWith(k)) || 'default';
   const topicAccent = (topicColors[colorKey] || topicColors.default || { primary: '#7B6FFF' }).primary;
@@ -336,18 +420,17 @@ function TopicCard({ topic, onPress, theme }) {
       </View>
     </TouchableOpacity>
   );
-}
+});
 
 
-// ── Bottom Navigation Bar ──────────────────────
-function BottomNav({ activeTab, setActiveTab, theme, isDark, pendingFriendCount = 0 }) {
+// ── Bottom Navigation Bar (Memoized) ──────────────────────
+const BottomNav = React.memo(function BottomNav({ activeTab, setActiveTab, theme, isDark, pendingFriendCount = 0, unreadChatCount = 0 }) {
   const accent = theme?.accent?.primary || '#7B6FFF';
-  const txt1 = theme?.text?.primary || '#FFFFFF';
   const txtM = theme?.text?.muted || '#9CA3AF';
   const bg = isDark ? '#13141C' : '#FFFFFF';
   const border = theme?.glass?.border || 'rgba(255,255,255,0.1)';
 
-  const NavItem = ({ id, icon, label, badge }) => {
+  const NavItem = useCallback(({ id, icon, label, badge }) => {
     const isActive = activeTab === id;
     return (
       <TouchableOpacity 
@@ -365,19 +448,19 @@ function BottomNav({ activeTab, setActiveTab, theme, isDark, pendingFriendCount 
         <Text style={[styles.navLabel, { color: isActive ? accent : txtM }]}>{label}</Text>
       </TouchableOpacity>
     );
-  };
+  }, [activeTab, accent, txtM]);
 
   return (
     <View style={[styles.bottomNav, { backgroundColor: bg, borderTopColor: border }]}>
       <NavItem id="home" icon="home" label="Home" />
-      <NavItem id="chat" icon="chat" label="Chat" />
+      <NavItem id="chat" icon="chat" label="Chat" badge={unreadChatCount} />
       <NavItem id="discover" icon="users" label="People" badge={pendingFriendCount} />
       <NavItem id="leaderboard" icon="trophy" label="Ranking" />
       <NavItem id="ebook" icon="book" label="Library" />
       <NavItem id="settings" icon="grid" label="Menu" />
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   root: { flex: 1, overflow: 'hidden' },

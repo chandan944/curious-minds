@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput,
   ActivityIndicator, RefreshControl, Dimensions, Animated, Alert, Platform, StatusBar,
+  InteractionManager,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../context/ThemeContext';
@@ -48,8 +49,12 @@ export default function DiscoverScreen({ onOpenProfile, onStartChat }) {
   const headerAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    loadInitialData();
     Animated.spring(headerAnim, { toValue: 1, tension: 50, friction: 12, useNativeDriver: true }).start();
+    // Defer heavy API calls until after tab-switch animation completes
+    const task = InteractionManager.runAfterInteractions(() => {
+      loadInitialData();
+    });
+    return () => task.cancel();
   }, []);
 
   useEffect(() => {
@@ -313,6 +318,10 @@ export default function DiscoverScreen({ onOpenProfile, onStartChat }) {
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => renderUserRow({ item })}
           contentContainerStyle={styles.listPad}
+          initialNumToRender={5}
+          windowSize={3}
+          maxToRenderPerBatch={5}
+          removeClippedSubviews={true}
           ListEmptyComponent={<EmptyState icon="search" title="No results" sub={`No users found for "${searchQuery}"`} txtM={txtM} txt1={txt1} glass2={glass2} border={border} />}
         />
       );
@@ -328,6 +337,10 @@ export default function DiscoverScreen({ onOpenProfile, onStartChat }) {
           renderItem={renderSuggestionCard}
           contentContainerStyle={styles.gridPad}
           columnWrapperStyle={styles.gridRow}
+          initialNumToRender={6}
+          windowSize={3}
+          maxToRenderPerBatch={4}
+          removeClippedSubviews={true}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={accent} />}
           ListEmptyComponent={loading ? <ActivityIndicator size="large" color={accent} style={{ marginTop: 40 }} /> : <EmptyState icon="users" title="No suggestions yet" sub="Check back later for recommendations" txtM={txtM} txt1={txt1} glass2={glass2} border={border} />}
         />
@@ -349,6 +362,10 @@ export default function DiscoverScreen({ onOpenProfile, onStartChat }) {
           keyExtractor={item => (item.friendshipId || item.id).toString()}
           renderItem={({ item }) => renderUserRow({ item, showLike: false, showChat: false, actionType: 'accept' })}
           contentContainerStyle={styles.listPad}
+          initialNumToRender={5}
+          windowSize={3}
+          maxToRenderPerBatch={5}
+          removeClippedSubviews={true}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={accent} />}
           ListEmptyComponent={<EmptyState icon="bell" title="No pending requests" sub="You're all caught up!" txtM={txtM} txt1={txt1} glass2={glass2} border={border} />}
         />
@@ -363,6 +380,10 @@ export default function DiscoverScreen({ onOpenProfile, onStartChat }) {
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => renderUserRow({ item, showAction: false })}
           contentContainerStyle={styles.listPad}
+          initialNumToRender={5}
+          windowSize={3}
+          maxToRenderPerBatch={5}
+          removeClippedSubviews={true}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={accent} />}
           ListEmptyComponent={<EmptyState icon="users" title="No friends yet" sub="Add friends from the suggestions tab" txtM={txtM} txt1={txt1} glass2={glass2} border={border} />}
         />
@@ -450,7 +471,7 @@ const styles = StyleSheet.create({
   clearBtn: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
 
   // Tabs
-  tabRow: { flexDirection: 'row', paddingHorizontal: SPACING.lg, gap: 8, marginBottom: SPACING.md },
+  tabRow: { flexDirection: 'row', paddingHorizontal: SPACING.sm, gap: 2, marginBottom: SPACING.md },
   tab: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: RADIUS.full, borderWidth: 1, borderColor: 'transparent' },
   tabLabel: { fontFamily: FONTS.bodyMedium, fontSize: 13 },
   tabBadge: { minWidth: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },

@@ -1,18 +1,18 @@
-// ─────────────────────────────────────────────────────────────
-//  LAB: Brain Structure — Brain Explorer Lab (Multi-Mode)
+﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  LAB: Brain Structure â€” Brain Explorer Lab (Multi-Mode)
 //
 //  SUB-CONCEPTS TAUGHT:
-//  1. Brain anatomy (lobes, gyri, sulci)         → Brain Map (side/inside)
-//  2. Region functions & specialization          → Brain Map (tap regions)
-//  3. Neural pathways & signal flow              → Brain Map (pathway anim)
-//  4. Brain activity mapping (fMRI-style)        → Activity Scan
-//  5. Reaction time & neural processing speed    → Reaction Test (real!)
-//  6. Sensory/motor pathway anatomy              → Reaction Test (explainer)
-//  7. Brain waves (EEG patterns)                 → Brain Waves (animated)
-//  8. Mental states & frequency bands            → Brain Waves (selector)
-//  9. Neural conduction velocity                 → Scientist Mode
-// 10. Neuroplasticity & synaptic connections     → Challenges + fun facts
-// ─────────────────────────────────────────────────────────────
+//  1. Brain anatomy (lobes, gyri, sulci)         â†’ Brain Map (side/inside)
+//  2. Region functions & specialization          â†’ Brain Map (tap regions)
+//  3. Neural pathways & signal flow              â†’ Brain Map (pathway anim)
+//  4. Brain activity mapping (fMRI-style)        â†’ Activity Scan
+//  5. Reaction time & neural processing speed    â†’ Reaction Test (real!)
+//  6. Sensory/motor pathway anatomy              â†’ Reaction Test (explainer)
+//  7. Brain waves (EEG patterns)                 â†’ Brain Waves (animated)
+//  8. Mental states & frequency bands            â†’ Brain Waves (selector)
+//  9. Neural conduction velocity                 â†’ Scientist Mode
+// 10. Neuroplasticity & synaptic connections     â†’ Challenges + fun facts
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -22,7 +22,7 @@ import {
 import Svg, {
   Circle, Line, Text as SvgText, Rect, Path,
   Defs, RadialGradient, LinearGradient as SvgLinearGradient, Stop, Ellipse,
-} from 'react-native-svg';
+import Svg, { Rect, Line, Path, Ellipse, Defs, Stop, RadialGradient, Text as SvgText, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
@@ -34,19 +34,19 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - SPACING.md * 4;
 const SIM_H = 340;
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  DATA
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const REGIONS = [
-  { id: 'frontal',    name: 'Frontal Lobe',   color: '#6C63FF', icon: 'brain',    functions: ['Decision making', 'Planning', 'Personality', 'Speech production (Broca)', 'Motor cortex'], fact: 'The frontal lobe is the last to fully develop — not until age 25! That\'s why teens take more risks.' },
+  { id: 'frontal',    name: 'Frontal Lobe',   color: '#6C63FF', icon: 'brain',    functions: ['Decision making', 'Planning', 'Personality', 'Speech production (Broca)', 'Motor cortex'], fact: 'The frontal lobe is the last to fully develop â€” not until age 25! That\'s why teens take more risks.' },
   { id: 'parietal',   name: 'Parietal Lobe',  color: '#FF9F1C', icon: 'sparkle',  functions: ['Touch/sensation', 'Spatial awareness', 'Navigation', 'Math processing'],  fact: 'London taxi drivers have enlarged parietal lobes from memorizing 25,000 streets!' },
   { id: 'temporal',   name: 'Temporal Lobe',  color: '#4ECDC4', icon: 'waves',    functions: ['Hearing', 'Language comprehension (Wernicke)', 'Memory encoding', 'Emotion processing'], fact: 'Damage to Wernicke\'s area causes fluent but completely meaningless speech!' },
-  { id: 'occipital',  name: 'Occipital Lobe', color: '#FF6B9D', icon: 'target',   functions: ['Vision processing', 'Color recognition', 'Visual memory', 'Depth perception'], fact: 'Your occipital lobe processes 10 million bits of visual data per second — that\'s 1.25 MB/s!' },
+  { id: 'occipital',  name: 'Occipital Lobe', color: '#FF6B9D', icon: 'target',   functions: ['Vision processing', 'Color recognition', 'Visual memory', 'Depth perception'], fact: 'Your occipital lobe processes 10 million bits of visual data per second â€” that\'s 1.25 MB/s!' },
   { id: 'cerebellum', name: 'Cerebellum',     color: '#C3B1E1', icon: 'balance',  functions: ['Balance & coordination', 'Motor learning', 'Posture', 'Timing'],         fact: 'The cerebellum has 50% of all brain neurons despite being only 10% of brain volume!' },
-  { id: 'brainstem',  name: 'Brain Stem',     color: '#00E5A0', icon: 'heart',    functions: ['Heartbeat', 'Breathing', 'Sleep/wake cycles', 'Reflexes'],             fact: 'Your brainstem keeps you alive even in a coma — it\'s the most ancient part of the brain.' },
-  { id: 'hippocampus',name: 'Hippocampus',    color: '#FFD166', icon: 'book',     functions: ['Memory formation', 'Spatial memory', 'Learning', 'Navigation'],        fact: 'Patient H.M. had his hippocampi removed in 1953 — he could never form new memories again.' },
-  { id: 'amygdala',   name: 'Amygdala',       color: '#FF6B6B', icon: 'fire',     functions: ['Fear response', 'Fight-or-flight', 'Emotional memory', 'Threat detection'], fact: 'Your amygdala triggers fear in just 12 ms — before your conscious brain even knows why!' },
+  { id: 'brainstem',  name: 'Brain Stem',     color: '#00E5A0', icon: 'heart',    functions: ['Heartbeat', 'Breathing', 'Sleep/wake cycles', 'Reflexes'],             fact: 'Your brainstem keeps you alive even in a coma â€” it\'s the most ancient part of the brain.' },
+  { id: 'hippocampus',name: 'Hippocampus',    color: '#FFD166', icon: 'book',     functions: ['Memory formation', 'Spatial memory', 'Learning', 'Navigation'],        fact: 'Patient H.M. had his hippocampi removed in 1953 â€” he could never form new memories again.' },
+  { id: 'amygdala',   name: 'Amygdala',       color: '#FF6B6B', icon: 'fire',     functions: ['Fear response', 'Fight-or-flight', 'Emotional memory', 'Threat detection'], fact: 'Your amygdala triggers fear in just 12 ms â€” before your conscious brain even knows why!' },
 ];
 
 const ACTIVITIES = [
@@ -61,11 +61,11 @@ const ACTIVITIES = [
 ];
 
 const BRAIN_WAVES = [
-  { id: 'delta', name: 'Delta',   freq: 2,  amp: 1.0,  range: '0.5–4 Hz',  color: '#C3B1E1', state: 'Deep dreamless sleep, healing, restoration',     icon: 'moon' },
-  { id: 'theta', name: 'Theta',   freq: 6,  amp: 0.75, range: '4–8 Hz',    color: '#4ECDC4', state: 'Light sleep, meditation, creativity, dreams',     icon: 'leaf' },
-  { id: 'alpha', name: 'Alpha',   freq: 10, amp: 0.55, range: '8–13 Hz',   color: '#00E5A0', state: 'Relaxed alertness, calm focus, flow state',       icon: 'sparkle' },
-  { id: 'beta',  name: 'Beta',    freq: 20, amp: 0.35, range: '13–30 Hz',  color: '#FFD166', state: 'Active thinking, problem-solving, concentration',  icon: 'brain' },
-  { id: 'gamma', name: 'Gamma',   freq: 40, amp: 0.2,  range: '30–100 Hz', color: '#FF6B9D', state: 'Peak concentration, insight, consciousness binding',icon: 'zap' },
+  { id: 'delta', name: 'Delta',   freq: 2,  amp: 1.0,  range: '0.5â€“4 Hz',  color: '#C3B1E1', state: 'Deep dreamless sleep, healing, restoration',     icon: 'moon' },
+  { id: 'theta', name: 'Theta',   freq: 6,  amp: 0.75, range: '4â€“8 Hz',    color: '#4ECDC4', state: 'Light sleep, meditation, creativity, dreams',     icon: 'leaf' },
+  { id: 'alpha', name: 'Alpha',   freq: 10, amp: 0.55, range: '8â€“13 Hz',   color: '#00E5A0', state: 'Relaxed alertness, calm focus, flow state',       icon: 'sparkle' },
+  { id: 'beta',  name: 'Beta',    freq: 20, amp: 0.35, range: '13â€“30 Hz',  color: '#FFD166', state: 'Active thinking, problem-solving, concentration',  icon: 'brain' },
+  { id: 'gamma', name: 'Gamma',   freq: 40, amp: 0.2,  range: '30â€“100 Hz', color: '#FF6B9D', state: 'Peak concentration, insight, consciousness binding',icon: 'zap' },
 ];
 
 const VIEWS = [
@@ -91,9 +91,9 @@ const CHALLENGES = [
   { id: 'inside_view',   title: 'Deep Diver',       desc: 'Explore inside view of the brain',  icon: 'target',   color: '#FF6B6B' },
 ];
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  BRAIN LAYOUT HELPERS
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function getRegionLayout(viewId) {
   const W = SIM_W, H = SIM_H;
@@ -107,7 +107,7 @@ function getRegionLayout(viewId) {
     hippocampus: { cx: W * .48, cy: H * .48, rx: W * .04, ry: H * .025, vis: false },
     amygdala:    { cx: W * .40, cy: H * .52, rx: W * .025, ry: H * .025, vis: false },
   };
-  // Inside (medial) view — internal structures visible
+  // Inside (medial) view â€” internal structures visible
   return {
     frontal:     { cx: W * .25, cy: H * .30, rx: W * .12, ry: H * .11, vis: true, outline: true },
     parietal:    { cx: W * .55, cy: H * .22, rx: W * .10, ry: H * .08, vis: true, outline: true },
@@ -144,11 +144,11 @@ function brainFolds(W, H) {
 }
 
 function reactionClassify(ms) {
-  if (ms < 150) return { label: 'Superhuman!', emoji: '⚡', color: '#FFD166', fact: 'Faster than a striking rattlesnake (200ms)! Your myelinated nerves are elite.' };
-  if (ms < 200) return { label: 'Lightning!',  emoji: '🏆', color: '#00E5A0', fact: 'Fighter pilots average 170ms. You\'re in the top tier of human reflexes!' };
-  if (ms < 250) return { label: 'Excellent',   emoji: '🔥', color: '#4ECDC4', fact: 'Right at the human average. Your signal traveled: eye → V1 → motor cortex → hand in a quarter second!' };
-  if (ms < 350) return { label: 'Average',     emoji: '💪', color: '#FF9F1C', fact: 'Normal range. Try when well-rested — caffeine can improve reaction time by 10-15%!' };
-  return            { label: 'Warming Up',  emoji: '😴', color: '#C3B1E1', fact: 'A bit slow — fatigue and distraction add 50-100ms. The signal took a scenic route through extra synapses!' };
+  if (ms < 150) return { label: 'Superhuman!', emoji: 'âš¡', color: '#FFD166', fact: 'Faster than a striking rattlesnake (200ms)! Your myelinated nerves are elite.' };
+  if (ms < 200) return { label: 'Lightning!',  emoji: 'ðŸ†', color: '#00E5A0', fact: 'Fighter pilots average 170ms. You\'re in the top tier of human reflexes!' };
+  if (ms < 250) return { label: 'Excellent',   emoji: 'ðŸ”¥', color: '#4ECDC4', fact: 'Right at the human average. Your signal traveled: eye â†’ V1 â†’ motor cortex â†’ hand in a quarter second!' };
+  if (ms < 350) return { label: 'Average',     emoji: 'ðŸ’ª', color: '#FF9F1C', fact: 'Normal range. Try when well-rested â€” caffeine can improve reaction time by 10-15%!' };
+  return            { label: 'Warming Up',  emoji: 'ðŸ˜´', color: '#C3B1E1', fact: 'A bit slow â€” fatigue and distraction add 50-100ms. The signal took a scenic route through extra synapses!' };
 }
 
 const REACTION_PATH = [
@@ -158,9 +158,9 @@ const REACTION_PATH = [
   { region: 'cerebellum', label: 'Coordinate',  delay: '20ms' },
 ];
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  MAIN COMPONENT
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 export default function BrainStructureLab({
   scientistMode = false,
@@ -177,7 +177,7 @@ export default function BrainStructureLab({
   const glass2 = _themeObj.glass?.medium || 'rgba(255,255,255,0.1)';
   const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
 
-  // ── State ──────────────────────────────────
+  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const [modeIdx, setModeIdx]         = useState(0);
   const [viewIdx, setViewIdx]         = useState(0);
   const [selRegion, setSelRegion]     = useState(null);
@@ -201,7 +201,7 @@ export default function BrainStructureLab({
   const [activitiesScanned, setActivitiesScanned] = useState(new Set());
   const [wavesViewed, setWavesViewed]   = useState(new Set());
 
-  // ── Refs ───────────────────────────────────
+  // â”€â”€ Refs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const impactRing = useRef(new Animated.Value(0)).current;
   const runBtnSc   = useRef(new Animated.Value(1)).current;
   const chAnim     = useRef(new Animated.Value(0)).current;
@@ -220,7 +220,7 @@ export default function BrainStructureLab({
   const waveTimer  = useRef(null);
   const pulseTimer = useRef(null);
 
-  // ── Effects ────────────────────────────────
+  // â”€â”€ Effects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => () => {
     if (rtTimeout.current) clearTimeout(rtTimeout.current);
     if (waveTimer.current) clearInterval(waveTimer.current);
@@ -248,7 +248,7 @@ export default function BrainStructureLab({
     return () => { if (pulseTimer.current) clearInterval(pulseTimer.current); };
   }, [modeIdx]);
 
-  // ── Derived ────────────────────────────────
+  // â”€â”€ Derived â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const mode   = MODES[modeIdx];
   const view   = VIEWS[viewIdx];
   const layout = getRegionLayout(view.id);
@@ -270,7 +270,7 @@ export default function BrainStructureLab({
     : (isDark ? '#0A0B12' : '#F5F6FF')
     : (isDark ? '#0A0B12' : '#F5F6FF');
 
-  // ── Mode change ────────────────────────────
+  // â”€â”€ Mode change â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const changeMode = (i) => {
     soundTap(); Haptics.selectionAsync();
     setModeIdx(i); setSelRegion(null); setShowInsights(false);
@@ -281,7 +281,7 @@ export default function BrainStructureLab({
     signalAnims.forEach(s => s.op.setValue(0));
   };
 
-  // ── Explore: tap region ────────────────────
+  // â”€â”€ Explore: tap region â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const tapRegion = (regionId) => {
     soundTap(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSelRegion(regionId === selRegion ? null : regionId);
@@ -326,7 +326,7 @@ export default function BrainStructureLab({
     });
   };
 
-  // ── View change ────────────────────────────
+  // â”€â”€ View change â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const changeView = (i) => {
     soundWhoosh(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Animated.sequence([
@@ -337,7 +337,7 @@ export default function BrainStructureLab({
     setSelRegion(null); setShowInsights(false);
   };
 
-  // ── Activity scan ──────────────────────────
+  // â”€â”€ Activity scan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const selectActivity = (i) => {
     soundTap(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setActIdx(i); setShowInsights(true); setRunCount(c => c + 1);
@@ -348,7 +348,7 @@ export default function BrainStructureLab({
     if (updated.size >= 8 && !completedCh.includes('scan_all')) triggerChallenge('scan_all');
   };
 
-  // ── Reaction test ──────────────────────────
+  // â”€â”€ Reaction test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const startReactionTest = () => {
     if (rtState === 'waiting' || rtState === 'go') return;
     soundWhoosh(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -402,7 +402,7 @@ export default function BrainStructureLab({
     }
   };
 
-  // ── Wave select ────────────────────────────
+  // â”€â”€ Wave select â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const selectWave = (i) => {
     soundTap(); Haptics.selectionAsync();
     setWaveIdx(i); setShowInsights(true);
@@ -411,7 +411,7 @@ export default function BrainStructureLab({
     if (updated.size >= 5 && !completedCh.includes('all_waves')) triggerChallenge('all_waves');
   };
 
-  // ── Challenge system ───────────────────────
+  // â”€â”€ Challenge system â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const triggerChallenge = (id) => {
     setCompletedCh(p => [...p, id]);
     setLastChMsg(CHALLENGES.find(c => c.id === id)?.title);
@@ -447,16 +447,16 @@ export default function BrainStructureLab({
     ]).start();
   };
 
-  // ── Fun facts ──────────────────────────────
+  // â”€â”€ Fun facts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const getFunFact = () => {
     if (mode.id === 'react' && rtTime) return rtClass?.fact || '';
     if (selRegion) return REGIONS.find(r => r.id === selRegion)?.fact || '';
-    if (mode.id === 'activity') return `When you're "${act.name.toLowerCase()}", ${Object.entries(act.active).length} brain regions light up simultaneously — the brain is NEVER doing just one thing!`;
-    if (mode.id === 'waves') return `${wave.name} waves (${wave.range}) dominate during: ${wave.state}. Hans Berger first recorded brain waves in 1929 — inventing the EEG!`;
-    return 'Your brain generates about 12-25 watts of electricity — enough to power a dim LED bulb! Albert Einstein\'s brain was preserved and studied; his parietal lobes were 15% wider than average. 💡';
+    if (mode.id === 'activity') return `When you're "${act.name.toLowerCase()}", ${Object.entries(act.active).length} brain regions light up simultaneously â€” the brain is NEVER doing just one thing!`;
+    if (mode.id === 'waves') return `${wave.name} waves (${wave.range}) dominate during: ${wave.state}. Hans Berger first recorded brain waves in 1929 â€” inventing the EEG!`;
+    return 'Your brain generates about 12-25 watts of electricity â€” enough to power a dim LED bulb! Albert Einstein\'s brain was preserved and studied; his parietal lobes were 15% wider than average. ðŸ’¡';
   };
 
-  // ── Wave SVG builder ───────────────────────
+  // â”€â”€ Wave SVG builder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const buildWavePath = (freq, amp, yCenter, phase, w) => {
     const pts = [];
     const margin = 30;
@@ -469,13 +469,13 @@ export default function BrainStructureLab({
     return pts.join(' ');
   };
 
-  // ═══════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   //  RENDER
-  // ═══════════════════════════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   return (
     <View style={styles.root}>
 
-      {/* ── Mode Tabs ─────────────────────── */}
+      {/* â”€â”€ Mode Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scroll} contentContainerStyle={styles.scrollInner}>
         {MODES.map((m, i) => (
           <TouchableOpacity key={m.id} onPress={() => changeMode(i)}
@@ -489,7 +489,7 @@ export default function BrainStructureLab({
         ))}
       </ScrollView>
 
-      {/* ── View tabs (Explore only) ──────── */}
+      {/* â”€â”€ View tabs (Explore only) â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {mode.id === 'explore' && (
         <View style={styles.viewRow}>
           {VIEWS.map((v, i) => (
@@ -505,7 +505,7 @@ export default function BrainStructureLab({
         </View>
       )}
 
-      {/* ── SVG Canvas ─────────────────────── */}
+      {/* â”€â”€ SVG Canvas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <Animated.View style={[styles.simBox, { borderColor: border, backgroundColor: canvasBg, opacity: mode.id === 'explore' ? canvasFade : 1 }]}>
         {/* Reaction test tap overlay */}
         {mode.id === 'react' && (rtState === 'waiting' || rtState === 'go' || rtState === 'early') && (
@@ -571,7 +571,7 @@ export default function BrainStructureLab({
             {mode.name}
           </SvgText>
 
-          {/* ── BRAIN MAP (Explore + Activity) ── */}
+          {/* â”€â”€ BRAIN MAP (Explore + Activity) â”€â”€ */}
           {(mode.id === 'explore' || mode.id === 'activity') && (
             <>
               {/* Brain shadow */}
@@ -637,14 +637,14 @@ export default function BrainStructureLab({
                     {act.name}
                   </SvgText>
                   <SvgText x={SIM_W / 2} y={SIM_H - 8} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.6)">
-                    {Object.keys(act.active).length} regions active — fMRI simulation
+                    {Object.keys(act.active).length} regions active â€” fMRI simulation
                   </SvgText>
                 </>
               )}
             </>
           )}
 
-          {/* ── REACTION TEST ── */}
+          {/* â”€â”€ REACTION TEST â”€â”€ */}
           {mode.id === 'react' && (rtState === 'idle' || rtState === 'done') && (
             <>
               {/* Brain outline (dimmed) */}
@@ -716,7 +716,7 @@ export default function BrainStructureLab({
             </>
           )}
 
-          {/* ── BRAIN WAVES ── */}
+          {/* â”€â”€ BRAIN WAVES â”€â”€ */}
           {mode.id === 'waves' && (
             <>
               {/* Multiple wave traces */}
@@ -789,7 +789,7 @@ export default function BrainStructureLab({
         ))}
       </Animated.View>
 
-      {/* ── Controls ──────────────────────── */}
+      {/* â”€â”€ Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
 
       {/* ACTIVITY SCAN: activity selector */}
       {mode.id === 'activity' && (
@@ -815,7 +815,7 @@ export default function BrainStructureLab({
             <Icon name="info" size={14} color={MODES[2].color} />
             <Text style={[styles.hintText, { color: txt2 }]}>
               {rtState === 'idle' && rtResults.length === 0
-                ? "Tap Start → wait for green → TAP as fast as you can! We'll measure your brain's neural processing speed."
+                ? "Tap Start â†’ wait for green â†’ TAP as fast as you can! We'll measure your brain's neural processing speed."
                 : rtState === 'idle' || rtState === 'done'
                 ? `${rtResults.length} test${rtResults.length !== 1 ? 's' : ''} done. Average: ${avgRt}ms, Best: ${bestRt}ms. Try again to improve!`
                 : "Focus on the screen..."}
@@ -841,15 +841,15 @@ export default function BrainStructureLab({
         </>
       )}
 
-      {/* ── Stats Bar ──────────────────────── */}
+      {/* â”€â”€ Stats Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <View style={styles.statsRow}>
         <StatPill icon="brain" iconColor={accentColor} label="Regions" value={`${regionsExplored.size}/8`} txt1={txt1} txtM={txtM} />
-        <StatPill icon="zap" iconColor="#4ECDC4" label={mode.id === 'react' ? 'Best' : 'Scans'} value={mode.id === 'react' ? (bestRt ? `${bestRt}ms` : '—') : `${activitiesScanned.size}`} txt1={txt1} txtM={txtM} />
+        <StatPill icon="zap" iconColor="#4ECDC4" label={mode.id === 'react' ? 'Best' : 'Scans'} value={mode.id === 'react' ? (bestRt ? `${bestRt}ms` : 'â€”') : `${activitiesScanned.size}`} txt1={txt1} txtM={txtM} />
         <StatPill icon="waves" iconColor="#FF6B9D" label="Waves" value={`${wavesViewed.size}/5`} txt1={txt1} txtM={txtM} />
         <StatPill icon="flask" iconColor="#FF9F1C" label="Exps" value={`${runCount}`} txt1={txt1} txtM={txtM} />
       </View>
 
-      {/* ── Run / Action Button ────────────── */}
+      {/* â”€â”€ Run / Action Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {mode.id === 'react' && (
         <Animated.View style={{ transform: [{ scale: runBtnSc }] }}>
           <TouchableOpacity onPress={startReactionTest}
@@ -869,7 +869,7 @@ export default function BrainStructureLab({
 
       {runCount > 0 && <View style={[styles.counterRow, { borderColor: border }]}><Icon name="flask" size={12} color={txtM} /><Text style={[styles.counterTxt, { color: txtM }]}>{runCount} interaction{runCount > 1 ? 's' : ''}</Text></View>}
 
-      {/* ── Region Info Panel (Explore) ─────── */}
+      {/* â”€â”€ Region Info Panel (Explore) â”€â”€â”€â”€â”€â”€â”€ */}
       {mode.id === 'explore' && selRegion && showInsights && (() => {
         const region = REGIONS.find(r => r.id === selRegion);
         if (!region) return null;
@@ -905,12 +905,12 @@ export default function BrainStructureLab({
         );
       })()}
 
-      {/* ── Activity Results (fMRI) ───────── */}
+      {/* â”€â”€ Activity Results (fMRI) â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {mode.id === 'activity' && showInsights && (
         <View style={[styles.insightsBox, { borderColor: act.color + '40', backgroundColor: act.color + '08' }]}>
           <View style={styles.insightsHeader}>
             <Icon name={act.icon} size={18} color={act.color} />
-            <Text style={[styles.insightsTitle, { color: txt1 }]}>{act.name} — Active Regions</Text>
+            <Text style={[styles.insightsTitle, { color: txt1 }]}>{act.name} â€” Active Regions</Text>
           </View>
           {Object.entries(act.active).sort((a, b) => b[1] - a[1]).map(([rId, intensity]) => {
             const region = REGIONS.find(r => r.id === rId);
@@ -931,7 +931,7 @@ export default function BrainStructureLab({
         </View>
       )}
 
-      {/* ── Reaction Results ──────────────── */}
+      {/* â”€â”€ Reaction Results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {mode.id === 'react' && rtState === 'done' && showInsights && (
         <View style={[styles.insightsBox, { borderColor: border, backgroundColor: glass1 }]}>
           <View style={styles.insightsHeader}>
@@ -939,7 +939,7 @@ export default function BrainStructureLab({
             <Text style={[styles.insightsTitle, { color: txt1 }]}>Neural Pathway Analysis</Text>
           </View>
           <Text style={[styles.pathDesc, { color: txt2 }]}>
-            Your reaction traveled: Light hits retina (0ms) → Occipital V1 (~30ms) → Parietal (~50ms) → Frontal motor cortex (~100ms) → Cerebellum coordinate → muscle contraction → total: {rtTime}ms
+            Your reaction traveled: Light hits retina (0ms) â†’ Occipital V1 (~30ms) â†’ Parietal (~50ms) â†’ Frontal motor cortex (~100ms) â†’ Cerebellum coordinate â†’ muscle contraction â†’ total: {rtTime}ms
           </Text>
           {REACTION_PATH.map((step, i) => {
             const region = REGIONS.find(r => r.id === step.region);
@@ -948,7 +948,7 @@ export default function BrainStructureLab({
                 <View style={[styles.pathDot, { backgroundColor: region?.color }]} />
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.pathStepName, { color: txt1 }]}>{region?.name}</Text>
-                  <Text style={[styles.pathStepDesc, { color: txt2 }]}>{step.label} — adds ~{step.delay}</Text>
+                  <Text style={[styles.pathStepDesc, { color: txt2 }]}>{step.label} â€” adds ~{step.delay}</Text>
                 </View>
               </View>
             );
@@ -972,12 +972,12 @@ export default function BrainStructureLab({
         </View>
       )}
 
-      {/* ── Wave Info Panel ───────────────── */}
+      {/* â”€â”€ Wave Info Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {mode.id === 'waves' && showInsights && (
         <View style={[styles.insightsBox, { borderColor: wave.color + '40', backgroundColor: wave.color + '08' }]}>
           <View style={styles.insightsHeader}>
             <Icon name={wave.icon} size={18} color={wave.color} />
-            <Text style={[styles.insightsTitle, { color: txt1 }]}>{wave.name} Waves — {wave.range}</Text>
+            <Text style={[styles.insightsTitle, { color: txt1 }]}>{wave.name} Waves â€” {wave.range}</Text>
           </View>
           <View style={[styles.waveInfoBox, { borderColor: wave.color + '30' }]}>
             <Icon name="sparkle" size={14} color={wave.color} />
@@ -989,7 +989,7 @@ export default function BrainStructureLab({
               <Text style={[styles.waveDataLabel, { color: txtM }]}>Frequency</Text>
             </View>
             <View style={[styles.waveDataItem, { borderColor: border }]}>
-              <Text style={[styles.waveDataVal, { color: wave.color }]}>{(wave.amp * 100).toFixed(0)} μV</Text>
+              <Text style={[styles.waveDataVal, { color: wave.color }]}>{(wave.amp * 100).toFixed(0)} Î¼V</Text>
               <Text style={[styles.waveDataLabel, { color: txtM }]}>Amplitude</Text>
             </View>
             <View style={[styles.waveDataItem, { borderColor: border }]}>
@@ -998,16 +998,16 @@ export default function BrainStructureLab({
             </View>
           </View>
           <Text style={[styles.waveFact, { color: txtM }]}>
-            {waveIdx === 0 ? 'Delta waves are strongest during deep sleep — your brain is repairing and consolidating. Growth hormone is released!' :
+            {waveIdx === 0 ? 'Delta waves are strongest during deep sleep â€” your brain is repairing and consolidating. Growth hormone is released!' :
              waveIdx === 1 ? 'Theta waves appear during meditation. Buddhist monks show 700% more theta during deep meditation!' :
              waveIdx === 2 ? 'Alpha waves = flow state. Closing your eyes increases alpha by 50%. Artists and athletes train to enhance them.' :
-             waveIdx === 3 ? 'Beta dominates during active thinking. Too much beta → anxiety. Coffee increases beta waves!' :
+             waveIdx === 3 ? 'Beta dominates during active thinking. Too much beta â†’ anxiety. Coffee increases beta waves!' :
              'Gamma waves may be the neural signature of consciousness itself. They bind sensory data into unified perception.'}
           </Text>
         </View>
       )}
 
-      {/* ── Fun Fact ───────────────────────── */}
+      {/* â”€â”€ Fun Fact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {(showInsights || runCount > 0) && (
         <View style={[styles.funFact, { borderColor: accentColor + '30', backgroundColor: accentColor + '08' }]}>
           <View style={[styles.funFactIco, { backgroundColor: accentColor + '18' }]}>
@@ -1017,7 +1017,7 @@ export default function BrainStructureLab({
         </View>
       )}
 
-      {/* ── Challenge popup ────────────────── */}
+      {/* â”€â”€ Challenge popup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <Animated.View style={[styles.challengePopup, {
         backgroundColor: accentColor + '18', borderColor: accentColor + '50',
         opacity: chAnim,
@@ -1030,7 +1030,7 @@ export default function BrainStructureLab({
         <Text style={[styles.challengePopTxt, { color: accentColor }]}>{lastChMsg}</Text>
       </Animated.View>
 
-      {/* ── Challenge panel ─────────────────── */}
+      {/* â”€â”€ Challenge panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <TouchableOpacity onPress={() => { soundTap(); setShowCh(v => !v); }}
         style={[styles.challengeToggle, { borderColor: border, backgroundColor: glass1 }]}>
         <View style={styles.challengeTogInner}>
@@ -1061,9 +1061,9 @@ export default function BrainStructureLab({
   );
 }
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  SUB-COMPONENTS
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function SectionLabel({ icon, label, color, txtM }) {
   return (
@@ -1086,9 +1086,9 @@ function StatPill({ icon, iconColor, label, value, txt1, txtM }) {
   );
 }
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  STYLES
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const styles = StyleSheet.create({
   root: { gap: SPACING.sm },

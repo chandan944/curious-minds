@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, Dimensions, TouchableOpacity,
   Animated, ScrollView,
@@ -6,7 +6,7 @@ import {
 import Svg, {
   Circle, Line, Text as SvgText, Rect, Path,
   Defs, RadialGradient, LinearGradient as SvgLinearGradient, Stop, Ellipse,
-} from 'react-native-svg';
+import Svg, { Rect, Line, Defs, Stop, RadialGradient, Text as SvgText, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
@@ -21,7 +21,7 @@ const SIM_H    = 320;
 const GROUND_Y = SIM_H - 40;
 const OBJ_START = 40;
 
-// ── Planet data ─────────────────────────────────
+// â”€â”€ Planet data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const PLANETS = [
   { name: 'Moon',    g: 1.6,  color: '#A8EDEA', icon: 'moon'   },
   { name: 'Mars',    g: 3.7,  color: '#FF6B4A', icon: 'planet' },
@@ -31,7 +31,7 @@ const PLANETS = [
   { name: 'Custom',  g: null, color: '#C3B1E1', icon: 'settings'},
 ];
 
-// ── Object data ──────────────────────────────────
+// â”€â”€ Object data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const OBJECTS = [
   { name: 'Ball',    mass: 1,    color: '#FF9F1C', size: 24, icon: 'target',   dragCoeff: 0.47 },
   { name: 'Feather', mass: 0.01, color: '#E8E8E8', size: 16, icon: 'leaf',     dragCoeff: 2.0  },
@@ -52,11 +52,11 @@ const HEIGHT_PRESETS   = [
   { label: '10km',  value: 10000 },
 ];
 
-// ── Challenges ─────────────────────────────────
+// â”€â”€ Challenges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const CHALLENGES = [
   { id: 'slow_fall', title: 'Slow Motion', desc: 'Make an object fall for more than 4 seconds', icon: 'clock', color: '#A8EDEA' },
   { id: 'speed_demon', title: 'Speed Demon', desc: 'Reach a velocity above 80 m/s', icon: 'zap', color: '#FF6B4A' },
-  { id: 'multi_drop', title: 'Multi‑Drop Master', desc: 'Drop 3+ objects at once', icon: 'balance', color: '#FFD166' },
+  { id: 'multi_drop', title: 'Multiâ€‘Drop Master', desc: 'Drop 3+ objects at once', icon: 'balance', color: '#FFD166' },
   { id: 'zero_g', title: 'Zero Gravity', desc: 'Drop an object with gravity = 0', icon: 'rocket', color: '#C3B1E1' },
   { id: 'high_drop', title: 'Sky Diver', desc: 'Drop from 1km or higher', icon: 'flag', color: '#FF6B9D' },
 ];
@@ -309,18 +309,18 @@ export default function GravityLab({
   const estVel  = Math.round(Math.sqrt(2 * g * dropHeight) * 10) / 10;
 
   const getFunFact = () => {
-    if (g === 0) return "No gravity! The objects float forever — just like deep space.";
+    if (g === 0) return "No gravity! The objects float forever â€” just like deep space.";
     if (dropHeight >= 10000) return `From ${formatHeight(dropHeight)}, that's almost as high as a commercial airplane!`;
     if (dropHeight >= 1000) return `From ${formatHeight(dropHeight)}, a free-falling human would reach terminal velocity (~53 m/s).`;
-    if (g < 3)   return `On ${planet.name}, you could jump ${(3.5 / g * 1.5).toFixed(1)}× higher than on Earth!`;
-    if (g > 20)  return `On ${planet.name}, you'd feel ${(g / 9.8).toFixed(1)}× heavier. Standing would be exhausting!`;
-    return `From ${formatHeight(dropHeight)}, objects hit at ~${Math.round(estVel * 3.6)} km/h — ${estVel > 50 ? 'deadly fast!' : 'pretty quick!'}`;
+    if (g < 3)   return `On ${planet.name}, you could jump ${(3.5 / g * 1.5).toFixed(1)}Ã— higher than on Earth!`;
+    if (g > 20)  return `On ${planet.name}, you'd feel ${(g / 9.8).toFixed(1)}Ã— heavier. Standing would be exhausting!`;
+    return `From ${formatHeight(dropHeight)}, objects hit at ~${Math.round(estVel * 3.6)} km/h â€” ${estVel > 50 ? 'deadly fast!' : 'pretty quick!'}`;
   };
 
   return (
     <View style={styles.container}>
 
-      {/* ── Challenge popup ──────────────────── */}
+      {/* â”€â”€ Challenge popup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {lastChallengeMsg && (
         <Animated.View style={[styles.challengePopup, {
           opacity: challengePopAnim,
@@ -336,8 +336,8 @@ export default function GravityLab({
         </Animated.View>
       )}
 
-      {/* ── Planet selector ──────────────────── */}
-      <SectionLabel icon="planet" label="Choose a Planet 🪐" color={accentColor} txtM={txtM} />
+      {/* â”€â”€ Planet selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      <SectionLabel icon="planet" label="Choose a Planet ðŸª" color={accentColor} txtM={txtM} />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
         {PLANETS.map((p, i) => {
           const active = selPlanet === i;
@@ -352,7 +352,7 @@ export default function GravityLab({
                 </View>
                 <Text style={[styles.chipName, { color: active ? p.color : txtM }]}>{p.name}</Text>
                 {p.g != null && (
-                  <Text style={[styles.chipSub, { color: active ? p.color + 'AA' : txtM }]}>{p.g} m/s²</Text>
+                  <Text style={[styles.chipSub, { color: active ? p.color + 'AA' : txtM }]}>{p.g} m/sÂ²</Text>
                 )}
               </LinearGradient>
             </TouchableOpacity>
@@ -360,13 +360,13 @@ export default function GravityLab({
         })}
       </ScrollView>
 
-      {/* ── Custom gravity ───────────────────── */}
+      {/* â”€â”€ Custom gravity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {selPlanet === 5 && (
         <View style={[styles.controlCard, { backgroundColor: glass1, borderColor: border }]}>
           <View style={styles.controlLabelRow}>
             <Icon name="settings" size={14} color={planet.color} />
             <Text style={[styles.controlLabel, { color: txt2 }]}>
-              Custom Gravity 🎛️: <Text style={{ color: txt1 }}>{customG.toFixed(1)}</Text> m/s²
+              Custom Gravity ðŸŽ›ï¸: <Text style={{ color: txt1 }}>{customG.toFixed(1)}</Text> m/sÂ²
             </Text>
           </View>
           <View style={[styles.fillTrack, { backgroundColor: glass2 }]}>
@@ -382,8 +382,8 @@ export default function GravityLab({
         </View>
       )}
 
-      {/* ── Drop Height selector 🆕 ──────────── */}
-      <SectionLabel icon="ruler" label="Drop Height 📏" color={accentColor} txtM={txtM} />
+      {/* â”€â”€ Drop Height selector ðŸ†• â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      <SectionLabel icon="ruler" label="Drop Height ðŸ“" color={accentColor} txtM={txtM} />
       <View style={[styles.controlCard, { backgroundColor: glass1, borderColor: border }]}>
         <View style={styles.controlLabelRow}>
           <Icon name="drop" size={14} color={accentColor} />
@@ -406,8 +406,8 @@ export default function GravityLab({
         </ScrollView>
       </View>
 
-      {/* ── Object selector (multi-select) 🆕 ── */}
-      <SectionLabel icon="target" label="Select Objects 🎯 (tap multiple)" color={accentColor} txtM={txtM} />
+      {/* â”€â”€ Object selector (multi-select) ðŸ†• â”€â”€ */}
+      <SectionLabel icon="target" label="Select Objects ðŸŽ¯ (tap multiple)" color={accentColor} txtM={txtM} />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.objectRow}>
         {OBJECTS.map((o, i) => {
           const active = selectedObjs.includes(i);
@@ -439,17 +439,17 @@ export default function GravityLab({
         <Icon name="balance" size={13} color={accentColor} />
         <Text style={[styles.selCountText, { color: txt2 }]}>
           {selectedObjs.length} object{selectedObjs.length > 1 ? 's' : ''} selected
-          {selectedObjs.length > 1 ? ' — will drop simultaneously!' : ''}
+          {selectedObjs.length > 1 ? ' â€” will drop simultaneously!' : ''}
         </Text>
       </View>
 
-      {/* ── Air resistance (scientist mode) ──── */}
+      {/* â”€â”€ Air resistance (scientist mode) â”€â”€â”€â”€ */}
       {scientistMode && (
         <View style={[styles.controlCard, { backgroundColor: glass1, borderColor: border }]}>
           <View style={styles.controlLabelRow}>
             <Icon name="waves" size={14} color="#4ECDC4" />
             <Text style={[styles.controlLabel, { color: txt2 }]}>
-              Air Resistance 🌪️: <Text style={{ color: txt1 }}>{Math.round(airRes * 100)}%</Text>
+              Air Resistance ðŸŒªï¸: <Text style={{ color: txt1 }}>{Math.round(airRes * 100)}%</Text>
             </Text>
           </View>
           <View style={[styles.fillTrack, { backgroundColor: glass2 }]}>
@@ -465,7 +465,7 @@ export default function GravityLab({
         </View>
       )}
 
-      {/* ── Simulation canvas ────────────────── */}
+      {/* â”€â”€ Simulation canvas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <View style={[styles.simBox, { borderColor: accentColor + '40', backgroundColor: isDark ? 'rgba(8,8,20,0.85)' : 'rgba(230,235,250,0.95)' }]}>
         <Svg width={SIM_W} height={SIM_H} style={StyleSheet.absoluteFill}>
           <Defs>
@@ -509,7 +509,7 @@ export default function GravityLab({
           </SvgText>
         </Svg>
 
-        {/* Animated falling objects — all selected */}
+        {/* Animated falling objects â€” all selected */}
         {selectedObjs.map((objIdx, lane) => {
           const obj = OBJECTS[objIdx];
           const laneOffset = selectedObjs.length > 1
@@ -546,15 +546,15 @@ export default function GravityLab({
         ))}
       </View>
 
-      {/* ── Stats row ────────────────────────── */}
+      {/* â”€â”€ Stats row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <View style={styles.statsBar}>
-        <StatPill icon="planet" iconColor={planet.color} label="Gravity" value={`${g} m/s²`} color={planet.color} txtM={txtM} txt1={txt1} />
+        <StatPill icon="planet" iconColor={planet.color} label="Gravity" value={`${g} m/sÂ²`} color={planet.color} txtM={txtM} txt1={txt1} />
         <StatPill icon="ruler" iconColor={accentColor} label="Height" value={formatHeight(dropHeight)} color={accentColor} txtM={txtM} txt1={txt1} />
         <StatPill icon="clock" iconColor={accentColor} label="Est." value={`~${estTime}s`} color={accentColor} txtM={txtM} txt1={txt1} />
         <StatPill icon="balance" iconColor={txt2} label="Objects" value={String(selectedObjs.length)} color={txt1} txtM={txtM} txt1={txt1} />
       </View>
 
-      {/* ── Drop counter ─────────────────────── */}
+      {/* â”€â”€ Drop counter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {dropCount > 0 && (
         <View style={[styles.dropCountBadge, { backgroundColor: glass1, borderColor: border }]}>
           <Icon name="flask" size={12} color={accentColor} />
@@ -562,7 +562,7 @@ export default function GravityLab({
         </View>
       )}
 
-      {/* ── Drop button ──────────────────────── */}
+      {/* â”€â”€ Drop button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <Animated.View style={[styles.dropBtnWrap, { transform: [{ scale: dropBtnScale }] }]}>
         <TouchableOpacity onPress={dropping ? undefined : startDrop} activeOpacity={dropping ? 1 : 0.85}
           style={{ borderRadius: RADIUS.md, overflow: 'hidden', borderWidth: 1,
@@ -574,14 +574,14 @@ export default function GravityLab({
               <Icon name={dropping ? 'drop' : hasDropped ? 'refresh' : 'zap'} size={20}
                 color={dropping ? txtM : txt1} />
               <Text style={[styles.dropBtnText, { color: dropping ? txtM : txt1 }]}>
-                {dropping ? 'Falling…' : hasDropped ? 'Drop Again' : selectedObjs.length > 1 ? `Drop ${selectedObjs.length} Objects!` : 'Drop!'}
+                {dropping ? 'Fallingâ€¦' : hasDropped ? 'Drop Again' : selectedObjs.length > 1 ? `Drop ${selectedObjs.length} Objects!` : 'Drop!'}
               </Text>
             </View>
           </LinearGradient>
         </TouchableOpacity>
       </Animated.View>
 
-      {/* ── Comparison Insights Table 🆕 ──────── */}
+      {/* â”€â”€ Comparison Insights Table ðŸ†• â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {showInsights && dropResults.length > 0 && (
         <View style={[styles.insightsCard, { backgroundColor: glass1, borderColor: border }]}>
           <View style={styles.insightsHeader}>
@@ -613,8 +613,8 @@ export default function GravityLab({
                     </View>
                     <View>
                       <Text style={[styles.tdName, { color: r.color }]}>{r.name}</Text>
-                      {isFastest && <Text style={[styles.tdBadge, { color: '#00D4A0' }]}>⚡ Fastest</Text>}
-                      {isSlowest && <Text style={[styles.tdBadge, { color: '#FF9F1C' }]}>🐢 Slowest</Text>}
+                      {isFastest && <Text style={[styles.tdBadge, { color: '#00D4A0' }]}>âš¡ Fastest</Text>}
+                      {isSlowest && <Text style={[styles.tdBadge, { color: '#FF9F1C' }]}>ðŸ¢ Slowest</Text>}
                     </View>
                   </View>
                   <Text style={[styles.tdCell, { color: txt1 }]}>{r.time}s</Text>
@@ -635,7 +635,7 @@ export default function GravityLab({
                 <Text style={[styles.analysisTitle, { color: accentColor }]}>Key Insight</Text>
                 {airRes === 0 ? (
                   <Text style={[styles.analysisText, { color: txt2 }]}>
-                    Without air resistance, all objects hit the ground at the same time! Mass doesn't affect fall speed in a vacuum — Galileo proved this ~400 years ago.
+                    Without air resistance, all objects hit the ground at the same time! Mass doesn't affect fall speed in a vacuum â€” Galileo proved this ~400 years ago.
                   </Text>
                 ) : (
                   <Text style={[styles.analysisText, { color: txt2 }]}>
@@ -648,7 +648,7 @@ export default function GravityLab({
         </View>
       )}
 
-      {/* ── Fun fact ─────────────────────────── */}
+      {/* â”€â”€ Fun fact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {hasDropped && !dropping && (
         <View style={[styles.funFact, { borderColor: border, backgroundColor: glass1 }]}>
           <View style={[styles.funFactIcon, { backgroundColor: accentColor + '20', borderColor: accentColor + '30' }]}>
@@ -658,7 +658,7 @@ export default function GravityLab({
         </View>
       )}
 
-      {/* ── Challenges panel ─────────────────── */}
+      {/* â”€â”€ Challenges panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <TouchableOpacity onPress={() => { setShowChallenges(!showChallenges); soundTap(); }} activeOpacity={0.75}
         style={[styles.challengeToggle, { borderColor: border, backgroundColor: glass1 }]}>
         <View style={styles.challengeToggleInner}>
@@ -703,7 +703,7 @@ export default function GravityLab({
   );
 }
 
-// ── Sub-components ────────────────────────────────
+// â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SectionLabel({ icon, label, color, txtM }) {
   return (
     <View style={sl.row}>
@@ -749,7 +749,7 @@ const spS = StyleSheet.create({
   value: { fontFamily: FONTS.displayMedium, fontSize: 13 },
 });
 
-// ── Styles ────────────────────────────────────────
+// â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const styles = StyleSheet.create({
   container: { paddingHorizontal: SPACING.md },
   chipRow: { gap: 8, paddingRight: SPACING.sm, paddingBottom: 4 },
@@ -839,7 +839,7 @@ const styles = StyleSheet.create({
   dropBtnInner: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   dropBtnText: { fontFamily: FONTS.displayMedium, fontSize: 16, letterSpacing: 0.3 },
 
-  // ── Insights Table ─────────────────────────
+  // â”€â”€ Insights Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   insightsCard: {
     marginTop: 12, borderRadius: RADIUS.md, borderWidth: 1, overflow: 'hidden',
   },
@@ -873,7 +873,7 @@ const styles = StyleSheet.create({
   analysisTitle: { fontFamily: FONTS.displayMedium, fontSize: 12, marginBottom: 2 },
   analysisText: { fontFamily: FONTS.body, fontSize: 12, lineHeight: 18 },
 
-  // ── Fun fact ───────────────────────────────
+  // â”€â”€ Fun fact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   funFact: {
     marginTop: 12, borderRadius: RADIUS.md, borderWidth: 1, padding: 14,
     flexDirection: 'row', alignItems: 'flex-start', gap: 10,
@@ -884,7 +884,7 @@ const styles = StyleSheet.create({
   },
   funFactText: { fontFamily: FONTS.body, fontSize: 14, lineHeight: 21, flex: 1 },
 
-  // ── Challenge popup/list ───────────────────
+  // â”€â”€ Challenge popup/list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   challengePopup: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
     borderRadius: RADIUS.md, borderWidth: 1.5, padding: 12, marginBottom: 8,

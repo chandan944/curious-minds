@@ -1,7 +1,7 @@
-// ─────────────────────────────────────────────────────────
+﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //  LAB: Pressure & Fluid Mechanics v2.0 (Extreme)
 //  Archimedes Tank & Hydraulic Press Engine
-// ─────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Svg, {
   Circle, Line, Rect, Path, Defs, RadialGradient, Stop, G, Text as SvgText, LinearGradient as SvgLinearGradient
-} from 'react-native-svg';
+import Svg, { Rect, Line, Path, G, Defs, Stop, Text as SvgText, LinearGradient as SvgLinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
@@ -22,7 +22,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 340;
 
-// ── Constants & Data ─────────────────────────────────
+// â”€â”€ Constants & Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const FLUIDS = [
   { id: 'air', name: 'Air', density: 1.2, color: '#FFFFFF20', icon: 'wind' },
@@ -47,7 +47,7 @@ const CHALLENGES = [
   { id: 'pressure_cook', title: 'Hydro-Static', desc: 'Achieve max depth with a Cork', icon: 'target', color: '#00E5FF' },
 ];
 
-// ── Unified UI Components ──────────────────────────────
+// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -80,10 +80,10 @@ const ChallengeCard = ({ challenge, isDone }) => (
   </View>
 );
 
-// ── AnimatedG must be defined before JSX use ───────────
+// â”€â”€ AnimatedG must be defined before JSX use â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const AnimatedG = Animated.createAnimatedComponent(G);
 
-// ── Main Simulation Component ───────────────────────────
+// â”€â”€ Main Simulation Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function PressureLab({ scientistMode = false, accentColor = '#00E5FF' }) {
   const { isDark } = useTheme();
@@ -99,7 +99,7 @@ export default function PressureLab({ scientistMode = false, accentColor = '#00E
   const submergedP = useRef(0);
   const [stats, setStats] = useState({ buoyancy: 0, gravity: 0, status: 'Air' });
 
-  // ── Physics Engine ─────────────────────────────────────
+  // â”€â”€ Physics Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const calculatePhysics = useCallback(() => {
     const G = 9.81;
@@ -164,7 +164,7 @@ export default function PressureLab({ scientistMode = false, accentColor = '#00E
     calculatePhysics();
   }, [activeObj, fluid, calculatePhysics]);
 
-  // ── Render ─────────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const renderFloatingObject = () => {
     // @ts-ignore: style prop on AnimatedG causes false positive TS error
@@ -252,13 +252,13 @@ export default function PressureLab({ scientistMode = false, accentColor = '#00E
           <Text style={styles.sectionTitle}>ARCHIMEDES ANALYTICS</Text>
           <View style={styles.sciGrid}>
             <ScientistCard 
-              formula="Fb = ρ * V_disp * g" 
+              formula="Fb = Ï * V_disp * g" 
               description="Buoyant Force Principle" 
               value={`${fluid.density} * ${(submergedP.current * 100).toFixed(1)}% Vol * 9.81 = ${stats.buoyancy.toFixed(3)} N`}
               color="#00E5FF"
             />
             <ScientistCard 
-              formula="P = ρ * g * h" 
+              formula="P = Ï * g * h" 
               description="Hydrostatic Pressure Calculation" 
               value={`Fluid Pressure @ Depth: ${(fluid.density * 9.81 * (submergedP.current * 0.5)).toFixed(1)} Pascal`}
               color="#A855F7"

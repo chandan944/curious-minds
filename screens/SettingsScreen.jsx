@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, Image, ScrollView,
-  Platform, StatusBar, Switch
+  Platform, StatusBar, Switch, InteractionManager
 } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -52,12 +52,13 @@ export default function SettingsScreen({ onBack }) {
           likes: profileRes.data.likeCount || 0,
           pending: pendingRes.data.length || 0
         });
-      } catch (e) {
-        console.warn('Failed to load social stats', e);
-      }
+      } catch (e) {}
     };
     
-    fetchSocialData();
+    const task = InteractionManager.runAfterInteractions(() => {
+      fetchSocialData();
+    });
+    return () => task.cancel();
   }, [user?.id]);
 
   return (

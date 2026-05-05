@@ -1,7 +1,7 @@
-// ─────────────────────────────────────────────────────────
+﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 //  LAB: Momentum & Collisions v2.0 (Extreme)
 //  Billiard Physics Engine & Conservation of P
-// ─────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Svg, {
   Circle, Line, Rect, Path, Defs, RadialGradient, Stop, G, Text as SvgText
-} from 'react-native-svg';
+import Svg, { Circle, Line, G, Text as SvgText } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 import { FONTS, RADIUS, SPACING } from '../../constants/theme';
@@ -22,7 +22,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 340;
 
-// ── Constants & Data ─────────────────────────────────
+// â”€â”€ Constants & Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const OBJECT_TYPES = [
   { id: 'marble', name: 'Marble', mass: 1, color: '#00E5FF', radius: 10, icon: 'circle' },
@@ -43,7 +43,7 @@ const CHALLENGES = [
   { id: 'total_p', title: 'Conserver', desc: 'Maintain system momentum for 5+ collisions', icon: 'shield', color: '#A855F7' },
 ];
 
-// ── Unified UI Components ──────────────────────────────
+// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -76,7 +76,7 @@ const ChallengeCard = ({ challenge, isDone }) => (
   </View>
 );
 
-// ── Main Simulation Component ───────────────────────────
+// â”€â”€ Main Simulation Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function MomentumLab({ scientistMode = false, accentColor = '#FF3131' }) {
   const { isDark } = useTheme();
@@ -95,7 +95,7 @@ export default function MomentumLab({ scientistMode = false, accentColor = '#FF3
   const interval = useRef(null);
   const objectsRef = useRef(objects);
 
-  // ── Physics Engine ─────────────────────────────────────
+  // â”€â”€ Physics Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const resolveCollision = (o1, o2) => {
     const dx = o2.x - o1.x;
@@ -187,7 +187,7 @@ export default function MomentumLab({ scientistMode = false, accentColor = '#FF3
     return () => clearInterval(interval.current);
   }, [running, step]);
 
-  // ── Stats ───────────────────────────────────────────────
+  // â”€â”€ Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const systemStats = useMemo(() => {
     let totalP = 0;
@@ -200,7 +200,7 @@ export default function MomentumLab({ scientistMode = false, accentColor = '#FF3
     return { p: totalP, ke: totalKE };
   }, [objects]);
 
-  // ── Interactions ────────────────────────────────────────
+  // â”€â”€ Interactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const toggleRun = () => {
     soundTap();
@@ -226,7 +226,7 @@ export default function MomentumLab({ scientistMode = false, accentColor = '#FF3
     objectsRef.current = newObjs;
   };
 
-  // ── Render ─────────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   return (
     <View style={styles.root}>
@@ -314,13 +314,13 @@ export default function MomentumLab({ scientistMode = false, accentColor = '#FF3
           <Text style={styles.sectionTitle}>SCIENTIFIC ANALYTICS</Text>
           <View style={styles.sciGrid}>
             <ScientistCard 
-              formula="Σp_initial = Σp_final" 
+              formula="Î£p_initial = Î£p_final" 
               description="Conservation of System Momentum" 
-              value={`Total Momentum: ${systemStats.p.toFixed(3)} kg·m/s`}
+              value={`Total Momentum: ${systemStats.p.toFixed(3)} kgÂ·m/s`}
               color="#00E5FF"
             />
             <ScientistCard 
-              formula="J = Δp = F * Δt" 
+              formula="J = Î”p = F * Î”t" 
               description="Impulse & Crash Dynamics" 
               value={`Elasticity Ratio: ${collType.e * 100}% Recovery`}
               color="#FFD166"
