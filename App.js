@@ -22,12 +22,19 @@ import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import HomeScreen  from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
+import OnboardingScreen from './screens/OnboardingScreen';
 import { initSounds } from './utils/sounds';
+import { getHasOnboarded, setHasOnboarded } from './utils/authStorage';
 
 function MainAppContent({ isFontsReady }) {
   const { isAuthenticated, isLoading } = useAuth();
+  const [hasOnboarded, setHasOnboardedState] = useState(null);
 
-  if (!isFontsReady || isLoading) {
+  useEffect(() => {
+    getHasOnboarded().then(setHasOnboardedState).catch(() => setHasOnboardedState(false));
+  }, []);
+
+  if (!isFontsReady || isLoading || hasOnboarded === null) {
     return (
       <View style={styles.loading}>
         <LottieView
@@ -42,6 +49,16 @@ function MainAppContent({ isFontsReady }) {
           ]}
         />
       </View>
+    );
+  }
+
+  if (!hasOnboarded) {
+    return (
+      <OnboardingScreen 
+        onFinish={() => {
+          setHasOnboarded(true).then(() => setHasOnboardedState(true));
+        }} 
+      />
     );
   }
 

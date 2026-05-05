@@ -48,3 +48,21 @@ export const clearAuthStorage = async () => {
     console.error('clearAuthStorage error:', e);
   }
 };
+
+export const setHasOnboarded = async (value) => {
+  try {
+    await AsyncStorage.setItem('@has_onboarded', value ? 'true' : 'false');
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const getHasOnboarded = async () => {
+  try {
+    const raw = await AsyncStorage.getItem('@has_onboarded');
+    return raw === 'true';
+  } catch {
+    return false;
+  }
+};
