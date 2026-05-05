@@ -55,7 +55,7 @@ export default function HomeScreen() {
   
   // Navigation State
   const [activeTab, setActiveTab] = useState('home');
-  const [visitedTabs, setVisitedTabs] = useState(['home']);
+  const visitedTabs = useRef(new Set(['home']));
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [isNavigating, setIsNavigating] = useState(false); // Prevents double-tap lag
   
@@ -98,10 +98,20 @@ export default function HomeScreen() {
     }
     
     // Lazy-load mechanism: Add newly visited tab to our tracker
-    if (!visitedTabs.includes(activeTab)) {
-      setVisitedTabs(prev => [...prev, activeTab]);
+    if (!visitedTabs.current.has(activeTab)) {
+      visitedTabs.current.add(activeTab);
     }
   }, [activeTab]);
+
+  // Pre-compute category -> topics mapping (avoids O(C × T) filter per render)
+  const categoryTopics = useMemo(() => {
+    const map = {};
+    CATEGORIES.forEach(cat => {
+      const topics = TOPIC_REGISTRY.filter(t => t.category === cat);
+      if (topics.length > 0) map[cat] = topics;
+    });
+    return map;
+  }, []);
 
   const lastFetchTime = useRef(0);
   const fetchPendingFriendCount = () => {
@@ -312,8 +322,8 @@ export default function HomeScreen() {
 
           {/* ── Categories & Topics ─────────────────────────── */}
           {CATEGORIES.map(cat => {
-            const catTopics = TOPIC_REGISTRY.filter(t => t.category === cat);
-            if (catTopics.length === 0) return null;
+            const catTopics = categoryTopics[cat];
+            if (!catTopics) return null;
             
             return (
               <View key={cat} style={{ marginBottom: SPACING.xl }}>
@@ -347,23 +357,23 @@ export default function HomeScreen() {
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'discover' ? 'flex' : 'none' }}>
-        {visitedTabs.includes('discover') && <DiscoverScreen onOpenProfile={openProfile} onStartChat={openChat} />}
+        {visitedTabs.current.has('discover') && <DiscoverScreen onOpenProfile={openProfile} onStartChat={openChat} />}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'chat' ? 'flex' : 'none' }}>
-        {visitedTabs.includes('chat') && <ChatHubScreen onOpenChat={openChat} />}
+        {visitedTabs.current.has('chat') && <ChatHubScreen onOpenChat={openChat} />}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'leaderboard' ? 'flex' : 'none' }}>
-        {visitedTabs.includes('leaderboard') && <LeaderboardScreen onBack={() => setActiveTab('home')} onStartChat={openChat} />}
+        {visitedTabs.current.has('leaderboard') && <LeaderboardScreen onBack={() => setActiveTab('home')} onStartChat={openChat} />}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'settings' ? 'flex' : 'none' }}>
-        {visitedTabs.includes('settings') && <SettingsScreen onBack={() => setActiveTab('home')} />}
+        {visitedTabs.current.has('settings') && <SettingsScreen onBack={() => setActiveTab('home')} />}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'ebook' ? 'flex' : 'none' }}>
-        {visitedTabs.includes('ebook') && <EbookScreen onOpenPdf={(url, title) => setViewingPdf({ url, title })} />}
+        {visitedTabs.current.has('ebook') && <EbookScreen onOpenPdf={(url, title) => setViewingPdf({ url, title })} />}
       </View>
 
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} isDark={isDark} pendingFriendCount={pendingFriendCount} unreadChatCount={unreadChatCount} />

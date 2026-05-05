@@ -8,6 +8,8 @@ class ChatService {
     this.token = null;
     this.isConnected = false;
     this.reconnectAttempts = 0;
+    this.maxReconnectAttempts = 10;
+    this.pingInterval = null;
   }
 
   // Convert http://192.168.x.x:8080 to ws://192.168.x.x:8080
@@ -37,6 +39,8 @@ class ChatService {
         this.reconnectAttempts = 0;
         // Authenticate immediately
         this.ws.send(JSON.stringify({ type: 'AUTH', token: this.token }));
+        // Start keepalive ping every 30 seconds
+        this.startPing();
       };
 
       this.ws.onmessage = (e) => {
@@ -51,6 +55,7 @@ class ChatService {
           } else if (data.type === 'AUTH_SUCCESS') {
             console.log('✅ WebSocket authenticated for User:', data.userId);
           }
+          // PONG responses are silently ignored
         } catch (err) {
           console.error('❌ Error parsing WS message', err);
         }
@@ -60,6 +65,7 @@ class ChatService {
         console.log('🔴 WebSocket closed', e.reason);
         this.isConnected = false;
         this.ws = null;
+        this.stopPing();
         this.attemptReconnect();
       };
 
@@ -72,25 +78,62 @@ class ChatService {
     }
   }
 
+  startPing() {
+    this.stopPing();
+    this.pingInterval = setInterval(() => {
+      if (this.isConnected && this.ws) {
+        try {
+          this.ws.send(JSON.stringify({ type: 'PING' }));
+        } catch (_) {
+          // Connection is dead — trigger reconnect
+          this.isConnected = false;
+          this.stopPing();
+          this.attemptReconnect();
+        }
+      }
+    }, 30000); // Every 30 seconds
+  }
+
+  stopPing() {
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+      this.pingInterval = null;
+    }
+  }
+
   attemptReconnect() {
-    if (this.reconnectAttempts > 5) return; // Give up after 5 tries
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.warn('⚠️ Max reconnect attempts reached. Will retry on next user action.');
+      return;
+    }
     this.reconnectAttempts++;
+    // Exponential backoff with jitter (prevents thundering herd)
+    const baseDelay = Math.min(2000 * Math.pow(1.5, this.reconnectAttempts - 1), 30000);
+    const jitter = Math.random() * 1000;
+    const delay = baseDelay + jitter;
     setTimeout(() => {
-      console.log(`🔄 Reconnecting WS (Attempt ${this.reconnectAttempts})...`);
+      console.log(`🔄 Reconnecting WS (Attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
       this.connect(this.token);
-    }, 2000 * this.reconnectAttempts);
+    }, delay);
   }
 
   disconnect() {
+    this.stopPing();
     if (this.ws) {
       this.ws.close();
       this.ws = null;
     }
     this.isConnected = false;
+    this.reconnectAttempts = 0;
   }
 
   send(target, content, replyTo = null) {
     if (!this.isConnected || !this.ws) {
+      // Auto-reconnect on send attempt if disconnected
+      if (this.token) {
+        this.reconnectAttempts = 0;
+        this.connect(this.token);
+      }
       console.warn('⚠️ Cannot send message, WS not connected');
       return false;
     }

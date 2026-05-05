@@ -1,14 +1,15 @@
 import { createAudioPlayer } from 'expo-audio';
 
 // ─────────────────────────────────────────────
-//  SOUND MANAGER — safe version
-//  Missing sound files are silently ignored
+//  SOUND MANAGER — lazy-load version
+//  Sounds are loaded on first use, not at startup.
+//  Missing sound files are silently ignored.
 // ─────────────────────────────────────────────
 
 let sounds = {};
 let isMuted = false;
 
-// Safely load sounds — if a file is missing, that sound is just skipped
+// Sound file references (lazy — not loaded until first play)
 const SOUND_FILES = {
   tap:         () => require('../assets/sounds/tap.mp3'),
   correct:     () => require('../assets/sounds/correct.mp3'),
@@ -21,27 +22,31 @@ const SOUND_FILES = {
   tick:        () => require('../assets/sounds/tick.mp3'),
 };
 
-export const initSounds = async () => {
+// Lazy-load a sound on first use instead of loading all at startup
+const getOrLoadSound = (name) => {
+  if (sounds[name]) return sounds[name];
+  const getFile = SOUND_FILES[name];
+  if (!getFile) return null;
   try {
-    for (const [key, getFile] of Object.entries(SOUND_FILES)) {
-      try {
-        const file = getFile();
-        const player = createAudioPlayer(file);
-        sounds[key] = player;
-      } catch (e) {
-        // Sound file missing or failed — just skip it, app still works
-      }
-    }
+    const file = getFile();
+    const player = createAudioPlayer(file);
+    sounds[name] = player;
+    return player;
   } catch (e) {
-    // Audio setup failed (e.g. simulator) — continue without sound
+    // Sound file missing or failed — just skip it
+    return null;
   }
 };
 
+// initSounds is kept for backward compatibility but is now a no-op
+// (sounds are loaded lazily on first use for faster cold start)
+export const initSounds = async () => {};
+
 export const playSound = async (name) => {
   if (isMuted) return;
-  const player = sounds[name];
-  if (!player) return;
   try {
+    const player = getOrLoadSound(name);
+    if (!player) return;
     player.seekTo(0);
     player.play();
   } catch (e) {

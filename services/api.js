@@ -14,10 +14,25 @@ export const BACKEND_URL = 'https://curiousminds.dpdns.org';
 
 const api = axios.create({
   baseURL: BACKEND_URL,
-  timeout: 120000, // Increased to 120s for large file uploads
+  timeout: 15000, // 15s default — fast fail for normal API calls
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Upload-specific timeout (used by EbookScreen file uploads)
+export const UPLOAD_TIMEOUT = 120000;
+
+// Auto-handle 401 responses (expired token)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired — clear auth header to prevent stale requests
+      delete api.defaults.headers.common['Authorization'];
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

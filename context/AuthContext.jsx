@@ -12,6 +12,7 @@ import {
 } from '../utils/authStorage';
 import { getXP, getStreak } from '../utils/storage';
 import chatService from '../services/chatService';
+import { registerForPushNotificationsAsync } from '../services/notificationService';
 
 const AuthContext = createContext(null);
 
@@ -68,6 +69,18 @@ export const AuthProvider = ({ children }) => {
             await saveUser(freshUserData);
             setUser(freshUserData);
             console.log('✅ Session validated in background for:', freshUserData.email);
+            
+            // Register for push notifications on app startup
+            registerForPushNotificationsAsync().then(async (pushToken) => {
+              if (pushToken) {
+                try {
+                  await api.put('/auth/push-token', { expoPushToken: pushToken });
+                  console.log('✅ Push token registered on startup');
+                } catch (err) {
+                  console.warn('⚠️ Failed to register push token:', err.message);
+                }
+              }
+            });
           } else {
             console.warn('⚠️ Token valid but user not found in DB — clearing session');
             await forceLogout();
@@ -150,6 +163,19 @@ export const AuthProvider = ({ children }) => {
       chatService.connect(jwtToken);
 
       console.log('🎉 Authenticated as:', userData.email, '| Role:', userData.role);
+      
+      // Register for push notifications after login
+      registerForPushNotificationsAsync().then(async (pushToken) => {
+        if (pushToken) {
+          try {
+            await api.put('/auth/push-token', { expoPushToken: pushToken });
+            console.log('✅ Push token registered on login');
+          } catch (err) {
+            console.warn('⚠️ Failed to register push token:', err.message);
+          }
+        }
+      });
+
       return { success: true };
 
     } catch (error) {

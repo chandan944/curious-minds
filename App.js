@@ -65,7 +65,17 @@ function MainAppContent({ isFontsReady }) {
   return isAuthenticated ? <HomeScreen /> : <LoginScreen />;
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,    // 5 minutes — data stays fresh, avoids refetch on tab switch
+      gcTime: 1000 * 60 * 10,      // 10 minutes — garbage collect unused cache
+      retry: 2,                     // retry failed queries twice
+      refetchOnWindowFocus: false,  // don't refetch when app returns to foreground
+    },
+  },
+});
+
 
 // ── Root component ────────────────────────────
 export default function App() {

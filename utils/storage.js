@@ -1,182 +1,160 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { syncXpToServer } from '../services/leaderboardService';
-import { getToken } from './authStorage';
+
+// ─────────────────────────────────────────────
+//  storage.js — Local persistence for user data
+//  Optimized with memory caching and batch reads
+// ─────────────────────────────────────────────
 
 const KEYS = {
-  BADGES: '@cm_badges',
-  PROGRESS: '@cm_progress',  // per-topic progress
-  LAST_OPEN: '@cm_last_open',
-  QUIZ_SCORES: '@cm_quiz_scores',
-  LAB_DATA: '@cm_lab_data',
+  XP_TOTAL:         '@curious_xp_total',
+  STREAK:           '@curious_streak',
+  LAST_LOGIN:       '@curious_last_login',
+  BADGES:           '@curious_badges',
+  TOPIC_PROGRESS:   '@curious_topic_progress',
+  SOUND_MUTED:      '@curious_sound_muted',
 };
 
-// ── Max XP allowed per action type (must match backend) ──
-const MAX_XP_PER_REASON = {
-  quiz_correct:   15,
-  quiz_perfect:   50,
-  theory_read:    10,
-  lab_complete:   20,
-  dyk_complete:   10,
-  streak_bonus:   25,
-  topic_complete: 30,
-  local_earn:     15,
-};
-const MAX_SINGLE_SYNC = 100;
+// ── In-memory cache for hot data ──────────────
+const cache = {};
 
-// ── XP ──────────────────────────────────────
-
-export const getXP = async () => {
-  return 0; // Legacy function, points are now managed via AuthContext & Backend
-};
-
-export const addXP = async (amount, reason = 'topic_complete') => {
+// ── Helpers ──────────────────────────────────────
+const safeGet = async (key) => {
+  // Check memory cache first
+  if (cache[key] !== undefined) return cache[key];
   try {
-    // ── Client-side validation ───────────────────────────────
-    if (typeof amount !== 'number' || amount <= 0 || !Number.isFinite(amount)) {
-      console.warn('⚠️ Invalid XP amount:', amount);
-      return 0;
-    }
-
-    const validAmount = Math.floor(amount);
-
-    if (validAmount <= 0) {
-      console.warn('⚠️ XP amount rounded to 0, skipping');
-      return 0;
-    }
-
-    // Sync with server directly
-    const token = await getToken();
-    if (token) {
-      // Send 0 for streak to let backend manage it exclusively
-      const serverRes = await syncXpToServer(token, validAmount, reason, 0);
-      if (serverRes && serverRes.success && typeof serverRes.totalPoints === 'number') {
-        return serverRes.totalPoints;
-      }
-    } else {
-      console.warn('⚠️ Cannot add XP: User not logged in.');
-    }
-    
-    return 0;
-  } catch (e) { 
-    console.warn('Error syncing XP to server', e?.message);
-    return 0; 
-  }
+    const raw = await AsyncStorage.getItem(key);
+    const parsed = raw != null ? JSON.parse(raw) : null;
+    cache[key] = parsed; // Populate cache
+    return parsed;
+  } catch { return null; }
 };
 
-// ── BADGES ──────────────────────────────────
-
-export const getBadges = async () => {
+const safeSet = async (key, val) => {
   try {
-    const val = await AsyncStorage.getItem(KEYS.BADGES);
-    return val ? JSON.parse(val) : [];
-  } catch { return []; }
+    cache[key] = val; // Update cache immediately
+    await AsyncStorage.setItem(key, JSON.stringify(val));
+  } catch {}
 };
 
-export const awardBadge = async (badgeId) => {
-  try {
-    const badges = await getBadges();
-    if (badges.includes(badgeId)) return false; // already have it
-    await AsyncStorage.setItem(KEYS.BADGES, JSON.stringify([...badges, badgeId]));
-    return true; // newly awarded
-  } catch { return false; }
+// ── XP ─────────────────────────────────────────
+export const getXP = () => safeGet(KEYS.XP_TOTAL);
+export const setXP = (xp) => safeSet(KEYS.XP_TOTAL, xp);
+export const addXP = async (amount) => {
+  const current = (await getXP()) || 0;
+  const newXP = current + amount;
+  await setXP(newXP);
+  return newXP;
 };
 
-// ── TOPIC PROGRESS ───────────────────────────
+// ── Streak ─────────────────────────────────────
+export const getStreak = () => safeGet(KEYS.STREAK);
+export const setStreak = (s) => safeSet(KEYS.STREAK, s);
 
+// ── Last Login ─────────────────────────────────
+export const getLastLogin = () => safeGet(KEYS.LAST_LOGIN);
+export const setLastLogin = (d) => safeSet(KEYS.LAST_LOGIN, d);
+
+// ── Badges ─────────────────────────────────────
+export const getBadges = async () => (await safeGet(KEYS.BADGES)) || [];
+export const addBadge = async (badge) => {
+  const current = await getBadges();
+  if (current.find(b => b.id === badge.id)) return current;
+  const updated = [...current, { ...badge, unlockedAt: new Date().toISOString() }];
+  await safeSet(KEYS.BADGES, updated);
+  return updated;
+};
+
+// ── Topic Progress ─────────────────────────────
 export const getTopicProgress = async (topicId) => {
+  const all = (await safeGet(KEYS.TOPIC_PROGRESS)) || {};
+  return all[topicId] || null;
+};
+
+export const updateTopicProgress = async (topicId, data) => {
+  const all = (await safeGet(KEYS.TOPIC_PROGRESS)) || {};
+  all[topicId] = { ...(all[topicId] || {}), ...data, lastUpdated: new Date().toISOString() };
+  await safeSet(KEYS.TOPIC_PROGRESS, all);
+  return all[topicId];
+};
+
+export const getAllTopicProgress = async () => {
+  return (await safeGet(KEYS.TOPIC_PROGRESS)) || {};
+};
+
+// ── Sound ──────────────────────────────────────
+export const getSoundMuted = async () => {
+  const val = await safeGet(KEYS.SOUND_MUTED);
+  return val === true;
+};
+export const setSoundMuted = (muted) => safeSet(KEYS.SOUND_MUTED, muted);
+
+// ── Full Stats (batch read for speed) ──────────
+export const getFullStats = async () => {
   try {
-    const val = await AsyncStorage.getItem(KEYS.PROGRESS);
-    const all = val ? JSON.parse(val) : {};
-    return all[topicId] || {
-      theoryRead: false,
-      labVisited: false,
-      dykAnswered: false,
-      quizBestScore: 0,
-      quizAttempts: 0,
-      scientistModeUnlocked: false,
-      completedAt: null,
+    // Use multiGet to batch all AsyncStorage reads into a single operation
+    const keys = [KEYS.XP_TOTAL, KEYS.STREAK, KEYS.BADGES, KEYS.LAST_LOGIN, KEYS.TOPIC_PROGRESS];
+    const pairs = await AsyncStorage.multiGet(keys);
+    const result = {};
+    pairs.forEach(([key, value]) => {
+      try {
+        const parsed = value != null ? JSON.parse(value) : null;
+        result[key] = parsed;
+        cache[key] = parsed; // Warm the cache
+      } catch {
+        result[key] = null;
+      }
+    });
+
+    return {
+      xp:       result[KEYS.XP_TOTAL] || 0,
+      streak:   result[KEYS.STREAK] || 0,
+      badges:   result[KEYS.BADGES] || [],
+      lastLogin: result[KEYS.LAST_LOGIN] || null,
+      topicProgress: result[KEYS.TOPIC_PROGRESS] || {},
     };
   } catch {
-    return { theoryRead: false, labVisited: false, dykAnswered: false, quizBestScore: 0, quizAttempts: 0, scientistModeUnlocked: false, completedAt: null };
+    return { xp: 0, streak: 0, badges: [], lastLogin: null, topicProgress: {} };
   }
 };
 
-export const updateTopicProgress = async (topicId, update) => {
-  try {
-    const val = await AsyncStorage.getItem(KEYS.PROGRESS);
-    const all = val ? JSON.parse(val) : {};
-    all[topicId] = { ...(all[topicId] || {}), ...update };
-    await AsyncStorage.setItem(KEYS.PROGRESS, JSON.stringify(all));
-    return all[topicId];
-  } catch {}
-};
-
-export const getAllProgress = async () => {
-  try {
-    const val = await AsyncStorage.getItem(KEYS.PROGRESS);
-    return val ? JSON.parse(val) : {};
-  } catch { return {}; }
-};
-
-// ── QUIZ SCORES ──────────────────────────────
-
-export const saveQuizScore = async (topicId, score, total, timeSeconds) => {
-  try {
-    const val = await AsyncStorage.getItem(KEYS.QUIZ_SCORES);
-    const all = val ? JSON.parse(val) : {};
-    if (!all[topicId]) all[topicId] = [];
-    all[topicId].push({ score, total, timeSeconds, date: Date.now() });
-    await AsyncStorage.setItem(KEYS.QUIZ_SCORES, JSON.stringify(all));
-  } catch {}
-};
-
-export const getQuizScores = async (topicId) => {
-  try {
-    const val = await AsyncStorage.getItem(KEYS.QUIZ_SCORES);
-    const all = val ? JSON.parse(val) : {};
-    return all[topicId] || [];
-  } catch { return []; }
-};
-
-export const getAllQuizScores = async () => {
-  try {
-    const val = await AsyncStorage.getItem(KEYS.QUIZ_SCORES);
-    return val ? JSON.parse(val) : {};
-  } catch { return {}; }
-};
-
-// ── STREAK ───────────────────────────────────
-
+// ── Streak Check (called on app open) ─────────
 export const checkAndUpdateStreak = async () => {
-  // Legacy function, streak is now managed by the backend exclusively.
-  return 0;
+  const now    = new Date();
+  const last   = await getLastLogin();
+  const streak = (await getStreak()) || 0;
+
+  if (last) {
+    const lastDate = new Date(last);
+    const daysDiff = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+
+    if (daysDiff === 1) {
+      // Consecutive day — increment streak
+      const newStreak = streak + 1;
+      await setStreak(newStreak);
+      await setLastLogin(now.toISOString());
+      return { streak: newStreak, isNew: true };
+    } else if (daysDiff > 1) {
+      // Missed a day — reset streak
+      await setStreak(1);
+      await setLastLogin(now.toISOString());
+      return { streak: 1, isNew: true, wasReset: true };
+    } else {
+      // Same day
+      return { streak, isNew: false };
+    }
+  } else {
+    // First ever login
+    await setStreak(1);
+    await setLastLogin(now.toISOString());
+    return { streak: 1, isNew: true, isFirst: true };
+  }
 };
 
-export const getStreak = async () => {
-  return 0; // Legacy function, streak is managed via AuthContext & Backend
-};
-
-// ── FULL STATS (for Progress Dashboard) ──────
-
-export const getFullStats = async () => {
-  const [xp, badges, allProgress, streak, allScores] = await Promise.all([
-    getXP(),
-    getBadges(),
-    getAllProgress(),
-    getStreak(),
-    getAllQuizScores(),
-  ]);
-
-  const completedTopics = Object.values(allProgress).filter(p => p.completedAt).length;
-  const totalQuizAttempts = Object.values(allScores).reduce((s, arr) => s + arr.length, 0);
-  const perfectScores = Object.values(allScores).reduce((s, arr) =>
-    s + arr.filter(q => q.score === q.total).length, 0);
-
-  return { xp, badges, allProgress, streak, allScores, completedTopics, totalQuizAttempts, perfectScores };
-};
-
-// ── RESET (dev/testing) ───────────────────────
-
+// ── Reset All (for debugging) ──────────────────
 export const resetAll = async () => {
-  await AsyncStorage.multiRemove(Object.values(KEYS));
+  try {
+    await AsyncStorage.multiRemove(Object.values(KEYS));
+    // Clear memory cache
+    Object.keys(cache).forEach(k => delete cache[k]);
+  } catch {}
 };

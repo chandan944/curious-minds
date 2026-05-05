@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   Alert, ActivityIndicator, Animated,
-  Dimensions, StatusBar, Platform, Image, ScrollView,
+  Dimensions, StatusBar, Platform, Image, ScrollView, Linking,
 } from 'react-native';
 import { LinearGradient }     from 'expo-linear-gradient';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
@@ -235,7 +235,10 @@ export default function LoginScreen() {
             </TouchableOpacity>
 
             <Text style={styles.disclaimer}>
-              By continuing you agree to our Terms of Service and Privacy Policy
+              By continuing you agree to our{' '}
+              <Text style={styles.disclaimerLink} onPress={() => Linking.openURL('https://curiousminds.dpdns.org/privacy-policy')}>
+                Terms of Service and Privacy Policy
+              </Text>
             </Text>
           </Animated.View>
 
@@ -384,6 +387,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 16,
     paddingHorizontal: 20,
+  },
+  disclaimerLink: {
+    color: '#6366F1',
+    textDecorationLine: 'underline',
   },
 });
 

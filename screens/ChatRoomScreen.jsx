@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   View, Text, TextInput, FlatList, TouchableOpacity, Image,
   StyleSheet, KeyboardAvoidingView, Platform, StatusBar, Animated,
@@ -135,14 +135,22 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
     return () => unsubscribe();
   }, [targetId]);
 
-  // ── Mark as read ──
+  // ── Mark as read (batched, deduped) ──
+  const markedReadRef = useRef(new Set());
   useEffect(() => {
-    messages.forEach(m => {
-      if (m.senderId !== user.id && m.status !== 'READ') {
-        chatService.markAsRead(m.id);
-        m.status = 'READ';
-      }
+    const unread = messages.filter(
+      m => m.senderId !== user.id && m.status !== 'READ' && m.id && !markedReadRef.current.has(m.id)
+    );
+    if (unread.length === 0) return;
+    unread.forEach(m => {
+      markedReadRef.current.add(m.id);
+      chatService.markAsRead(m.id);
     });
+    if (unread.length > 0) {
+      setMessages(prev => prev.map(m =>
+        unread.some(u => u.id === m.id) ? { ...m, status: 'READ' } : m
+      ));
+    }
   }, [messages, user.id]);
 
   const handleSend = () => {
@@ -164,10 +172,12 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
     if (onStartDirectChat) setTimeout(() => onStartDirectChat(pId, pName), 100);
   };
 
+  const chatKeyExtractor = useCallback((item, idx) => item.id ? item.id.toString() : idx.toString(), []);
+
   // ─────────────────────────────────────────────────────────
-  // RENDER MESSAGE
+  // RENDER MESSAGE (memoized)
   // ─────────────────────────────────────────────────────────
-  const renderMessage = ({ item, index }) => {
+  const renderMessage = useCallback(({ item, index }) => {
     const isMe   = item.senderId === user.id;
     const timeStr = formatTime(item.timestamp);
     const isRead = item.status === 'READ';
@@ -272,7 +282,7 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
         </TouchableOpacity>
       </View>
     );
-  };
+  }, [messages, user.id, isGlobal, C, isDark]);
 
   // ─────────────────────────────────────────────────────────
   // RENDER
@@ -325,11 +335,15 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
         ref={flatListRef}
         data={messages}
         inverted
-        keyExtractor={(item, idx) => item.id ? item.id.toString() : idx.toString()}
+        keyExtractor={chatKeyExtractor}
         renderItem={renderMessage}
         contentContainerStyle={[styles.listContent, { paddingBottom: replyingTo ? 180 : 120 }]}
         showsVerticalScrollIndicator={false}
         style={{ flex: 1 }}
+        initialNumToRender={15}
+        maxToRenderPerBatch={10}
+        windowSize={7}
+        removeClippedSubviews={Platform.OS === 'android'}
       />
 
       {/* ── REPLY BANNER ─────────────────────────────────── */}

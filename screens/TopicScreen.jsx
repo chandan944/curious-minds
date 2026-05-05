@@ -30,7 +30,7 @@ import QuizResults from "../components/QuizResults";
 import StarBackground from "../components/ui/StarBackground";
 import Icon from "../components/ui/Icons";
 import LanguageToggle from "../components/ui/LanguageToggle";
-import AiTutorChat from "../components/AiTutorChat";
+
 
 const { width } = Dimensions.get("window");
 const STATUS_BAR_H =
@@ -44,9 +44,9 @@ const LOG_TAG = "🟢 [TopicScreen]";
 const ERR_TAG = "🔴 [TopicScreen]";
 const WRN_TAG = "🟡 [TopicScreen]";
 
-const debugLog = (...args) => console.log(LOG_TAG, ...args);
-const debugWarn = (...args) => console.warn(WRN_TAG, ...args);
-const debugErr = (...args) => console.error(ERR_TAG, ...args);
+const debugLog = __DEV__ ? (...args) => console.log(LOG_TAG, ...args) : () => {};
+const debugWarn = __DEV__ ? (...args) => console.warn(WRN_TAG, ...args) : () => {};
+const debugErr = __DEV__ ? (...args) => console.error(ERR_TAG, ...args) : () => {};
 
 // ─────────────────────────────────────────────────────────────────
 //  TOPIC CONFIGS MAP
@@ -400,8 +400,7 @@ export default function TopicScreen({ topicId, onBack }) {
   const [newBadges, setNewBadges] = useState([]);
   const [scientistMode, setScientistMode] = useState(false);
   const [labBreakerTriggered, setLabBreakerTriggered] = useState(false);
-  const [showAiTutor, setShowAiTutor] = useState(false);
-  const tutorFabScale = useRef(new Animated.Value(1)).current;
+
 
   const topicMeta = TOPIC_REGISTRY.find((t) => t.id === topicId);
 
@@ -1198,36 +1197,6 @@ const styles = StyleSheet.create({
   },
   continueBtnText: { fontFamily: FONTS.displayMedium, fontSize: 15 },
 
-  // ── AI Tutor FAB ─────────────────────────────
-  tutorFab: {
-    position: "absolute",
-    bottom: 100,
-    right: 20,
-    borderRadius: 28,
-    shadowOpacity: 0.55,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 16,
-    elevation: 14,
-    zIndex: 999,
-  },
-  tutorFabInner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 18,
-    paddingVertical: 13,
-    borderRadius: 28,
-  },
-  tutorFabText: {
-    fontFamily: FONTS.displayMedium,
-    fontSize: 14,
-    color: "#FFF",
-  },
 
-  // ── AI Tutor Modal ────────────────────────────
-  tutorModal: {
-    flex: 1,
-    paddingTop: Platform.OS === "ios" ? 50 : StatusBar.currentHeight || 36,
-  },
 });
 

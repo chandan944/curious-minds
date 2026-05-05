@@ -5,7 +5,7 @@ import {
   InteractionManager
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import api from '../services/api';
+import api, { UPLOAD_TIMEOUT } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Icon from '../components/ui/Icons';
@@ -129,6 +129,7 @@ export default function EbookScreen({ onOpenPdf }) {
         }
         await api.post('/api/ebooks/upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
+          timeout: UPLOAD_TIMEOUT,
         });
         Alert.alert('Success', 'Ebook uploaded successfully');
       }

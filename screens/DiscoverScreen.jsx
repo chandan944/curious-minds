@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput,
   ActivityIndicator, RefreshControl, Dimensions, Animated, Alert, Platform, StatusBar,
@@ -102,14 +102,19 @@ export default function DiscoverScreen({ onOpenProfile, onStartChat }) {
     } catch (e) { console.error('Friends failed', e); }
   };
 
-  const handleSearch = async (text) => {
+  const searchTimerRef = useRef(null);
+  const handleSearch = useCallback((text) => {
     setSearchQuery(text);
     if (text.length < 2) { setSearchResults([]); return; }
-    try {
-      const res = await api.get(`/api/social/search?q=${text}`);
-      setSearchResults(res.data);
-    } catch (e) { console.error('Search failed', e); }
-  };
+    // Debounce: wait 300ms after last keystroke before calling API
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await api.get(`/api/social/search?q=${encodeURIComponent(text)}`);
+        setSearchResults(res.data);
+      } catch (e) { console.error('Search failed', e); }
+    }, 300);
+  }, []);
 
   const sendFriendRequest = async (targetUserId) => {
     const markPending = u => u.id === targetUserId ? { ...u, friendshipStatus: 'PENDING' } : u;
