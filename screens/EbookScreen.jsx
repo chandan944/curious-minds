@@ -23,7 +23,8 @@ export default function EbookScreen({ onOpenPdf }) {
   // Modal State
   const [modalVisible, setModalVisible] = useState(false);
   const [editingEbook, setEditingEbook] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedEnglishFile, setSelectedEnglishFile] = useState(null);
+  const [selectedHindiFile, setSelectedHindiFile] = useState(null);
   const [selectedCoverImage, setSelectedCoverImage] = useState(null);
   const [processing, setProcessing] = useState(false);
 
@@ -54,15 +55,27 @@ export default function EbookScreen({ onOpenPdf }) {
     }
   };
 
-  const handlePickFile = async () => {
+  const handlePickEnglishFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/pdf',
         copyToCacheDirectory: true,
       });
       if (result.canceled || !result.assets || result.assets.length === 0) return;
-      const file = result.assets[0];
-      setSelectedFile(file);
+      setSelectedEnglishFile(result.assets[0]);
+    } catch (e) {
+      Alert.alert('Error', 'Failed to pick file');
+    }
+  };
+
+  const handlePickHindiFile = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'application/pdf',
+        copyToCacheDirectory: true,
+      });
+      if (result.canceled || !result.assets || result.assets.length === 0) return;
+      setSelectedHindiFile(result.assets[0]);
     } catch (e) {
       Alert.alert('Error', 'Failed to pick file');
     }
@@ -88,16 +101,25 @@ export default function EbookScreen({ onOpenPdf }) {
         await api.put(`/api/ebooks/${editingEbook.id}`, {});
         Alert.alert('Success', 'Ebook updated successfully');
       } else {
-        if (!selectedFile) {
+        if (!selectedEnglishFile && !selectedHindiFile) {
           setProcessing(false);
-          return Alert.alert('Error', 'Please select a PDF file');
+          return Alert.alert('Error', 'Please select at least one PDF file (English or Hindi)');
         }
         const formData = new FormData();
-        formData.append('file', {
-          uri: selectedFile.uri,
-          name: selectedFile.name,
-          type: selectedFile.mimeType || 'application/pdf',
-        });
+        if (selectedEnglishFile) {
+          formData.append('englishPdf', {
+            uri: selectedEnglishFile.uri,
+            name: selectedEnglishFile.name,
+            type: selectedEnglishFile.mimeType || 'application/pdf',
+          });
+        }
+        if (selectedHindiFile) {
+          formData.append('hindiPdf', {
+            uri: selectedHindiFile.uri,
+            name: selectedHindiFile.name,
+            type: selectedHindiFile.mimeType || 'application/pdf',
+          });
+        }
         if (selectedCoverImage) {
           formData.append('coverImage', {
             uri: selectedCoverImage.uri,
@@ -143,7 +165,8 @@ export default function EbookScreen({ onOpenPdf }) {
 
   const openEditModal = (ebook) => {
     setEditingEbook(ebook);
-    setSelectedFile(null);
+    setSelectedEnglishFile(null);
+    setSelectedHindiFile(null);
     setSelectedCoverImage(null);
     setModalVisible(true);
   };
@@ -151,7 +174,8 @@ export default function EbookScreen({ onOpenPdf }) {
   const closeModal = () => {
     setModalVisible(false);
     setEditingEbook(null);
-    setSelectedFile(null);
+    setSelectedEnglishFile(null);
+    setSelectedHindiFile(null);
     setSelectedCoverImage(null);
   };
 
@@ -169,11 +193,7 @@ export default function EbookScreen({ onOpenPdf }) {
     const cardAccent = accentColors[index % accentColors.length];
 
     return (
-      <TouchableOpacity 
-        style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}
-        onPress={() => openEbook(item.fileUrl, item.title)}
-        activeOpacity={0.85}
-      >
+      <View style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
         {/* Cover / Placeholder */}
         {item.coverImageUrl ? (
           <Image source={{ uri: item.coverImageUrl }} style={styles.coverImage} />
@@ -190,7 +210,32 @@ export default function EbookScreen({ onOpenPdf }) {
           </LinearGradient>
         )}
 
-        {/* Card is just the image (and admin actions if applicable) */}
+        {/* Read Actions */}
+        <View style={[styles.readBar, { borderTopColor: border }]}>
+          {item.englishFileUrl && (
+            <TouchableOpacity 
+              style={styles.readBtn} 
+              onPress={() => openEbook(item.englishFileUrl, item.title + " (English)")}
+            >
+              <Icon name="book" size={16} color={accent} />
+              <Text style={[styles.readBtnText, { color: accent }]}>Read English</Text>
+            </TouchableOpacity>
+          )}
+          
+          {item.englishFileUrl && item.hindiFileUrl && (
+            <View style={[styles.readDivider, { backgroundColor: border }]} />
+          )}
+
+          {item.hindiFileUrl && (
+            <TouchableOpacity 
+              style={styles.readBtn} 
+              onPress={() => openEbook(item.hindiFileUrl, item.title + " (Hindi)")}
+            >
+              <Icon name="book" size={16} color={accent} />
+              <Text style={[styles.readBtnText, { color: accent }]}>Read Hindi</Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
         {/* Admin Actions */}
         {isAdmin && (
@@ -214,7 +259,7 @@ export default function EbookScreen({ onOpenPdf }) {
             </TouchableOpacity>
           </View>
         )}
-      </TouchableOpacity>
+      </View>
     );
   };
 
@@ -296,14 +341,25 @@ export default function EbookScreen({ onOpenPdf }) {
 
               {!editingEbook && (
                 <>
-                  <Text style={[styles.label, { color: txtM }]}>PDF File</Text>
+                  <Text style={[styles.label, { color: txtM }]}>English PDF File</Text>
                   <TouchableOpacity 
-                    style={[styles.filePicker, { backgroundColor: bg, borderColor: selectedFile ? accent : border, borderStyle: selectedFile ? 'solid' : 'dashed' }]}
-                    onPress={handlePickFile}
+                    style={[styles.filePicker, { backgroundColor: bg, borderColor: selectedEnglishFile ? accent : border, borderStyle: selectedEnglishFile ? 'solid' : 'dashed' }]}
+                    onPress={handlePickEnglishFile}
                   >
-                    <Icon name={selectedFile ? "check" : "upload"} size={24} color={selectedFile ? "#22C55E" : accent} />
-                    <Text style={[styles.filePickerText, { color: selectedFile ? txt1 : txtM }]}>
-                      {selectedFile ? selectedFile.name : 'Select PDF Document'}
+                    <Icon name={selectedEnglishFile ? "check" : "upload"} size={24} color={selectedEnglishFile ? "#22C55E" : accent} />
+                    <Text style={[styles.filePickerText, { color: selectedEnglishFile ? txt1 : txtM }]}>
+                      {selectedEnglishFile ? selectedEnglishFile.name : 'Select English PDF Document'}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <Text style={[styles.label, { color: txtM }]}>Hindi PDF File</Text>
+                  <TouchableOpacity 
+                    style={[styles.filePicker, { backgroundColor: bg, borderColor: selectedHindiFile ? accent : border, borderStyle: selectedHindiFile ? 'solid' : 'dashed' }]}
+                    onPress={handlePickHindiFile}
+                  >
+                    <Icon name={selectedHindiFile ? "check" : "upload"} size={24} color={selectedHindiFile ? "#22C55E" : accent} />
+                    <Text style={[styles.filePickerText, { color: selectedHindiFile ? txt1 : txtM }]}>
+                      {selectedHindiFile ? selectedHindiFile.name : 'Select Hindi PDF Document'}
                     </Text>
                   </TouchableOpacity>
 
@@ -413,6 +469,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  // ── Read Actions ─────────────────────────────
+  readBar: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    paddingVertical: 12,
+  },
+  readBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  readBtnText: { fontFamily: FONTS.displayMedium, fontSize: 14 },
+  readDivider: { width: 1, height: '60%', alignSelf: 'center' },
+
   // ── Admin Actions ─────────────────────────────
   adminBar: {
     flexDirection: 'row',

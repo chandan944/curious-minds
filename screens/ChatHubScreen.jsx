@@ -81,12 +81,17 @@ export default function ChatHubScreen({ onBack, onOpenChat }) {
         {/* Name + Title */}
         <View style={styles.rowContent}>
           <Text style={[styles.name, { color: txt1 }]} numberOfLines={1}>{item.name}</Text>
-          <Text style={[styles.subtitle, { color: txtM }]} numberOfLines={1}>
+          <Text style={[styles.subtitle, { color: txtM, fontWeight: item.unreadCount > 0 ? '700' : '400' }]} numberOfLines={1}>
             {item.title} 
           </Text>
         </View>
 
-        {/* Arrow */}
+        {/* Unread Badge */}
+        {item.unreadCount > 0 && (
+          <View style={[styles.unreadBadge, { backgroundColor: accent }]}>
+            <Text style={styles.unreadBadgeText}>{item.unreadCount > 9 ? '9+' : item.unreadCount}</Text>
+          </View>
+        )}
         
       </TouchableOpacity>
     );
@@ -291,4 +296,13 @@ const styles = StyleSheet.create({
   },
   emptyTitle: { fontFamily: FONTS.displayMedium, fontSize: 18, marginBottom: 8 },
   emptySub: { fontFamily: FONTS.body, fontSize: 14, textAlign: 'center', lineHeight: 22 },
+
+  unreadBadge: {
+    minWidth: 22, height: 22, borderRadius: 11,
+    alignItems: 'center', justifyContent: 'center',
+    paddingHorizontal: 6, marginLeft: 8,
+  },
+  unreadBadgeText: {
+    fontFamily: FONTS.displayMedium, fontSize: 11, color: '#FFFFFF'
+  },
 });
