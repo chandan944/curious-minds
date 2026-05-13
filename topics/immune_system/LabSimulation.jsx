@@ -1,5 +1,5 @@
-﻿/**
- * Immune System Lab â€” interactive simulation
+/**
+ * Immune System Lab — interactive simulation
  * NO react-native-reanimated (incompatible with Old Architecture Expo Go)
  * Uses only: RN Animated API, setInterval, useState, useRef
  */
@@ -19,11 +19,11 @@ const CX = width / 2;
 const CY = VIEWPORT_H / 2;
 
 const DISCOVERIES = [
-  { id: 'i1', cond: s => s.threat > 80 && s.response < 38, title: 'Immune Overwhelm', entry: 'When pathogen replication outpaces immune cell production, a cytokine storm develops â€” the immune system attacks host tissue, causing organ damage worse than the infection itself.', rarity: 'Common' },
-  { id: 'i2', cond: s => s.antibody > 82 && s.threat < 18, title: 'Humoral Immunity', entry: 'High antibody levels with low pathogen presence equals immunological memory. The next exposure is neutralised before symptoms appear â€” the scientific basis of vaccination.', rarity: 'Uncommon' },
-  { id: 'i3', cond: s => s.inflam > 82, title: 'Chronic Inflammation', entry: 'Sustained inflammation causes collateral tissue damage â€” the underlying mechanism of autoimmune diseases like rheumatoid arthritis, lupus, and multiple sclerosis.', rarity: 'Common' },
-  { id: 'i4', cond: s => s.response > 80 && s.antibody > 80 && s.threat > 60, title: 'Peak Immune Response', entry: 'T-cells, B-cells, and antibodies simultaneously activated in a coordinated response. Plasma cells produce 2,000 antibodies per second â€” maximum immune capacity.', rarity: 'Rare âœ¨' },
-  { id: 'i5', cond: s => s.threat < 10 && s.antibody > 52, title: 'Clonal Selection', entry: 'In the absence of pathogens, B-cells with matching antibodies are selected and proliferate â€” the fundamental principle behind why vaccines create long-term immunity.', rarity: 'Rare âœ¨' },
+  { id: 'i1', cond: s => s.threat > 80 && s.response < 38, title: 'Immune Overwhelm', entry: 'When pathogen replication outpaces immune cell production, a cytokine storm develops — the immune system attacks host tissue, causing organ damage worse than the infection itself.', rarity: 'Common' },
+  { id: 'i2', cond: s => s.antibody > 82 && s.threat < 18, title: 'Humoral Immunity', entry: 'High antibody levels with low pathogen presence equals immunological memory. The next exposure is neutralised before symptoms appear — the scientific basis of vaccination.', rarity: 'Uncommon' },
+  { id: 'i3', cond: s => s.inflam > 82, title: 'Chronic Inflammation', entry: 'Sustained inflammation causes collateral tissue damage — the underlying mechanism of autoimmune diseases like rheumatoid arthritis, lupus, and multiple sclerosis.', rarity: 'Common' },
+  { id: 'i4', cond: s => s.response > 80 && s.antibody > 80 && s.threat > 60, title: 'Peak Immune Response', entry: 'T-cells, B-cells, and antibodies simultaneously activated in a coordinated response. Plasma cells produce 2,000 antibodies per second — maximum immune capacity.', rarity: 'Rare ✨' },
+  { id: 'i5', cond: s => s.threat < 10 && s.antibody > 52, title: 'Clonal Selection', entry: 'In the absence of pathogens, B-cells with matching antibodies are selected and proliferate — the fundamental principle behind why vaccines create long-term immunity.', rarity: 'Rare ✨' },
 ];
 
 export default function ImmuneSystemLab({ scientistMode = false, accentColor = '#00D4FF', onLabBreaker }) {
@@ -34,7 +34,7 @@ export default function ImmuneSystemLab({ scientistMode = false, accentColor = '
   const [frame,    setFrame]    = useState(0);
   const [danger,   setDanger]   = useState(false);
   const [logs,     setLogs]     = useState([]);
-  const [hint,     setHint]     = useState('Increase pathogen load â€” then deploy T-cells and antibodies to fight back! Watch the lymph node pulse.');
+  const [hint,     setHint]     = useState('Increase pathogen load — then deploy T-cells and antibodies to fight back! Watch the lymph node pulse.');
   const [logsOpen, setLogsOpen] = useState(false);
   const [discMode, setDiscMode] = useState(false);
 
@@ -71,13 +71,13 @@ export default function ImmuneSystemLab({ scientistMode = false, accentColor = '
         Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
       ]));
       shakeLoop.current.start();
-      setHint('ðŸš¨ CYTOKINE STORM â€” Immune system overwhelmed! Raise T-cell response immediately!');
+      setHint('🚨 CYTOKINE STORM — Immune system overwhelmed! Raise T-cell response immediately!');
     } else {
       dangerLoop.current?.stop();
       shakeLoop.current?.stop();
       dangerAnim.setValue(0);
       shakeAnim.setValue(0);
-      if (!overwhelmed && threat > 60 && response < 50) setHint('âš ï¸ Pathogen load high â€” boost immune response!');
+      if (!overwhelmed && threat > 60 && response < 50) setHint('⚠️ Pathogen load high — boost immune response!');
     }
   }, [threat, response]);
 
@@ -90,7 +90,7 @@ export default function ImmuneSystemLab({ scientistMode = false, accentColor = '
           discLocks.current[d.id] = true;
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           setLogs(p => [d, ...p]);
-          setHint(`ðŸ”¬ Discovery: ${d.title}`);
+          setHint(`🔬 Discovery: ${d.title}`);
         }
       });
     }, 1200);
@@ -189,7 +189,7 @@ export default function ImmuneSystemLab({ scientistMode = false, accentColor = '
 
           {discMode && (
             <G>
-              <SvgText x={CX} y={25} textAnchor="middle" fill="#AAA" fontSize={9}>ORANGE=Antibodies Â· CYAN=T-cells Â· ORANGE/RED=Pathogens</SvgText>
+              <SvgText x={CX} y={25} textAnchor="middle" fill="#AAA" fontSize={9}>ORANGE=Antibodies · CYAN=T-cells · ORANGE/RED=Pathogens</SvgText>
             </G>
           )}
         </Svg>
@@ -209,12 +209,12 @@ export default function ImmuneSystemLab({ scientistMode = false, accentColor = '
 
       <View style={styles.panel}>
         <View style={styles.panelRow}>
-          <SliderControl label="ðŸ¦  Pathogen Load" value={threat} onChange={v => { setThreat(v); soundTap(); }} color={threat > 80 ? '#FF3131' : '#FF6600'} displayVal={`${threat}%`} />
-          <SliderControl label="ðŸ›¡ï¸ T-Cell Response" value={response} onChange={v => { setResponse(v); soundTap(); }} color="#00D4FF" displayVal={`${response}%`} />
+          <SliderControl label="🦠 Pathogen Load" value={threat} onChange={v => { setThreat(v); soundTap(); }} color={threat > 80 ? '#FF3131' : '#FF6600'} displayVal={`${threat}%`} />
+          <SliderControl label="🛡️ T-Cell Response" value={response} onChange={v => { setResponse(v); soundTap(); }} color="#00D4FF" displayVal={`${response}%`} />
         </View>
         <View style={styles.panelRow}>
-          <SliderControl label="ðŸ’‰ Antibodies" value={antibody} onChange={v => { setAntibody(v); soundTap(); }} color="#FF9500" displayVal={`${antibody}%`} />
-          <SliderControl label="ðŸ”¥ Inflammation" value={inflam} onChange={v => { setInflam(v); soundTap(); }} color={inflam > 80 ? '#FF3131' : '#FF4500'} displayVal={`${inflam}%`} />
+          <SliderControl label="💉 Antibodies" value={antibody} onChange={v => { setAntibody(v); soundTap(); }} color="#FF9500" displayVal={`${antibody}%`} />
+          <SliderControl label="🔥 Inflammation" value={inflam} onChange={v => { setInflam(v); soundTap(); }} color={inflam > 80 ? '#FF3131' : '#FF4500'} displayVal={`${inflam}%`} />
         </View>
       </View>
 
@@ -235,7 +235,7 @@ export default function ImmuneSystemLab({ scientistMode = false, accentColor = '
         <View style={styles.modalBg}>
           <View style={[styles.modalContent, { backgroundColor: '#091220' }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: '#00D4FF' }]}>Research Logs ðŸ““</Text>
+              <Text style={[styles.modalTitle, { color: '#00D4FF' }]}>Research Logs 📓</Text>
               <TouchableOpacity onPress={() => { setLogsOpen(false); soundTap(); }}>
                 <Icon name="close" size={22} color="#D0EEFF" />
               </TouchableOpacity>

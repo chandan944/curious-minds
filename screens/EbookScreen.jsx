@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, 
   Linking, Modal, KeyboardAvoidingView, Platform, ScrollView, Image, Dimensions,
-  InteractionManager
+  InteractionManager, TextInput
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import api, { UPLOAD_TIMEOUT } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useProgress } from '../context/ProgressContext';
 import Icon from '../components/ui/Icons';
 import { SPACING, RADIUS, FONTS } from '../constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,6 +18,7 @@ const { width } = Dimensions.get('window');
 export default function EbookScreen({ onOpenPdf }) {
   const { user } = useAuth();
   const { theme, isDark } = useTheme();
+  const { isCompleted, toggleCompletion, markAsCompleted } = useProgress();
   const [ebooks, setEbooks] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -26,6 +28,7 @@ export default function EbookScreen({ onOpenPdf }) {
   const [selectedEnglishFile, setSelectedEnglishFile] = useState(null);
   const [selectedHindiFile, setSelectedHindiFile] = useState(null);
   const [selectedCoverImage, setSelectedCoverImage] = useState(null);
+  const [title, setTitle] = useState('');
   const [processing, setProcessing] = useState(false);
 
   const isAdmin = user?.role === 'ADMIN' || user?.email === 'chandanprajapati6307@gmail.com';
@@ -98,7 +101,7 @@ export default function EbookScreen({ onOpenPdf }) {
     setProcessing(true);
     try {
       if (editingEbook) {
-        await api.put(`/api/ebooks/${editingEbook.id}`, {});
+        await api.put(`/api/ebooks/${editingEbook.id}`, { title });
         Alert.alert('Success', 'Ebook updated successfully');
       } else {
         if (!selectedEnglishFile && !selectedHindiFile) {
@@ -106,6 +109,8 @@ export default function EbookScreen({ onOpenPdf }) {
           return Alert.alert('Error', 'Please select at least one PDF file (English or Hindi)');
         }
         const formData = new FormData();
+        if (title.trim() !== '') formData.append('title', title.trim());
+        
         if (selectedEnglishFile) {
           formData.append('englishPdf', {
             uri: selectedEnglishFile.uri,
@@ -166,6 +171,7 @@ export default function EbookScreen({ onOpenPdf }) {
 
   const openEditModal = (ebook) => {
     setEditingEbook(ebook);
+    setTitle(ebook.title || '');
     setSelectedEnglishFile(null);
     setSelectedHindiFile(null);
     setSelectedCoverImage(null);
@@ -175,14 +181,16 @@ export default function EbookScreen({ onOpenPdf }) {
   const closeModal = () => {
     setModalVisible(false);
     setEditingEbook(null);
+    setTitle('');
     setSelectedEnglishFile(null);
     setSelectedHindiFile(null);
     setSelectedCoverImage(null);
   };
 
-  const openEbook = (url, ebookTitle) => {
+  const openEbook = (url, ebookTitle, id) => {
+    markAsCompleted(id);
     if (onOpenPdf) {
-      onOpenPdf(url, ebookTitle);
+      onOpenPdf(url, ebookTitle, id);
     } else {
       Linking.openURL(url).catch(() => Alert.alert('Error', 'Could not open this eBook'));
     }
@@ -192,6 +200,8 @@ export default function EbookScreen({ onOpenPdf }) {
   const renderEbook = ({ item, index }) => {
     const accentColors = [accent, '#FF9F1C', '#4ECDC4', '#E879F9', '#22C55E'];
     const cardAccent = accentColors[index % accentColors.length];
+    const ebookId = `ebook_${item.id}`;
+    const isDone = isCompleted(ebookId);
 
     return (
       <View style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
@@ -211,32 +221,36 @@ export default function EbookScreen({ onOpenPdf }) {
           </LinearGradient>
         )}
 
+        {isDone && (
+          <View style={styles.doneBadgeLarge}>
+            <Icon name="check" size={16} color="#FFF" />
+            <Text style={styles.doneBadgeText}>COMPLETED</Text>
+          </View>
+        )}
+
         {/* Read Actions */}
-        <View style={[styles.readBar, { borderTopColor: border }]}>
+        <View style={styles.readBar}>
           {item.englishFileUrl && (
             <TouchableOpacity 
-              style={styles.readBtn} 
-              onPress={() => openEbook(item.englishFileUrl, item.title + " (English)")}
+              style={[styles.readBtn, { backgroundColor: cardAccent + '12', borderColor: cardAccent + '40' }]} 
+              onPress={() => openEbook(item.englishFileUrl, item.title + " (English)", ebookId)}
             >
-              <Icon name="book" size={16} color={accent} />
-              <Text style={[styles.readBtnText, { color: accent }]}>Read English</Text>
+              <Icon name="book" size={14} color={cardAccent} />
+              <Text style={[styles.readBtnText, { color: cardAccent }]}>English</Text>
             </TouchableOpacity>
-          )}
-          
-          {item.englishFileUrl && item.hindiFileUrl && (
-            <View style={[styles.readDivider, { backgroundColor: border }]} />
           )}
 
           {item.hindiFileUrl && (
             <TouchableOpacity 
-              style={styles.readBtn} 
-              onPress={() => openEbook(item.hindiFileUrl, item.title + " (Hindi)")}
+              style={[styles.readBtn, { backgroundColor: cardAccent + '12', borderColor: cardAccent + '40' }]} 
+              onPress={() => openEbook(item.hindiFileUrl, item.title + " (Hindi)", ebookId)}
             >
-              <Icon name="book" size={16} color={accent} />
-              <Text style={[styles.readBtnText, { color: accent }]}>Read Hindi</Text>
+              <Icon name="book" size={14} color={cardAccent} />
+              <Text style={[styles.readBtnText, { color: cardAccent }]}>Hindi</Text>
             </TouchableOpacity>
           )}
         </View>
+
 
         {/* Admin Actions */}
         {isAdmin && (
@@ -339,6 +353,15 @@ export default function EbookScreen({ onOpenPdf }) {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
+              
+              <Text style={[styles.label, { color: txtM }]}>eBook Title</Text>
+              <TextInput
+                style={[styles.input, { color: txt1, borderColor: border, backgroundColor: bg }]}
+                value={title}
+                onChangeText={setTitle}
+                placeholder="E.g., The Universe Explained"
+                placeholderTextColor={txtM}
+              />
 
               {!editingEbook && (
                 <>
@@ -457,6 +480,28 @@ const styles = StyleSheet.create({
     height: 380,
     resizeMode: 'cover',
   },
+  doneBadgeLarge: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    backgroundColor: '#22C55E',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: RADIUS.full,
+    gap: 4,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  doneBadgeText: {
+    color: '#FFF',
+    fontFamily: FONTS.displayBold,
+    fontSize: 12,
+  },
   coverPlaceholder: {
     width: '100%',
     height: 140,
@@ -473,8 +518,9 @@ const styles = StyleSheet.create({
   // ── Read Actions ─────────────────────────────
   readBar: {
     flexDirection: 'row',
-    borderTopWidth: 1,
-    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 12,
   },
   readBtn: {
     flex: 1,
@@ -482,9 +528,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
+    paddingVertical: 12,
+    borderRadius: RADIUS.full,
+    borderWidth: 1.5,
   },
-  readBtnText: { fontFamily: FONTS.displayMedium, fontSize: 14 },
-  readDivider: { width: 1, height: '60%', alignSelf: 'center' },
+  readBtnText: { fontFamily: FONTS.displayBold, fontSize: 13, letterSpacing: 0.5 },
+
+  // ── Complete Action ─────────────────────────────
+  completeBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderTopWidth: 1,
+    paddingVertical: 12,
+  },
+  completeBtnText: { fontFamily: FONTS.displayMedium, fontSize: 14 },
 
   // ── Admin Actions ─────────────────────────────
   adminBar: {
@@ -568,5 +627,16 @@ const styles = StyleSheet.create({
   coverPreviewText: {
     fontFamily: FONTS.bodyMedium,
     fontSize: 13,
+  },
+  
+  // Form Inputs
+  label: { fontFamily: FONTS.displayMedium, fontSize: 14, marginBottom: 8, marginTop: 16 },
+  input: {
+    borderWidth: 1,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontFamily: FONTS.bodyMedium,
+    fontSize: 15,
   },
 });

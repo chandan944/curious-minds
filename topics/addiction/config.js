@@ -205,10 +205,10 @@ export default {
       id: "q1",
       question: "What is the primary psychological function of Dopamine?",
       options: [
-        "To make us feel relaxed and sleepy",
-        "To provide a feeling of deep satisfaction after a meal",
-        "To drive craving, motivation, and the pursuit of a reward",
-        "To numb physical pain"
+        "Relaxation and sleep",
+        "Post-meal satisfaction",
+        "Drives craving, motivation, reward pursuit",
+        "Numbing physical pain"
       ],
       answer: 2,
       explanation: "Dopamine is the molecule of 'more'. It creates craving and anticipation, driving you to seek out the reward."
@@ -217,10 +217,10 @@ export default {
       id: "q2",
       question: "What does the brain do when exposed to unnatural, massive spikes of dopamine over time?",
       options: [
-        "It builds new receptors to handle the extra dopamine",
-        "It removes (down-regulates) dopamine receptors to protect itself",
-        "It permanently shuts down dopamine production",
-        "It converts the dopamine into serotonin"
+        "Builds new dopamine receptors",
+        "Removes dopamine receptors for protection",
+        "Shuts down dopamine production",
+        "Converts dopamine to serotonin"
       ],
       answer: 1,
       explanation: "To maintain balance (homeostasis), the brain protects itself from overload by deleting receptors. This is called Down-Regulation or Tolerance."
@@ -241,10 +241,10 @@ export default {
       id: "q4",
       question: "Why do healthy activities (like reading) feel boring when you are addicted to cheap dopamine (like TikTok)?",
       options: [
-        "Because reading is objectively boring",
-        "Because healthy activities produce zero dopamine",
-        "Because your depleted receptors require a massive stimulus to activate, and reading doesn't provide enough",
-        "Because blue light destroys the optic nerve"
+        "Reading is objectively boring",
+        "Healthy activities lack dopamine",
+        "Depleted receptors need massive stimulus",
+        "Blue light harms optic nerve"
       ],
       answer: 2,
       explanation: "Your receptors are down-regulated. Normal, healthy activities produce a normal amount of dopamine, but you don't have enough receptors left to 'catch' it and feel the joy."
@@ -253,10 +253,10 @@ export default {
       id: "q5",
       question: "How does a 'Dopamine Detox' help cure addiction?",
       options: [
-        "It completely removes dopamine from your brain forever",
-        "It punishes the brain so you fear the addiction",
-        "By removing massive stimuli, it forces the brain to regenerate dopamine receptors, restoring normal sensitivity",
-        "It distracts you until you forget the habit"
+        "Removes all brain dopamine",
+        "Punishes the brain to create fear",
+        "Regenerates receptors by removing stimuli",
+        "Distracts until habit is forgotten"
       ],
       answer: 2,
       explanation: "By enduring the boredom of a detox, you give your brain the time and environment it needs to regrow receptors, allowing you to find joy in normal things again."
@@ -266,7 +266,7 @@ export default {
       question: "What makes slot machines and social media feeds so incredibly addictive?",
       options: [
         "Bright colors",
-        "Variable Reward Schedules (unpredictability)",
+        "Variable reward schedules",
         "Loud noises",
         "Social interaction"
       ],
@@ -277,10 +277,10 @@ export default {
       id: "q7",
       question: "What is 'Cross-Addiction'?",
       options: [
-        "Being addicted to multiple drugs at once",
-        "Quitting one addiction but immediately replacing it with another (e.g., quitting smoking but binge-eating)",
-        "Being angry at your addiction",
-        "When two people share an addiction"
+        "Addicted to multiple drugs",
+        "Replacing one addiction with another",
+        "Being angry at addiction",
+        "Two people sharing addiction"
       ],
       answer: 1,
       explanation: "Because your dopamine baseline is still crashed, your brain desperately seeks *any* available high to fill the void."
@@ -291,7 +291,7 @@ export default {
       options: [
         "Have fun",
         "Rebel against society",
-        "Avoid or numb underlying emotional pain/trauma",
+        "Avoid underlying emotional pain",
         "Gain popularity"
       ],
       answer: 2,
@@ -301,10 +301,10 @@ export default {
       id: "q9",
       question: "What does 'Neuroplasticity' mean in the context of addiction?",
       options: [
-        "The brain is permanently damaged and acts like plastic",
-        "The brain can physically re-wire and heal itself when you stop the addictive behavior",
-        "Addiction is caused by microplastics in the bloodstream",
-        "The brain becomes immune to drugs over time"
+        "Brain is permanently damaged",
+        "Brain can re-wire and heal",
+        "Addiction from microplastics",
+        "Brain becomes immune to drugs"
       ],
       answer: 1,
       explanation: "Neuroplasticity is the brain's ability to change its physical structure. Just as it wired itself to be addicted, it can rewire itself to heal."
@@ -314,9 +314,9 @@ export default {
       question: "Why does relying *only* on willpower usually fail when trying to quit a bad habit?",
       options: [
         "Willpower is a myth",
-        "Willpower is located in the logical brain, which gets overridden by the survival brain during a craving",
-        "People just don't want it enough",
-        "Willpower actually increases cravings"
+        "Logical brain overridden by survival brain",
+        "People lack sufficient desire",
+        "Willpower increases cravings"
       ],
       answer: 1,
       explanation: "Addiction hijacks the primitive survival centers of the brain. When cravings hit, the survival brain overrides the logical Prefrontal Cortex."
@@ -325,10 +325,10 @@ export default {
       id: "q11",
       question: "What is 'Environmental Design'?",
       options: [
-        "Painting your room a calming color",
+        "Painting rooms calming colors",
         "Recycling more often",
-        "Physically arranging your space to make bad habits hard (adding friction) and good habits easy",
-        "Listening to nature sounds while working"
+        "Arranging space for good/bad habits",
+        "Listening to nature sounds"
       ],
       answer: 2,
       explanation: "If you remove the cookies from your house, you add 'friction' to the habit. You don't need willpower if the temptation isn't there."
@@ -337,10 +337,10 @@ export default {
       id: "q12",
       question: "How does the human brain view 'Instant Gratification' vs 'Long-term Goals'?",
       options: [
-        "It values long-term goals equally",
-        "It evolved to prioritize immediate rewards (survival now) over distant future benefits",
-        "It hates instant gratification",
-        "It only cares about the future"
+        "Values long-term goals equally",
+        "Prioritizes immediate rewards over future",
+        "Hates instant gratification",
+        "Only cares about the future"
       ],
       answer: 1,
       explanation: "Because our ancestors needed to survive the day, our brains severely discount the value of future rewards. Addictions exploit this."
@@ -361,10 +361,10 @@ export default {
       id: "q14",
       question: "From a biological perspective, why are 'Likes' on social media so addictive?",
       options: [
-        "They trigger the release of Melatonin",
-        "They hack our primal need for tribal social validation and safety",
-        "They emit a specific frequency of light",
-        "They make us feel smarter"
+        "Trigger melatonin release",
+        "Hack primal need for social validation",
+        "Emit specific light frequency",
+        "Make us feel smarter"
       ],
       answer: 1,
       explanation: "In ancient times, being rejected by the tribe meant death. A 'Like' tells your brain you are accepted and safe."
@@ -373,9 +373,9 @@ export default {
       id: "q15",
       question: "What is an example of an 'Identity Shift' when quitting an addiction?",
       options: [
-        "Saying 'I am a smoker who is trying to quit'",
+        "Saying 'I am trying to quit'",
         "Changing your name",
-        "Saying 'I am not a smoker' instead of 'I can't have a cigarette right now'",
+        "Saying 'I am not a smoker'",
         "Getting a new haircut"
       ],
       answer: 2,
@@ -385,10 +385,10 @@ export default {
       id: "q16",
       question: "How should a 'Relapse' be viewed during recovery?",
       options: [
-        "As a complete failure that erases all progress",
-        "As a sign that you can never recover",
-        "As a data point and a stumble on the upward spiral of recovery",
-        "As a reason to give up"
+        "Complete failure, erases progress",
+        "Sign of no recovery",
+        "Data point, stumble on upward spiral",
+        "Reason to give up"
       ],
       answer: 2,
       explanation: "Relapse does not erase your progress. It simply shows that a trigger overwhelmed your coping mechanisms. The key is to learn and keep going without shame."
@@ -398,7 +398,7 @@ export default {
       question: "Anhedonia is a common symptom of severe addiction. What does it mean?",
       options: [
         "Extreme hyperactivity",
-        "The inability to feel joy or pleasure from normal activities",
+        "Inability to feel joy or pleasure",
         "A fear of heights",
         "Excessive sweating"
       ],
@@ -409,10 +409,10 @@ export default {
       id: "q18",
       question: "What role does the 'Cue' play in the Habit Loop?",
       options: [
-        "It is the reward you get at the end",
-        "It is the action you take",
-        "It is the trigger (time, place, emotion) that starts the automatic behavior",
-        "It is the guilt you feel afterward"
+        "The reward at the end",
+        "The action you take",
+        "The trigger for automatic behavior",
+        "The guilt felt afterward"
       ],
       answer: 2,
       explanation: "The Cue tells the brain to go into automatic mode. By identifying the Cue, you can consciously choose a new Routine."
@@ -421,10 +421,10 @@ export default {
       id: "q19",
       question: "Why do tech companies employ psychologists?",
       options: [
-        "To provide therapy for their employees",
-        "To design interfaces that intentionally exploit human dopamine and habit loops",
-        "To write better code",
-        "To improve hardware design"
+        "Provide employee therapy",
+        "Exploit dopamine/habit loops in design",
+        "Write better code",
+        "Improve hardware design"
       ],
       answer: 1,
       explanation: "Many apps are purposefully engineered using psychological principles (like variable rewards) to maximize user addiction and engagement."
@@ -433,9 +433,9 @@ export default {
       id: "q20",
       question: "If you want to break a bad habit of checking your phone in bed, what is the best 'Environmental Design' strategy?",
       options: [
-        "Tell yourself you will try harder tonight",
-        "Write 'Don't look at phone' on your hand",
-        "Charge your phone in the kitchen overnight",
+        "Try harder tonight",
+        "Write reminder on hand",
+        "Charge phone in kitchen overnight",
         "Buy a more expensive phone"
       ],
       answer: 2,

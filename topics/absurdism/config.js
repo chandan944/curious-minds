@@ -187,26 +187,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "In philosophy, what specifically is 'The Absurd'?", options: ['A comedy routine', 'The conflict between the human desire for meaning and the silent, meaningless universe', 'The belief in magic', 'An argument between two people'], answer: 1, explanation: "We scream 'Why?', but the universe responds with silence. That tension is the Absurd. 🎭" },
-    { id: 'q2', question: "Which philosopher is most famous for defining Absurdism?", options: ['Socrates', 'Albert Camus', 'Karl Marx', 'Aristotle'], answer: 1, explanation: "The French-Algerian author of 'The Myth of Sisyphus'. 🚬" },
-    { id: 'q3', question: "What is 'Philosophical Suicide' according to Camus?", options: ['Reading too many books', 'Ignoring the meaningless universe by leaping into religion or fake dogmas just to feel safe', 'Dying for a cause', 'Debating until you pass out'], answer: 1, explanation: "It is killing your reason to embrace a comforting lie. 🧠" },
-    { id: 'q4', question: "What should an 'Absurd Hero' do when facing the meaningless void?", options: ['Cry continuously', 'Accept the void without false hope, and rebel against it by living a fiercely passionate life', 'Invent a new religion', 'Commit physical suicide'], answer: 1, explanation: "Do not jump, and do not invent a safety net. Just enjoy the view. ✊" },
-    { id: 'q5', question: "What is the Absurdist concept of 'Rebellion'?", options: ['Protesting taxes', 'Joyfully living and experiencing life in spite of a universe that offers no ultimate purpose', 'Fighting the police', 'Breaking speed limits'], answer: 1, explanation: "Smiling through pointless existence is the ultimate middle finger to the cosmos. 🖕" },
-    { id: 'q6', question: "How does Absurdism view 'Freedom'?", options: ['Freedom from prison', 'Because there is no divine mission or karma, you are completely free from cosmic expectations and guilt', 'Freedom to fly', 'Freedom to buy things'], answer: 1, explanation: "You cannot 'fail' at life if there is no ultimate goal. 🕊️" },
-    { id: 'q7', question: "In Greek mythology, what was Sisyphus' punishment?", options: ['Standing in fire', 'Rolling a massive boulder up a mountain for eternity, only for it to roll back down every time he reached the top', 'Eating rocks', 'Being tied to a tree'], answer: 1, explanation: "It is the perfect metaphor for the pointless repetitions of human life (like chores and work). 🪨" },
-    { id: 'q8', question: "Why does Camus focus on Sisyphus' 'walk back down' the mountain?", options: ['He rests during the walk', 'It is the moment of consciousness. He realizes his labor is pointless, but by understanding it without false hope, he rises above his fate', 'Because the view is nice', 'Because he is tired'], answer: 1, explanation: "Consciousness of the tragedy is what elevates us above the tragedy. 🚶‍♂️" },
-    { id: 'q9', question: "What is the most famous concluding line of 'The Myth of Sisyphus'?", options: ['Sisyphus was tired', '\'One must imagine Sisyphus happy.\'', 'The gods were cruel', 'The rock was heavy'], answer: 1, explanation: "By choosing to find joy in the pointless struggle, Sisyphus defeats his punishment. 😁" },
-    { id: 'q10', question: "Which is the correct distinction between Nihilism and Absurdism?", options: ['They are the exact same', 'Nihilism surrenders to despair over meaninglessness. Absurdism accepts it and rebelliously enjoys life anyway', 'Absurdism requires a god', 'Nihilism is cheerful'], answer: 1, explanation: "Nihilism is the disease. Absurdism is the rebellious cure. ⚔️" },
-    { id: 'q11', question: "How does Absurdism differ from Sartre's Existentialism?", options: ['They use different languages', 'Existentialism says you can create a real meaning. Absurdism says even the meaning you create is fake, so just live for the experience itself', 'Absurdism is older', 'Existentialism is about aliens'], answer: 1, explanation: "Absurdists don't even try to build a permanent 'meaning' in the void. 🧬" },
-    { id: 'q12', question: "What role does 'Art' play in Absurdism?", options: ['It pays the bills', 'Creating art that will eventually be destroyed by time is the ultimate passionate, rebellious act of living in the present', 'Art is a waste of time', 'Art proves God exists'], answer: 1, explanation: "Create beautiful things, knowing full well they won't last. 🎭" },
-    { id: 'q13', question: "In Camus' novel *The Stranger*, why is Meursault condemned by society?", options: ['He stole a car', 'He refuses to fake emotions (like crying at his mother\'s funeral) to satisfy society\'s made-up rules of meaning', 'He speaks a different language', 'He is too smart'], answer: 1, explanation: "Society hates those who refuse to play along with the illusion of 'meaning'. 🧍" },
-    { id: 'q14', question: "According to Camus, what is the 'only really serious philosophical problem'?", options: ['Whether the Earth is round', 'Suicide: deciding whether life is actually worth living in a meaningless universe', 'Math equations', 'The existence of ghosts'], answer: 1, explanation: "Before you figure out 'how' to live, you must decide 'if' you should live. 🧠" },
-    { id: 'q15', question: "How does Absurdism view the 'quantity vs quality' of life experiences?", options: ['Quality is all that matters', 'Because there is no afterlife, we should strive for the maximum quantity of passionate earthly experiences (love, sun, food)', 'Both are bad', 'Experiences don\'t matter'], answer: 1, explanation: "Drink deeply from the well of life before it runs dry. 🍷" },
-    { id: 'q16', question: "If the universe doesn't care about us, how should we react (according to Absurdism)?", options: ['Cry endlessly', 'With defiant joy and passion, becoming the masters of our own temporary existence', 'By trying to contact aliens', 'By sleeping'], answer: 1, explanation: "Your joy is a rebellion against the indifferent cosmos. ✊" },
-    { id: 'q17', question: "Why is Sisyphus considered an 'absurd hero'?", options: ['He had superpowers', 'Because his punishment is entirely meaningless, yet he embraces his fate purely out of spite and passion for life', 'He defeated the gods in combat', 'He built a machine'], answer: 1, explanation: "He wins not by escaping the rock, but by learning to love the rock. 🪨" },
-    { id: 'q18', question: "What does the quote: 'In the midst of winter, I found there was, within me, an invincible summer' mean?", options: ['Camus liked the beach', 'Despite the cold despair of a meaningless universe, human consciousness has a relentless, unstoppable capacity for joy', 'Global warming is real', 'Winter is shorter than summer'], answer: 1, explanation: "Joy is not dependent on the universe making sense. ☀️" },
-    { id: 'q19', question: "Why did Camus reject 'Physical Suicide'?", options: ['It hurts', 'It does not solve The Absurd; it just cowardly eliminates one side of the equation (the human). The Absurd requires you to stay alive and face it', 'It is against the law', 'It is expensive'], answer: 1, explanation: "To rebel, you must stay on the battlefield. 🚪" },
-    { id: 'q20', question: "Ultimately, Absurdism is a philosophy of:", options: ['Severe depression', 'Profound optimism and defiant joy generated out of deep cosmic despair', 'Mathematical logic', 'Political government'], answer: 1, explanation: "When you drop the heavy burden of needing a 'meaning', you are light enough to truly live. 🎇" },
+    { id: 'q1', question: "In philosophy, what specifically is 'The Absurd'?", options: [
+        "A funny stage performance",
+        "Conflict of meaning and universe",
+        "Belief in supernatural forces",
+        "Disagreement between two people"
+      ], answer: 1, explanation: "We scream 'Why?', but the universe responds with silence. That tension is the Absurd. 🎭" },
+    { id: 'q2', question: "Which philosopher is most famous for defining Absurdism?", options: [
+        "Socrates",
+        "Albert Camus",
+        "Karl Marx",
+        "Aristotle"
+      ], answer: 1, explanation: "The French-Algerian author of 'The Myth of Sisyphus'. 🚬" },
+    { id: 'q3', question: "What is 'Philosophical Suicide' according to Camus?", options: [
+        "Reading too many books",
+        "Escaping reality through faith",
+        "Sacrificing life for causes",
+        "Exhaustion from intense debate"
+      ], answer: 1, explanation: "It is killing your reason to embrace a comforting lie. 🧠" },
+    { id: 'q4', question: "What should an 'Absurd Hero' do when facing the meaningless void?", options: [
+        "Weep in constant despair",
+        "Live passionately despite the void",
+        "Create a new religion",
+        "End their own life"
+      ], answer: 1, explanation: "Do not jump, and do not invent a safety net. Just enjoy the view. ✊" },
+    { id: 'q5', question: "What is the Absurdist concept of 'Rebellion'?", options: [
+        "Protesting against high taxes",
+        "Living joyfully without purpose",
+        "Fighting against law enforcement",
+        "Breaking local traffic laws"
+      ], answer: 1, explanation: "Smiling through pointless existence is the ultimate middle finger to the cosmos. 🖕" },
+    { id: 'q6', question: "How does Absurdism view 'Freedom'?", options: [
+        "Release from physical prison",
+        "Independence from cosmic expectations",
+        "Ability to fly anywhere",
+        "Right to purchase goods"
+      ], answer: 1, explanation: "You cannot 'fail' at life if there is no ultimate goal. 🕊️" },
+    { id: 'q7', question: "In Greek mythology, what was Sisyphus' punishment?", options: [
+        "Standing in eternal fire",
+        "Rolling a boulder forever",
+        "Eating stones for food",
+        "Being tied to trees"
+      ], answer: 1, explanation: "It is the perfect metaphor for the pointless repetitions of human life (like chores and work). 🪨" },
+    { id: 'q8', question: "Why does Camus focus on Sisyphus' 'walk back down' the mountain?", options: [
+        "He rests during descent",
+        "He gains conscious awareness",
+        "He enjoys the scenery",
+        "He feels physical exhaustion"
+      ], answer: 1, explanation: "Consciousness of the tragedy is what elevates us above the tragedy. 🚶‍♂️" },
+    { id: 'q9', question: "What is the most famous concluding line of 'The Myth of Sisyphus'?", options: [
+        "Sisyphus was very tired",
+        "Imagine Sisyphus is happy",
+        "The gods were cruel",
+        "The rock was heavy"
+      ], answer: 1, explanation: "By choosing to find joy in the pointless struggle, Sisyphus defeats his punishment. 😁" },
+    { id: 'q10', question: "Which is the correct distinction between Nihilism and Absurdism?", options: [
+        "They are identical concepts",
+        "Absurdism rebels against despair",
+        "Absurdism requires a deity",
+        "Nihilism is inherently cheerful"
+      ], answer: 1, explanation: "Nihilism is the disease. Absurdism is the rebellious cure. ⚔️" },
+    { id: 'q11', question: "How does Absurdism differ from Sartre's Existentialism?", options: [
+        "They use different languages",
+        "Absurdism rejects created meaning",
+        "Absurdism is much older",
+        "Existentialism involves alien life"
+      ], answer: 1, explanation: "Absurdists don't even try to build a permanent 'meaning' in the void. 🧬" },
+    { id: 'q12', question: "What role does 'Art' play in Absurdism?", options: [
+        "It pays monthly bills",
+        "Passionate act of rebellion",
+        "Art wastes valuable time",
+        "Art proves God exists"
+      ], answer: 1, explanation: "Create beautiful things, knowing full well they won't last. 🎭" },
+    { id: 'q13', question: "In Camus' novel *The Stranger*, why is Meursault condemned by society?", options: [
+        "He stole a car",
+        "He refuses fake emotions",
+        "He speaks another language",
+        "He is too intelligent"
+      ], answer: 1, explanation: "Society hates those who refuse to play along with the illusion of 'meaning'. 🧍" },
+    { id: 'q14', question: "According to Camus, what is the 'only really serious philosophical problem'?", options: [
+        "Whether Earth is round",
+        "Deciding if life is worthwhile",
+        "Solving complex math equations",
+        "The existence of ghosts"
+      ], answer: 1, explanation: "Before you figure out 'how' to live, you must decide 'if' you should live. 🧠" },
+    { id: 'q15', question: "How does Absurdism view the 'quantity vs quality' of life experiences?", options: [
+        "Quality is most important",
+        "Quantity of experiences matters",
+        "Both are equally bad",
+        "Experiences do not matter"
+      ], answer: 1, explanation: "Drink deeply from the well of life before it runs dry. 🍷" },
+    { id: 'q16', question: "If the universe doesn't care about us, how should we react (according to Absurdism)?", options: [
+        "Cry without any end",
+        "With defiant joy and passion",
+        "Try to contact aliens",
+        "Sleep through the day"
+      ], answer: 1, explanation: "Your joy is a rebellion against the indifferent cosmos. ✊" },
+    { id: 'q17', question: "Why is Sisyphus considered an 'absurd hero'?", options: [
+        "He possessed great superpowers",
+        "He embraces meaningless fate",
+        "He defeated the gods",
+        "He built a machine"
+      ], answer: 1, explanation: "He wins not by escaping the rock, but by learning to love the rock. 🪨" },
+    { id: 'q18', question: "What does the quote: 'In the midst of winter, I found there was, within me, an invincible summer' mean?", options: [
+        "Camus liked the beach",
+        "Consciousness has unstoppable joy",
+        "Global warming is real",
+        "Winter is very short"
+      ], answer: 1, explanation: "Joy is not dependent on the universe making sense. ☀️" },
+    { id: 'q19', question: "Why did Camus reject 'Physical Suicide'?", options: [
+        "It is physically painful",
+        "It fails to solve absurdity",
+        "It is against the law",
+        "It is too expensive"
+      ], answer: 1, explanation: "To rebel, you must stay on the battlefield. 🚪" },
+    { id: 'q20', question: "Ultimately, Absurdism is a philosophy of:", options: [
+        "Severe clinical depression",
+        "Optimism and defiant joy",
+        "Strict mathematical logic",
+        "Forms of political government"
+      ], answer: 1, explanation: "When you drop the heavy burden of needing a 'meaning', you are light enough to truly live. 🎇" },
   ],
 
   relatedTopics: ['nihilism', 'existentialism', 'atheism'],

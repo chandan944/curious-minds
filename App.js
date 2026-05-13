@@ -1,9 +1,10 @@
 // ─────────────────────────────────────────────
 //  App.js — Root with Auth-gated navigation
+//  Production-hardened with ErrorBoundary + global handlers
 // ─────────────────────────────────────────────
 import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, LogBox } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -16,15 +17,40 @@ import {
 } from '@expo-google-fonts/outfit';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS } from './constants/theme';
 import { ThemeProvider }    from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { ProgressProvider } from './context/ProgressContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import HomeScreen  from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import { initSounds } from './utils/sounds';
 import { getHasOnboarded, setHasOnboarded } from './utils/authStorage';
+
+// ── Production: Suppress non-critical yellow box warnings ──
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+  'ViewPropTypes will be removed',
+  'AsyncStorage has been extracted',
+  'Setting a timer for a long period',
+  'Require cycle:',
+]);
+
+// ── Global unhandled promise rejection handler ──
+// Prevents the app from crashing on unhandled async errors
+const originalHandler = global.ErrorUtils?.getGlobalHandler?.();
+if (global.ErrorUtils) {
+  global.ErrorUtils.setGlobalHandler((error, isFatal) => {
+    console.error('🚨 Global error caught:', error);
+    // Don't crash the app for non-fatal errors
+    if (!isFatal) return;
+    // For fatal errors, call the original handler which will show the red screen in dev
+    if (originalHandler) originalHandler(error, isFatal);
+  });
+}
 
 function MainAppContent({ isFontsReady }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -90,7 +116,7 @@ export default function App() {
   const [forceLoad, setForceLoad] = useState(false);
 
   useEffect(() => {
-    initSounds().catch(console.error);
+    initSounds().catch(() => {});
 
     // Fallback: If fonts take longer than 5 seconds, force the app to load anyway
     const timer = setTimeout(() => {
@@ -102,18 +128,24 @@ export default function App() {
   const isFontsReady = fontsLoaded || forceLoad;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <AuthProvider>
-          <LanguageProvider>
-            <ThemeProvider>
-              <StatusBar style="auto" />
-              <MainAppContent isFontsReady={isFontsReady} />
-            </ThemeProvider>
-          </LanguageProvider>
-        </AuthProvider>
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaProvider>
+            <AuthProvider>
+              <LanguageProvider>
+                <ProgressProvider>
+                  <ThemeProvider>
+                    <StatusBar style="auto" />
+                    <MainAppContent isFontsReady={isFontsReady} />
+                  </ThemeProvider>
+                </ProgressProvider>
+              </LanguageProvider>
+            </AuthProvider>
+          </SafeAreaProvider>
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </GestureHandlerRootView>
   );
 }
 

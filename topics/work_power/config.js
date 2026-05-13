@@ -41,26 +41,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "What is the unit of Work?", options: ['Watt', 'Newton', 'Joule', 'Pascal'], answer: 2, explanation: "Work and Energy are both measured in Joules (J)." },
-    { id: 'q2', question: "Power is defined as Work divided by:", options: ['Distance', 'Mass', 'Time', 'Acceleration'], answer: 2, explanation: "Power is the rate of doing work (P = W/t)." },
-    { id: 'q3', question: "If motion is zero, how much work is done?", options: ['Infinite', 'Constant', 'Zero', 'Depends on Force'], answer: 2, explanation: "Work = Force × Displacement. No displacement = No work." },
-    { id: 'q4', question: "Potential energy depends on height and:", options: ['Speed', 'Mass', 'Color', 'Time'], answer: 1, explanation: "PE = mgh. Higher mass or height means more stored energy." },
-    { id: 'q5', question: "Kinetic energy depends on mass and:", options: ['Height', 'Volume', 'Velocity', 'Charge'], answer: 2, explanation: "KE = ½mv². Moving faster means more energy." },
-    { id: 'q6', question: "What happens to KE if you double the velocity?", options: ['Doubles', 'Triples', 'Quadruples', 'Stays same'], answer: 2, explanation: "Since v is squared, (2v)² = 4v². Energy quadruples." },
-    { id: 'q7', question: "A ramp is which type of simple machine?", options: ['Lever', 'Pulley', 'Incline Plane', 'Screw'], answer: 2, explanation: "A ramp is a classic incline plane." },
-    { id: 'q8', question: "Energy transformation in a falling apple:", options: ['KE to PE', 'PE to KE', 'Heat to Light', 'Mass to Sound'], answer: 1, explanation: "Potential energy at the top turns into Kinetic energy as it falls." },
-    { id: 'q9', question: "One Horsepower is approximately how many Watts?", options: ['100 W', '500 W', '746 W', '1000 W'], answer: 2, explanation: "1 hp = 746 Watts." },
-    { id: 'q10', question: "Why is 100% efficiency impossible?", options: ['Lack of gravity', 'Air pressure', 'Friction/Heat loss', 'Quantum effects'], answer: 2, explanation: "Friction always converts some useful energy into waste heat." },
-    { id: 'q11', question: "What acts as a conservative force?", options: ['Friction', 'Air Resistance', 'Gravity', 'Tension'], answer: 2, explanation: "Gravity's work only depends on displacement, not path." },
-    { id: 'q12', question: "Calculate Work: 10N force moves a box 5m.", options: ['2 J', '5 J', '50 J', '100 J'], answer: 2, explanation: "W = 10N × 5m = 50 Joules." },
-    { id: 'q13', question: "Machine A does 100J in 10s. Machine B does 100J in 5s. Which is more powerful?", options: ['Machine A', 'Machine B', 'Equal', 'Neither'], answer: 1, explanation: "Machine B does the same work in less time." },
-    { id: 'q14', question: "Normal Force acts in which direction?", options: ['Downwards', 'Towards motion', 'Perpendicular to surface', 'Opposite to friction'], answer: 2, explanation: "The surface pushes back perpendicularly." },
-    { id: 'q15', question: "What energy is stored in a compressed spring?", options: ['Kinetic', 'Chemical', 'Elastic Potential', 'Thermal'], answer: 2, explanation: "Elastic potential energy is stored in deformation." },
-    { id: 'q16', question: "If you carry a box horizontally at constant speed, work done by YOU is:", options: ['High', 'Negative', 'Zero', 'Infinite'], answer: 2, explanation: "Your force is upward, but motion is horizontal (90°). Cos(90) = 0." },
-    { id: 'q17', question: "Total mechanical energy is the sum of:", options: ['Power and Work', 'KE and PE', 'Mass and Velocity', 'Heat and Light'], answer: 1, explanation: "Total ME = KE + PE." },
-    { id: 'q18', question: "A watt is equal to one joule per:", options: ['Meter', 'Newton', 'Second', 'Kilogram'], answer: 2, explanation: "1 W = 1 J/s." },
-    { id: 'q19', question: "Mechanical Advantage helps us by:", options: ['Creating energy', 'Reducing total work', 'Reducing required force', 'Stopping friction'], answer: 2, explanation: "It makes work 'easier' by using less force over more distance." },
-    { id: 'q20', question: "What remains constant in the Conservation of Energy?", options: ['Kinetic Energy', 'Potential Energy', 'Total Energy', 'Heat'], answer: 2, explanation: "The total energy stays the same, it just changes forms." }
+    { id: 'q1', question: "What is the unit of Work?", options: [
+        "Watt",
+        "Newton",
+        "Joule",
+        "Pascal"
+      ], answer: 2, explanation: "Work and Energy are both measured in Joules (J)." },
+    { id: 'q2', question: "Power is defined as Work divided by:", options: [
+        "Distance",
+        "Mass",
+        "Time",
+        "Acceleration"
+      ], answer: 2, explanation: "Power is the rate of doing work (P = W/t)." },
+    { id: 'q3', question: "If motion is zero, how much work is done?", options: [
+        "Infinite",
+        "Constant",
+        "Zero",
+        "Depends on Force"
+      ], answer: 2, explanation: "Work = Force × Displacement. No displacement = No work." },
+    { id: 'q4', question: "Potential energy depends on height and:", options: [
+        "Speed",
+        "Mass",
+        "Color",
+        "Time"
+      ], answer: 1, explanation: "PE = mgh. Higher mass or height means more stored energy." },
+    { id: 'q5', question: "Kinetic energy depends on mass and:", options: [
+        "Height",
+        "Volume",
+        "Velocity",
+        "Charge"
+      ], answer: 2, explanation: "KE = ½mv². Moving faster means more energy." },
+    { id: 'q6', question: "What happens to KE if you double the velocity?", options: [
+        "Doubles",
+        "Triples",
+        "Quadruples",
+        "Stays same"
+      ], answer: 2, explanation: "Since v is squared, (2v)² = 4v². Energy quadruples." },
+    { id: 'q7', question: "A ramp is which type of simple machine?", options: [
+        "Lever",
+        "Pulley",
+        "Incline Plane",
+        "Screw"
+      ], answer: 2, explanation: "A ramp is a classic incline plane." },
+    { id: 'q8', question: "Energy transformation in a falling apple:", options: [
+        "KE to PE",
+        "PE to KE",
+        "Heat to Light",
+        "Mass to Sound"
+      ], answer: 1, explanation: "Potential energy at the top turns into Kinetic energy as it falls." },
+    { id: 'q9', question: "One Horsepower is approximately how many Watts?", options: [
+        "100 W",
+        "500 W",
+        "746 W",
+        "1000 W"
+      ], answer: 2, explanation: "1 hp = 746 Watts." },
+    { id: 'q10', question: "Why is 100% efficiency impossible?", options: [
+        "Lack of gravity",
+        "Air pressure",
+        "Friction/Heat loss",
+        "Quantum effects"
+      ], answer: 2, explanation: "Friction always converts some useful energy into waste heat." },
+    { id: 'q11', question: "What acts as a conservative force?", options: [
+        "Friction",
+        "Air Resistance",
+        "Gravity",
+        "Tension"
+      ], answer: 2, explanation: "Gravity's work only depends on displacement, not path." },
+    { id: 'q12', question: "Calculate Work: 10N force moves a box 5m.", options: [
+        "2 J",
+        "5 J",
+        "50 J",
+        "100 J"
+      ], answer: 2, explanation: "W = 10N × 5m = 50 Joules." },
+    { id: 'q13', question: "Machine A does 100J in 10s. Machine B does 100J in 5s. Which is more powerful?", options: [
+        "Machine A",
+        "Machine B",
+        "Equal",
+        "Neither"
+      ], answer: 1, explanation: "Machine B does the same work in less time." },
+    { id: 'q14', question: "Normal Force acts in which direction?", options: [
+        "Downwards",
+        "Towards motion",
+        "Perpendicular to surface",
+        "Opposite to friction"
+      ], answer: 2, explanation: "The surface pushes back perpendicularly." },
+    { id: 'q15', question: "What energy is stored in a compressed spring?", options: [
+        "Kinetic",
+        "Chemical",
+        "Elastic Potential",
+        "Thermal"
+      ], answer: 2, explanation: "Elastic potential energy is stored in deformation." },
+    { id: 'q16', question: "If you carry a box horizontally at constant speed, work done by YOU is:", options: [
+        "High",
+        "Negative",
+        "Zero",
+        "Infinite"
+      ], answer: 2, explanation: "Your force is upward, but motion is horizontal (90°). Cos(90) = 0." },
+    { id: 'q17', question: "Total mechanical energy is the sum of:", options: [
+        "Power and Work",
+        "KE and PE",
+        "Mass and Velocity",
+        "Heat and Light"
+      ], answer: 1, explanation: "Total ME = KE + PE." },
+    { id: 'q18', question: "A watt is equal to one joule per:", options: [
+        "Meter",
+        "Newton",
+        "Second",
+        "Kilogram"
+      ], answer: 2, explanation: "1 W = 1 J/s." },
+    { id: 'q19', question: "Mechanical Advantage helps us by:", options: [
+        "Creating energy",
+        "Reducing total work",
+        "Reducing required force",
+        "Stopping friction"
+      ], answer: 2, explanation: "It makes work 'easier' by using less force over more distance." },
+    { id: 'q20', question: "What remains constant in the Conservation of Energy?", options: [
+        "Kinetic Energy",
+        "Potential Energy",
+        "Total Energy",
+        "Heat"
+      ], answer: 2, explanation: "The total energy stays the same, it just changes forms." }
   ],
 
   relatedTopics: ['forces_motion', 'energy_types'],

@@ -187,26 +187,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "In Christianity, the Catholic concept of Purgatory is:", options: ['Another name for Hell', 'A temporary cleansing state for souls not yet ready for Heaven', 'A type of prayer', 'Accepted by all denominations'], answer: 1, explanation: "Purgatory is Catholic-only. Protestants reject it, arguing salvation is through faith alone. ✝️" },
-    { id: 'q2', question: "Islam's afterlife judgment involves:", options: ['Only faith', 'A weighing of deeds on divine scales (Mizan), crossing a bridge over Hell (Sirat)', 'Random selection', 'No judgment'], answer: 1, explanation: "Every deed is measured — but the Quran emphasizes God's mercy always exceeds His wrath. ⚖️" },
-    { id: 'q3', question: "Hindu reincarnation (Samsara) is determined by:", options: ['Random chance', 'Karma — the accumulated consequences of all your actions across lifetimes', 'God\'s mood', 'Your wishes'], answer: 1, explanation: "Karma is an impersonal cosmic law, not divine punishment. Actions have consequences. 🕉️" },
-    { id: 'q4', question: "Buddhism's concept of rebirth DIFFERS from Hindu reincarnation because:", options: ['Buddhism doesn\'t believe in rebirth', 'Buddhism denies a permanent soul (Anatta) — rebirth is a stream of consciousness, not a soul transferring', 'They are identical', 'Buddhism only allows human rebirth'], answer: 1, explanation: "A candle lighting another candle — the flame is caused by but is NOT the same flame. 🕯️" },
-    { id: 'q5', question: "Judaism's afterlife is NOTABLY:", options: ['Extremely detailed', 'Remarkably vague — deliberately focused on THIS life rather than speculating about the next', 'Nonexistent', 'Identical to Christianity'], answer: 1, explanation: "Rabbis intentionally avoided detailed afterlife promises, fearing they'd be used for manipulation. ✡️" },
-    { id: 'q6', question: "In ancient Egypt, if your heart was HEAVIER than the Feather of Truth:", options: ['You went to Heaven', 'Your heart was devoured by Ammit and your soul CEASED to exist', 'You got a second chance', 'Nothing happened'], answer: 1, explanation: "Egyptian judgment was total annihilation, not eternal punishment. There was no Hell — just nonexistence. 💀" },
-    { id: 'q7', question: "The Greek hero Achilles, speaking from the afterlife (Hades), famously said:", options: ['The afterlife is paradise', 'I would rather be a slave on earth than king of the dead', 'Death is beautiful', 'I enjoy Elysium'], answer: 1, explanation: "The Greeks viewed death as diminishment — even heroes were less than the living. 🏺" },
-    { id: 'q8', question: "Norse warriors SMILED while dying in battle because:", options: ['They were in shock', 'A glorious death in battle guaranteed entry to Valhalla — paradise for warriors', 'They were crazy', 'Vikings couldn\'t feel pain'], answer: 1, explanation: "How you died mattered more than how you lived. Dying of old age sent you to boring Helheim. ⚔️" },
-    { id: 'q9', question: "From a scientific materialist perspective, death is:", options: ['A doorway', 'Identical to the billions of years before you were born — complete cessation of consciousness', 'Temporary', 'A new beginning'], answer: 1, explanation: "Mark Twain: 'I was dead for billions of years before I was born and suffered not the slightest inconvenience.' 🔬" },
-    { id: 'q10', question: "Near-Death Experiences (NDEs) are scientifically puzzling because:", options: ['They don\'t exist', 'Some patients accurately report events from OTHER rooms while their brain showed ZERO electrical activity', 'Everyone has them', 'They prove God'], answer: 1, explanation: "The AWARE study found cases of awareness during flat EEG — challenging physicalism. 💫" },
-    { id: 'q11', question: "Dr. Ian Stevenson's reincarnation research found:", options: ['No evidence', 'Children accurately describing verifiable details of dead strangers\' lives, sometimes with matching birthmarks', 'Proof of fraud', 'Only evidence in Hindu countries'], answer: 1, explanation: "40% of his cases came from Western, non-reincarnation-believing cultures. 🔄" },
-    { id: 'q12', question: "Terror Management Theory (TMT) proves that reminders of death make people:", options: ['Calmer', 'More nationalistic, more religious, more aggressive to outsiders, and more materialistic', 'Happier', 'Sleepy'], answer: 1, explanation: "Just walking past a cemetery makes people measurably more hostile to those who threaten their worldview. 🪦" },
-    { id: 'q13', question: "In East Asian ancestor traditions, the dead:", options: ['Go to Heaven', 'Remain part of the family, need ongoing offerings, and can become \'hungry ghosts\' if neglected', 'Disappear', 'Are feared'], answer: 1, explanation: "Death doesn't sever the relationship — the dead are still family members who need care. 🏮" },
-    { id: 'q14', question: "Quantum Immortality suggests that:", options: ['Quantum mechanics proves the afterlife', 'In the Many-Worlds interpretation, your consciousness always selects the branch where you survive', 'Quantum physics is magic', 'Death is impossible'], answer: 1, explanation: "A bizarre but logically consistent implication of the Many-Worlds interpretation. 🌌" },
-    { id: 'q15', question: "Ancient Egyptians discarded the BRAIN during mummification because:", options: ['They didn\'t know what it did', 'They believed the HEART, not the brain, contained the soul, intelligence, and memory', 'It was too heavy', 'Religious law required it'], answer: 1, explanation: "The brain was pulled out through the nose with hooks and thrown away! The heart stayed. 🧠🚮" },
-    { id: 'q16', question: "Tibetan sky burials (feeding the dead to vultures) reflect:", options: ['Disrespect', 'Buddhist teaching that the body is an empty vessel — feeding it to birds is the final act of generosity', 'Poverty', 'Laziness'], answer: 1, explanation: "No permanent self means the body is just material. Its last gift should nourish living beings. 🦅" },
-    { id: 'q17', question: "Día de los Muertos is a CELEBRATION because:", options: ['Death is fun', 'The dead RETURN to visit the living — it\'s a family reunion, not a funeral', 'Mexican law requires it', 'It\'s a tourist attraction'], answer: 1, explanation: "The dead are right here, eating their favorite tamales. Death is a transition, not an ending. 🌺" },
-    { id: 'q18', question: "Cryonics (freezing bodies after death) is essentially:", options: ['Medical science', 'A technological bet on achieving afterlife through future revival technology', 'Proven to work', 'Free'], answer: 1, explanation: "'I'm not dead, I'm paused.' Whether it will ever work remains an open question. 🧊" },
-    { id: 'q19', question: "The #1 regret of the dying, according to palliative care research, is:", options: ['Not making enough money', 'I wish I\'d had the courage to live a life true to MYSELF, not the life others expected of me', 'Not traveling enough', 'Not exercising'], answer: 1, explanation: "Nobody on their deathbed wishes they'd spent more time at the office. 🌅" },
-    { id: 'q20', question: "What ALL afterlife traditions agree on, across cultures, is:", options: ['The specific destination', 'That awareness of death IMPROVES the quality of life by stripping away pettiness and focusing on what matters', 'That there is definitely an afterlife', 'Nothing'], answer: 1, explanation: "Memento Mori. Whether you believe in heaven or oblivion — remembering death makes you live better. 💀🌱" },
+    { id: 'q1', question: "In Christianity, the Catholic concept of Purgatory is:", options: [
+        "A permanent state of hell",
+        "A temporary state of cleansing",
+        "A specific form of prayer",
+        "A belief shared by all"
+      ], answer: 1, explanation: "Purgatory is Catholic-only. Protestants reject it, arguing salvation is through faith alone. ✝️" },
+    { id: 'q2', question: "Islam's afterlife judgment involves:", options: [
+        "A test of faith alone",
+        "A weighing of earthly deeds",
+        "A random selection process",
+        "A state of no judgment"
+      ], answer: 1, explanation: "Every deed is measured — but the Quran emphasizes God's mercy always exceeds His wrath. ⚖️" },
+    { id: 'q3', question: "Hindu reincarnation (Samsara) is determined by:", options: [
+        "A matter of random chance",
+        "The accumulated consequences of actions",
+        "The current mood of God",
+        "The personal wishes of souls"
+      ], answer: 1, explanation: "Karma is an impersonal cosmic law, not divine punishment. Actions have consequences. 🕉️" },
+    { id: 'q4', question: "Buddhism's concept of rebirth DIFFERS from Hindu reincarnation because:", options: [
+        "Buddhism rejects the rebirth cycle",
+        "Buddhism denies a permanent soul",
+        "The two concepts are identical",
+        "Buddhism limits rebirth to humans"
+      ], answer: 1, explanation: "A candle lighting another candle — the flame is caused by but is NOT the same flame. 🕯️" },
+    { id: 'q5', question: "Judaism's afterlife is NOTABLY:", options: [
+        "A highly detailed description",
+        "A vague focus on life",
+        "A total lack of existence",
+        "A copy of Christian views"
+      ], answer: 1, explanation: "Rabbis intentionally avoided detailed afterlife promises, fearing they'd be used for manipulation. ✡️" },
+    { id: 'q6', question: "In ancient Egypt, if your heart was HEAVIER than the Feather of Truth:", options: [
+        "You entered a heavenly realm",
+        "Your soul ceased to exist",
+        "You received a second chance",
+        "Your status remained the same"
+      ], answer: 1, explanation: "Egyptian judgment was total annihilation, not eternal punishment. There was no Hell — just nonexistence. 💀" },
+    { id: 'q7', question: "The Greek hero Achilles, speaking from the afterlife (Hades), famously said:", options: [
+        "The afterlife is a paradise",
+        "Life as a slave is better",
+        "Death is a beautiful state",
+        "Elysium is a joyful place"
+      ], answer: 1, explanation: "The Greeks viewed death as diminishment — even heroes were less than the living. 🏺" },
+    { id: 'q8', question: "Norse warriors SMILED while dying in battle because:", options: [
+        "They were in medical shock",
+        "Battle death guaranteed entry to Valhalla",
+        "They suffered from mental illness",
+        "They were unable to feel pain"
+      ], answer: 1, explanation: "How you died mattered more than how you lived. Dying of old age sent you to boring Helheim. ⚔️" },
+    { id: 'q9', question: "From a scientific materialist perspective, death is:", options: [
+        "A doorway to another realm",
+        "The complete cessation of consciousness",
+        "A temporary state of being",
+        "A brand new spiritual beginning"
+      ], answer: 1, explanation: "Mark Twain: 'I was dead for billions of years before I was born and suffered not the slightest inconvenience.' 🔬" },
+    { id: 'q10', question: "Near-Death Experiences (NDEs) are scientifically puzzling because:", options: [
+        "They are purely imaginary events",
+        "Patients report events while brain-dead",
+        "They occur to every person",
+        "They provide proof of God"
+      ], answer: 1, explanation: "The AWARE study found cases of awareness during flat EEG — challenging physicalism. 💫" },
+    { id: 'q11', question: "Dr. Ian Stevenson's reincarnation research found:", options: [
+        "No evidence was ever found",
+        "Children recalling verifiable past lives",
+        "Evidence of widespread scientific fraud",
+        "Evidence found only in India"
+      ], answer: 1, explanation: "40% of his cases came from Western, non-reincarnation-believing cultures. 🔄" },
+    { id: 'q12', question: "Terror Management Theory (TMT) proves that reminders of death make people:", options: [
+        "People become much calmer",
+        "People become more defensive and tribal",
+        "People become significantly happier",
+        "People become tired and sleepy"
+      ], answer: 1, explanation: "Just walking past a cemetery makes people measurably more hostile to those who threaten their worldview. 🪦" },
+    { id: 'q13', question: "In East Asian ancestor traditions, the dead:", options: [
+        "The dead enter a heaven",
+        "The dead remain family members",
+        "The dead disappear from existence",
+        "The dead are universally feared"
+      ], answer: 1, explanation: "Death doesn't sever the relationship — the dead are still family members who need care. 🏮" },
+    { id: 'q14', question: "Quantum Immortality suggests that:", options: [
+        "Quantum mechanics proves an afterlife",
+        "Consciousness survives in parallel worlds",
+        "Quantum physics acts like magic",
+        "Death is physically impossible"
+      ], answer: 1, explanation: "A bizarre but logically consistent implication of the Many-Worlds interpretation. 🌌" },
+    { id: 'q15', question: "Ancient Egyptians discarded the BRAIN during mummification because:", options: [
+        "They ignored its biological function",
+        "The heart held the soul",
+        "The organ was too heavy",
+        "Religious law demanded its removal"
+      ], answer: 1, explanation: "The brain was pulled out through the nose with hooks and thrown away! The heart stayed. 🧠🚮" },
+    { id: 'q16', question: "Tibetan sky burials (feeding the dead to vultures) reflect:", options: [
+        "A sign of deep disrespect",
+        "The body is an empty vessel",
+        "A result of extreme poverty",
+        "A sign of cultural laziness"
+      ], answer: 1, explanation: "No permanent self means the body is just material. Its last gift should nourish living beings. 🦅" },
+    { id: 'q17', question: "Día de los Muertos is a CELEBRATION because:", options: [
+        "Death is a fun event",
+        "The dead visit the living",
+        "National law requires the event",
+        "It is primarily for tourists"
+      ], answer: 1, explanation: "The dead are right here, eating their favorite tamales. Death is a transition, not an ending. 🌺" },
+    { id: 'q18', question: "Cryonics (freezing bodies after death) is essentially:", options: [
+        "A standard medical science practice",
+        "A bet on future revival",
+        "A process proven to work",
+        "A free service for all"
+      ], answer: 1, explanation: "'I'm not dead, I'm paused.' Whether it will ever work remains an open question. 🧊" },
+    { id: 'q19', question: "The #1 regret of the dying, according to palliative care research, is:", options: [
+        "Not earning enough money",
+        "Not living true to oneself",
+        "Not traveling to enough places",
+        "Not exercising on a schedule"
+      ], answer: 1, explanation: "Nobody on their deathbed wishes they'd spent more time at the office. 🌅" },
+    { id: 'q20', question: "What ALL afterlife traditions agree on, across cultures, is:", options: [
+        "The specific final destination",
+        "Death awareness improves life quality",
+        "The certainty of an afterlife",
+        "Nothing is agreed upon"
+      ], answer: 1, explanation: "Memento Mori. Whether you believe in heaven or oblivion — remembering death makes you live better. 💀🌱" },
   ],
 
   relatedTopics: ['spirituality_vs_religion', 'world_religions', 'consciousness', 'how_religion_evolved'],

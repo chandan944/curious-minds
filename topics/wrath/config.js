@@ -162,26 +162,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "What is the primary difference between Biological Anger and Wrath (Resentment)?", options: ["They are the exact same thing", "Anger is an emotional reaction lasting minutes; Wrath is a conscious cognitive decision lasting years", "Anger is cold; Wrath is hot", "Anger is bad; Wrath is good"], answer: 1, explanation: "Anger is the flash of a bomb. Wrath is deciding to live inside a toxic radiation zone forever. 🌋" },
-    { id: 'q2', question: "What is 'Rumination'?", options: ["Chewing food slowly", "The act of mentally replaying an offensive event over and over again", "Sleeping deeply", "Running in circles"], answer: 1, explanation: "Ruminating is effectively re-traumatizing yourself daily without the enemy having to lift a finger! 🔄" },
-    { id: 'q3', question: "What happens chemically in the brain when you vividly ruminate on a past betrayal?", options: ["It releases calming oxytocin", "Because the brain can't tell reality from imagination, it releases the exact same stress hormones (cortisol)", "It makes you sleep", "Nothing happens"], answer: 1, explanation: "Your body reacts to the memory as if the attack is happening right now in your living room! 📉" },
-    { id: 'q4', question: "Which famous quote accurately describes the biology of Wrath?", options: ["An apple a day", "Holding onto anger is like drinking poison and expecting the other person to die", "Ignorance is bliss", "What goes around comes around"], answer: 1, explanation: "Your resentment physically damages your cardiovascular system, while the other person sleeps peacefully. ☠️" },
-    { id: 'q5', question: "Why is the 'Cycle of Vengeance' mathematically flawed?", options: ["Because humans can't count", "Because people rarely take 'equal' vengeance; they usually escalate, leading to endless destruction", "Because it is too slow", "Because it makes people rich"], answer: 1, explanation: "If you hit me, I'll hit you twice as hard. Then you'll hit me four times as hard. It never ends! ⚔️" },
-    { id: 'q6', question: "What is the biggest myth society believes about 'Forgiveness'?", options: ["That it is free", "That it means saying 'what you did is okay' and reconciling with the abuser", "That people like it", "That it takes 5 minutes"], answer: 1, explanation: "True forgiveness does not require reconciliation. You can forgive someone while permanently cutting them out of your life. ✂️" },
-    { id: 'q7', question: "Forgiveness is best defined as:", options: ["Becoming best friends again", "A gift you give entirely to yourself by severing the emotional tether to the past event", "A weakness", "Forgetting what happened"], answer: 1, explanation: "Forgiveness is simply deciding 'I will no longer spend my energy hoping you suffer.' 🕊️" },
-    { id: 'q8', question: "What physical system activates in the body when you finally let go of a long-standing grudge?", options: ["The Sympathetic Nervous System (Fight/Flight)", "The Parasympathetic Nervous System (Rest/Digest), lowering heart rate and tension", "The Immune System", "Vocal cords"], answer: 1, explanation: "When the 'threat' is gone, the body finally exits combat mode and begins to heal! 🫁" },
-    { id: 'q9', question: "Why does the Ego so fiercely resist the act of forgiving someone?", options: ["Because the Ego hates people", "Because holding a grudge provides the intoxicating, righteous power of being 'The Victim' or the 'Good Guy'", "Because the Ego is lazy", "Because forgiving costs money"], answer: 1, explanation: "Forgiving requires stepping down from the moral high ground, which the ego hates doing! 🪞" },
-    { id: 'q10', question: "How does the 'Empathy Hack' help you let go of wrath?", options: ["It forces you to hug them", "By viewing the person as 'broken and flawed' rather than an 'Evil Mastermind', it removes their terrifying power over you", "It makes you cry", "It hurts them"], answer: 1, explanation: "It is much easier to step over a broken, sad person than it is to fight a supervillain! 👁️" },
-    { id: 'q11', question: "What are you doing when you have a brilliant argument with your boss in the shower?", options: ["Washing your hair", "Ruminating—your brain is simulating a survival threat to 'win' a past encounter", "Singing", "Forgiving them"], answer: 1, explanation: "The brain cannot stand a 'lost battle,' so it forces you to practice for next time! 🚿" },
-    { id: 'q12', question: "Which hormone is chronically elevated in people holding deep grudges, leading to a suppressed immune system?", options: ["Dopamine", "Oxytocin", "Cortisol", "Melatonin"], answer: 2, explanation: "Chronic cortisol acts as a slow poison on the human vascular and immune systems. 📉" },
-    { id: 'q13', question: "In the absence of centralized courts/police, ancient humans used vengeance to:", options: ["Make friends", "Deter future crime by proving they would retaliate", "Exercise", "Build muscle"], answer: 1, explanation: "Vengeance was an ancient legal system! 'If you steal from me, I will punish you.' 🩸" },
-    { id: 'q14', question: "Reconciliation requires two people. Forgiveness requires ________.", options: ["Zero people", "Three people", "Exactly one person (you)", "A judge"], answer: 2, explanation: "You can forgive someone who refuses to apologize. You can forgive someone who passed away! 🚶‍♂️" },
-    { id: 'q15', question: "What happens to your 'Mental Bandwidth' when you hold a grudge?", options: ["It increases", "A large portion of it is permanently tied up in the 'background process' of anger, making you exhausted", "It turns into WIFI", "Nothing"], answer: 1, explanation: "A grudge operates like an app running in the background of your phone, ruining the battery life. ⛓️" },
-    { id: 'q16', question: "If 'Anger' is an emotion, 'Wrath' is best described as:", options: ["A color", "A decision", "A food", "A reflex"], answer: 1, explanation: "You choose to rehearse the pain. You choose to keep the fire burning. 🧊" },
-    { id: 'q17', question: "Why did Nelson Mandela refuse to hold a grudge after 27 years in prison?", options: ["He forgot", "He knew that hating his captors would keep his mind in prison even after his body was freed", "He lacked energy", "He liked the guards"], answer: 1, explanation: "By forgiving, he took absolute sovereign control over his own happiness. 👑" },
-    { id: 'q18', question: "The phrase 'An eye for an eye leaves the whole world blind' warns against:", options: ["Optometrists", "The escalating, destructive trap of the Cycle of Vengeance", "The sun", "Archery"], answer: 1, explanation: "Vengeance never zeros the scale; it just destroys both sides of the scale. ⚔️" },
-    { id: 'q19', question: "If you use Empathy to understand why a thief stole from you (e.g. they were starving), you must also do what?", options: ["Give them more things", "Remember that empathy is NOT endorsement; you understand why they did it, but still set a firm boundary", "Let them do it again", "Become a thief"], answer: 1, explanation: "You can understand a snake's nature and forgive it for biting you, but you shouldn't pick the snake up again! 🛡️" },
-    { id: 'q20', question: "People who finally deeply forgive someone often report feeling physically:", options: ["Heavier and sad", "Lighter, as massive muscle tension leaves the body", "Angry", "Sick"], answer: 1, explanation: "The brain finally tells the body: 'The war is over. Stand down.' 🧘‍♂️" },
+    { id: 'q1', question: "What is the primary difference between Biological Anger and Wrath (Resentment)?", options: [
+        "They are the same",
+        "Anger is brief; Wrath is lasting",
+        "Anger is cold; Wrath is hot",
+        "Anger is bad; Wrath is good"
+      ], answer: 1, explanation: "Anger is the flash of a bomb. Wrath is deciding to live inside a toxic radiation zone forever. 🌋" },
+    { id: 'q2', question: "What is 'Rumination'?", options: [
+        "Chewing food slowly",
+        "Mentally replaying an offensive event",
+        "Deep, restful sleep",
+        "Running in circles"
+      ], answer: 1, explanation: "Ruminating is effectively re-traumatizing yourself daily without the enemy having to lift a finger! 🔄" },
+    { id: 'q3', question: "What happens chemically in the brain when you vividly ruminate on a past betrayal?", options: [
+        "Releases calming oxytocin",
+        "Brain releases stress hormones (cortisol)",
+        "It makes you sleep",
+        "Absolutely nothing happens"
+      ], answer: 1, explanation: "Your body reacts to the memory as if the attack is happening right now in your living room! 📉" },
+    { id: 'q4', question: "Which famous quote accurately describes the biology of Wrath?", options: [
+        "An apple a day",
+        "Holding anger is like drinking poison",
+        "Ignorance is bliss",
+        "What goes around comes around"
+      ], answer: 1, explanation: "Your resentment physically damages your cardiovascular system, while the other person sleeps peacefully. ☠️" },
+    { id: 'q5', question: "Why is the 'Cycle of Vengeance' mathematically flawed?", options: [
+        "Humans cannot count",
+        "Vengeance escalates, leading to endless destruction",
+        "It is too slow",
+        "It makes people rich"
+      ], answer: 1, explanation: "If you hit me, I'll hit you twice as hard. Then you'll hit me four times as hard. It never ends! ⚔️" },
+    { id: 'q6', question: "What is the biggest myth society believes about 'Forgiveness'?", options: [
+        "That it is free",
+        "It means condoning or reconciling",
+        "That people like it",
+        "That it takes 5 minutes"
+      ], answer: 1, explanation: "True forgiveness does not require reconciliation. You can forgive someone while permanently cutting them out of your life. ✂️" },
+    { id: 'q7', question: "Forgiveness is best defined as:", options: [
+        "Becoming best friends again",
+        "Severing emotional ties to a past event",
+        "It is a weakness",
+        "Forgetting what happened"
+      ], answer: 1, explanation: "Forgiveness is simply deciding 'I will no longer spend my energy hoping you suffer.' 🕊️" },
+    { id: 'q8', question: "What physical system activates in the body when you finally let go of a long-standing grudge?", options: [
+        "Sympathetic Nervous System",
+        "Parasympathetic Nervous System",
+        "The Immune System",
+        "Your vocal cords"
+      ], answer: 1, explanation: "When the 'threat' is gone, the body finally exits combat mode and begins to heal! 🫁" },
+    { id: 'q9', question: "Why does the Ego so fiercely resist the act of forgiving someone?", options: [
+        "Ego hates other people",
+        "Grudge provides power of being 'The Victim'",
+        "The Ego is lazy",
+        "Forgiving costs money"
+      ], answer: 1, explanation: "Forgiving requires stepping down from the moral high ground, which the ego hates doing! 🪞" },
+    { id: 'q10', question: "How does the 'Empathy Hack' help you let go of wrath?", options: [
+        "Forces you to hug them",
+        "Viewing them as flawed, not evil",
+        "It makes you cry",
+        "It hurts them"
+      ], answer: 1, explanation: "It is much easier to step over a broken, sad person than it is to fight a supervillain! 👁️" },
+    { id: 'q11', question: "What are you doing when you have a brilliant argument with your boss in the shower?", options: [
+        "Washing your hair",
+        "Ruminating; brain simulates past threat",
+        "Singing in the shower",
+        "Actively forgiving them"
+      ], answer: 1, explanation: "The brain cannot stand a 'lost battle,' so it forces you to practice for next time! 🚿" },
+    { id: 'q12', question: "Which hormone is chronically elevated in people holding deep grudges, leading to a suppressed immune system?", options: [
+        "Dopamine",
+        "Oxytocin",
+        "Cortisol",
+        "Melatonin"
+      ], answer: 2, explanation: "Chronic cortisol acts as a slow poison on the human vascular and immune systems. 📉" },
+    { id: 'q13', question: "In the absence of centralized courts/police, ancient humans used vengeance to:", options: [
+        "To make new friends",
+        "Deter future crime by retaliation",
+        "To exercise daily",
+        "To build muscle"
+      ], answer: 1, explanation: "Vengeance was an ancient legal system! 'If you steal from me, I will punish you.' 🩸" },
+    { id: 'q14', question: "Reconciliation requires two people. Forgiveness requires ________.", options: [
+        "Absolutely zero people",
+        "At least three people",
+        "Exactly one person (you)",
+        "A legal judge"
+      ], answer: 2, explanation: "You can forgive someone who refuses to apologize. You can forgive someone who passed away! 🚶‍♂️" },
+    { id: 'q15', question: "What happens to your 'Mental Bandwidth' when you hold a grudge?", options: [
+        "It greatly increases",
+        "Tied up by anger, causing exhaustion",
+        "It turns into WIFI",
+        "Absolutely nothing"
+      ], answer: 1, explanation: "A grudge operates like an app running in the background of your phone, ruining the battery life. ⛓️" },
+    { id: 'q16', question: "If 'Anger' is an emotion, 'Wrath' is best described as:", options: [
+        "A color",
+        "A decision",
+        "A food",
+        "A reflex"
+      ], answer: 1, explanation: "You choose to rehearse the pain. You choose to keep the fire burning. 🧊" },
+    { id: 'q17', question: "Why did Nelson Mandela refuse to hold a grudge after 27 years in prison?", options: [
+        "He simply forgot",
+        "Hate would keep his mind imprisoned",
+        "He lacked energy",
+        "He liked the guards"
+      ], answer: 1, explanation: "By forgiving, he took absolute sovereign control over his own happiness. 👑" },
+    { id: 'q18', question: "The phrase 'An eye for an eye leaves the whole world blind' warns against:", options: [
+        "Visiting eye doctors",
+        "The destructive Cycle of Vengeance",
+        "Looking at the sun",
+        "Practicing archery skills"
+      ], answer: 1, explanation: "Vengeance never zeros the scale; it just destroys both sides of the scale. ⚔️" },
+    { id: 'q19', question: "If you use Empathy to understand why a thief stole from you (e.g. they were starving), you must also do what?", options: [
+        "Give them more things",
+        "Empathy is not endorsement; set boundaries",
+        "Let them do it again",
+        "Become a thief yourself"
+      ], answer: 1, explanation: "You can understand a snake's nature and forgive it for biting you, but you shouldn't pick the snake up again! 🛡️" },
+    { id: 'q20', question: "People who finally deeply forgive someone often report feeling physically:", options: [
+        "Heavier and sad",
+        "Lighter, as tension leaves body",
+        "Very angry",
+        "Feeling sick"
+      ], answer: 1, explanation: "The brain finally tells the body: 'The war is over. Stand down.' 🧘‍♂️" },
   ],
 
   relatedTopics: ['anger', 'emotions_motivation', 'manipulation_tactics'],

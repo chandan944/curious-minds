@@ -3,16 +3,18 @@
 //  Provides: user, token, isAuthenticated, isLoading
 //  Actions:  handleGoogleAuth, logout, refreshUser
 // ─────────────────────────────────────────────
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
 import api from '../services/api';
 import {
   saveToken, getToken,
   saveUser, getUser,
   clearAuthStorage,
 } from '../utils/authStorage';
-import { getXP, getStreak } from '../utils/storage';
+import { getXP, getStreak, checkAndUpdateStreak, resetAll } from '../utils/storage';
 import chatService from '../services/chatService';
 import { registerForPushNotificationsAsync } from '../services/notificationService';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = createContext(null);
 
@@ -27,6 +29,7 @@ export const AuthProvider = ({ children }) => {
   const [token,           setTokenState]      = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading,       setIsLoading]       = useState(true);
+  const localStreakRef = useRef(0); // Tracks freshest local streak to prevent race conditions
 
   // ── Restore session on app boot ──────────────
   useEffect(() => {
@@ -69,6 +72,37 @@ export const AuthProvider = ({ children }) => {
             await saveUser(freshUserData);
             setUser(freshUserData);
             console.log('✅ Session validated in background for:', freshUserData.email);
+            
+            // ── 3. CHECK & UPDATE DAILY STREAK ──────
+            try {
+              const streakResult = await checkAndUpdateStreak();
+              if (streakResult.isNew) {
+                // Streak changed (incremented or reset) — sync to backend
+                const updatedStreak = streakResult.streak;
+                localStreakRef.current = updatedStreak; // Track for race condition prevention
+                console.log(`🔥 Streak updated: ${updatedStreak}${streakResult.wasReset ? ' (reset)' : ''}`);
+                
+                // Update local user object with new streak
+                freshUserData.streak = updatedStreak;
+                await saveUser(freshUserData);
+                setUser({ ...freshUserData });
+                
+                // Sync streak to backend
+                api.post('/user/sync-xp', 
+                  { points: 0, reason: 'daily_streak', streak: updatedStreak },
+                  { headers: { Authorization: `Bearer ${savedToken}` } }
+                ).then(() => {
+                  console.log('✅ Streak synced to backend:', updatedStreak);
+                }).catch((err) => {
+                  console.warn('⚠️ Failed to sync streak:', err.message);
+                });
+              } else {
+                localStreakRef.current = streakResult.streak; // Track for race condition prevention
+                console.log(`🔥 Streak unchanged (same day): ${streakResult.streak}`);
+              }
+            } catch (streakErr) {
+              console.warn('⚠️ Streak check failed:', streakErr.message);
+            }
             
             // Register for push notifications on app startup
             registerForPushNotificationsAsync().then(async (pushToken) => {
@@ -198,7 +232,7 @@ export const AuthProvider = ({ children }) => {
           imageUrl: serverUser.imageUrl || '',
           role:     serverUser.role || 'USER',
           points:   serverUser.points || 0,
-          streak:   serverUser.streak || 0,
+          streak:   Math.max(serverUser.streak || 0, localStreakRef.current),
           level:    serverUser.level || 1,
           title:    serverUser.title || 'Curious Kid',
         };
@@ -213,10 +247,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ── Logout ────────────────────────────────────
-  const logout = async () => {
+  const updateAvatar = async (newUrl) => {
+    if (!user) return;
+    const updatedUser = { ...user, imageUrl: newUrl };
+    setUser(updatedUser);
+    await saveUser(updatedUser);
+  };
+
+  const logout = async (fullWipe = false) => {
     try {
       chatService.disconnect();
+      
+      // Wipe storage completely on account deletion, otherwise just clear auth and progress
+      if (fullWipe) {
+        await AsyncStorage.clear();
+      }
+      
       await clearAuthStorage();
+      await resetAll();
+      
+      // Ensure Google session is revoked
+      try { await GoogleSignin.signOut(); } catch (e) {}
+
       delete api.defaults.headers.common['Authorization'];
       setUser(null);
       setTokenState(null);
@@ -228,7 +280,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated, isLoading, handleGoogleAuth, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, token, isAuthenticated, isLoading, handleGoogleAuth, logout, refreshUser, updateAvatar }}>
       {children}
     </AuthContext.Provider>
   );

@@ -256,7 +256,7 @@ function TheoryCard({ card, index, total, isDark, txt1, txt2, accentColor, onPre
         {/* Watermark Logo when sharing */}
         {isSharing && (
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 24, gap: 8 }}>
-            <Text style={{ fontFamily: FONTS.displayMedium, fontSize: 16, color: card.color }}>By Curious Minds</Text>
+            <Text style={{ fontFamily: FONTS.displayMedium, fontSize: 16, color: card.color }}>By Curious</Text>
           </View>
         )}
       </View>

@@ -41,26 +41,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "What fundamental type of wave is Sound?", options: ['Transverse Wave', 'Longitudinal Wave', 'Electromagnetic Wave', 'Gravitational Wave'], answer: 1, explanation: "Sound is a powerful longitudinal wave, composed entirely of physical compressions and rarefactions moving parallel through a given medium." },
-    { id: 'q2', question: "Which measurable characteristic of a sound wave directly determines its Pitch?", options: ['Amplitude', 'Frequency', 'Velocity', 'Refraction'], answer: 1, explanation: "Frequency (measured in Hertz) controls pitch. High frequency generates shrill high pitches, while low frequency generates deep bass pitches." },
-    { id: 'q3', question: "What occurs when a wave fundamentally transfers sheer energy?", options: ['It transfers physical matter permanently', 'It creates gravity', 'It transfers energy without permanently transferring matter', 'It stops entirely'], answer: 2, explanation: "Waves are the universe's way of moving massive energy across distances without actually picking up matter and relocating it." },
-    { id: 'q4', question: "Why is outer space completely, terrifyingly silent?", options: ['The stars absorb it', 'There is no air/medium for sound waves to mechanically travel through', 'Sound freezes in zero gravity', 'Starlight cancels audio'], answer: 1, explanation: "Sound is atoms painfully bumping into atoms. Since the void of space is a vacuum completely devoid of atoms, there is absolutely no medium to carry the chain reaction." },
-    { id: 'q5', question: "What is the standard unit of measurement for Frequency?", options: ['Decibels (dB)', 'Joules (J)', 'Newtons (N)', 'Hertz (Hz)'], answer: 3, explanation: "Hertz represents exactly one complete wave cycle per second. A 60 Hz tone oscillates 60 times every single second." },
-    { id: 'q6', question: "If you physically increase a wave's Amplitude, what happens to the resulting audio?", options: ['It becomes noticeably higher pitched', 'It becomes significantly louder', 'It becomes quieter', 'It travels faster'], answer: 1, explanation: "Amplitude is the sheer height/intensity of the physical wave. Larger disturbance amplitude directly equals massive volume." },
-    { id: 'q7', question: "Sound waves travel the absolute fastest through which of these states of matter?", options: ['A thick Gas', 'A pool of Liquid', 'A solid Metal', 'A perfect Vacuum'], answer: 2, explanation: "Because the atoms in a rigid solid (like steel) are locked exceptionally tightly together, mechanical acoustic vibrations transfer through them instantly." },
-    { id: 'q8', question: "What medical technology utilizes extreme sound frequencies above 20,000 Hz to generate internal non-invasive images?", options: ['X-Ray Machines', 'Ultrasound Imaging', 'MRI Scanning', 'Electrocardiograms'], answer: 1, explanation: "Ultrasound uses extremely high-frequency sound waves that safely bounce off internal human organs, actively catching the echoes to map an invisible image." },
-    { id: 'q9', question: "The dropping pitch of an ambulance siren aggressively driving away is a perfect example of what phenomenon?", options: ['The Doppler Effect', 'Sonic Boom', 'Destructive Interference', 'Acoustic Resonance'], answer: 0, explanation: "The Doppler Effect proves that relative rapid movement actively stretches or crushes the outgoing soundwaves, shifting the perceived frequency." },
-    { id: 'q10', question: "When two distinct waves violently collide perfectly peak-to-trough (valley), completely silencing each other, this is called:", options: ['Constructive Interference', 'Acoustic Resonance', 'Destructive Interference', 'Sonic Voiding'], answer: 2, explanation: "Destructive interference happens when contrasting wave pressures perfectly oppose each other, mathematically canceling to zero. This is the entire foundation for Noise-Cancelling software!" },
-    { id: 'q11', question: "Elephants famously communicate secretly utilizing deep extreme low frequencies known formally as:", options: ['Ultrasound', 'Infrasound', 'Echolocation', 'Microsound'], answer: 1, explanation: "Infrasound constitutes deep acoustic frequencies below human hearing capability (under 20 Hz), which brilliantly travel massive distances across the earth." },
-    { id: 'q12', question: "What is the name of the phenomenon where a singer shatters a delicate wine glass simply by hitting a very specific sustained pitch?", options: ['Acoustic Dissonance', 'Frequency Clipping', 'Destructive Interference', 'Resonance'], answer: 3, explanation: "Resonance! Whenever the singer hits the exact natural frequency of the glass, the crystal absorbs the energy perfectly until the massive vibration fractures it." },
-    { id: 'q13', question: "If light is a transverse wave, what physical direction do its particles/fields vibrate?", options: ['Parallel to the wave', 'Perpendicular to the wave direction', 'In randomized circles', 'Backward only'], answer: 1, explanation: "Transverse waves vibrate up and down (perpendicular), while longitudinal waves (like sound) aggressively vibrate forwards and backwards." },
-    { id: 'q14', question: "Approximately how fast does normal sound travel through normal air at room temperature?", options: ['1,000,000 meters/second', '343 meters/second', '299,792 meters/second', '10 meters/second'], answer: 1, explanation: "Sound cruises at about 343 m/s in air, heavily lagging behind the speed of light, ensuring thunder is always drastically delayed behind the lightning flash." },
-    { id: 'q15', question: "What standard logarithmic measurement unit calculates the sheer volume/intensity of a noise?", options: ['Watts', 'Hertz', 'Decibels', 'Pascals'], answer: 2, explanation: "The Decibel (dB) expertly measures volume intensity. Anything above 85 dB over prolonged periods can cause permanent architectural ear damage!" },
-    { id: 'q16', question: "If you physically shout into a grand canyon and hear your exact voice wildly return seconds later, this is an:", options: ['Echo', 'Oscillation', 'Doppler Shift', 'Acoustic Shadow'], answer: 0, explanation: "An Echo is simply the massive soundwave physically bouncing off the distant rock wall and returning safely to your auditory sensors." },
-    { id: 'q17', question: "The region in a longitudinal sound wave where particles are violently squeezed tightly together is precisely called a:", options: ['Trough', 'Rarefaction', 'Compression', 'Crest'], answer: 2, explanation: "A Compression is the high-pressure zone of a sound wave where the atoms are grouped up heavily, while Rarefactions are the extremely low-pressure gaps." },
-    { id: 'q18', question: "What happens to the wavelength of a sound wave if you double its frequency (assuming speed is constant)?", options: ['It doubles', 'It stays the same', 'It is cut precisely in half', 'It completely disappears'], answer: 2, explanation: "Frequency and Wavelength are mathematically inversely proportional! More waves per second strictly means each physical wave must be much shorter." },
-    { id: 'q19', question: "Which unique animal explicitly weaponizes profound echolocation to safely navigate total darkness?", options: ['Wolves', 'Eagles', 'Bats', 'Pigeons'], answer: 2, explanation: "Bats rapidly emit ultrasonic clicks that aggressively bounce off invisible prey, perfectly calculating location, trajectory, and size entirely in the dark!" },
-    { id: 'q20', question: "When an F-22 jet physically outpaces the speed of sound, creating an immense atmospheric pressure wave, the resulting explosion is a:", options: ['Sonic Boom', 'Thunderclap', 'Acoustic Resonance', 'Thermal Detonation'], answer: 0, explanation: "A Sonic Boom is the violent consequence of an aircraft crushing all of its own soundwaves into a single, terrifying blast of acoustic shock energy." }
+    { id: 'q1', question: "What fundamental type of wave is Sound?", options: [
+        "Transverse Wave",
+        "Longitudinal Wave",
+        "Electromagnetic Wave",
+        "Gravitational Wave"
+      ], answer: 1, explanation: "Sound is a powerful longitudinal wave, composed entirely of physical compressions and rarefactions moving parallel through a given medium." },
+    { id: 'q2', question: "Which measurable characteristic of a sound wave directly determines its Pitch?", options: [
+        "Amplitude",
+        "Frequency",
+        "Velocity",
+        "Refraction"
+      ], answer: 1, explanation: "Frequency (measured in Hertz) controls pitch. High frequency generates shrill high pitches, while low frequency generates deep bass pitches." },
+    { id: 'q3', question: "What occurs when a wave fundamentally transfers sheer energy?", options: [
+        "Transfers matter permanently",
+        "Creates gravity",
+        "Transfers energy, not matter",
+        "Stops entirely"
+      ], answer: 2, explanation: "Waves are the universe's way of moving massive energy across distances without actually picking up matter and relocating it." },
+    { id: 'q4', question: "Why is outer space completely, terrifyingly silent?", options: [
+        "Stars absorb sound",
+        "No medium for sound travel",
+        "Sound freezes in gravity",
+        "Starlight cancels audio"
+      ], answer: 1, explanation: "Sound is atoms painfully bumping into atoms. Since the void of space is a vacuum completely devoid of atoms, there is absolutely no medium to carry the chain reaction." },
+    { id: 'q5', question: "What is the standard unit of measurement for Frequency?", options: [
+        "Decibels (dB)",
+        "Joules (J)",
+        "Newtons (N)",
+        "Hertz (Hz)"
+      ], answer: 3, explanation: "Hertz represents exactly one complete wave cycle per second. A 60 Hz tone oscillates 60 times every single second." },
+    { id: 'q6', question: "If you physically increase a wave's Amplitude, what happens to the resulting audio?", options: [
+        "It becomes higher pitched",
+        "It becomes significantly louder",
+        "It becomes quieter",
+        "It travels faster"
+      ], answer: 1, explanation: "Amplitude is the sheer height/intensity of the physical wave. Larger disturbance amplitude directly equals massive volume." },
+    { id: 'q7', question: "Sound waves travel the absolute fastest through which of these states of matter?", options: [
+        "A thick Gas",
+        "A pool of Liquid",
+        "A solid Metal",
+        "A perfect Vacuum"
+      ], answer: 2, explanation: "Because the atoms in a rigid solid (like steel) are locked exceptionally tightly together, mechanical acoustic vibrations transfer through them instantly." },
+    { id: 'q8', question: "What medical technology utilizes extreme sound frequencies above 20,000 Hz to generate internal non-invasive images?", options: [
+        "X-Ray Machines",
+        "Ultrasound Imaging",
+        "MRI Scanning",
+        "Electrocardiograms"
+      ], answer: 1, explanation: "Ultrasound uses extremely high-frequency sound waves that safely bounce off internal human organs, actively catching the echoes to map an invisible image." },
+    { id: 'q9', question: "The dropping pitch of an ambulance siren aggressively driving away is a perfect example of what phenomenon?", options: [
+        "The Doppler Effect",
+        "Sonic Boom",
+        "Destructive Interference",
+        "Acoustic Resonance"
+      ], answer: 0, explanation: "The Doppler Effect proves that relative rapid movement actively stretches or crushes the outgoing soundwaves, shifting the perceived frequency." },
+    { id: 'q10', question: "When two distinct waves violently collide perfectly peak-to-trough (valley), completely silencing each other, this is called:", options: [
+        "Constructive Interference",
+        "Acoustic Resonance",
+        "Destructive Interference",
+        "Sonic Voiding"
+      ], answer: 2, explanation: "Destructive interference happens when contrasting wave pressures perfectly oppose each other, mathematically canceling to zero. This is the entire foundation for Noise-Cancelling software!" },
+    { id: 'q11', question: "Elephants famously communicate secretly utilizing deep extreme low frequencies known formally as:", options: [
+        "Ultrasound",
+        "Infrasound",
+        "Echolocation",
+        "Microsound"
+      ], answer: 1, explanation: "Infrasound constitutes deep acoustic frequencies below human hearing capability (under 20 Hz), which brilliantly travel massive distances across the earth." },
+    { id: 'q12', question: "What is the name of the phenomenon where a singer shatters a delicate wine glass simply by hitting a very specific sustained pitch?", options: [
+        "Acoustic Dissonance",
+        "Frequency Clipping",
+        "Destructive Interference",
+        "Resonance"
+      ], answer: 3, explanation: "Resonance! Whenever the singer hits the exact natural frequency of the glass, the crystal absorbs the energy perfectly until the massive vibration fractures it." },
+    { id: 'q13', question: "If light is a transverse wave, what physical direction do its particles/fields vibrate?", options: [
+        "Parallel to wave",
+        "Perpendicular to wave direction",
+        "In random circles",
+        "Only backward"
+      ], answer: 1, explanation: "Transverse waves vibrate up and down (perpendicular), while longitudinal waves (like sound) aggressively vibrate forwards and backwards." },
+    { id: 'q14', question: "Approximately how fast does normal sound travel through normal air at room temperature?", options: [
+        "1,000,000 meters/second",
+        "343 meters/second",
+        "299,792 meters/second",
+        "10 meters/second"
+      ], answer: 1, explanation: "Sound cruises at about 343 m/s in air, heavily lagging behind the speed of light, ensuring thunder is always drastically delayed behind the lightning flash." },
+    { id: 'q15', question: "What standard logarithmic measurement unit calculates the sheer volume/intensity of a noise?", options: [
+        "Watts",
+        "Hertz",
+        "Decibels",
+        "Pascals"
+      ], answer: 2, explanation: "The Decibel (dB) expertly measures volume intensity. Anything above 85 dB over prolonged periods can cause permanent architectural ear damage!" },
+    { id: 'q16', question: "If you physically shout into a grand canyon and hear your exact voice wildly return seconds later, this is an:", options: [
+        "Echo",
+        "Oscillation",
+        "Doppler Shift",
+        "Acoustic Shadow"
+      ], answer: 0, explanation: "An Echo is simply the massive soundwave physically bouncing off the distant rock wall and returning safely to your auditory sensors." },
+    { id: 'q17', question: "The region in a longitudinal sound wave where particles are violently squeezed tightly together is precisely called a:", options: [
+        "Trough",
+        "Rarefaction",
+        "Compression",
+        "Crest"
+      ], answer: 2, explanation: "A Compression is the high-pressure zone of a sound wave where the atoms are grouped up heavily, while Rarefactions are the extremely low-pressure gaps." },
+    { id: 'q18', question: "What happens to the wavelength of a sound wave if you double its frequency (assuming speed is constant)?", options: [
+        "It doubles",
+        "It stays the same",
+        "It is cut in half",
+        "It disappears"
+      ], answer: 2, explanation: "Frequency and Wavelength are mathematically inversely proportional! More waves per second strictly means each physical wave must be much shorter." },
+    { id: 'q19', question: "Which unique animal explicitly weaponizes profound echolocation to safely navigate total darkness?", options: [
+        "Wolves",
+        "Eagles",
+        "Bats",
+        "Pigeons"
+      ], answer: 2, explanation: "Bats rapidly emit ultrasonic clicks that aggressively bounce off invisible prey, perfectly calculating location, trajectory, and size entirely in the dark!" },
+    { id: 'q20', question: "When an F-22 jet physically outpaces the speed of sound, creating an immense atmospheric pressure wave, the resulting explosion is a:", options: [
+        "Sonic Boom",
+        "Thunderclap",
+        "Acoustic Resonance",
+        "Thermal Detonation"
+      ], answer: 0, explanation: "A Sonic Boom is the violent consequence of an aircraft crushing all of its own soundwaves into a single, terrifying blast of acoustic shock energy." }
   ],
 
   relatedTopics: ['light_optics'],

@@ -1,7 +1,7 @@
-﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 //  LAB: Thermodynamics v2.0 (Extreme)
 //  The Adiabatic Engine
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -20,7 +20,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 360;
 
-// â”€â”€ Physics Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Physics Constants ─────────────────────────────────
 
 const PARTICLE_COUNT = 15;
 const INITIAL_V = 200; // Pixels from top
@@ -33,7 +33,7 @@ const CHALLENGES = [
   { id: 'work_master', title: 'Workhorse', desc: 'Generate 1000J of total Work (W)', icon: 'cpu', color: '#A855F7' },
 ];
 
-// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Unified UI Components ──────────────────────────────
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -54,7 +54,7 @@ const ScientistCard = ({ formula, value, description, color }) => (
   </View>
 );
 
-// â”€â”€ Particle Simulation Logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Particle Simulation Logic ──────────────────────────
 
 class Particle {
   constructor(w, h, pY) {
@@ -66,7 +66,7 @@ class Particle {
   }
 }
 
-// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Main Component ─────────────────────────────────────
 
 export default function ThermodynamicsLab({ scientistMode = false }) {
   const { isDark } = useTheme();
@@ -86,7 +86,7 @@ export default function ThermodynamicsLab({ scientistMode = false }) {
   const reqRef = useRef(null);
   const particles = useRef([]);
 
-  // â”€â”€ Physics Engine Loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Physics Engine Loop ────────────────────────────────
 
   useEffect(() => {
     // Initialize Particles
@@ -113,7 +113,7 @@ export default function ThermodynamicsLab({ scientistMode = false }) {
     return () => cancelAnimationFrame(reqRef.current);
   }, [pistonY, temp]);
 
-  // â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Handlers ─────────────────────────────────────────
 
   const panResponder = useRef(
     PanResponder.create({
@@ -161,13 +161,13 @@ export default function ThermodynamicsLab({ scientistMode = false }) {
     setPressure( (150 / volume) * ( (temp + delta) / 300 ) );
   };
 
-  // â”€â”€ Graph â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Graph ───────────────────────────────────────────
 
   useEffect(() => {
      setHistory(prev => [...prev.slice(-30), { v: volume, p: pressure }]);
   }, [volume, pressure]);
 
-  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Render ──────────────────────────────────────────
 
   return (
     <View style={styles.container}>
@@ -253,7 +253,7 @@ export default function ThermodynamicsLab({ scientistMode = false }) {
                     color="#FF9F1C"
                  />
                  <ScientistCard 
-                    formula="W = âˆ« P dV" 
+                    formula="W = ∫ P dV" 
                     description="Work Performed" 
                     value={`Sum W: ${totalWork.toFixed(0)} J`}
                     color="#A855F7"

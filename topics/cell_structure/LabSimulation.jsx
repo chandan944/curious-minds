@@ -1,5 +1,5 @@
-﻿/**
- * Cell Structure Lab â€” interactive simulation
+/**
+ * Cell Structure Lab — interactive simulation
  * Architecture: NO react-native-reanimated (Reanimated v4 requires New Architecture)
  * Uses only: RN Animated API, setInterval, useState, useRef
  */
@@ -19,7 +19,7 @@ const VIEWPORT_H = Math.min(height * 0.38, 240);
 const CX = width / 2;
 const CY = VIEWPORT_H / 2;
 
-// â”€â”€ Organelle colours â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Organelle colours ─────────────────────────────────────────────
 const ORGANELLES = [
   { angle: 30,  radius: 95,  size: 11, color: '#FF6B6B', label: 'Mitochondria', pulseOff: 0.0 },
   { angle: 100, radius: 90,  size: 8,  color: '#FFD93D', label: 'Golgi Body',   pulseOff: 0.4 },
@@ -29,11 +29,11 @@ const ORGANELLES = [
 ];
 
 const DISCOVERIES = [
-  { id: 'c1', cond: s => s.size > 80 && s.energy > 80, title: 'Cell Division Threshold', entry: 'When a cell grows large enough with sufficient ATP, it signals for mitosis â€” division keeps the DNA-to-cytoplasm ratio balanced. Uncontrolled growth = cancer.', rarity: 'Rare âœ¨' },
-  { id: 'c2', cond: s => s.rna < 12,  title: 'Transcription Silence', entry: 'With near-zero RNA activity, protein synthesis halts â€” the cell enters a quiescent state used in stem cells and dormancy. No RNA = no proteins = no life.', rarity: 'Uncommon' },
-  { id: 'c3', cond: s => s.perm > 83, title: 'Osmotic Lysis', entry: 'A membrane too permeable loses selective control â€” water floods in by osmosis and the cell lyses (bursts). This is cytolysis â€” the cell\'s catastrophic failure mode.', rarity: 'Common' },
-  { id: 'c4', cond: s => s.energy < 12 && s.size > 60, title: 'Energy Crisis', entry: 'Large cells need tremendous ATP to maintain ion gradients. When energy drops, sodium-potassium pumps fail and the cell depolarises â€” triggering cell death.', rarity: 'Uncommon' },
-  { id: 'c5', cond: s => s.rna > 70 && s.energy > 70, title: 'Ribosome Storm', entry: 'High RNA + high ATP floods the endoplasmic reticulum with ribosomes â€” the cell\'s protein factory running at maximum capacity. Seen in rapidly dividing tumour cells!', rarity: 'Rare âœ¨' },
+  { id: 'c1', cond: s => s.size > 80 && s.energy > 80, title: 'Cell Division Threshold', entry: 'When a cell grows large enough with sufficient ATP, it signals for mitosis — division keeps the DNA-to-cytoplasm ratio balanced. Uncontrolled growth = cancer.', rarity: 'Rare ✨' },
+  { id: 'c2', cond: s => s.rna < 12,  title: 'Transcription Silence', entry: 'With near-zero RNA activity, protein synthesis halts — the cell enters a quiescent state used in stem cells and dormancy. No RNA = no proteins = no life.', rarity: 'Uncommon' },
+  { id: 'c3', cond: s => s.perm > 83, title: 'Osmotic Lysis', entry: 'A membrane too permeable loses selective control — water floods in by osmosis and the cell lyses (bursts). This is cytolysis — the cell\'s catastrophic failure mode.', rarity: 'Common' },
+  { id: 'c4', cond: s => s.energy < 12 && s.size > 60, title: 'Energy Crisis', entry: 'Large cells need tremendous ATP to maintain ion gradients. When energy drops, sodium-potassium pumps fail and the cell depolarises — triggering cell death.', rarity: 'Uncommon' },
+  { id: 'c5', cond: s => s.rna > 70 && s.energy > 70, title: 'Ribosome Storm', entry: 'High RNA + high ATP floods the endoplasmic reticulum with ribosomes — the cell\'s protein factory running at maximum capacity. Seen in rapidly dividing tumour cells!', rarity: 'Rare ✨' },
 ];
 
 export default function CellStructureLab({ scientistMode = false, accentColor = '#7B61FF', onLabBreaker }) {
@@ -83,14 +83,14 @@ export default function CellStructureLab({ scientistMode = false, accentColor = 
         Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
       ]));
       shakeLoop.current.start();
-      setHint('ðŸ’¥ Membrane too permeable! Water is flooding in â€” OSMOTIC LYSIS!');
+      setHint('💥 Membrane too permeable! Water is flooding in — OSMOTIC LYSIS!');
     } else {
       dangerLoop.current?.stop();
       shakeLoop.current?.stop();
       dangerAnim.setValue(0);
       shakeAnim.setValue(0);
     }
-    if (perm > 75 && perm <= 85) setHint('âš ï¸ High permeability â€” membrane selectivity breaking down!');
+    if (perm > 75 && perm <= 85) setHint('⚠️ High permeability — membrane selectivity breaking down!');
   }, [perm]);
 
   // Discovery checks
@@ -103,7 +103,7 @@ export default function CellStructureLab({ scientistMode = false, accentColor = 
           discLocks.current[d.id] = true;
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           setLogs(p => [d, ...p]);
-          setHint(`ðŸ”¬ Discovery: ${d.title}`);
+          setHint(`🔬 Discovery: ${d.title}`);
         }
       });
     }, 1200);
@@ -209,12 +209,12 @@ export default function CellStructureLab({ scientistMode = false, accentColor = 
       {/* CONTROLS */}
       <View style={styles.panel}>
         <View style={styles.panelRow}>
-          <SliderControl label="ðŸ”¬ Cell Size" value={size} onChange={v => { setSize(v); soundTap(); }} color="#7B61FF" displayVal={`${size}%`} />
-          <SliderControl label="ðŸ§¬ RNA Activity" value={rna} onChange={v => { setRna(v); soundTap(); }} color="#00FFD1" displayVal={`${rna}%`} />
+          <SliderControl label="🔬 Cell Size" value={size} onChange={v => { setSize(v); soundTap(); }} color="#7B61FF" displayVal={`${size}%`} />
+          <SliderControl label="🧬 RNA Activity" value={rna} onChange={v => { setRna(v); soundTap(); }} color="#00FFD1" displayVal={`${rna}%`} />
         </View>
         <View style={styles.panelRow}>
-          <SliderControl label="ðŸŒŠ Permeability" value={perm} onChange={v => { setPerm(v); soundTap(); }} color={perm > 85 ? '#FF3E6C' : '#C77DFF'} displayVal={`${perm}%`} />
-          <SliderControl label="âš¡ ATP Energy" value={energy} onChange={v => { setEnergy(v); soundTap(); }} color="#FFD93D" displayVal={`${energy}%`} />
+          <SliderControl label="🌊 Permeability" value={perm} onChange={v => { setPerm(v); soundTap(); }} color={perm > 85 ? '#FF3E6C' : '#C77DFF'} displayVal={`${perm}%`} />
+          <SliderControl label="⚡ ATP Energy" value={energy} onChange={v => { setEnergy(v); soundTap(); }} color="#FFD93D" displayVal={`${energy}%`} />
         </View>
       </View>
 
@@ -238,7 +238,7 @@ export default function CellStructureLab({ scientistMode = false, accentColor = 
         <View style={styles.modalBg}>
           <View style={[styles.modalContent, { backgroundColor: '#0C0F1A' }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: '#7B61FF' }]}>Research Logs ðŸ““</Text>
+              <Text style={[styles.modalTitle, { color: '#7B61FF' }]}>Research Logs 📓</Text>
               <TouchableOpacity onPress={() => { setLogsOpen(false); soundTap(); }}>
                 <Icon name="close" size={22} color="#E0DCFF" />
               </TouchableOpacity>
@@ -265,7 +265,7 @@ export default function CellStructureLab({ scientistMode = false, accentColor = 
   );
 }
 
-// â”€â”€ Shared slider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Shared slider ─────────────────────────────────────────────────
 function SliderControl({ label, value, onChange, color, displayVal }) {
   const trackRef = useRef(null);
   return (

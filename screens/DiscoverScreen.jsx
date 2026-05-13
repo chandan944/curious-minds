@@ -224,17 +224,7 @@ export default function DiscoverScreen({ onOpenProfile, onStartChat }) {
           <Text style={[styles.sMutual, { color: txtM }]}>{item.mutualFriendsCount} mutual</Text>
         )}
 
-        {/* Action Buttons */}
-        <View style={styles.sActions}>
-          <TouchableOpacity onPress={() => toggleLike(item.id)} style={[styles.sIconBtn, { backgroundColor: glass2, borderColor: border }]}>
-            <Icon name="heart" size={15} color={isLiked ? coral : txtM} filled={!!isLiked} />
-          </TouchableOpacity>
-          {onStartChat && (
-            <TouchableOpacity onPress={() => startChat(item)} style={[styles.sIconBtn, { backgroundColor: glass2, borderColor: border }]}>
-              <Icon name="chat" size={15} color={accent} />
-            </TouchableOpacity>
-          )}
-        </View>
+       
 
         {/* Add Friend Button */}
         {isPending ? (
@@ -278,16 +268,8 @@ export default function DiscoverScreen({ onOpenProfile, onStartChat }) {
           <Text style={[styles.uName, { color: txt1 }]} numberOfLines={1}>{item.name}</Text>
           <Text style={[styles.uSub, { color: txtM }]} numberOfLines={1}>{item.title || 'Explorer'} • Lv {item.level || 1}</Text>
         </View>
-        {showLike && (
-          <TouchableOpacity onPress={() => toggleLike(item.id)} style={styles.uIconBtn}>
-            <Icon name="heart" size={18} color={isLiked ? coral : txtM} filled={!!isLiked} />
-          </TouchableOpacity>
-        )}
-        {showChat && onStartChat && (
-          <TouchableOpacity onPress={() => startChat(item)} style={styles.uIconBtn}>
-            <Icon name="chat" size={18} color={accent} />
-          </TouchableOpacity>
-        )}
+        
+      
         {showAction && (
           actionType === 'accept' ? (
             <TouchableOpacity
@@ -476,7 +458,7 @@ const styles = StyleSheet.create({
   clearBtn: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
 
   // Tabs
-  tabRow: { flexDirection: 'row', paddingHorizontal: SPACING.sm, gap: 2, marginBottom: SPACING.md },
+  tabRow: { flexDirection: 'row', paddingHorizontal: SPACING.md, gap: 2, marginBottom: SPACING.md },
   tab: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: RADIUS.full, borderWidth: 1, borderColor: 'transparent' },
   tabLabel: { fontFamily: FONTS.bodyMedium, fontSize: 13 },
   tabBadge: { minWidth: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },

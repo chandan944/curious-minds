@@ -187,26 +187,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "What is the key difference between a bad memory and trauma?", options: ['Trauma makes you angry', 'Trauma is stored as an active, unfinished threat in the nervous system rather than a past event', 'Bad memories go away', 'No difference'], answer: 1, explanation: "Bad memories are in the past. Trauma feels like it is happening right now. ⏳" },
-    { id: 'q2', question: "Which brain structure acts as the 'filing cabinet' and fails during a traumatic event?", options: ['The Frontal Lobe', 'The Hippocampus', 'The Brain Stem', 'The Optic Nerve'], answer: 1, explanation: "Because the Hippocampus shuts off, the memory is never stamped with 'Past'. 🗄️" },
-    { id: 'q3', question: "What is 'Little t' trauma?", options: ['Small physical injuries', 'Highly distressing emotional events (like severe bullying or neglect) that aren\'t life-threatening but overwhelm the nervous system', 'Watching a scary movie', 'Getting a bad grade'], answer: 1, explanation: "Death is not required to overwhelm the nervous system's capacity to cope. 🌪️" },
-    { id: 'q4', question: "According to Bessel van der Kolk, where does unresolved trauma live?", options: ['In the subconscious mind entirely', 'Trapped within the physical body, the nervous system, and muscles (The Body Keeps the Score)', 'In the frontal lobe', 'In dreams'], answer: 1, explanation: "This is why trauma survivors suffer from severe, unexplained physical health issues. 🧍‍♂️" },
-    { id: 'q5', question: "What is a 'Trigger'?", options: ['A sudden burst of energy', 'A sensory shortcut (smell, sound) that instantly reactivates the unfiled traumatic memory as if it is happening now', 'A type of gun', 'A bad mood'], answer: 1, explanation: "Triggers bypass logic, taking you instantly from the grocery store back to the warzone. 💣" },
-    { id: 'q6', question: "What is the biological purpose of 'Dissociation'?", options: ['To fall asleep', 'When physical escape is impossible, the brain provides psychological escape by numbing reality to protect the mind', 'To think creatively', 'To forget names'], answer: 1, explanation: "It is essentially the brain turning off the cameras because the horror is too bright. 👻" },
-    { id: 'q7', question: "How is Complex PTSD (C-PTSD) different from PTSD?", options: ['It involves mathematics', 'It results from repeated, prolonged trauma where escape was impossible (e.g., childhood abuse), altering core identity', 'It is less severe', 'It only happens to soldiers'], answer: 1, explanation: "CPTSD is death by a thousand cuts, not one single explosion. 🔪" },
-    { id: 'q8', question: "What happens when someone is pushed ABOVE their 'Window of Tolerance'?", options: ['They get tired', 'They enter Hyperarousal (panic, rage, anxiety, fight/flight)', 'They sleep', 'They dissociate'], answer: 1, explanation: "Below the window is numbness; above the window is chaos. 🪟" },
-    { id: 'q9', question: "What does 'Epigenetics' prove about trauma?", options: ['Trauma causes wrinkles', 'Severe trauma can alter gene expression, meaning heightened stress responses can be inherited by future generations', 'Trauma is fake', 'Trauma improves DNA'], answer: 1, explanation: "The ghosts of your grandparents' trauma can physically live in your genes. 🧬" },
-    { id: 'q10', question: "How does EMDR therapy work?", options: ['Listening to music', 'Using bilateral eye movements (mimicking REM sleep) to distract the amygdala while the hippocampus finally files the memory', 'Taking a pill', 'Talking for hours'], answer: 1, explanation: "The eye movements tax the working memory, pulling the vividness out of the flashback. 👁️" },
-    { id: 'q11', question: "What is the core belief resulting from 'Shame'?", options: ['I made a mistake', 'I *am* a mistake (fundamental belief of being broken or bad)', 'Other people are bad', 'I forgot something'], answer: 1, explanation: "Traumatized children take the blame to avoid recognizing their caretakers are dangerous. 🎭" },
-    { id: 'q12', question: "Why is 'Somatic Experiencing' effective for trauma?", options: ['It makes you sweat', 'It treats the trauma through the body first (bottom-up), completing stress cycles that language cannot reach', 'It improves flexibility', 'It is cheap'], answer: 1, explanation: "The body must believe it is safe before the brain can relax. 🧘‍♀️" },
-    { id: 'q13', question: "What is 'Post-Traumatic Growth'?", options: ['Getting taller', 'Experiencing profound positive psychological changes and deeper meaning after surviving trauma', 'Gaining weight', 'Becoming famous'], answer: 1, explanation: "You can be shattered, and the pieces can be glued back together stronger than before. 🌳" },
-    { id: 'q14', question: "What is the worst thing to say to a trauma survivor?", options: ['I believe you', 'Everything happens for a reason (invalidates the horror of the trauma)', 'Would you like some tea', 'Take your time'], answer: 1, explanation: "Do not put a shiny sticker on a gaping wound. Sit with them in the mess. 🚫" },
-    { id: 'q15', question: "What characterizes the 'Freeze' response during trauma?", options: ['A drop in temperature', 'The body paralyzing itself, dropping heart rate, and numbing pain when fighting or escaping is impossible', 'Screaming loudly', 'Running fast'], answer: 1, explanation: "It is an involuntary biological defense, not an indicator of cowardice. 🧊" },
-    { id: 'q16', question: "Why do trauma symptoms sometimes appear years after the event when the survivor is finally safe?", options: ['Because they are bored', 'The brain only drops its repression defenses to process the backlog of trauma once it feels the environment is safe enough to do so', 'Karma', 'Old age'], answer: 1, explanation: "The brain says: 'Okay, we survived. Now we must clean up the mess.' 📦" },
-    { id: 'q17', question: "Playing Tetris right after a traumatic event is proven to do what?", options: ['Improve hand-eye coordination', 'Interrupt the visual consolidation of the traumatic memory, reducing future flashbacks', 'Make you forget the event', 'Increase stress'], answer: 1, explanation: "Tetris hogs the visual processing power, preventing the images from burning into long-term memory. 🧱" },
-    { id: 'q18', question: "What is 'Trauma Reenactment'?", options: ['A stage play', 'Subconsciously seeking out familiar painful or abusive situations in an attempt to finally \'get it right\'', 'Acting crazy', 'Telling stories'], answer: 1, explanation: "The brain prefers the devil it knows over the heaven it doesn't. 🔄" },
-    { id: 'q19', question: "Why do 'talk therapies' alone often fail severe PTSD?", options: ['It takes too long', 'The trauma is stuck in the emotional/survival parts of the brain which don\'t communicate via language', 'Therapists are bad', 'It is too expensive'], answer: 1, explanation: "You cannot reason with the amygdala using language. 🗣️" },
-    { id: 'q20', question: "What is a flashback?", options: ['A bad thought', 'Re-experiencing the traumatic event with the exact same physical flood of chemicals as if it is happening right now', 'A bright light', 'A type of dream'], answer: 1, explanation: "It is an involuntary time-travel back to the moment of terror. 🎞️" },
+    { id: 'q1', question: "What is the key difference between a bad memory and trauma?", options: [
+        "Trauma causes anger.",
+        "Trauma is an active threat in the nervous system.",
+        "Bad memories fade.",
+        "No difference exists."
+      ], answer: 1, explanation: "Bad memories are in the past. Trauma feels like it is happening right now. ⏳" },
+    { id: 'q2', question: "Which brain structure acts as the 'filing cabinet' and fails during a traumatic event?", options: [
+        "The Frontal Lobe",
+        "The Hippocampus",
+        "The Brain Stem",
+        "The Optic Nerve"
+      ], answer: 1, explanation: "Because the Hippocampus shuts off, the memory is never stamped with 'Past'. 🗄️" },
+    { id: 'q3', question: "What is 'Little t' trauma?", options: [
+        "Small physical injuries.",
+        "Distressing events overwhelming the nervous system.",
+        "Watching a scary movie.",
+        "Getting a bad grade."
+      ], answer: 1, explanation: "Death is not required to overwhelm the nervous system's capacity to cope. 🌪️" },
+    { id: 'q4', question: "According to Bessel van der Kolk, where does unresolved trauma live?", options: [
+        "In the subconscious mind.",
+        "Trapped in the body and nervous system.",
+        "In the frontal lobe.",
+        "In dreams."
+      ], answer: 1, explanation: "This is why trauma survivors suffer from severe, unexplained physical health issues. 🧍‍♂️" },
+    { id: 'q5', question: "What is a 'Trigger'?", options: [
+        "A sudden burst of energy.",
+        "A sensory shortcut reactivating traumatic memory.",
+        "A type of gun.",
+        "A bad mood."
+      ], answer: 1, explanation: "Triggers bypass logic, taking you instantly from the grocery store back to the warzone. 💣" },
+    { id: 'q6', question: "What is the biological purpose of 'Dissociation'?", options: [
+        "To fall asleep.",
+        "Brain numbs reality for psychological escape.",
+        "To think creatively.",
+        "To forget names."
+      ], answer: 1, explanation: "It is essentially the brain turning off the cameras because the horror is too bright. 👻" },
+    { id: 'q7', question: "How is Complex PTSD (C-PTSD) different from PTSD?", options: [
+        "It involves mathematics.",
+        "Repeated trauma altering core identity.",
+        "It is less severe.",
+        "It only affects soldiers."
+      ], answer: 1, explanation: "CPTSD is death by a thousand cuts, not one single explosion. 🔪" },
+    { id: 'q8', question: "What happens when someone is pushed ABOVE their 'Window of Tolerance'?", options: [
+        "They get tired.",
+        "They enter hyperarousal (panic, rage).",
+        "They sleep.",
+        "They dissociate."
+      ], answer: 1, explanation: "Below the window is numbness; above the window is chaos. 🪟" },
+    { id: 'q9', question: "What does 'Epigenetics' prove about trauma?", options: [
+        "Trauma causes wrinkles.",
+        "Trauma alters gene expression, inherited stress.",
+        "Trauma is fake.",
+        "Trauma improves DNA."
+      ], answer: 1, explanation: "The ghosts of your grandparents' trauma can physically live in your genes. 🧬" },
+    { id: 'q10', question: "How does EMDR therapy work?", options: [
+        "Listening to music.",
+        "Bilateral eye movements file memory.",
+        "Taking a pill.",
+        "Talking for hours."
+      ], answer: 1, explanation: "The eye movements tax the working memory, pulling the vividness out of the flashback. 👁️" },
+    { id: 'q11', question: "What is the core belief resulting from 'Shame'?", options: [
+        "I made a mistake.",
+        "I am a mistake.",
+        "Other people are bad.",
+        "I forgot something."
+      ], answer: 1, explanation: "Traumatized children take the blame to avoid recognizing their caretakers are dangerous. 🎭" },
+    { id: 'q12', question: "Why is 'Somatic Experiencing' effective for trauma?", options: [
+        "It makes you sweat.",
+        "Treats trauma through the body first.",
+        "It improves flexibility.",
+        "It is cheap."
+      ], answer: 1, explanation: "The body must believe it is safe before the brain can relax. 🧘‍♀️" },
+    { id: 'q13', question: "What is 'Post-Traumatic Growth'?", options: [
+        "Getting taller.",
+        "Positive psychological changes after trauma.",
+        "Gaining weight.",
+        "Becoming famous."
+      ], answer: 1, explanation: "You can be shattered, and the pieces can be glued back together stronger than before. 🌳" },
+    { id: 'q14', question: "What is the worst thing to say to a trauma survivor?", options: [
+        "I believe you.",
+        "Everything happens for a reason.",
+        "Would you like tea?",
+        "Take your time."
+      ], answer: 1, explanation: "Do not put a shiny sticker on a gaping wound. Sit with them in the mess. 🚫" },
+    { id: 'q15', question: "What characterizes the 'Freeze' response during trauma?", options: [
+        "A drop in temperature.",
+        "Body paralyzes, numbs pain, drops heart rate.",
+        "Screaming loudly.",
+        "Running fast."
+      ], answer: 1, explanation: "It is an involuntary biological defense, not an indicator of cowardice. 🧊" },
+    { id: 'q16', question: "Why do trauma symptoms sometimes appear years after the event when the survivor is finally safe?", options: [
+        "Because they are bored.",
+        "Brain processes trauma when finally safe.",
+        "Karma.",
+        "Old age."
+      ], answer: 1, explanation: "The brain says: 'Okay, we survived. Now we must clean up the mess.' 📦" },
+    { id: 'q17', question: "Playing Tetris right after a traumatic event is proven to do what?", options: [
+        "Improve hand-eye coordination.",
+        "Interrupts visual memory, reduces flashbacks.",
+        "Make you forget the event.",
+        "Increase stress."
+      ], answer: 1, explanation: "Tetris hogs the visual processing power, preventing the images from burning into long-term memory. 🧱" },
+    { id: 'q18', question: "What is 'Trauma Reenactment'?", options: [
+        "A stage play.",
+        "Subconsciously seeking familiar painful situations.",
+        "Acting crazy.",
+        "Telling stories."
+      ], answer: 1, explanation: "The brain prefers the devil it knows over the heaven it doesn't. 🔄" },
+    { id: 'q19', question: "Why do 'talk therapies' alone often fail severe PTSD?", options: [
+        "It takes too long.",
+        "Trauma stuck in non-verbal brain parts.",
+        "Therapists are bad.",
+        "It is too expensive."
+      ], answer: 1, explanation: "You cannot reason with the amygdala using language. 🗣️" },
+    { id: 'q20', question: "What is a flashback?", options: [
+        "A bad thought.",
+        "Re-experiencing trauma with physical sensations.",
+        "A bright light.",
+        "A type of dream."
+      ], answer: 1, explanation: "It is an involuntary time-travel back to the moment of terror. 🎞️" },
   ],
 
   relatedTopics: ['fear', 'anxiety', 'resilience'],

@@ -174,15 +174,7 @@ export default function QuizResults({
           </View>
 
           {/* Motivational note */}
-          <View style={[styles.noteBox, { backgroundColor: glass1, borderColor: border }]}>
-            <Icon name="info" size={14} color={txtM} />
-            <Text style={[styles.noteText, { color: txtM }]}>
-              {pct < 70
-                ? 'Tip: Re-read the theory cards, especially the highlighted callouts. The quiz questions are based directly on them.'
-                : 'Great job! Try exploring a related topic next to build on your knowledge.'
-              }
-            </Text>
-          </View>
+          
 
         </Animated.View>
         <View style={{ height: 80 }} />

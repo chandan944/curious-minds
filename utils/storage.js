@@ -11,6 +11,7 @@ const KEYS = {
   LAST_LOGIN:       '@curious_last_login',
   BADGES:           '@curious_badges',
   TOPIC_PROGRESS:   '@curious_topic_progress',
+  COMPLETED_ITEMS:  '@curious_completed_items',
   SOUND_MUTED:      '@curious_sound_muted',
 };
 
@@ -64,6 +65,15 @@ export const addBadge = async (badge) => {
   return updated;
 };
 
+export const awardBadge = async (badgeId) => {
+  const current = await getBadges();
+  if (current.find(b => b.id === badgeId)) return false; // Already awarded
+  const newBadge = { id: badgeId, unlockedAt: new Date().toISOString() };
+  const updated = [...current, newBadge];
+  await safeSet(KEYS.BADGES, updated);
+  return true; // Newly awarded
+};
+
 // ── Topic Progress ─────────────────────────────
 export const getTopicProgress = async (topicId) => {
   const all = (await safeGet(KEYS.TOPIC_PROGRESS)) || {};
@@ -81,6 +91,23 @@ export const getAllTopicProgress = async () => {
   return (await safeGet(KEYS.TOPIC_PROGRESS)) || {};
 };
 
+// ── Completed Items ────────────────────────────
+export const getCompletedItems = async () => {
+  return (await safeGet(KEYS.COMPLETED_ITEMS)) || [];
+};
+
+export const toggleCompletedItem = async (itemId) => {
+  const current = await getCompletedItems();
+  let updated;
+  if (current.includes(itemId)) {
+    updated = current.filter(id => id !== itemId);
+  } else {
+    updated = [...current, itemId];
+  }
+  await safeSet(KEYS.COMPLETED_ITEMS, updated);
+  return updated;
+};
+
 // ── Sound ──────────────────────────────────────
 export const getSoundMuted = async () => {
   const val = await safeGet(KEYS.SOUND_MUTED);
@@ -92,7 +119,7 @@ export const setSoundMuted = (muted) => safeSet(KEYS.SOUND_MUTED, muted);
 export const getFullStats = async () => {
   try {
     // Use multiGet to batch all AsyncStorage reads into a single operation
-    const keys = [KEYS.XP_TOTAL, KEYS.STREAK, KEYS.BADGES, KEYS.LAST_LOGIN, KEYS.TOPIC_PROGRESS];
+    const keys = [KEYS.XP_TOTAL, KEYS.STREAK, KEYS.BADGES, KEYS.LAST_LOGIN, KEYS.TOPIC_PROGRESS, KEYS.COMPLETED_ITEMS];
     const pairs = await AsyncStorage.multiGet(keys);
     const result = {};
     pairs.forEach(([key, value]) => {
@@ -106,14 +133,15 @@ export const getFullStats = async () => {
     });
 
     return {
-      xp:       result[KEYS.XP_TOTAL] || 0,
-      streak:   result[KEYS.STREAK] || 0,
-      badges:   result[KEYS.BADGES] || [],
-      lastLogin: result[KEYS.LAST_LOGIN] || null,
-      topicProgress: result[KEYS.TOPIC_PROGRESS] || {},
+      xp:             result[KEYS.XP_TOTAL] || 0,
+      streak:         result[KEYS.STREAK] || 0,
+      badges:         result[KEYS.BADGES] || [],
+      lastLogin:      result[KEYS.LAST_LOGIN] || null,
+      topicProgress:  result[KEYS.TOPIC_PROGRESS] || {},
+      completedItems: result[KEYS.COMPLETED_ITEMS] || [],
     };
   } catch {
-    return { xp: 0, streak: 0, badges: [], lastLogin: null, topicProgress: {} };
+    return { xp: 0, streak: 0, badges: [], lastLogin: null, topicProgress: {}, completedItems: [] };
   }
 };
 
@@ -125,7 +153,11 @@ export const checkAndUpdateStreak = async () => {
 
   if (last) {
     const lastDate = new Date(last);
-    const daysDiff = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+    
+    // Compare calendar dates (not raw timestamps) to handle midnight edge cases
+    const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const lastDateOnly = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate());
+    const daysDiff = Math.round((todayDate - lastDateOnly) / (1000 * 60 * 60 * 24));
 
     if (daysDiff === 1) {
       // Consecutive day — increment streak
@@ -139,7 +171,7 @@ export const checkAndUpdateStreak = async () => {
       await setLastLogin(now.toISOString());
       return { streak: 1, isNew: true, wasReset: true };
     } else {
-      // Same day
+      // Same day (daysDiff === 0)
       return { streak, isNew: false };
     }
   } else {

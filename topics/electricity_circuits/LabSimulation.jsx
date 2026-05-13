@@ -1,7 +1,7 @@
-﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 //  LAB: Electricity & Circuits v2.0 (Extreme)
 //  Interactive Circuit Matrix & Real-time Ohm's Law Engine
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -20,7 +20,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 300;
 
-// â”€â”€ Components & Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Components & Data ─────────────────────────────────
 
 const COMPONENT_TYPES = [
   { id: 'resistor', name: 'Resistor', resistance: 100, color: '#6C63FF', icon: 'link' },
@@ -38,7 +38,7 @@ const CHALLENGES = [
   { id: 'mixed_master', title: 'Circuit Master', desc: 'Use 4 different components types', icon: 'award', color: '#A855F7' },
 ];
 
-// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Unified UI Components ──────────────────────────────
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -71,11 +71,11 @@ const ChallengeCard = ({ challenge, isDone }) => (
   </View>
 );
 
-// â”€â”€ Animated SVG components must be defined before JSX use â”€â”€
+// ── Animated SVG components must be defined before JSX use ──
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
-// â”€â”€ Main Simulation Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Main Simulation Component ───────────────────────────
 
 export default function ElectricityLab({ scientistMode = false, accentColor = '#6C63FF' }) {
   const { isDark } = useTheme();
@@ -94,7 +94,7 @@ export default function ElectricityLab({ scientistMode = false, accentColor = '#
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const sparkAnim = useRef(new Animated.Value(0)).current;
 
-  // â”€â”€ Physics Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Physics Engine ─────────────────────────────────────
 
   const calculatePhysics = useCallback(() => {
     let totalR = 0;
@@ -155,7 +155,7 @@ export default function ElectricityLab({ scientistMode = false, accentColor = '#
     calculatePhysics();
   }, [slots, topology, voltage, calculatePhysics]);
 
-  // â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Animations ─────────────────────────────────────────
 
   const triggerSpark = () => {
     sparkAnim.setValue(0);
@@ -182,7 +182,7 @@ export default function ElectricityLab({ scientistMode = false, accentColor = '#
     }
   }, [running, results.current, currentAnim]);
 
-  // â”€â”€ Interaction Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Interaction Handlers ───────────────────────────────
 
   const placeComponent = (slotIdx, typeId) => {
     soundTap();
@@ -210,7 +210,7 @@ export default function ElectricityLab({ scientistMode = false, accentColor = '#
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
-  // â”€â”€ Render Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Render Helpers ─────────────────────────────────────
 
   const renderCircuitLayout = () => {
     const isSeries = topology === 'series';
@@ -269,7 +269,7 @@ export default function ElectricityLab({ scientistMode = false, accentColor = '#
       <View style={styles.metricsRow}>
         <StatusCard label="CURRENT" value={results.current.toFixed(3)} unit="A" color="#FF4D6D" icon="zap" />
         <StatusCard label="POWER" value={results.power.toFixed(3)} unit="W" color="#FFD166" icon="sun" />
-        <StatusCard label="LOAD" value={results.resistance.toFixed(0)} unit="Î©" color="#00E5FF" icon="grid" />
+        <StatusCard label="LOAD" value={results.resistance.toFixed(0)} unit="Ω" color="#00E5FF" icon="grid" />
       </View>
 
       {/* 2. Simulation Area */}
@@ -320,7 +320,7 @@ export default function ElectricityLab({ scientistMode = false, accentColor = '#
              >
                <Icon name={type.icon} size={18} color={type.color} />
                <Text style={[styles.compName, { color: type.color }]}>{type.name}</Text>
-               <Text style={styles.compDetails}>{type.resistance}Î©</Text>
+               <Text style={styles.compDetails}>{type.resistance}Ω</Text>
              </TouchableOpacity>
            ))}
         </ScrollView>
@@ -376,9 +376,9 @@ export default function ElectricityLab({ scientistMode = false, accentColor = '#
             />
             {topology === 'parallel' && (
               <ScientistCard 
-                formula="1/Rt = Î£(1/Rn)" 
+                formula="1/Rt = Σ(1/Rn)" 
                 description="Parallel Equivalent Resistance" 
-                value={`Rt = ${(1/results.resistance).toFixed(4)}^-1 = ${results.resistance.toFixed(1)} Î©`}
+                value={`Rt = ${(1/results.resistance).toFixed(4)}^-1 = ${results.resistance.toFixed(1)} Ω`}
                 color="#00E5FF"
               />
             )}

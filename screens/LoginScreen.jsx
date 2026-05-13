@@ -13,6 +13,7 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import { useAuth }   from '../context/AuthContext';
 import { FONTS, SPACING, RADIUS, COLORS } from '../constants/theme';
 import Icon from '../components/ui/Icons';
+import PrivacyPolicyScreen from './PrivacyPolicyScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -69,6 +70,8 @@ function PillTag({ icon, color, text, delay }) {
 export default function LoginScreen() {
   const { handleGoogleAuth } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [policyAccepted, setPolicyAccepted] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
 
   // Animation refs
   const logoScale   = useRef(new Animated.Value(0.4)).current;
@@ -156,6 +159,10 @@ export default function LoginScreen() {
     }
   };
 
+  if (showPrivacyPolicy) {
+    return <PrivacyPolicyScreen onBack={() => setShowPrivacyPolicy(false)} />;
+  }
+
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -195,20 +202,31 @@ export default function LoginScreen() {
             </Animated.View>
 
             {/* ── Pills Section (Minimal features) ── */}
-            <View style={styles.pillsSection}>
-              <PillTag icon="flask"  color="#8B5CF6" text="Interactive Labs" delay={200} />
-              <PillTag icon="brain"  color="#3B82F6" text="Science & Theory" delay={350} />
-              <PillTag icon="users" color="#EC4899" text="Global Community" delay={500} />
-            </View>
+          
           </View>
 
           {/* ── Auth section ─────────────────────── */}
           <Animated.View style={[styles.authSection, { opacity: btnOpacity, transform: [{ scale: btnScale }] }]}>
+            
+            {/* ── Privacy Checkbox ──────────────── */}
+            <TouchableOpacity 
+              style={styles.checkboxContainer} 
+              onPress={() => setPolicyAccepted(!policyAccepted)}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.checkbox, policyAccepted && styles.checkboxChecked]}>
+                {policyAccepted && <Icon name="check" size={14} color="#FFFFFF" />}
+              </View>
+              <Text style={styles.checkboxText}>
+                I agree to the <Text style={styles.disclaimerLink} onPress={() => setShowPrivacyPolicy(true)}>Privacy Policy</Text>
+              </Text>
+            </TouchableOpacity>
+
             {/* Google button */}
             <TouchableOpacity
-              style={[styles.googleBtn, loading && styles.googleBtnDisabled]}
+              style={[styles.googleBtn, (loading || !policyAccepted) && styles.googleBtnDisabled]}
               onPress={handleSignIn}
-              disabled={loading}
+              disabled={loading || !policyAccepted}
               activeOpacity={0.88}
             >
               <LinearGradient
@@ -233,13 +251,6 @@ export default function LoginScreen() {
                 )}
               </LinearGradient>
             </TouchableOpacity>
-
-            <Text style={styles.disclaimer}>
-              By continuing you agree to our{' '}
-              <Text style={styles.disclaimerLink} onPress={() => Linking.openURL('https://curiousminds.dpdns.org/privacy-policy')}>
-                Terms of Service and Privacy Policy
-              </Text>
-            </Text>
           </Animated.View>
 
         </ScrollView>
@@ -291,6 +302,7 @@ const styles = StyleSheet.create({
     color: '#0F172A',
     letterSpacing: -0.5,
     marginBottom: 8,
+    marginTop: 20,
   },
   tagline: {
     fontFamily: FONTS.bodyMedium,
@@ -391,6 +403,36 @@ const styles = StyleSheet.create({
   disclaimerLink: {
     color: '#6366F1',
     textDecorationLine: 'underline',
+  },
+  
+  // Checkbox styles
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 20,
+    width: '100%',
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#CBD5E1',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  checkboxChecked: {
+    backgroundColor: '#6366F1',
+    borderColor: '#6366F1',
+  },
+  checkboxText: {
+    fontFamily: FONTS.bodyMedium,
+    fontSize: 14,
+    color: '#475569',
+    flex: 1,
   },
 });
 

@@ -1,10 +1,10 @@
-﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-//  LAB: Global Conflict Strategy â€” World Wars
+// ─────────────────────────────────────────────────────────────
+//  LAB: Global Conflict Strategy — World Wars
 //
-//  MODE 1 â€” Alliance Web (WWI): Chain-reaction network graph
-//  MODE 2 â€” Enigma Simulator (WWII): 3-rotor cryptography keyboard
-//  MODE 3 â€” Shifting Fronts (WWII): Timeline map of Axis expansion
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  MODE 1 — Alliance Web (WWI): Chain-reaction network graph
+//  MODE 2 — Enigma Simulator (WWII): 3-rotor cryptography keyboard
+//  MODE 3 — Shifting Fronts (WWII): Timeline map of Axis expansion
+// ─────────────────────────────────────────────────────────────
 
 import React, { useState, useRef } from 'react';
 import {
@@ -22,9 +22,9 @@ const { width: W_SCREEN } = Dimensions.get('window');
 const SIM_W = W_SCREEN - SPACING.md * 4;
 const SIM_H = 320;
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  DATA & CONSTANTS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 const MODES = [
   { id: 'alliance', name: 'WWI Alliance Web', icon: 'grid', color: '#D4A74A' },
@@ -44,7 +44,7 @@ const QWERTY = [
   ['Z','X','C','V','B','N','M']
 ];
 
-// â”€â”€ WWI ALLIANCE DATA â”€â”€
+// ── WWI ALLIANCE DATA ──
 const NATIONS = [
   { id: 'serbia',  name: 'Serbia',  cx: SIM_W*0.65, cy: 220, color: '#4D5A46', ally: 'russia' },
   { id: 'austria', name: 'Austria', cx: SIM_W*0.5,  cy: 160, color: '#B42B2B', ally: 'germany' },
@@ -62,7 +62,7 @@ const TREATIES = [
   { n1: 'serbia', n2: 'austria', type: 'conflict', dotted: true },
 ];
 
-// â”€â”€ WWII FRONTS DATA â”€â”€
+// ── WWII FRONTS DATA ──
 const MAP_PATH = "M60 40 L160 20 L240 10 L300 40 L320 120 L280 280 L200 300 L110 310 L40 280 L20 180 Z";
 // Simplified polygon areas representing Axis control by year
 const AXIS_POLYS = {
@@ -75,9 +75,9 @@ const AXIS_POLYS = {
   1945: "M150 120 L170 120 L165 140 L155 140 Z",// Collapse to Berlin
 };
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  COMPONENT
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 export default function WorldWarsLab({
   scientistMode = false,
@@ -95,7 +95,7 @@ export default function WorldWarsLab({
   const border = _themeObj.glass?.border || 'rgba(255,255,255,0.15)';
   const wire = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)';
 
-  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── State ──────────────────────────────────
   const [modeIdx, setModeIdx] = useState(0);
 
   // Alliance Mode
@@ -119,7 +119,7 @@ export default function WorldWarsLab({
 
   const mode = MODES[modeIdx];
 
-  // â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Handlers ───────────────────────────────
   const unlockCh = (id) => {
     if (completedCh.includes(id)) return;
     const next = [...completedCh, id];
@@ -213,7 +213,7 @@ export default function WorldWarsLab({
     }
   };
 
-  // â”€â”€ Fun fact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fun fact ───────────────────────────────
   const funFact = (() => {
     if (mode.id === 'alliance') return "The assassination of Archduke Ferdinand was the spark, but the secret defense treaties were the dynamite.";
     if (mode.id === 'enigma') return "The Enigma code had over 158 quintillion settings and changed every single time you pressed a key.";
@@ -221,13 +221,13 @@ export default function WorldWarsLab({
     return "The World Wars completely erased the ancient world of Kings and Empires.";
   })();
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════════════════════════
   //  RENDER
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════════════════════════
   return (
     <View style={s.root}>
 
-      {/* â”€â”€ Mode Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Mode Tabs ─────────────────────── */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.tabRow}>
         {MODES.map((m, i) => (
           <TouchableOpacity key={m.id} onPress={() => switchMode(i)}
@@ -238,7 +238,7 @@ export default function WorldWarsLab({
         ))}
       </ScrollView>
 
-      {/* â”€â”€ MAIN CANVAS AREA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── MAIN CANVAS AREA ────────────────── */}
       <View style={[s.canvasOuter, { borderColor: border }]}>
 
         {/* MODE 1: ALLIANCE DOMINO WEB */}
@@ -406,14 +406,14 @@ export default function WorldWarsLab({
         )})()}
       </View>
 
-      {/* â”€â”€ Stats Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Stats Bar ─────────────────────── */}
       <View style={s.statsRow}>
         <Stat icon="shield" color="#D4A74A" label="Treaties" val={TREATIES.length} t1={txt1} tM={txtM} />
         <Stat icon="lock" color="#00E5A0" label="Rotors" val="3" t1={txt1} tM={txtM} />
         <Stat icon="bomb" color="#FF4444" label="Global War" val="2" t1={txt1} tM={txtM} />
       </View>
 
-      {/* â”€â”€ Fun Fact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Fun Fact ───────────────────────── */}
       <View style={[s.fact, { borderColor: accentColor + '25', backgroundColor: accentColor + '08' }]}>
         <View style={[s.factIco, { backgroundColor: accentColor + '18' }]}>
           <Icon name="lightbulb" size={14} color={accentColor} />
@@ -421,7 +421,7 @@ export default function WorldWarsLab({
         <Text style={[s.factTxt, { color: txt2 }]}>{funFact}</Text>
       </View>
 
-      {/* â”€â”€ Challenge toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Challenge toast ─────────────── */}
       <Animated.View style={[s.toast, { backgroundColor: accentColor + '18', borderColor: accentColor + '50',
         opacity: chAnim, transform: [{ translateY: chAnim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) }],
       }]}>
@@ -429,7 +429,7 @@ export default function WorldWarsLab({
         <Text style={[s.toastTxt, { color: accentColor }]}>{lastChMsg}</Text>
       </Animated.View>
 
-      {/* â”€â”€ Challenges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Challenges ───────────────────── */}
       <TouchableOpacity onPress={() => { soundTap(); setShowCh(v => !v); }}
         style={[s.chToggle, { borderColor: border, backgroundColor: glass1 }]}>
         <View style={s.chToggleInner}>
@@ -467,9 +467,9 @@ export default function WorldWarsLab({
   );
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  SUB-COMPONENTS & HELPERS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 function Stat({ icon, color, label, val, t1, tM }) {
   return (
@@ -483,9 +483,9 @@ function Stat({ icon, color, label, val, t1, tM }) {
   );
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  STYLES
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 const s = StyleSheet.create({
   root: { gap: SPACING.sm },

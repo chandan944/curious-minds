@@ -1,7 +1,7 @@
-﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 //  LAB: Quantum Basics v2.0 (Extreme)
 //  The Probability Forge
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -20,7 +20,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 340;
 
-// â”€â”€ Quantum Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Quantum Data ───────────────────────────────────────
 
 const CHALLENGES = [
   { id: 'wave_fringe', title: 'Wave Master', desc: 'Create a perfect 5-fringe interference pattern', icon: 'wind', color: '#00D4FF' },
@@ -28,7 +28,7 @@ const CHALLENGES = [
   { id: 'pure_probability', title: 'Probability Pro', desc: 'Fire 100 electrons in unobserved mode', icon: 'activity', color: '#A855F7' },
 ];
 
-// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Unified UI Components ──────────────────────────────
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -49,10 +49,10 @@ const ScientistCard = ({ formula, value, description, color }) => (
   </View>
 );
 
-// â”€â”€ AnimatedElectron must be defined before JSX use â”€â”€â”€
+// ── AnimatedElectron must be defined before JSX use ───
 const AnimatedElectron = Animated.createAnimatedComponent(Circle);
 
-// â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Main Component ─────────────────────────────────────
 
 export default function QuantumLab({ scientistMode = false }) {
   const { isDark } = useTheme();
@@ -68,7 +68,7 @@ export default function QuantumLab({ scientistMode = false }) {
   const gunAnim = useRef(new Animated.Value(0)).current;
   const waveAnim = useRef(new Animated.Value(0)).current;
 
-  // â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Handlers ─────────────────────────────────────────
 
   const fireElectron = useCallback(() => {
     soundTap();
@@ -108,7 +108,7 @@ export default function QuantumLab({ scientistMode = false }) {
     }
   }, [electronCount, isObserving]);
 
-  // â”€â”€ Render Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Render Helpers ────────────────────────────────────
 
   const renderInterferencePattern = () => {
     if (isObserving) return null;
@@ -121,7 +121,7 @@ export default function QuantumLab({ scientistMode = false }) {
     return paths;
   };
 
-  // â”€â”€ Main Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Main Render ───────────────────────────────────────
 
   return (
     <View style={styles.container}>
@@ -129,7 +129,7 @@ export default function QuantumLab({ scientistMode = false }) {
       <View style={styles.header}>
          <StatusCard label="OBSERVER" value={isObserving ? 'ACTIVE' : 'OFF'} unit="" color={isObserving ? '#FF3131' : '#00D4FF'} icon="eye" />
          <StatusCard label="ELECTRONS" value={electronCount} unit="fired" color="#A855F7" icon="zap" />
-         <StatusCard label="AMPLITUDE" value={amplitude.toFixed(1)} unit="Ïˆ" color="#FFD166" icon="activity" />
+         <StatusCard label="AMPLITUDE" value={amplitude.toFixed(1)} unit="ψ" color="#FFD166" icon="activity" />
       </View>
 
       {/* 2. Simulation Area */}
@@ -202,7 +202,7 @@ export default function QuantumLab({ scientistMode = false }) {
          </View>
 
          <View style={styles.sliderRow}>
-            <Text style={styles.sectionTitle}>PROBABILITY AMPLITUDE (Ïˆ)</Text>
+            <Text style={styles.sectionTitle}>PROBABILITY AMPLITUDE (ψ)</Text>
             <View style={styles.sliderTrack}>
                <TouchableOpacity onPress={() => setAmplitude(Math.max(0.1, amplitude - 0.2))} style={styles.stepBtn}><Text style={styles.stepText}>-</Text></TouchableOpacity>
                <View style={styles.barWrap}><View style={[styles.bar, { width: `${amplitude * 100}%` }]} /></View>
@@ -217,13 +217,13 @@ export default function QuantumLab({ scientistMode = false }) {
            <Text style={styles.sectionTitle}>WAVEFUNCTION ANALYTICS</Text>
            <View style={styles.sciGrid}>
               <ScientistCard 
-                 formula="|Ïˆ(x,t)|Â²" 
+                 formula="|ψ(x,t)|²" 
                  description="Probability Density" 
                  value={isObserving ? "Dirac Delta Distribution" : "Sine Interference Matrix"}
                  color="#00D4FF"
               />
               <ScientistCard 
-                 formula="Î”x Î”p â‰¥ h/4Ï€" 
+                 formula="Δx Δp ≥ h/4π" 
                  description="Heisenberg Constraint" 
                  value={`Uncertainty Index: ${isObserving ? 'Critical Collapse' : 'Stable Wave'}`}
                  color="#FFD166"

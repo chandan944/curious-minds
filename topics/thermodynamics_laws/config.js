@@ -159,140 +159,240 @@ export default {
     {
       id: "q1",
       question: "The 1st Law of Thermodynamics states that energy...",
-      options: ["Is constantly disappearing", "Can never be created or destroyed", "Is an illusion", "Only exists in heat"],
+      options: [
+        "Is always disappearing",
+        "Can never be created or destroyed",
+        "Is an illusion",
+        "Only exists as heat"
+      ],
       answer: 1,
       explanation: "Total energy in any closed system remains constant — the Law of Conservation of Energy! ⚛️",
     },
     {
       id: "q2",
       question: "What is 'Entropy' in thermodynamics?",
-      options: ["Raw energy", "A measure of disorder and chaos", "Magnetic pull", "Total mass"],
+      options: [
+        "Pure, raw energy",
+        "A measure of disorder and chaos",
+        "A type of magnetic pull",
+        "The total mass"
+      ],
       answer: 1,
       explanation: "Entropy represents the unavailability of a system's thermal energy for conversion into mechanical work! 🌪️",
     },
     {
       id: "q3",
       question: "What happens at Absolute Zero (0 Kelvin)?",
-      options: ["Atoms move at the speed of light", "Almost all atomic motion stops", "Ice boils spontaneously", "Mass doubles"],
+      options: [
+        "Atoms move at light speed",
+        "Almost all atomic motion stops",
+        "Ice boils spontaneously",
+        "An object's mass doubles"
+      ],
       answer: 1,
       explanation: "At absolute zero, the system reaches its minimum possible energy and stillness! 🧊",
     },
     {
       id: "q4",
       question: "Touching a hot stove is an example of heat transfer via...",
-      options: ["Convection", "Radiation", "Conduction", "Induction"],
+      options: [
+        "Convection",
+        "Radiation",
+        "Conduction",
+        "Induction"
+      ],
       answer: 2,
       explanation: "Conduction is the direct transfer of energy through molecular collisions! 🔥",
     },
     {
       id: "q5",
       question: "How does the Sun heat the Earth across the vacuum of space?",
-      options: ["Conduction", "Convection", "Thermal Radiation", "Magnetic Waves"],
+      options: [
+        "Conduction",
+        "Convection",
+        "Thermal Radiation",
+        "Magnetic Waves"
+      ],
       answer: 2,
       explanation: "Energy travels through space as electromagnetic waves (primarily infrared light)! ☀️",
     },
     {
       id: "q6",
       question: "In convection, why does hot fluid rise?",
-      options: ["It becomes less dense when heated", "It becomes magnetic", "Gravity forgets about it", "It wants to be closer to the sun"],
+      options: [
+        "It becomes less dense when heated",
+        "It becomes magnetic",
+        "Gravity forgets about it",
+        "It wants to reach the sun"
+      ],
       answer: 0,
       explanation: "Heated molecules spread out, making the fluid lighter than its cooler surroundings! 🌊",
     },
     {
       id: "q7",
       question: "What is the 'Zeroth' Law primarily about?",
-      options: ["Total Energy", "Thermal Equilibrium", "Maximum Chaos", "Zero Gravity"],
+      options: [
+        "Total Energy",
+        "Thermal Equilibrium",
+        "Maximum Chaos",
+        "Zero Gravity"
+      ],
       answer: 1,
       explanation: "It defines the concept of temperature balance between systems! ⚖️",
     },
     {
       id: "q8",
       question: "Why are house heaters usually placed near the floor?",
-      options: ["To save wall space", "Because hot air naturally rises via convection", "To stay away from the ceiling", "For easier repair"],
+      options: [
+        "To save wall space",
+        "Hot air naturally rises via convection",
+        "To stay away from the ceiling",
+        "For easier repair"
+      ],
       answer: 1,
       explanation: "Heating air at the bottom causes it to rise and circulate through the whole room! 🌬️",
     },
     {
       id: "q9",
       question: "The theoretical final state of the universe is often called...",
-      options: ["The Big Rip", "The Heat Death", "The Big Crunch", "Absolute Vacuum"],
+      options: [
+        "The Big Rip",
+        "The Heat Death",
+        "The Big Crunch",
+        "Absolute Vacuum"
+      ],
       answer: 1,
       explanation: "Maximum entropy would mean energy is too spread out to support life or movement! 💀",
     },
     {
       id: "q10",
       question: "What does 'Specific Heat Capacity' measure?",
-      options: ["The weight of an object", "Resistance to temperature change", "Melting speed", "Brightness"],
+      options: [
+        "The weight of an object",
+        "Resistance to temperature change",
+        "An object's melting speed",
+        "Its overall brightness"
+      ],
       answer: 1,
       explanation: "It's the energy needed to raise the temperature of 1kg of a substance by 1 degree! 💧",
     },
     {
       id: "q11",
       question: "Why do bridges have metal expansion joints?",
-      options: ["To hold them together", "To account for thermal expansion in hot weather", "To prevent gravity leaks", "To look modern"],
+      options: [
+        "To hold them together",
+        "To allow for thermal expansion",
+        "To prevent gravity leaks",
+        "To look modern"
+      ],
       answer: 1,
       explanation: "Materials physically expand as their atoms vibrate more intensely in the heat! 🏗️",
     },
     {
       id: "q12",
       question: "Why can't a heat engine be 100% efficient?",
-      options: ["Friction is too high", "Some heat must always be lost to a cold reservoir (2nd Law)", "Fuels aren't pure enough", "Computers aren't fast enough"],
+      options: [
+        "Friction is too high",
+        "Heat must be lost to cold reservoir",
+        "Fuels aren't pure enough",
+        "Computers aren't fast enough"
+      ],
       answer: 1,
       explanation: "The 2nd Law requires a temperature difference to perform work, resulting in waste heat! 💸",
     },
     {
       id: "q13",
       question: "What is a 'Heat Sink' designed to do?",
-      options: ["Generate heat", "Block light", "Absorb and dissipate unwanted heat", "Store oxygen"],
+      options: [
+        "To generate heat",
+        "To block light",
+        "Absorb and dissipate unwanted heat",
+        "To store oxygen"
+      ],
       answer: 2,
       explanation: "Heat sinks protect devices by moving thermal energy away from sensitive components! 💻",
     },
     {
       id: "q14",
       question: "Which scale is the 'absolute' temperature scale in science?",
-      options: ["Celsius", "Fahrenheit", "Kelvin", "Rankine"],
+      options: [
+        "Celsius",
+        "Fahrenheit",
+        "Kelvin",
+        "Rankine"
+      ],
       answer: 2,
       explanation: "The Kelvin scale is built directly on the laws of thermodynamics! 📏",
     },
     {
       id: "q15",
       question: "Heat will naturally flow in which direction?",
-      options: ["Cold to Hot", "Hot to Cold", "Always Upward", "Always Downward"],
+      options: [
+        "Cold to Hot",
+        "Hot to Cold",
+        "Always Upward",
+        "Always Downward"
+      ],
       answer: 1,
       explanation: "Energy naturally moves to occupy less-energized areas until balance is reached! 🚪",
     },
     {
       id: "q16",
       question: "An 'Adiabatic' process occurs when...",
-      options: ["The system is frozen", "No heat is exchanged with the surroundings", "The system is a vacuum", "A catalyst is added"],
+      options: [
+        "The system is frozen",
+        "No heat exchanged with surroundings",
+        "The system is a vacuum",
+        "A catalyst is added"
+      ],
       answer: 1,
       explanation: "In an adiabatic change, energy stays entirely within the substance being manipulated! 🛡️",
     },
     {
       id: "q17",
       question: "How do oceans help regulate planetary temperature?",
-      options: ["They reflect all light", "High Specific Heat allows them to store massive energy", "They generate cold air", "They have a high salt content"],
+      options: [
+        "They reflect all light",
+        "High specific heat stores massive energy",
+        "They generate cold air",
+        "They have high salt content"
+      ],
       answer: 1,
       explanation: "The oceans absorb solar energy during the day and release it slowly at night! 🌍",
     },
     {
       id: "q18",
       question: "What does a Heat Engine primarily convert thermal energy into?",
-      options: ["Electricity", "Mechanical Work", "Visual Light", "Nuclear Fusion"],
+      options: [
+        "Electricity",
+        "Mechanical Work",
+        "Visual Light",
+        "Nuclear Fusion"
+      ],
       answer: 1,
       explanation: "It uses the expansion of hot gases to provide motion and force! ⚙️",
     },
     {
       id: "q19",
       question: "Why are some rooftops painted white or silver?",
-      options: ["To be more visible", "To reflect thermal radiation and stay cool", "To prevent birds from landing", "To increase weight"],
+      options: [
+        "To be more visible",
+        "To reflect thermal radiation and stay cool",
+        "To prevent birds from landing",
+        "To increase weight"
+      ],
       answer: 1,
       explanation: "Light colors reflect more solar energy, reducing the 'Heat Island' effect! 🪞",
     },
     {
       id: "q20",
       question: "Compressing a gas inside a piston quickly will usually...",
-      options: ["Decrease its temperature", "Increase its temperature", "Have no thermal effect", "Turn it into a metal"],
+      options: [
+        "Decrease its temperature",
+        "Increase its temperature",
+        "Have no thermal effect",
+        "Turn it into a metal"
+      ],
       answer: 1,
       explanation: "Doing work on the gas adds internal energy, making its atoms vibrate faster! 💨",
     },

@@ -187,26 +187,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "The world's LARGEST religion by number of followers is:", options: ['Islam', 'Hinduism', 'Christianity (2.4 billion)', 'Buddhism'], answer: 2, explanation: "Christianity has been the largest religion for centuries — though Islam is the fastest growing. ✝️" },
-    { id: 'q2', question: "The world's OLDEST living major religion is:", options: ['Christianity', 'Islam', 'Hinduism (dating back ~4,000 years)', 'Buddhism'], answer: 2, explanation: "Hinduism has no single founding date — it evolved organically over millennia. 🕉️" },
-    { id: 'q3', question: "Unlike most religions, Buddhism is unique because:", options: ['It has no temples', 'Its founder explicitly avoided the God question entirely', 'It has no followers', 'It was founded in Europe'], answer: 1, explanation: "The Buddha called metaphysical questions 'unanswerable distractions' from practical suffering-reduction. 🧘" },
-    { id: 'q4', question: "The Golden Rule ('Treat others as you want to be treated') appears in:", options: ['Only Christianity', 'Only Eastern religions', 'Every major religion independently', 'No religion'], answer: 2, explanation: "This suggests a universal human moral instinct, not exclusive divine revelation. 🌐" },
-    { id: 'q5', question: "Islam's Five Pillars are:", options: ['Five holy books', 'Declaration of faith, daily prayer, charity, Ramadan fasting, and Hajj pilgrimage', 'Five prophets', 'Five temples'], answer: 1, explanation: "These five simple, concrete practices give Islam extraordinary clarity and accessibility. 🌙" },
-    { id: 'q6', question: "The Hindu concept of Karma means:", options: ['Luck', 'That every action has consequences that affect this life and future reincarnations', 'Punishment', 'A type of yoga'], answer: 1, explanation: "Karma is a cosmic cause-and-effect law — not reward/punishment from a deity. ⚖️" },
-    { id: 'q7', question: "Judaism is disproportionately influential because:", options: ['It has the most followers', 'It spawned both Christianity and Islam, and Jews have won ~22% of Nobel Prizes despite being ~0.2% of the population', 'It is the newest religion', 'It controls the media'], answer: 1, explanation: "Judaism's emphasis on education and debate created extraordinary intellectual output. ✡️" },
-    { id: 'q8', question: "Sikhism's Langar practice is:", options: ['A form of meditation', 'Free community kitchens open to ALL people regardless of religion, race, or wealth', 'A type of prayer', 'A pilgrimage'], answer: 1, explanation: "The Golden Temple in Amritsar feeds over 100,000 people daily — for free. ☬" },
-    { id: 'q9', question: "Christmas was placed on December 25th to:", options: ['Celebrate Jesus\'s exact birthday', 'Align with the Roman pagan festival of Sol Invictus to ease conversion', 'Honor the winter', 'Celebrate snow'], answer: 1, explanation: "Jesus was likely born in spring/fall. The date was strategic marketing. 🎄" },
-    { id: 'q10', question: "Hindu sacred cow veneration originated from:", options: ['A divine commandment', 'Practical economics — cows provided milk, fuel, fertilizer, and plowing power in agrarian society', 'Random tradition', 'Buddhist influence'], answer: 1, explanation: "Killing your tractor-dairy-fuel-factory was economic suicide. Practicality became theology. 🐄" },
-    { id: 'q11', question: "The 20th century's DEADLIEST regimes (Stalin, Mao) prove that:", options: ['Atheism is evil', 'Humans commit atrocities with or without religion — violence is a human problem, not a religion problem', 'Religion prevents violence', 'Communism is a religion'], answer: 1, explanation: "Humans use ANY available ideology to justify violence — religious or not. ⚔️" },
-    { id: 'q12', question: "At the MYSTICAL level (Sufi, Vedanta, Zen, Kabbalah), religions:", options: ['Completely disagree', 'Converge dramatically — mystics from different traditions describe nearly identical experiences', 'Don\'t have mystics', 'Only disagree more'], answer: 1, explanation: "Rumi, Meister Eckhart, and Upanishadic sages all describe dissolution of self and unity with everything. 🌀" },
-    { id: 'q13', question: "Islam prohibits images of Prophet Muhammad to:", options: ['Hide his appearance', 'Prevent idolatry (worshipping the image instead of God)', 'Save on art costs', 'Remain mysterious'], answer: 1, explanation: "This drove Islamic art into breathtaking geometric and calligraphic masterpieces instead. 🔷" },
-    { id: 'q14', question: "Jewish Kosher and Islamic Halal dietary laws are similar because:", options: ['Coincidence', 'Both descend from the same Abrahamic tradition and likely share ancient hygienic origins', 'They copied each other', 'All religions ban pork'], answer: 1, explanation: "Abraham/Ibrahim is the shared patriarch. Practical hygiene rules became sacralized. 🥩" },
-    { id: 'q15', question: "By 2050, the CENTER of global Christianity will shift to:", options: ['North America', 'Europe', 'Africa and Asia', 'Australia'], answer: 2, explanation: "Africa will have more Christians than Europe and North America combined. 🌍" },
-    { id: 'q16', question: "Religious Pluralism argues that:", options: ['Only one religion is right', 'All religions are different paths to the same ultimate reality', 'Religion is false', 'Science replaces religion'], answer: 1, explanation: "Like blind men touching different parts of an elephant — each perceives a different truth. 🐘" },
-    { id: 'q17', question: "The practical PROBLEM with religious pluralism is:", options: ['It\'s too optimistic', 'Some truth-claims are mutually exclusive — Jesus can\'t be both God AND just a prophet simultaneously', 'It\'s too complicated', 'Religions refuse to communicate'], answer: 1, explanation: "Ethical convergence is real. Theological convergence is logically impossible on some claims. 🏷️" },
-    { id: 'q18', question: "Rhythmic group worship (chanting, singing) across ALL religions works because:", options: ['God prefers music', 'It releases oxytocin (the bonding hormone), chemically binding communities together', 'It sounds nice', 'Ancient tradition'], answer: 1, explanation: "Religion is biologically effective — shared rhythm literally changes brain chemistry. 🧪" },
-    { id: 'q19', question: "The FASTEST growing 'religious' category in Western countries is:", options: ['Islam', 'Christianity', 'Nones (no religious affiliation)', 'Buddhism'], answer: 2, explanation: "Many 'Nones' still believe in God — they reject institutions, not spirituality itself. 📉" },
-    { id: 'q20', question: "If you were born in Saudi Arabia instead of where you actually were born, you would most likely be:", options: ['The same religion you are now', 'Muslim — geography is the strongest predictor of religion', 'Atheist', 'Buddhist'], answer: 1, explanation: "This geographical coincidence is one of the most challenging facts for any claim of religious exclusivism. 🗺️" },
+    { id: 'q1', question: "The world's LARGEST religion by number of followers is:", options: [
+        "Islam",
+        "Hinduism",
+        "Christianity",
+        "Buddhism"
+      ], answer: 2, explanation: "Christianity has been the largest religion for centuries — though Islam is the fastest growing. ✝️" },
+    { id: 'q2', question: "The world's OLDEST living major religion is:", options: [
+        "Christianity",
+        "Islam",
+        "Hinduism",
+        "Buddhism"
+      ], answer: 2, explanation: "Hinduism has no single founding date — it evolved organically over millennia. 🕉️" },
+    { id: 'q3', question: "Unlike most religions, Buddhism is unique because:", options: [
+        "It has no temples",
+        "Founder avoided the God question",
+        "It has no followers",
+        "It was founded in Europe"
+      ], answer: 1, explanation: "The Buddha called metaphysical questions 'unanswerable distractions' from practical suffering-reduction. 🧘" },
+    { id: 'q4', question: "The Golden Rule ('Treat others as you want to be treated') appears in:", options: [
+        "Only Christianity",
+        "Only Eastern religions",
+        "Every major religion independently",
+        "No religion"
+      ], answer: 2, explanation: "This suggests a universal human moral instinct, not exclusive divine revelation. 🌐" },
+    { id: 'q5', question: "Islam's Five Pillars are:", options: [
+        "Five holy books",
+        "Faith, prayer, charity, fasting, pilgrimage",
+        "Five prophets",
+        "Five temples"
+      ], answer: 1, explanation: "These five simple, concrete practices give Islam extraordinary clarity and accessibility. 🌙" },
+    { id: 'q6', question: "The Hindu concept of Karma means:", options: [
+        "Luck",
+        "Actions have consequences for lives",
+        "Punishment",
+        "A type of yoga"
+      ], answer: 1, explanation: "Karma is a cosmic cause-and-effect law — not reward/punishment from a deity. ⚖️" },
+    { id: 'q7', question: "Judaism is disproportionately influential because:", options: [
+        "It has the most followers",
+        "Spawned Christianity/Islam; high Nobel Prize winners",
+        "It is the newest religion",
+        "It controls the media"
+      ], answer: 1, explanation: "Judaism's emphasis on education and debate created extraordinary intellectual output. ✡️" },
+    { id: 'q8', question: "Sikhism's Langar practice is:", options: [
+        "A form of meditation",
+        "Free community kitchens for all",
+        "A type of prayer",
+        "A pilgrimage"
+      ], answer: 1, explanation: "The Golden Temple in Amritsar feeds over 100,000 people daily — for free. ☬" },
+    { id: 'q9', question: "Christmas was placed on December 25th to:", options: [
+        "Celebrate Jesus's exact birthday",
+        "Align with Roman pagan festival",
+        "Honor the winter",
+        "Celebrate snow"
+      ], answer: 1, explanation: "Jesus was likely born in spring/fall. The date was strategic marketing. 🎄" },
+    { id: 'q10', question: "Hindu sacred cow veneration originated from:", options: [
+        "A divine commandment",
+        "Cows' practical economic value",
+        "Random tradition",
+        "Buddhist influence"
+      ], answer: 1, explanation: "Killing your tractor-dairy-fuel-factory was economic suicide. Practicality became theology. 🐄" },
+    { id: 'q11', question: "The 20th century's DEADLIEST regimes (Stalin, Mao) prove that:", options: [
+        "Atheism is evil",
+        "Violence is a human problem",
+        "Religion prevents violence",
+        "Communism is a religion"
+      ], answer: 1, explanation: "Humans use ANY available ideology to justify violence — religious or not. ⚔️" },
+    { id: 'q12', question: "At the MYSTICAL level (Sufi, Vedanta, Zen, Kabbalah), religions:", options: [
+        "Completely disagree",
+        "Mystics describe similar experiences",
+        "Don't have mystics",
+        "Only disagree more"
+      ], answer: 1, explanation: "Rumi, Meister Eckhart, and Upanishadic sages all describe dissolution of self and unity with everything. 🌀" },
+    { id: 'q13', question: "Islam prohibits images of Prophet Muhammad to:", options: [
+        "Hide his appearance",
+        "Prevent idolatry of images",
+        "Save on art costs",
+        "Remain mysterious"
+      ], answer: 1, explanation: "This drove Islamic art into breathtaking geometric and calligraphic masterpieces instead. 🔷" },
+    { id: 'q14', question: "Jewish Kosher and Islamic Halal dietary laws are similar because:", options: [
+        "Coincidence",
+        "Shared Abrahamic, hygienic origins",
+        "They copied each other",
+        "All religions ban pork"
+      ], answer: 1, explanation: "Abraham/Ibrahim is the shared patriarch. Practical hygiene rules became sacralized. 🥩" },
+    { id: 'q15', question: "By 2050, the CENTER of global Christianity will shift to:", options: [
+        "North America",
+        "Europe",
+        "Africa and Asia",
+        "Australia"
+      ], answer: 2, explanation: "Africa will have more Christians than Europe and North America combined. 🌍" },
+    { id: 'q16', question: "Religious Pluralism argues that:", options: [
+        "Only one religion is right",
+        "All paths to ultimate reality",
+        "Religion is false",
+        "Science replaces religion"
+      ], answer: 1, explanation: "Like blind men touching different parts of an elephant — each perceives a different truth. 🐘" },
+    { id: 'q17', question: "The practical PROBLEM with religious pluralism is:", options: [
+        "It's too optimistic",
+        "Mutually exclusive truth-claims exist",
+        "It's too complicated",
+        "Religions refuse to communicate"
+      ], answer: 1, explanation: "Ethical convergence is real. Theological convergence is logically impossible on some claims. 🏷️" },
+    { id: 'q18', question: "Rhythmic group worship (chanting, singing) across ALL religions works because:", options: [
+        "God prefers music",
+        "It releases oxytocin, bonding communities",
+        "It sounds nice",
+        "Ancient tradition"
+      ], answer: 1, explanation: "Religion is biologically effective — shared rhythm literally changes brain chemistry. 🧪" },
+    { id: 'q19', question: "The FASTEST growing 'religious' category in Western countries is:", options: [
+        "Islam",
+        "Christianity",
+        "Nones (no affiliation)",
+        "Buddhism"
+      ], answer: 2, explanation: "Many 'Nones' still believe in God — they reject institutions, not spirituality itself. 📉" },
+    { id: 'q20', question: "If you were born in Saudi Arabia instead of where you actually were born, you would most likely be:", options: [
+        "The same religion you are now",
+        "Muslim; geography predicts religion",
+        "Atheist",
+        "Buddhist"
+      ], answer: 1, explanation: "This geographical coincidence is one of the most challenging facts for any claim of religious exclusivism. 🗺️" },
   ],
 
   relatedTopics: ['how_religion_evolved', 'god_arguments', 'spirituality_vs_religion', 'eastern_philosophy'],

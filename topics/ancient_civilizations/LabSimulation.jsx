@@ -1,11 +1,11 @@
-﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-//  LAB: Ancient Civilizations â€” Empire Explorer
+// ─────────────────────────────────────────────────────────────
+//  LAB: Ancient Civilizations — Empire Explorer
 //
-//  MODE 1 â€” Empire Map: territory ellipses that grow/shrink per era
-//  MODE 2 â€” Rise & Fall: power-curve chart across all eras
-//  MODE 3 â€” Wars & Battles: historical battles on the map
-//  MODE 4 â€” Match Game: achievement quiz (RN Views, no SVG cards)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  MODE 1 — Empire Map: territory ellipses that grow/shrink per era
+//  MODE 2 — Rise & Fall: power-curve chart across all eras
+//  MODE 3 — Wars & Battles: historical battles on the map
+//  MODE 4 — Match Game: achievement quiz (RN Views, no SVG cards)
+// ─────────────────────────────────────────────────────────────
 
 import React, { useState, useRef, useMemo } from 'react';
 import {
@@ -24,9 +24,9 @@ const { width: W_SCREEN } = Dimensions.get('window');
 const SIM_W = W_SCREEN - SPACING.md * 4;
 const SIM_H = 300;
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  CIVILIZATION BASE DATA
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 const CIVS = [
   { id: 'mesopotamia', name: 'Mesopotamia',  short: 'Mesop.',  color: '#FF9F1C', icon: 'construction', mapX: 0.56, mapY: 0.38 },
@@ -41,9 +41,9 @@ const CIVS = [
 
 const civById = (id) => CIVS.find(c => c.id === id);
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  ERAS â€” who ruled, where, with how much power (1-10)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
+//  ERAS — who ruled, where, with how much power (1-10)
+// ══════════════════════════════════════════════════════════
 
 const ERAS = [
   {
@@ -55,7 +55,7 @@ const ERAS = [
   },
   {
     year: -2500, label: '2500 BCE', title: 'Age of Pyramids',
-    desc: 'Three great river civilizations thrive simultaneously â€” worlds apart.',
+    desc: 'Three great river civilizations thrive simultaneously — worlds apart.',
     civs: {
       mesopotamia: { power: 7, ruler: 'Sargon of Akkad', event: 'First empire in human history' },
       egypt:       { power: 9, ruler: 'Pharaoh Khufu (4th Dynasty)', event: 'Great Pyramid of Giza built' },
@@ -67,8 +67,8 @@ const ERAS = [
     desc: "Egypt's New Kingdom reaches its peak. Shang Dynasty rises in China.",
     civs: {
       mesopotamia: { power: 5, ruler: 'Kassite Babylonia', event: 'Recovering from Hittite invasion' },
-      egypt:       { power: 10, ruler: 'Hatshepsut â†’ Thutmose III', event: "Egypt's Golden Age (New Kingdom)" },
-      indus:       { power: 2, ruler: 'Declining cities', event: 'Severe drought â†’ cities abandoned' },
+      egypt:       { power: 10, ruler: 'Hatshepsut → Thutmose III', event: "Egypt's Golden Age (New Kingdom)" },
+      indus:       { power: 2, ruler: 'Declining cities', event: 'Severe drought → cities abandoned' },
       china:       { power: 4, ruler: 'Shang Dynasty', event: 'Oracle bones, bronze casting begins' },
       maya:        { power: 2, ruler: 'Early settlements', event: 'Pre-Classic farming communities' },
     },
@@ -102,7 +102,7 @@ const ERAS = [
     desc: 'Alexander conquered Persia. Rome expands. Qin Shi Huang unifies China.',
     civs: {
       egypt:  { power: 3, ruler: 'Ptolemaic Dynasty (Greek rulers)', event: "Cleopatra's ancestors now rule" },
-      china:  { power: 9, ruler: 'Qin Shi Huang â†’ early Han', event: 'China unified, Great Wall begun' },
+      china:  { power: 9, ruler: 'Qin Shi Huang → early Han', event: 'China unified, Great Wall begun' },
       greece: { power: 5, ruler: 'Hellenistic kingdoms', event: "Alexander's empire has fractured" },
       rome:   { power: 7, ruler: 'Roman Republic expands', event: 'Punic Wars vs Carthage begin' },
       maya:   { power: 5, ruler: 'Late Pre-Classic peak', event: 'Large cities growing rapidly' },
@@ -123,7 +123,7 @@ const ERAS = [
     civs: {
       china: { power: 4, ruler: 'Three Kingdoms (Wei, Shu, Wu)', event: 'Civil war splits the empire' },
       rome:  { power: 6, ruler: 'Crisis of the 3rd Century', event: 'Barbarian raids increasing' },
-      maya:  { power: 9, ruler: 'Classic Period peak', event: 'Tikal, Palenque, CopÃ¡n thrive' },
+      maya:  { power: 9, ruler: 'Classic Period peak', event: 'Tikal, Palenque, Copán thrive' },
     },
   },
   {
@@ -137,19 +137,19 @@ const ERAS = [
   },
 ];
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  WARS â€” historically accurate battles
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
+//  WARS — historically accurate battles
+// ══════════════════════════════════════════════════════════
 
 const WARS = [
   { year: -1274, name: 'Battle of Kadesh',      a: 'egypt',  b: 'mesopotamia', winner: 'draw',
-    desc: 'Ramesses II vs Hittites â€” largest chariot battle ever. Led to the first peace treaty in history!',
+    desc: 'Ramesses II vs Hittites — largest chariot battle ever. Led to the first peace treaty in history!',
     soldiers: '~50,000 total', locX: 0.51, locY: 0.34 },
   { year: -539, name: 'Fall of Babylon',         a: 'persia', b: 'mesopotamia', winner: 'persia',
-    desc: 'Cyrus the Great conquers Babylon without a fight. Issues the Cyrus Cylinder â€” first human rights.',
+    desc: 'Cyrus the Great conquers Babylon without a fight. Issues the Cyrus Cylinder — first human rights.',
     soldiers: 'Bloodless conquest', locX: 0.56, locY: 0.38 },
   { year: -490, name: 'Battle of Marathon',      a: 'persia', b: 'greece', winner: 'greece',
-    desc: '10,000 Athenians defeat 25,000 Persians. Pheidippides runs 42 km to Athens â€” the first marathon!',
+    desc: '10,000 Athenians defeat 25,000 Persians. Pheidippides runs 42 km to Athens — the first marathon!',
     soldiers: '35,000 total', locX: 0.46, locY: 0.28 },
   { year: -480, name: 'Thermopylae & Salamis',   a: 'persia', b: 'greece', winner: 'greece',
     desc: '300 Spartans delay 100,000+ Persians at the pass. Then Greek navy destroys Persian fleet at Salamis.',
@@ -158,7 +158,7 @@ const WARS = [
     desc: 'Alexander the Great (47,000) defeats Darius III (100,000+). Persian Empire falls forever.',
     soldiers: '~150,000 total', locX: 0.57, locY: 0.36 },
   { year: -146, name: 'Conquest of Greece',       a: 'rome',   b: 'greece', winner: 'rome',
-    desc: 'Rome conquers Greece. But "captured Greece captured Rome" â€” Greece transforms Roman culture forever.',
+    desc: 'Rome conquers Greece. But "captured Greece captured Rome" — Greece transforms Roman culture forever.',
     soldiers: 'Roman legions', locX: 0.44, locY: 0.26 },
   { year: -31,  name: 'Battle of Actium',        a: 'rome',   b: 'egypt', winner: 'rome',
     desc: 'Octavian defeats Mark Antony & Cleopatra VII. Egypt becomes a Roman province. Last pharaoh dies.',
@@ -168,9 +168,9 @@ const WARS = [
     soldiers: 'Collapse', locX: 0.38, locY: 0.22 },
 ];
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  MATCH ITEMS (20 achievements â†’ civilization)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
+//  MATCH ITEMS (20 achievements → civilization)
+// ══════════════════════════════════════════════════════════
 
 const MATCH_ITEMS = [
   { q: 'Invented the wheel', a: 'mesopotamia' },
@@ -191,13 +191,13 @@ const MATCH_ITEMS = [
   { q: 'Created the first postal system', a: 'persia' },
   { q: 'Used base-60 number system', a: 'mesopotamia' },
   { q: 'Predicted eclipses with 99.9% accuracy', a: 'maya' },
-  { q: 'Proved aÂ² + bÂ² = cÂ²', a: 'greece' },
+  { q: 'Proved a² + b² = c²', a: 'greece' },
   { q: 'Standardized bricks across 1500 km (4:2:1)', a: 'indus' },
 ];
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  MODES + CHALLENGES
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 const MODES = [
   { id: 'map',   name: 'Empire Map',  icon: 'globe',  color: '#D4A74A' },
@@ -217,9 +217,9 @@ const CHALLENGES = [
   { id: 'scholar',    title: 'Ancient Scholar',     desc: 'Complete all other challenges',      icon: 'sparkle', color: '#4ECDC4' },
 ];
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  HELPERS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 function fmtYear(y) { return y <= 0 ? `${Math.abs(y)} BCE` : `${y} CE`; }
 function shuffleArr(arr) {
@@ -245,9 +245,9 @@ const CH_H = CH_BOT - CH_TOP;
 function eraX(idx, total, w) { return CH_L + (idx / (total - 1)) * (w - CH_L - CH_R_PAD); }
 function powerY(p) { return CH_BOT - (p / 10) * CH_H; }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  COMPONENT
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 export default function AncientCivilizationsLab({
   scientistMode = false,
@@ -266,13 +266,13 @@ export default function AncientCivilizationsLab({
   const oceanBg  = isDark ? '#0A0C18' : '#EDF0FF';
   const wire     = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
 
-  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── State ──────────────────────────────────
   const [modeIdx, setModeIdx]     = useState(0);
   const [eraIdx, setEraIdx]       = useState(4);        // start at 500 BCE (classical age)
   const [selCivId, setSelCivId]   = useState(null);     // tapped territory
   const [selWarIdx, setSelWarIdx] = useState(null);      // tapped war
 
-  // Rise & Fall â€” highlighted civs
+  // Rise & Fall — highlighted civs
   const [hlCivs, setHlCivs]       = useState(new Set(['rome', 'egypt', 'china']));
 
   // Match state
@@ -297,7 +297,7 @@ export default function AncientCivilizationsLab({
   const chAnim    = useRef(new Animated.Value(0)).current;
   const fadeSvg   = useRef(new Animated.Value(1)).current;
 
-  // â”€â”€ Derived â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Derived ────────────────────────────────
   const mode       = MODES[modeIdx];
   const era        = ERAS[eraIdx];
   const activeCivs = Object.keys(era.civs);
@@ -309,7 +309,7 @@ export default function AncientCivilizationsLab({
     return shuffleArr([correct, ...others]);
   }, [mIdx, matchQ]);
 
-  // â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Handlers ───────────────────────────────
   const switchMode = (i) => {
     soundTap(); Haptics.selectionAsync();
     setModeIdx(i); setSelCivId(null); setSelWarIdx(null);
@@ -394,12 +394,12 @@ export default function AncientCivilizationsLab({
     }
   };
 
-  // â”€â”€ Fun fact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fun fact ───────────────────────────────
   const funFact = (() => {
     if (mode.id === 'map') {
       const n = activeCivs.length;
-      if (n >= 6) return `Incredible! ${n} civilizations coexisted in ${era.label} â€” yet most had no idea the others existed!`;
-      if (selCivId && era.civs[selCivId]) return `${era.civs[selCivId].event} â€” Power level: ${era.civs[selCivId].power}/10`;
+      if (n >= 6) return `Incredible! ${n} civilizations coexisted in ${era.label} — yet most had no idea the others existed!`;
+      if (selCivId && era.civs[selCivId]) return `${era.civs[selCivId].event} — Power level: ${era.civs[selCivId].power}/10`;
       return era.desc;
     }
     if (mode.id === 'wars' && selWarIdx !== null) return WARS[selWarIdx].desc;
@@ -407,13 +407,13 @@ export default function AncientCivilizationsLab({
     return 'Explore the rise and fall of 8 ancient civilizations across 4,000 years!';
   })();
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════════════════════════
   //  RENDER
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════════════════════════
   return (
     <View style={s.root}>
 
-      {/* â”€â”€ Mode Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Mode Tabs ─────────────────────── */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.tabRow}>
         {MODES.map((m, i) => (
           <TouchableOpacity key={m.id} onPress={() => switchMode(i)}
@@ -424,7 +424,7 @@ export default function AncientCivilizationsLab({
         ))}
       </ScrollView>
 
-      {/* â”€â”€ SVG CANVAS (Map, Rise & Fall, Wars) â”€â”€ */}
+      {/* ── SVG CANVAS (Map, Rise & Fall, Wars) ── */}
       {mode.id !== 'match' && (
         <Animated.View style={[s.canvas, { borderColor: border, backgroundColor: oceanBg, opacity: fadeSvg }]}>
           <Svg width={SIM_W} height={SIM_H}>
@@ -442,7 +442,7 @@ export default function AncientCivilizationsLab({
             </Defs>
             <Rect x="0" y="0" width={SIM_W} height={SIM_H} fill="url(#bgG)" />
 
-            {/* â”€â”€ EMPIRE MAP â”€â”€ */}
+            {/* ── EMPIRE MAP ── */}
             {mode.id === 'map' && (
               <>
                 {/* Continents */}
@@ -497,12 +497,12 @@ export default function AncientCivilizationsLab({
 
                 {/* Active count */}
                 <SvgText x={SIM_W / 2} y={SIM_H - 8} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.6)">
-                  {activeCivs.length} empire{activeCivs.length !== 1 ? 's' : ''} active  â€¢  Numbers = power (1-10)
+                  {activeCivs.length} empire{activeCivs.length !== 1 ? 's' : ''} active  •  Numbers = power (1-10)
                 </SvgText>
               </>
             )}
 
-            {/* â”€â”€ RISE & FALL CHART â”€â”€ */}
+            {/* ── RISE & FALL CHART ── */}
             {mode.id === 'rise' && (
               <>
                 {/* Grid lines */}
@@ -559,7 +559,7 @@ export default function AncientCivilizationsLab({
               </>
             )}
 
-            {/* â”€â”€ WARS MAP â”€â”€ */}
+            {/* ── WARS MAP ── */}
             {mode.id === 'wars' && (
               <>
                 {landPaths(SIM_W, SIM_H).map((d, i) => (
@@ -578,7 +578,7 @@ export default function AncientCivilizationsLab({
                       <Circle cx={wx} cy={wy} r={isSel ? 8 : 5} fill={isSel ? '#FF4444' : '#FF6B6B'}
                         fillOpacity={isSel ? 1 : 0.6} stroke="#FF4444" strokeWidth={isSel ? 2 : 0.8} />
                       <SvgText x={wx} y={wy + 3} textAnchor="middle" fontSize="7" fill="#fff" fontWeight="bold">
-                        {isSel ? 'âš”' : ''}
+                        {isSel ? '⚔' : ''}
                       </SvgText>
                       {isSel && (
                         <>
@@ -622,7 +622,7 @@ export default function AncientCivilizationsLab({
         </Animated.View>
       )}
 
-      {/* â”€â”€ MATCH GAME (RN Views â€” no SVG cards) â”€â”€ */}
+      {/* ── MATCH GAME (RN Views — no SVG cards) ── */}
       {mode.id === 'match' && (
         <View style={[s.matchBox, { borderColor: border, backgroundColor: glass1 }]}>
           {/* Progress */}
@@ -683,7 +683,7 @@ export default function AncientCivilizationsLab({
         </View>
       )}
 
-      {/* â”€â”€ ERA SELECTOR (Map + Rise+Fall) â”€â”€ */}
+      {/* ── ERA SELECTOR (Map + Rise+Fall) ── */}
       {(mode.id === 'map' || mode.id === 'rise') && (
         <>
           <SLabel icon="clock" label="ERA" color={accentColor} txtM={txtM} />
@@ -698,7 +698,7 @@ export default function AncientCivilizationsLab({
         </>
       )}
 
-      {/* â”€â”€ Rise & Fall: civ legend â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Rise & Fall: civ legend ─────── */}
       {mode.id === 'rise' && (
         <>
           <SLabel icon="chart" label="TOGGLE CIVILIZATIONS" color={MODES[1].color} txtM={txtM} />
@@ -717,7 +717,7 @@ export default function AncientCivilizationsLab({
         </>
       )}
 
-      {/* â”€â”€ WARS LIST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── WARS LIST ──────────────────── */}
       {mode.id === 'wars' && (
         <>
           <SLabel icon="shield" label="BATTLES (tap map markers or cards)" color={MODES[2].color} txtM={txtM} />
@@ -768,7 +768,7 @@ export default function AncientCivilizationsLab({
         </>
       )}
 
-      {/* â”€â”€ MAP: selected territory info â”€â”€ */}
+      {/* ── MAP: selected territory info ── */}
       {mode.id === 'map' && selCivId && era.civs[selCivId] && (() => {
         const c = civById(selCivId), info = era.civs[selCivId];
         return (
@@ -795,10 +795,10 @@ export default function AncientCivilizationsLab({
         );
       })()}
 
-      {/* â”€â”€ Rise & Fall: era info â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Rise & Fall: era info ─────── */}
       {mode.id === 'rise' && (
         <View style={[s.infoBox, { borderColor: border, backgroundColor: glass1 }]}>
-          <Text style={[s.infoTitle, { color: txt1, marginBottom: 4 }]}>{era.title} â€” {era.label}</Text>
+          <Text style={[s.infoTitle, { color: txt1, marginBottom: 4 }]}>{era.title} — {era.label}</Text>
           <Text style={[s.infoEvent, { color: txt2 }]}>{era.desc}</Text>
           {activeCivs.length > 0 && (
             <View style={s.riseList}>
@@ -820,7 +820,7 @@ export default function AncientCivilizationsLab({
         </View>
       )}
 
-      {/* â”€â”€ Stats Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Stats Bar ─────────────────────── */}
       <View style={s.statsRow}>
         <Stat icon="globe" color={accentColor} label="Explored" val={`${civsViewed.size}/8`} t1={txt1} tM={txtM} />
         <Stat icon="clock" color="#6C63FF" label="Eras" val={`${erasVisited.size}/${ERAS.length}`} t1={txt1} tM={txtM} />
@@ -828,7 +828,7 @@ export default function AncientCivilizationsLab({
         <Stat icon="target" color="#00E5A0" label="Matched" val={`${mScore}`} t1={txt1} tM={txtM} />
       </View>
 
-      {/* â”€â”€ Fun Fact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Fun Fact ───────────────────────── */}
       <View style={[s.fact, { borderColor: accentColor + '25', backgroundColor: accentColor + '08' }]}>
         <View style={[s.factIco, { backgroundColor: accentColor + '18' }]}>
           <Icon name="lightbulb" size={14} color={accentColor} />
@@ -836,7 +836,7 @@ export default function AncientCivilizationsLab({
         <Text style={[s.factTxt, { color: txt2 }]}>{funFact}</Text>
       </View>
 
-      {/* â”€â”€ Challenge toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Challenge toast ─────────────── */}
       <Animated.View style={[s.toast, { backgroundColor: accentColor + '18', borderColor: accentColor + '50',
         opacity: chAnim, transform: [{ translateY: chAnim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) }],
       }]}>
@@ -844,7 +844,7 @@ export default function AncientCivilizationsLab({
         <Text style={[s.toastTxt, { color: accentColor }]}>{lastChMsg}</Text>
       </Animated.View>
 
-      {/* â”€â”€ Challenges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Challenges ───────────────────── */}
       <TouchableOpacity onPress={() => { soundTap(); setShowCh(v => !v); }}
         style={[s.chToggle, { borderColor: border, backgroundColor: glass1 }]}>
         <View style={s.chToggleInner}>
@@ -882,9 +882,9 @@ export default function AncientCivilizationsLab({
   );
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  SUB-COMPONENTS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 function SLabel({ icon, label, color, txtM }) {
   return (
@@ -907,9 +907,9 @@ function Stat({ icon, color, label, val, t1, tM }) {
   );
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 //  STYLES
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════
 
 const s = StyleSheet.create({
   root: { gap: SPACING.sm },

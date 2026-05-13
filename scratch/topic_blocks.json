@@ -1,0 +1,15 @@
+{
+  "Block 1": ["depression", "anxiety", "overthinking", "addiction", "fear", "meditation", "burnout", "loneliness", "self_esteem", "trauma", "mental_health_basics"],
+  "Block 2": ["basic_understanding", "consistency", "study_tips", "mastery_expertise", "relationships", "love", "anger", "life_hacks", "lust", "greed", "envy", "sloth", "wrath"],
+  "Block 3": ["brain_structure", "memory_how_it_works", "cognitive_biases", "critical_thinking", "emotions_motivation", "learning_behavior"],
+  "Block 4": ["social_media_trap", "manipulation_tactics", "happiness_science", "meaningful_life", "science_of_emotion", "why_be_good", "financial_literacy", "earn_money", "mental_syndromes", "phobias", "good_citizen", "politics"],
+  "Block 5": ["stoicism", "ethics_morality", "great_philosophers", "existentialism", "nihilism", "absurdism", "free_will", "eastern_philosophy", "enlightenment", "atheism", "consciousness"],
+  "Block 6": ["how_religion_evolved", "science_vs_god", "world_religions", "god_arguments", "spirituality_vs_religion", "afterlife_beliefs"],
+  "Block 7": ["ai_machine_learning", "internet_how_it_works", "binary_computers", "cryptography", "data_science", "digital_circuits"],
+  "Block 8": ["human_body_systems", "nervous_system", "immune_system", "cell_structure", "evolution_natural", "dna_genetics", "climate_change", "photosynthesis", "ecosystems"],
+  "Block 9": ["scientific_method", "atoms_molecules", "matter_states", "energy_types", "forces_motion", "gravity", "measurement_units", "periodic_table", "work_power", "heat_temperature", "waves_sound", "light_optics"],
+  "Block 10": ["chemical_bonding", "chemical_reactions", "acids_bases_ph", "periodic_trends", "stoichiometry", "organic_chemistry", "electrochemistry"],
+  "Block 11": ["electricity_circuits", "magnetism", "thermodynamics_laws", "momentum_collisions", "pressure_fluids", "physics_multi_lab", "relativity_basics", "quantum_basics"],
+  "Block 12": ["world_wars", "industrial_revolution", "indian_freedom", "ancient_civilizations"],
+  "Block 13": ["big_bang", "black_holes", "solar_system", "stars_lifecycle", "exoplanets"]
+}

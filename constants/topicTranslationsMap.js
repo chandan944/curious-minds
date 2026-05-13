@@ -114,4 +114,13 @@ export const TOPIC_CONFIGS_HI = {
   world_religions: () => require("../topics/world_religions/config_hi").default,
   world_wars: () => require("../topics/world_wars/config_hi").default,
   wrath: () => require("../topics/wrath/config_hi").default,
+  personal_finance: () => require("../topics/personal_finance/config_hi").default,
+  banking: () => require("../topics/banking/config_hi").default,
+  investing: () => require("../topics/investing/config_hi").default,
+  debt_credit: () => require("../topics/debt_credit/config_hi").default,
+  taxation: () => require("../topics/taxation/config_hi").default,
+  real_estate_finance: () => require("../topics/real_estate_finance/config_hi").default,
+  corporate_finance: () => require("../topics/corporate_finance/config_hi").default,
+  insurance: () => require("../topics/insurance/config_hi").default,
+  wealth_loops: () => require("../topics/wealth_loops/config_hi").default,
 };

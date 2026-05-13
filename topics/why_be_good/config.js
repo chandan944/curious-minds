@@ -242,26 +242,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "What is the core difference between Law and Ethics?", options: ['Law is written; Ethics is spoken', 'Law tells you what must be done to avoid jail; Ethics explores what is objectively right to do', 'Law is for adults; Ethics is for kids', 'There is no difference'], answer: 1, explanation: "An action can be 100% legal, but completely unethical! ⚖️" },
-    { id: 'q2', question: "Utilitarianism is the ethical theory that states you should:", options: ['Only care about utilities like water', 'Follow strict rules', 'Maximize the total happiness/well-being for the greatest number of people', 'Read books'], answer: 2, explanation: "It is a math equation where the Ends absolutely justify the Means! 🧮" },
-    { id: 'q3', question: "Deontology (Duty Ethics) argues that morality is based on:", options: ['Absolute, unbreakable rules (Ends NEVER justify Means)', 'Predicting the future', 'Emotions', 'Animals'], answer: 0, explanation: "Deontologists focus on DOING the right thing, ignoring the consequences. 📜" },
-    { id: 'q4', question: "Kant's 'Categorical Imperative' asks you to test an action by imagining:", options: ['If animals did it', 'If EVERY human on earth did it simultaneously (Universal Law)', 'If it caused pain', 'If a king did it'], answer: 1, explanation: "If universalizing the action collapses society, the action is categorically wrong! 🌍" },
-    { id: 'q5', question: "Virtue Ethics (Aristotle) focuses on:", options: ['Building good character habits (courage, honesty) rather than writing rules', 'Doing math', 'Screaming', 'Building houses'], answer: 0, explanation: "A good tree naturally drops good fruit. Cultivate the tree! 🌳" },
-    { id: 'q6', question: "In the famous 'Trolley Problem', pulling the lever to kill 1 person to save 5 is the textbook example of:", options: ['Utilitarianism', 'Deontology', 'Virtue Ethics', 'Nihilism'], answer: 0, explanation: "Using math to minimize total human death! 🚋" },
-    { id: 'q7', question: "Biologically, what happens when you perform an act of altruism (kindness)?", options: ['Cortisol spikes', 'The brain unleashes Oxytocin and Endorphins, reducing stress and healing the body', 'You lose hair', 'Your heart stops'], answer: 1, explanation: "Ethics is built directly into your endocrine system! 🫀" },
-    { id: 'q8', question: "Niccolò Machiavelli ('The Prince') argued that:", options: ['Love is the answer', 'Kindness is a weakness; leaders must be ruthless and feared to maintain power', 'We must run away', 'Trees are pretty'], answer: 1, explanation: "The dark psychology of power and manipulation! 🐍" },
-    { id: 'q9', question: "According to Moral Foundations Theory, why do conservatives and liberals argue?", options: ['Because one side is evil', 'Because they emphasize completely different moral \'taste buds\' (e.g., Care vs. Loyalty/Sanctity)', 'Because they hate words', 'Magic'], answer: 1, explanation: "You aren't fighting a villain; you are fighting someone who weights authority higher than fairness! ⚖️" },
-    { id: 'q10', question: "Lawrence Kohlberg's final 'Post-Conventional' stage of morality is when a person:", options: ['Complies to avoid punishment', 'Acts from profound universal principles, even if it forces them to break an unjust law', 'Cries', 'Sleeps all day'], answer: 1, explanation: "It is the realm of MLK and Gandhi! 🧗‍♂️" },
-    { id: 'q11', question: "What does 'The Banality of Evil' (Hannah Arendt) mean?", options: ['Evil is funny', 'Evil is often committed by boring, normal people who simply \'follow orders\' and stop thinking', 'Evil is ugly', 'Evil is magic'], answer: 1, explanation: "The most horrific things are done by bureaucrats stamping papers. 📎" },
-    { id: 'q12', question: "Ethical Egoism (Ayn Rand) argues that the greatest absolute moral good is:", options: ['Giving money to charity', 'Pursuing your own rational self-interest completely', 'Hugging', 'Swimming'], answer: 1, explanation: "She believed altruism was a plague that destroyed achievement! 🏢" },
-    { id: 'q13', question: "The 'Ring of Gyges' thought experiment asks:", options: ['Would you wear a ring?', 'If you had a ring that made you invisible/immune to punishment, would you still be a good person?', 'Can rings fly?', 'What is gold?'], answer: 1, explanation: "It tests whether we love being good, or merely fear the police! 💍" },
-    { id: 'q14', question: "What is Buddhist 'Karma' fundamentally about regarding ethics?", options: ['Magic points', 'Because we are all one energy, hurting someone else is literally damaging your own self/soul', 'A bank account', 'Animals'], answer: 1, explanation: "Compassion is the logical result of recognizing the illusion of separation! 🪷" },
-    { id: 'q15', question: "The 'Identifiable Victim Effect' explains why we:", options: ['Donate massive amounts to save one specific dog, but ignore the deaths of 10,000 abstract humans', 'Victimize people', 'Cannot identify friends', 'Lose our keys'], answer: 0, explanation: "The primitive brain cannot compute large statistics, so it feels zero empathy for numbers. 📉" },
-    { id: 'q16', question: "What is 'Moral Licensing'?", options: ['A driver license', 'Acting \'good\' (like eating a salad) causes the brain to grant itself permission to act \'bad\' (eating cake) later', 'A college degree', 'Paying for water'], answer: 1, explanation: "The brain keeps a scorecard of your behavior! 📝" },
-    { id: 'q17', question: "The 'Just-World Hypothesis' causes humans to:", options: ['Build globes', 'Blame innocent victims because it is too terrifying to accept that the universe is cruel and random', 'Plant trees', 'Hate planets'], answer: 1, explanation: "We comfort ourselves by pretending bad things only happen to bad people. 🌎" },
-    { id: 'q18', question: "Why do some psychopaths succeed as CEOs?", options: ['They are aliens', 'A lack of Amygdala empathy allows them to make ice-cold utilitarian decisions that maximize profit', 'They sleep less', 'They yell'], answer: 1, explanation: "They lack the biological brakes (guilt) that stop normal people. 👔" },
-    { id: 'q19', question: "Nietzsche's 'Übermensch' (Superman) is a concept about:", options: ['Flying over cities', 'Throwing away herd morality to forge your own powerful, aesthetic values and meaning', 'Wearing capes', 'Lifting heavy weights'], answer: 1, explanation: "A terrifyingly beautiful challenge to become the author of your own existence. 🦅" },
-    { id: 'q20', question: "Ultimately, without ethics, human civilization would:", options: ['Be fun', 'Instantly collapse into a primitive, brutal struggle for survival', 'Be quiet', 'Evolve instantly'], answer: 1, explanation: "Moral philosophy is the glue holding the atoms of society together. 🧱" },
+    { id: 'q1', question: "What is the core difference between Law and Ethics?", options: [
+        "Law is written; ethics is unwritten",
+        "Law avoids punishment; ethics seeks right",
+        "Law is for adults; ethics for children",
+        "There is no real difference"
+      ], answer: 1, explanation: "An action can be 100% legal, but completely unethical! ⚖️" },
+    { id: 'q2', question: "Utilitarianism is the ethical theory that states you should:", options: [
+        "Focus on essential utilities",
+        "Adhere to strict moral rules",
+        "Maximize happiness for the most people",
+        "Prioritize personal reading habits"
+      ], answer: 2, explanation: "It is a math equation where the Ends absolutely justify the Means! 🧮" },
+    { id: 'q3', question: "Deontology (Duty Ethics) argues that morality is based on:", options: [
+        "Morality based on absolute rules",
+        "Predicting future outcomes",
+        "Personal feelings and emotions",
+        "The welfare of animals"
+      ], answer: 0, explanation: "Deontologists focus on DOING the right thing, ignoring the consequences. 📜" },
+    { id: 'q4', question: "Kant's 'Categorical Imperative' asks you to test an action by imagining:", options: [
+        "If all animals did it",
+        "If everyone did it universally",
+        "If it caused widespread pain",
+        "If a powerful leader did it"
+      ], answer: 1, explanation: "If universalizing the action collapses society, the action is categorically wrong! 🌍" },
+    { id: 'q5', question: "Virtue Ethics (Aristotle) focuses on:", options: [
+        "Developing good character and habits",
+        "Focusing on mathematical problems",
+        "Expressing strong emotions loudly",
+        "Constructing physical structures"
+      ], answer: 0, explanation: "A good tree naturally drops good fruit. Cultivate the tree! 🌳" },
+    { id: 'q6', question: "In the famous 'Trolley Problem', pulling the lever to kill 1 person to save 5 is the textbook example of:", options: [
+        "Utilitarianism",
+        "Deontology",
+        "Virtue Ethics",
+        "Nihilism"
+      ], answer: 0, explanation: "Using math to minimize total human death! 🚋" },
+    { id: 'q7', question: "Biologically, what happens when you perform an act of altruism (kindness)?", options: [
+        "Stress hormone cortisol spikes",
+        "Brain releases oxytocin and endorphins",
+        "You experience hair loss",
+        "Your heart temporarily stops"
+      ], answer: 1, explanation: "Ethics is built directly into your endocrine system! 🫀" },
+    { id: 'q8', question: "Niccolò Machiavelli ('The Prince') argued that:", options: [
+        "Love is the ultimate solution",
+        "Leaders must be ruthless to hold power",
+        "One must always flee danger",
+        "The beauty of nature matters"
+      ], answer: 1, explanation: "The dark psychology of power and manipulation! 🐍" },
+    { id: 'q9', question: "According to Moral Foundations Theory, why do conservatives and liberals argue?", options: [
+        "One side is inherently evil",
+        "Different emphasis on moral foundations",
+        "They simply hate words",
+        "Due to inexplicable magic"
+      ], answer: 1, explanation: "You aren't fighting a villain; you are fighting someone who weights authority higher than fairness! ⚖️" },
+    { id: 'q10', question: "Lawrence Kohlberg's final 'Post-Conventional' stage of morality is when a person:", options: [
+        "Complies to avoid punishment",
+        "Acts on universal principles, defying unjust laws",
+        "Expresses sadness frequently",
+        "Chooses to sleep all day"
+      ], answer: 1, explanation: "It is the realm of MLK and Gandhi! 🧗‍♂️" },
+    { id: 'q11', question: "What does 'The Banality of Evil' (Hannah Arendt) mean?", options: [
+        "Evil is inherently humorous",
+        "Normal people commit evil by following orders",
+        "Evil is visually unappealing",
+        "Evil is a form of magic"
+      ], answer: 1, explanation: "The most horrific things are done by bureaucrats stamping papers. 📎" },
+    { id: 'q12', question: "Ethical Egoism (Ayn Rand) argues that the greatest absolute moral good is:", options: [
+        "Generously giving money to charity",
+        "Pursuing one's own rational self-interest",
+        "Engaging in physical affection",
+        "Participating in aquatic activities"
+      ], answer: 1, explanation: "She believed altruism was a plague that destroyed achievement! 🏢" },
+    { id: 'q13', question: "The 'Ring of Gyges' thought experiment asks:", options: [
+        "Would you choose to wear a ring?",
+        "Invisible, would you still be good?",
+        "Are rings capable of flight?",
+        "What defines the metal gold?"
+      ], answer: 1, explanation: "It tests whether we love being good, or merely fear the police! 💍" },
+    { id: 'q14', question: "What is Buddhist 'Karma' fundamentally about regarding ethics?", options: [
+        "Accumulation of magic points",
+        "Hurting others damages your own self",
+        "A spiritual bank account",
+        "The treatment of animals"
+      ], answer: 1, explanation: "Compassion is the logical result of recognizing the illusion of separation! 🪷" },
+    { id: 'q15', question: "The 'Identifiable Victim Effect' explains why we:", options: [
+        "Prioritize one identifiable victim over many",
+        "Tend to victimize others",
+        "Struggle to identify friends",
+        "Frequently misplace our keys"
+      ], answer: 0, explanation: "The primitive brain cannot compute large statistics, so it feels zero empathy for numbers. 📉" },
+    { id: 'q16', question: "What is 'Moral Licensing'?", options: [
+        "A government-issued driver's license",
+        "Good acts permit later bad acts",
+        "An academic college degree",
+        "The act of paying for water"
+      ], answer: 1, explanation: "The brain keeps a scorecard of your behavior! 📝" },
+    { id: 'q17', question: "The 'Just-World Hypothesis' causes humans to:", options: [
+        "Construct physical globes",
+        "Blame victims to believe in justice",
+        "Engage in tree planting",
+        "Develop an aversion to planets"
+      ], answer: 1, explanation: "We comfort ourselves by pretending bad things only happen to bad people. 🌎" },
+    { id: 'q18', question: "Why do some psychopaths succeed as CEOs?", options: [
+        "They are extraterrestrial beings",
+        "Lack of empathy allows ruthless profit decisions",
+        "They require less sleep",
+        "They frequently raise their voice"
+      ], answer: 1, explanation: "They lack the biological brakes (guilt) that stop normal people. 👔" },
+    { id: 'q19', question: "Nietzsche's 'Übermensch' (Superman) is a concept about:", options: [
+        "The ability to fly over cities",
+        "Forging own values beyond herd morality",
+        "The practice of wearing capes",
+        "Engaging in heavy weightlifting"
+      ], answer: 1, explanation: "A terrifyingly beautiful challenge to become the author of your own existence. 🦅" },
+    { id: 'q20', question: "Ultimately, without ethics, human civilization would:", options: [
+        "Become incredibly fun",
+        "Collapse into brutal struggle for survival",
+        "Become completely quiet",
+        "Experience instant evolution"
+      ], answer: 1, explanation: "Moral philosophy is the glue holding the atoms of society together. 🧱" },
   ],
 
   relatedTopics: ['good_citizen', 'meaningful_life', 'social_media_trap'],

@@ -162,26 +162,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "What is 'Avogadro's Number'?", options: ['6.022 x 10^12', '6.022 x 10^23', '3.14 x 10^23', 'Exactly 1 billion'], answer: 1, explanation: "This is the number of particles in exactly one mole of any substance! 🥑" },
-    { id: 'q2', question: "What is the GIANT unit chemists use to group atoms together for counting?", options: ['The Dozen', 'The Mole', 'The Gram', 'The Liter'], answer: 1, explanation: "Just like 12 = dozen, 6.022 x 10^23 = 1 mole! 🧪" },
-    { id: 'q3', question: "If the molar mass of Carbon is 12g, how many atoms are in exactly 12g of Carbon?", options: ['12 atoms', '1 million atoms', '6.022 x 10^23 atoms', 'Zero'], answer: 2, explanation: "12g is one mole of Carbon, so it contains Avogadro's number of atoms! 💎" },
-    { id: 'q4', question: "In the equation 2H₂ + O₂ → 2H₂O, what is the mole ratio of H₂ to O₂?", options: ['1:1', '2:1', '1:2', '2:2'], answer: 1, explanation: "The coefficients tell the ratio: 2 H₂ for every 1 O₂! ⚖️" },
-    { id: 'q5', question: "What happens to the 'Limiting Reactant' in a reaction?", options: ['It is never used', 'It is the leftover amount', 'It is completely used up first', 'It makes the reaction faster'], answer: 2, explanation: "Like the cheese in a 2-slice sandwich, the limiting reactant stops the show! 🛑" },
-    { id: 'q6', question: "What is 'Theoretical Yield'?", options: ['What you get in the lab', 'The maximum amount of product calculated using math', 'A type of gas', 'The weight of a beaker'], answer: 1, explanation: "It is the perfect 'on-paper' result of your stoichiometry math! 📝" },
-    { id: 'q7', question: "If you calculate you should get 10g but you only get 8g in the lab, what is your Percent Yield?", options: ['10%', '8%', '80%', '125%'], answer: 2, explanation: "(Actual 8 / Theoretical 10) x 100 = 80%! 📈" },
-    { id: 'q8', question: "Molarity is a measure of concentration defined as:", options: ['Grams per Liter', 'Moles per Liter', 'Atoms per Gram', 'Liters per Mole'], answer: 1, explanation: "Molarity (M) tells you how 'crowded' the molecules are in a liquid! 🧪" },
-    { id: 'q9', question: "At Standard Temperature and Pressure (STP), 1 mole of ANY gas occupies how much volume?", options: ['1 Liter', '22.4 Liters', '100 Liters', '6.022 Liters'], answer: 1, explanation: "This is a convenient 'gas shortcut' discovered by Avogadro! 🎈" },
-    { id: 'q10', question: "The Law of Conservation of Mass states that atoms in a reaction cannot be:", options: ['Liquid', 'Moved', 'Created or Destroyed', 'Counted'], answer: 2, explanation: "This is why we MUST balance chemical equations! ⚖️" },
-    { id: 'q11', question: "What is an 'Empirical Formula'?", options: ['The name of the scientist', 'The simplest whole-number ratio of atoms in a compound', 'The exact weight of a molecule', 'A fake formula'], answer: 1, explanation: "It gives the basic blueprint of a substance's identity! 🏗️" },
-    { id: 'q12', question: "Stoichiometry is crucial for NASA because they must calculate the exact ratio of:", options: ['Astronauts to food', 'Fuel to Oxygen (Oxidizer)', 'Radio signals to Earth', 'Stars to planets'], answer: 1, explanation: "Without the perfect stoichiometric ratio, a rocket won't have the thrust to reach orbit! 🚀" },
-    { id: 'q13', question: "Why does the Percent Yield matter in a medicine factory?", options: ['It tells the color of pills', 'It measures efficiency and potential waste/loss', 'It makes the pills taste better', 'It isn\'t important'], answer: 1, explanation: "High yield means less waste and lower costs for life-saving drugs! 💊" },
-    { id: 'q14', question: "Which value from the Periodic Table is used as the 'Number of Grams in 1 Mole'?", options: ['Atomic Number', 'Atomic Mass', 'Group Number', 'The Symbol'], answer: 1, explanation: "Atomic mass is the bridge between the subatomic and our scales! ⚖️" },
-    { id: 'q15', question: "If you have 4 moles of H₂ and 10 moles of O₂, which is the Limiting Reactant for making water (2H₂ + O₂ → 2H₂O)?", options: ['H₂', 'O₂', 'Water', 'Both'], answer: 0, explanation: "You need 2 H₂ for every 1 O₂. 4 H₂ only needs 2 O₂. Since you have 10 O₂, the O₂ is in excess and H₂ runs out first! 🛑" },
-    { id: 'q16', question: "Avogadro's Number is approximately:", options: ['6.022 x 10^23', '6.022 x 10^-23', '3 x 10^8', '9.8'], answer: 0, explanation: "A massive number for a massive amount of tiny particles! 🥑" },
-    { id: 'q17', question: "In a 'Solution', the substance being dissolved is called the:", options: ['Solvent', 'Solute', 'Molarity', 'Residue'], answer: 1, explanation: "The solute is the 'stuff' you are counting in moles! 🧪" },
-    { id: 'q18', question: "Why do we balance equations by changing coefficients and NOT subscripts?", options: ['Subscripts are easier', 'Changing subscripts changes the identity of the chemical', 'Coefficients are prettier', 'There is no reason'], answer: 1, explanation: "Changing H₂O to H₂O₂ turns water into hydrogen peroxide—a very different (and dangerous) substance! ⚠️" },
-    { id: 'q19', question: "If you have 2 moles of O₂, how many Liters would that occupy at STP?", options: ['22.4 L', '44.8 L', '11.2 L', '6.022 L'], answer: 1, explanation: "2 moles x 22.4 L/mole = 44.8 Liters! 🎈" },
-    { id: 'q20', question: "Stoichiometry comes from the Greek words 'stoicheion' and 'metron', meaning:", options: ['Fire and Measure', 'Element and Measure', 'Atom and Math', 'Secret and Count'], answer: 1, explanation: "It literally translates to 'The measurement of elements'! 📏" },
+    { id: 'q1', question: "What is 'Avogadro's Number'?", options: [
+        "6.022 x 10^12",
+        "6.022 x 10^23",
+        "3.14 x 10^23",
+        "Exactly 1 billion"
+      ], answer: 1, explanation: "This is the number of particles in exactly one mole of any substance! 🥑" },
+    { id: 'q2', question: "What is the GIANT unit chemists use to group atoms together for counting?", options: [
+        "The Dozen",
+        "The Mole",
+        "The Gram",
+        "The Liter"
+      ], answer: 1, explanation: "Just like 12 = dozen, 6.022 x 10^23 = 1 mole! 🧪" },
+    { id: 'q3', question: "If the molar mass of Carbon is 12g, how many atoms are in exactly 12g of Carbon?", options: [
+        "12 atoms",
+        "1 million atoms",
+        "6.022 x 10^23 atoms",
+        "Zero"
+      ], answer: 2, explanation: "12g is one mole of Carbon, so it contains Avogadro's number of atoms! 💎" },
+    { id: 'q4', question: "In the equation 2H₂ + O₂ → 2H₂O, what is the mole ratio of H₂ to O₂?", options: [
+        "1:1",
+        "2:1",
+        "1:2",
+        "2:2"
+      ], answer: 1, explanation: "The coefficients tell the ratio: 2 H₂ for every 1 O₂! ⚖️" },
+    { id: 'q5', question: "What happens to the 'Limiting Reactant' in a reaction?", options: [
+        "It is never used",
+        "It is the leftover amount",
+        "It is completely used up first",
+        "It makes the reaction faster"
+      ], answer: 2, explanation: "Like the cheese in a 2-slice sandwich, the limiting reactant stops the show! 🛑" },
+    { id: 'q6', question: "What is 'Theoretical Yield'?", options: [
+        "Actual product from the lab",
+        "Maximum product calculated by math",
+        "A type of chemical reaction",
+        "The mass of a container"
+      ], answer: 1, explanation: "It is the perfect 'on-paper' result of your stoichiometry math! 📝" },
+    { id: 'q7', question: "If you calculate you should get 10g but you only get 8g in the lab, what is your Percent Yield?", options: [
+        "10%",
+        "8%",
+        "80%",
+        "125%"
+      ], answer: 2, explanation: "(Actual 8 / Theoretical 10) x 100 = 80%! 📈" },
+    { id: 'q8', question: "Molarity is a measure of concentration defined as:", options: [
+        "Grams per Liter",
+        "Moles per Liter",
+        "Atoms per Gram",
+        "Liters per Mole"
+      ], answer: 1, explanation: "Molarity (M) tells you how 'crowded' the molecules are in a liquid! 🧪" },
+    { id: 'q9', question: "At Standard Temperature and Pressure (STP), 1 mole of ANY gas occupies how much volume?", options: [
+        "1 Liter",
+        "22.4 Liters",
+        "100 Liters",
+        "6.022 Liters"
+      ], answer: 1, explanation: "This is a convenient 'gas shortcut' discovered by Avogadro! 🎈" },
+    { id: 'q10', question: "The Law of Conservation of Mass states that atoms in a reaction cannot be:", options: [
+        "Liquid state",
+        "Moved freely",
+        "Created or Destroyed",
+        "Counted easily"
+      ], answer: 2, explanation: "This is why we MUST balance chemical equations! ⚖️" },
+    { id: 'q11', question: "What is an 'Empirical Formula'?", options: [
+        "Name of a famous scientist",
+        "Simplest whole-number ratio of atoms",
+        "Exact mass of a molecule",
+        "A complex chemical formula"
+      ], answer: 1, explanation: "It gives the basic blueprint of a substance's identity! 🏗️" },
+    { id: 'q12', question: "Stoichiometry is crucial for NASA because they must calculate the exact ratio of:", options: [
+        "Astronauts to food",
+        "Fuel to Oxygen (Oxidizer)",
+        "Radio signals to Earth",
+        "Stars to planets"
+      ], answer: 1, explanation: "Without the perfect stoichiometric ratio, a rocket won't have the thrust to reach orbit! 🚀" },
+    { id: 'q13', question: "Why does the Percent Yield matter in a medicine factory?", options: [
+        "It tells the color of pills",
+        "It measures efficiency and potential waste/loss",
+        "It makes the pills taste better",
+        "It has no real importance"
+      ], answer: 1, explanation: "High yield means less waste and lower costs for life-saving drugs! 💊" },
+    { id: 'q14', question: "Which value from the Periodic Table is used as the 'Number of Grams in 1 Mole'?", options: [
+        "Atomic Number",
+        "Atomic Mass",
+        "Group Number",
+        "The Symbol"
+      ], answer: 1, explanation: "Atomic mass is the bridge between the subatomic and our scales! ⚖️" },
+    { id: 'q15', question: "If you have 4 moles of H₂ and 10 moles of O₂, which is the Limiting Reactant for making water (2H₂ + O₂ → 2H₂O)?", options: [
+        "H₂",
+        "O₂",
+        "Water",
+        "Both"
+      ], answer: 0, explanation: "You need 2 H₂ for every 1 O₂. 4 H₂ only needs 2 O₂. Since you have 10 O₂, the O₂ is in excess and H₂ runs out first! 🛑" },
+    { id: 'q16', question: "Avogadro's Number is approximately:", options: [
+        "6.022 x 10^23",
+        "6.022 x 10^-23",
+        "3 x 10^8",
+        "9.8"
+      ], answer: 0, explanation: "A massive number for a massive amount of tiny particles! 🥑" },
+    { id: 'q17', question: "In a 'Solution', the substance being dissolved is called the:", options: [
+        "Solvent",
+        "Solute",
+        "Molarity",
+        "Residue"
+      ], answer: 1, explanation: "The solute is the 'stuff' you are counting in moles! 🧪" },
+    { id: 'q18', question: "Why do we balance equations by changing coefficients and NOT subscripts?", options: [
+        "Subscripts are simply easier",
+        "Changing subscripts changes the identity of the chemical",
+        "Coefficients look much better",
+        "There is absolutely no reason"
+      ], answer: 1, explanation: "Changing H₂O to H₂O₂ turns water into hydrogen peroxide—a very different (and dangerous) substance! ⚠️" },
+    { id: 'q19', question: "If you have 2 moles of O₂, how many Liters would that occupy at STP?", options: [
+        "22.4 L",
+        "44.8 L",
+        "11.2 L",
+        "6.022 L"
+      ], answer: 1, explanation: "2 moles x 22.4 L/mole = 44.8 Liters! 🎈" },
+    { id: 'q20', question: "Stoichiometry comes from the Greek words 'stoicheion' and 'metron', meaning:", options: [
+        "Fire and Measure",
+        "Element and Measure",
+        "Atom and Math",
+        "Secret and Count"
+      ], answer: 1, explanation: "It literally translates to 'The measurement of elements'! 📏" },
   ],
 
   relatedTopics: ['atoms_molecules', 'chemical_reactions', 'matter_states'],

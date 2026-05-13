@@ -4,7 +4,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, TouchableOpacity, Image, StyleSheet,
-  Modal, Animated, ActivityIndicator,
+  Modal, Animated, ActivityIndicator, Alert
 } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -117,6 +117,15 @@ export default function ProfileModal({
   // ── DM ─────────────────────────────────────
   const handleDirectMessage = () => {
     if (profile && onStartChat) {
+      if (profile.isPrivateProfile && profile.friendshipStatus !== 'ACCEPTED') {
+        Alert.alert(
+          'Private Profile',
+          'This user has a private profile. You must be friends with them to send a direct message.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+
       const pId = profile.id;
       const pName = profile.name;
       handleClose();
@@ -242,9 +251,9 @@ export default function ProfileModal({
 
                 {/* ── DM Button ─────────────────── */}
                 {showMessageButton && onStartChat && (
-                  <TouchableOpacity onPress={handleDirectMessage} style={[styles.dmBtn, { backgroundColor: accent }]} activeOpacity={0.8}>
-                    <Icon name="chat" size={18} color="#FFFFFF" />
-                    <Text style={styles.dmBtnText}>Message Directly</Text>
+                  <TouchableOpacity onPress={handleDirectMessage} style={[styles.dmBtn, { backgroundColor: (profile.isPrivateProfile && profile.friendshipStatus !== 'ACCEPTED') ? '#374151' : accent }]} activeOpacity={0.8}>
+                    <Icon name={(profile.isPrivateProfile && profile.friendshipStatus !== 'ACCEPTED') ? 'lock' : 'chat'} size={18} color="#FFFFFF" />
+                    <Text style={styles.dmBtnText}>{(profile.isPrivateProfile && profile.friendshipStatus !== 'ACCEPTED') ? 'Private Message' : 'Message Directly'}</Text>
                   </TouchableOpacity>
                 )}
               </>

@@ -164,14 +164,15 @@ export default function QuizEngine({ quiz, accentColor, onComplete }) {
 
   const onNextQuestion = () => {
     soundWhoosh();
-    const isCorrect = selected === quiz[currentQ].answer;
-    advanceQuestion(isCorrect);
+    advanceQuestion();
   };
 
-  const advanceQuestion = (wasCorrect) => {
+  const advanceQuestion = () => {
     const isLast = currentQ === quiz.length - 1;
     if (isLast) {
-      const finalScore = score + (wasCorrect ? 1 : 0);
+      // Score is already updated by handleAnswer, so use the answers array
+      // to compute the final score accurately (avoids double-counting).
+      const finalScore = answers.reduce((sum, a) => sum + (a.correct ? 1 : 0), 0);
       const timeTaken  = Math.round((Date.now() - startTime) / 1000);
       const isPerfect  = finalScore === quiz.length;
       if (isPerfect) soundCelebration();

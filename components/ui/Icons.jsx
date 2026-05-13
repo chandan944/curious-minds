@@ -89,6 +89,17 @@ const iconMap = {
       <Path d="M12 2L14.4 8.1L21 9.27L16.5 14.14L17.81 21L12 17.77L6.19 21L7.5 14.14L3 9.27L9.6 8.1L12 2Z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
     </Svg>
   ),
+  crown: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M2 22h20M2 19l3-12l4 4l3-8l3 8l4-4l3 12H2z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
+  medal: ({ size, color }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="15" r="4" stroke={color} strokeWidth="1.5" />
+      <Path d="M10 11.5L7 3L11 3L12 6L13 3L17 3L14 11.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ),
   zap: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
@@ -271,11 +282,6 @@ const iconMap = {
   edit: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  ),
-  upload: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   ),
   heart: ({ size, color, filled }) => (
@@ -508,12 +514,7 @@ const iconMap = {
       <Path d="M12 8V8.01M12 11V16" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
     </Svg>
   ),
-  sun: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="12" r="4" stroke={color} strokeWidth="1.5" />
-      <Path d="M12 2V4M12 20V22M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M2 12H4M20 12H22M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </Svg>
-  ),
+
   moon: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
@@ -544,12 +545,7 @@ const iconMap = {
       <Rect x="14" y="14" width="7" height="7" rx="1" stroke={color} strokeWidth="1.5" />
     </Svg>
   ),
-  search: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="11" cy="11" r="8" stroke={color} strokeWidth="1.5" />
-      <Path d="M21 21L16.65 16.65" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </Svg>
-  ),
+
   play: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M8 5L19 12L8 19V5Z" fill={color} />
@@ -630,15 +626,7 @@ const iconMap = {
       <Path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   ),
-  robot: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Rect x="4" y="8" width="16" height="12" rx="2" stroke={color} strokeWidth="1.5" />
-      <Path d="M12 2v4M8 5h8" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-      <Circle cx="9" cy="13" r="1.5" fill={color} />
-      <Circle cx="15" cy="13" r="1.5" fill={color} />
-      <Path d="M9 17h6" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </Svg>
-  ),
+
   cube: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M21 16.09v-8.19a2 2 0 0 0-1-1.73L13 2.61a2 2 0 0 0-2 0L4 6.17a2 2 0 0 0-1 1.73v8.19a2 2 0 0 0 1 1.73l7 3.56a2 2 0 0 0 2 0l7-3.56a2 2 0 0 0 1-1.73z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -763,29 +751,6 @@ const iconMap = {
       <Path d="M9 13L11 15L15 11L13 9M9 13C8 14 6 14 5 13L3 11L7 7L13 9M15 11C16 10 18 10 19 11L21 13L17 17L11 15" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   ),
-  globe: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="12" r="10" stroke={color} strokeWidth="1.5" />
-      <Path d="M2 12H22M12 2C14.5 4.5 16 8 16 12C16 16 14.5 19.5 12 22M12 2C9.5 4.5 8 8 8 12C8 16 9.5 19.5 12 22" stroke={color} strokeWidth="1.5" />
-    </Svg>
-  ),
-  coin: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth="1.5" />
-      <Path d="M12 6V18M9 9C9 7.9 10.34 7 12 7C13.66 7 15 7.9 15 9C15 10.1 13.66 11 12 11C10.34 11 9 11.9 9 13C9 14.1 10.34 15 12 15C13.66 15 15 14.1 15 13" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </Svg>
-  ),
-  alert: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 2L2 20H22L12 2Z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
-      <Path d="M12 10V14M12 17V17.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </Svg>
-  ),
-  power: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 3V12M18.36 6.64A9 9 0 1 1 5.64 6.64" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </Svg>
-  ),
   chat: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M21 11.5C21 16.75 16.97 21 12 21C10.82 21 9.69 20.78 8.65 20.38L3 22L4.8 17.2C3.67 15.58 3 13.62 3 11.5C3 6.25 7.03 2 12 2C16.97 2 21 6.25 21 11.5Z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
@@ -796,30 +761,13 @@ const iconMap = {
       <Path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   ),
-  lock: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Rect x="3" y="11" width="18" height="11" rx="2" stroke={color} strokeWidth="1.5" />
-      <Path d="M7 11V7C7 4.24 9.24 2 12 2C14.76 2 17 4.24 17 7V11" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-    </Svg>
-  ),
-  zap: ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  ),
   bell: ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <Path d="M13.73 21a2 2 0 0 1-3.46 0" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   ),
-  'user-plus': ({ size, color }) => (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <Circle cx="8.5" cy="7" r="4" stroke={color} strokeWidth="1.5" />
-      <Path d="M20 8v6M23 11h-6" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </Svg>
-  ),
+
   'heart-filled': ({ size, color }) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
       <Path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

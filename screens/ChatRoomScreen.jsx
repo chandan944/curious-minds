@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import Icon from '../components/ui/Icons';
@@ -12,6 +13,8 @@ import ProfileModal from '../components/ui/ProfileModal';
 import { FONTS, RADIUS, SPACING } from '../constants/theme';
 import chatService from '../services/chatService';
 import api from '../services/api';
+import { useQueryClient } from '@tanstack/react-query';
+import { parseSafe } from '../utils/timeUtils';
 
 // Removed hardcoded DARK/LIGHT tokens to dynamically map from theme context below.
 
@@ -19,17 +22,16 @@ const STATUS_BAR_H = Platform.OS === 'android' ? StatusBar.currentHeight || 36 :
 
 const formatTime = (isoString) => {
   if (!isoString) return '';
-  // Safely extract time from "YYYY-MM-DDTHH:mm:ss" avoiding iOS/Hermes UTC offset bugs
-  const match = isoString.match(/T(\d{2}):(\d{2})/);
-  if (match) {
-    let h = parseInt(match[1], 10);
-    const m = match[2];
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    h = h % 12;
-    h = h ? h : 12;
-    return `${h}:${m} ${ampm}`;
+  
+  let date = parseSafe(isoString);
+  const now = new Date();
+  
+  // Cap to current time if server clock is ahead
+  if (date > now) {
+    date = now;
   }
-  return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+  return date.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: true });
 };
 
 // ── Typing Indicator dots ─────────────────────────────────────
@@ -64,6 +66,8 @@ function TypingDots({ color }) {
 export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDirectChat }) {
   const { theme, isDark } = useTheme();
   const { user, token } = useAuth();
+  const queryClient = useQueryClient();
+  
   
   // Dynamic theme mapping
   const C = {
@@ -90,8 +94,10 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
   const [profileTargetId, setProfileTargetId] = useState(null);
   const [profileVisible, setProfileVisible]   = useState(false);
   const [isOnline, setIsOnline]               = useState(false);
+  const [targetUser, setTargetUser]           = useState(null);
 
   const flatListRef = useRef(null);
+  const swipeableRefs = useRef(new Map());
   const isGlobal    = targetId === null;
 
   // ── Fetch history + connect WS ──
@@ -104,10 +110,14 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
 
         if (!isGlobal && targetId) {
           try {
-            const onlineRes = await api.get(`/chat/online/${targetId}`);
+            const [onlineRes, profileRes] = await Promise.all([
+              api.get(`/chat/online/${targetId}`),
+              api.get(`/api/social/profile/${targetId}`)
+            ]);
             setIsOnline(onlineRes.data);
+            setTargetUser(profileRes.data);
           } catch (err) {
-            console.warn('Failed to fetch online status', err?.message);
+            console.warn('Failed to fetch target user info', err?.message);
           }
         }
       } catch (e) {
@@ -132,7 +142,11 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
       setMessages(prev => [msg, ...prev]);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      // Invalidate inbox on unmount so ChatHub shows fresh data
+      queryClient.invalidateQueries({ queryKey: ['chatInbox'] });
+    };
   }, [targetId]);
 
   // ── Mark as read (batched, deduped) ──
@@ -150,6 +164,8 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
       setMessages(prev => prev.map(m =>
         unread.some(u => u.id === m.id) ? { ...m, status: 'READ' } : m
       ));
+      // Invalidate inbox cache so unread badges clear when user goes back
+      queryClient.invalidateQueries({ queryKey: ['chatInbox'] });
     }
   }, [messages, user.id]);
 
@@ -188,29 +204,45 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
     const showAvatar = !isMe && (!nextItem || nextItem.senderId !== item.senderId);
 
     return (
-      <View style={[styles.msgRow, isMe ? styles.msgRowMe : styles.msgRowThem]}>
+      <Swipeable
+        ref={(ref) => {
+          if (ref) {
+            swipeableRefs.current.set(item.id, ref);
+          } else {
+            swipeableRefs.current.delete(item.id);
+          }
+        }}
+        renderLeftActions={(progress, dragX) => {
+          const scale = dragX.interpolate({
+            inputRange: [0, 40],
+            outputRange: [0, 1],
+            extrapolate: 'clamp',
+          });
+          return (
+            <View style={{ justifyContent: 'center', alignItems: 'center', width: 50, paddingLeft: 10 }}>
+              <Animated.View style={{ transform: [{ scale }], backgroundColor: isDark ? '#1C1D26' : '#FFFFFF', padding: 8, borderRadius: 20, borderWidth: 1, borderColor: C.border }}>
+                <Icon name="reply" size={16} color={C.accent} />
+              </Animated.View>
+            </View>
+          );
+        }}
+        onSwipeableOpen={() => {
+          setReplyingTo(item);
+          const ref = swipeableRefs.current.get(item.id);
+          if (ref) ref.close();
+        }}
+        overshootLeft={false}
+      >
+        <View style={[styles.msgRow, isMe ? styles.msgRowMe : styles.msgRowThem]}>
 
-        {/* Avatar column (left side only) */}
-        {!isMe && (
-          <TouchableOpacity onPress={() => handleAvatarPress(item.senderId)} activeOpacity={0.8}
-            style={[styles.avatarSlot, !showAvatar && styles.avatarHidden]}>
-            {item.senderImage ? (
-              <Image source={{ uri: item.senderImage }} style={[styles.avatar, { borderColor: C.border }]} />
-            ) : (
-              <LinearGradient colors={[C.accent, C.accentSoft]} style={styles.avatar}>
-                <Text style={styles.avatarInit}>{(item.senderName || '?')[0].toUpperCase()}</Text>
-              </LinearGradient>
-            )}
-          </TouchableOpacity>
-        )}
+          {/* Avatar column (left side only) */}
 
-        {/* Bubble column */}
-        <TouchableOpacity
-          style={[styles.bubbleCol, isMe ? styles.bubbleColMe : styles.bubbleColThem]}
-          activeOpacity={0.85}
-          onLongPress={() => setReplyingTo(item)}
-        >
-          {/* Sender name (global room only, other person) */}
+
+          {/* Bubble column */}
+          <View
+            style={[styles.bubbleCol, isMe ? styles.bubbleColMe : styles.bubbleColThem]}
+          >
+            {/* Sender name (global room only, other person) */}
           {isGlobal && !isMe && (
             <Text style={[styles.senderLabel, { color: C.accentSoft }]}>{item.senderName}</Text>
           )}
@@ -279,8 +311,9 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
               </View>
             </View>
           )}
-        </TouchableOpacity>
-      </View>
+          </View>
+        </View>
+      </Swipeable>
     );
   }, [messages, user.id, isGlobal, C, isDark]);
 
@@ -290,8 +323,8 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
   return (
     <KeyboardAvoidingView
       style={[styles.root, { backgroundColor: C.bg }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : STATUS_BAR_H}
+      behavior="padding"
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
     >
       {/* Background gradient */}
       <LinearGradient
@@ -311,9 +344,18 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
           {/* Avatar + name */}
           <TouchableOpacity onPress={() => handleAvatarPress(targetId)} activeOpacity={0.85} style={styles.headerCenter}>
             <View style={styles.headerAvatarWrap}>
-              <LinearGradient colors={[C.accent, C.accentSoft]} style={styles.headerAvatar}>
-                <Text style={styles.headerAvatarText}>{chatTitle ? chatTitle[0].toUpperCase() : '?'}</Text>
-              </LinearGradient>
+              {targetUser?.imageUrl ? (
+                <Image source={{ uri: targetUser.imageUrl }} style={[styles.headerAvatar, { borderColor: C.accent + '40' }]} />
+              ) : (
+                <LinearGradient
+                  colors={[C.accent + '40', C.accent + '10']}
+                  start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                  style={[styles.headerAvatar, { borderColor: C.accent + '30' }]}
+                >
+                  <Text style={[styles.headerAvatarText, { color: C.accent }]}>{(chatTitle || '?')[0].toUpperCase()}</Text>
+                </LinearGradient>
+              )}
+              
               {/* Online indicator */}
               {(!isGlobal && isOnline) && (
                 <View style={[styles.onlineDot, { backgroundColor: C.green, borderColor: C.bg }]} />
@@ -337,7 +379,7 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
         inverted
         keyExtractor={chatKeyExtractor}
         renderItem={renderMessage}
-        contentContainerStyle={[styles.listContent, { paddingBottom: replyingTo ? 180 : 120 }]}
+        contentContainerStyle={[styles.listContent, { paddingBottom: 20 }]}
         showsVerticalScrollIndicator={false}
         style={{ flex: 1 }}
         initialNumToRender={15}
@@ -391,7 +433,7 @@ export default function ChatRoomScreen({ onBack, targetId, chatTitle, onStartDir
                 { shadowColor: input.trim() ? C.accentGlow : 'transparent', borderColor: input.trim() ? 'transparent' : C.border }
               ]}
             >
-              <Icon name="forward" size={17} color={input.trim() ? "#FFFFFF" : C.muted} />
+              <Icon name="send" size={17} color={input.trim() ? "#FFFFFF" : C.muted} />
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -444,14 +486,25 @@ const styles = StyleSheet.create({
     width: 38, height: 38, borderRadius: 19, borderWidth: 1,
     alignItems: 'center', justifyContent: 'center',
   },
+  headerAvatarWrap: { position: 'relative' },
+  headerAvatar: {
+    width: 40, height: 40, borderRadius: 20, borderWidth: 1.5,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  headerAvatarText: { fontFamily: FONTS.displayMedium, fontSize: 16, fontWeight: '700' },
+  onlineDot: {
+    position: 'absolute', bottom: 1, right: 1,
+    width: 10, height: 10, borderRadius: 5, borderWidth: 1.5,
+  },
 
   // ── Messages ──
   listContent: {
     paddingHorizontal: 14,
-    paddingTop: STATUS_BAR_H + 80,   // clear the header
+    paddingTop: 10,   // small gap above input box (visual bottom)
+    paddingBottom: STATUS_BAR_H + 80,  // clear the header (visual top)
   },
 
-  msgRow: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: 8, width: '100%' },
+  msgRow: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: 4, width: '100%' },
   msgRowMe:   { justifyContent: 'flex-end' },
   msgRowThem: { justifyContent: 'flex-start' },
 
@@ -495,9 +548,6 @@ const styles = StyleSheet.create({
 
   // ── Reply Banner ──
   replyBanner: {
-    position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 96 : 76,
-    left: 0, right: 0, zIndex: 9,
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 16, paddingVertical: 10,
     borderTopWidth: 1,
@@ -510,9 +560,8 @@ const styles = StyleSheet.create({
 
   // ── Input ──
   inputBlur: {
-    position: 'absolute', bottom: 0, left: 0, right: 0,
     paddingHorizontal: 14,
-    paddingBottom: Platform.OS === 'ios' ? 34 : 18,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 28,
     paddingTop: 12,
   },
   inputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 10 },

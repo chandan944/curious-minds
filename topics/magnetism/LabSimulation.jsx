@@ -1,7 +1,7 @@
-﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 //  LAB: Magnetism & Electromagnetism v2.0 (Extreme)
 //  Lorentz Force Particle Accelerator & B-Field Simulator
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -20,7 +20,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 320;
 
-// â”€â”€ Particle Data & Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Particle Data & Config ──────────────────────────────
 
 const PARTICLES = [
   { id: 'electron', name: 'Electron', mass: 1, charge: -1, color: '#00E5FF', icon: 'zap' },
@@ -39,7 +39,7 @@ const CHALLENGES = [
   { id: 'mass_driver', title: 'Mass Driver', desc: 'Fire a Heavy Ion at max velocity', icon: 'truck', color: '#A855F7' },
 ];
 
-// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Unified UI Components ──────────────────────────────
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -72,7 +72,7 @@ const ChallengeCard = ({ challenge, isDone }) => (
   </View>
 );
 
-// â”€â”€ Main Simulation Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Main Simulation Component ───────────────────────────
 
 export default function MagnetismLab({ scientistMode = false, accentColor = '#00E5FF' }) {
   const { isDark } = useTheme();
@@ -90,7 +90,7 @@ export default function MagnetismLab({ scientistMode = false, accentColor = '#00
   const posRef = useRef({ x: SIM_W/2, y: SIM_H - 40, vx: 0, vy: -5 });
   const pathRef = useRef('');
 
-  // â”€â”€ Physics Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Physics Engine ─────────────────────────────────────
 
   const calculateLorentz = useCallback(() => {
     if (!firing) return;
@@ -179,7 +179,7 @@ export default function MagnetismLab({ scientistMode = false, accentColor = '#00
     return () => clearInterval(interval.current);
   }, [firing, calculateLorentz]);
 
-  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Render ─────────────────────────────────────────────
 
   return (
     <View style={styles.root}>
@@ -205,7 +205,7 @@ export default function MagnetismLab({ scientistMode = false, accentColor = '#00
               fill={bField >= 0 ? '#00E5FF40' : '#FF4D6D40'} 
               fontSize="12"
             >
-              {bField > 0 ? 'â€¢' : bField < 0 ? 'x' : ''}
+              {bField > 0 ? '•' : bField < 0 ? 'x' : ''}
             </SvgText>
           ))}
 
@@ -271,7 +271,7 @@ export default function MagnetismLab({ scientistMode = false, accentColor = '#00
           <Text style={styles.sectionTitle}>SCIENTIFIC ANALYTICS</Text>
           <View style={styles.sciGrid}>
             <ScientistCard 
-              formula="F = q(v Ã— B)" 
+              formula="F = q(v × B)" 
               description="Lorentz Force (Vector Cross Product)" 
               value={`${selectedParticle.charge} * (${velocity} * ${bField}) = Force Vector`}
               color={selectedParticle.color}

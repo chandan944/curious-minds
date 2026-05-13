@@ -269,7 +269,7 @@ export const TOPIC_REGISTRY = [
     id: "social_media_trap",
     category: "Society",
     title: "Social Media Trap (Dopamine & Addiction)",
-    emoji: "📱",
+    icon: "eyes",
     priority: 2,
     status: "ready",
   },
@@ -277,7 +277,7 @@ export const TOPIC_REGISTRY = [
     id: "manipulation_tactics",
     category: "Society",
     title: "Manipulation (Recognize & Defend)",
-    emoji: "🛡️",
+    icon: "shield",
     priority: 2,
     status: "ready",
   },
@@ -285,7 +285,7 @@ export const TOPIC_REGISTRY = [
     id: "happiness_science",
     category: "Society",
     title: "The Happiest Person on Earth (Science of Joy)",
-    emoji: "☀️",
+    icon: "sun",
     priority: 2,
     status: "ready",
   },
@@ -293,7 +293,7 @@ export const TOPIC_REGISTRY = [
     id: "meaningful_life",
     category: "Society",
     title: "Meaningful Life (Purpose & Ikigai)",
-    emoji: "🧭",
+    icon: "compass",
     priority: 2,
     status: "ready",
   },
@@ -301,7 +301,7 @@ export const TOPIC_REGISTRY = [
     id: "science_of_emotion",
     category: "Society",
     title: "Science of Emotion (How Feelings Work)",
-    emoji: "❤️",
+    icon: "heart",
     priority: 2,
     status: "ready",
   },
@@ -920,12 +920,93 @@ export const TOPIC_REGISTRY = [
     priority: 3,
     status: "ready",
   },
+
+  // ═══════════════════════════════════════════════════════════════
+  //  BLOCK 14: FINANCE (Wealth, Banking & Markets)
+  // ═══════════════════════════════════════════════════════════════
+  {
+    id: "personal_finance",
+    category: "Finance",
+    title: "Personal Finance (Budgeting & Saving)",
+    icon: "dollar",
+    priority: 1,
+    status: "ready",
+  },
+  {
+    id: "banking",
+    category: "Finance",
+    title: "Banking & Savings Accounts",
+    icon: "coin",
+    priority: 1,
+    status: "ready",
+  },
+  {
+    id: "investing",
+    category: "Finance",
+    title: "Investing Basics (Stocks & Bonds)",
+    icon: "chart",
+    priority: 1,
+    status: "ready",
+  },
+  {
+    id: "debt_credit",
+    category: "Finance",
+    title: "Debt & Credit Score",
+    icon: "alert",
+    priority: 1,
+    status: "ready",
+  },
+  {
+    id: "taxation",
+    category: "Finance",
+    title: "Taxation & Economy",
+    icon: "scroll",
+    priority: 1,
+    status: "ready",
+  },
+  {
+    id: "real_estate_finance",
+    category: "Finance",
+    title: "Real Estate & Housing",
+    icon: "home",
+    priority: 2,
+    status: "ready",
+  },
+  {
+    id: "corporate_finance",
+    category: "Finance",
+    title: "Business & Corporate Finance",
+    icon: "factory",
+    priority: 2,
+    status: "ready",
+  },
+  {
+    id: "insurance",
+    category: "Finance",
+    title: "Insurance & Risk Management",
+    icon: "shield",
+    priority: 1,
+    status: "ready",
+  },
+  {
+    id: "wealth_loops",
+    category: "Finance",
+    title: "Wealth Loops (Loop Holes)",
+    icon: "spiral",
+    priority: 1,
+    status: "ready",
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
 //  UTILITIES
 // ═══════════════════════════════════════════════════════════════════
-export const CATEGORIES = [...new Set(TOPIC_REGISTRY.map((t) => t.category))];
+const rawCategories = [...new Set(TOPIC_REGISTRY.map((t) => t.category))];
+const preferredOrder = ["Foundations", "Technology"];
+export const CATEGORIES = [
+  ...preferredOrder.filter(c => rawCategories.includes(c)),
+  ...rawCategories.filter(c => !preferredOrder.includes(c))
+];
 
 export const getTopicById = (id) => TOPIC_REGISTRY.find((t) => t.id === id);
 export const getTopicsByCategory = (cat) =>

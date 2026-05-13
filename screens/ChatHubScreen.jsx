@@ -14,22 +14,70 @@ import { FONTS, RADIUS, SPACING } from '../constants/theme';
 import api from '../services/api';
 import socialService from '../services/socialService';
 import chatService from '../services/chatService';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { parseSafe } from '../utils/timeUtils';
 
 const STATUS_BAR_H = Platform.OS === 'android' ? StatusBar.currentHeight || 36 : 50;
+const formatRelativeTime = (isoString) => {
+  if (!isoString) return '';
+  
+  let date = parseSafe(isoString);
+  const now = new Date();
+  
+  // Cap to current time if server clock is ahead
+  if (date > now) {
+    date = now;
+  }
+  
+  const diffInMs = Math.max(0, now - date);
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  if (diffInMs < 60000) return 'Just now';
+  if (diffInMs < 3600000) return `${Math.floor(diffInMs / 60000)}m`;
+  
+  // Same day
+  if (now.toDateString() === date.toDateString()) {
+    return date.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: true });
+  }
+  
+  // Yesterday
+  const yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+  if (yesterday.toDateString() === date.toDateString()) return 'Yesterday';
+
+  // Within a week
+  if (diffInDays < 7) {
+    return date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'short' });
+  }
+
+  // Older
+  return date.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', month: 'short', day: 'numeric' });
+};
 
 export default function ChatHubScreen({ onBack, onOpenChat }) {
   const { theme, isDark } = useTheme();
   const { token } = useAuth();
 
-  const { data: inbox = [], isLoading: loading } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { data: inbox = [], isLoading: loading, refetch: refetchInbox } = useQuery({
     queryKey: ['chatInbox'],
     queryFn: async () => {
       const res = await api.get('/chat/inbox');
       return res.data || [];
     },
-    staleTime: 1000 * 60 * 2, // 2 mins
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
+
+  // Sort inbox strictly by time (descending)
+  const sortedInbox = React.useMemo(() => {
+    return [...inbox].sort((a, b) => {
+      const timeA = a.lastMessageTime ? parseSafe(a.lastMessageTime).getTime() : 0;
+      const timeB = b.lastMessageTime ? parseSafe(b.lastMessageTime).getTime() : 0;
+      return timeB - timeA;
+    });
+  }, [inbox]);
 
   // Notifications
   const [notifVisible, setNotifVisible] = useState(false);
@@ -45,6 +93,8 @@ export default function ChatHubScreen({ onBack, onOpenChat }) {
 
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
+      // Refetch inbox & unread count whenever ChatHub is shown
+      refetchInbox();
       socialService.getUnreadCount()
         .then(res => setUnreadCount(res.unreadCount || 0))
         .catch(() => {});
@@ -52,11 +102,23 @@ export default function ChatHubScreen({ onBack, onOpenChat }) {
 
     const unsub = chatService.addNotificationListener(() => {
       setUnreadCount(prev => prev + 1);
+      // Also refresh the inbox list to show the new message
+      queryClient.invalidateQueries({ queryKey: ['chatInbox'] });
     });
-    return () => { task.cancel(); unsub(); };
+
+    // Also listen for incoming messages to update inbox in real-time
+    const unsubMsg = chatService.addListener((msg) => {
+      if (msg.type === 'MESSAGE') {
+        queryClient.invalidateQueries({ queryKey: ['chatInbox'] });
+      }
+    });
+
+    return () => { task.cancel(); unsub(); unsubMsg(); };
   }, []);
 
   const renderInboxItem = ({ item }) => {
+    const hasUnread = item.unreadCount > 0;
+
     return (
       <TouchableOpacity
         style={[styles.row, { borderBottomColor: border }]}
@@ -76,23 +138,42 @@ export default function ChatHubScreen({ onBack, onOpenChat }) {
               <Text style={[styles.avatarInit, { color: accent }]}>{(item.name || '?')[0].toUpperCase()}</Text>
             </LinearGradient>
           )}
+          {hasUnread && <View style={[styles.unreadDotIndicator, { backgroundColor: accent }]} />}
         </View>
 
-        {/* Name + Title */}
+        {/* Name + Last Message */}
         <View style={styles.rowContent}>
-          <Text style={[styles.name, { color: txt1 }]} numberOfLines={1}>{item.name}</Text>
-          <Text style={[styles.subtitle, { color: txtM, fontWeight: item.unreadCount > 0 ? '700' : '400' }]} numberOfLines={1}>
-            {item.title} 
-          </Text>
-        </View>
-
-        {/* Unread Badge */}
-        {item.unreadCount > 0 && (
-          <View style={[styles.unreadBadge, { backgroundColor: accent }]}>
-            <Text style={styles.unreadBadgeText}>{item.unreadCount > 9 ? '9+' : item.unreadCount}</Text>
+          <View style={styles.nameRow}>
+            <Text style={[styles.name, { color: txt1 }]} numberOfLines={1}>{item.name}</Text>
+            {item.lastMessageTime && (
+              <Text style={[styles.timeText, { color: hasUnread ? accent : txtM }]}>
+                {formatRelativeTime(item.lastMessageTime)}
+              </Text>
+            )}
           </View>
-        )}
-        
+          
+          <View style={styles.msgPreviewRow}>
+            <Text 
+              style={[
+                styles.subtitle, 
+                { 
+                  color: hasUnread ? (isDark ? '#FFF' : '#000') : txtM, 
+                  fontWeight: hasUnread ? '700' : '400',
+                  flex: 1 
+                }
+              ]} 
+              numberOfLines={1}
+            >
+              {item.lastMessage || item.title} 
+            </Text>
+            
+            {hasUnread && (
+              <View style={[styles.unreadBadge, { backgroundColor: accent }]}>
+                <Text style={styles.unreadBadgeText}>{item.unreadCount > 9 ? '9+' : item.unreadCount}</Text>
+              </View>
+            )}
+          </View>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -179,7 +260,7 @@ export default function ChatHubScreen({ onBack, onOpenChat }) {
           </View>
         ) : (
           <FlatList
-            data={inbox}
+            data={sortedInbox}
             keyExtractor={item => item.id.toString()}
             renderItem={renderInboxItem}
             contentContainerStyle={{ paddingBottom: 100 }}
@@ -298,11 +379,25 @@ const styles = StyleSheet.create({
   emptySub: { fontFamily: FONTS.body, fontSize: 14, textAlign: 'center', lineHeight: 22 },
 
   unreadBadge: {
-    minWidth: 22, height: 22, borderRadius: 11,
+    minWidth: 20, height: 20, borderRadius: 10,
     alignItems: 'center', justifyContent: 'center',
-    paddingHorizontal: 6, marginLeft: 8,
+    paddingHorizontal: 4,
   },
   unreadBadgeText: {
-    fontFamily: FONTS.displayMedium, fontSize: 11, color: '#FFFFFF'
+    fontFamily: FONTS.displayBold, fontSize: 10, color: '#FFFFFF'
+  },
+  unreadDotIndicator: {
+    position: 'absolute', top: -2, right: -2,
+    width: 10, height: 10, borderRadius: 5,
+  },
+  nameRow: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    marginBottom: 4,
+  },
+  timeText: {
+    fontFamily: FONTS.bodyMedium, fontSize: 11,
+  },
+  msgPreviewRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
   },
 });

@@ -1,7 +1,7 @@
-﻿// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 //  LAB: Chemical Bonding v2.0 (Extreme)
 //  The Atomic Matchmaker Engine
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
@@ -20,7 +20,7 @@ const { width } = Dimensions.get('window');
 const SIM_W = width - 40;
 const SIM_H = 360;
 
-// â”€â”€ Constants & Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Constants & Data ─────────────────────────────────
 
 const ELEMENTS = [
   { id: 'Na', name: 'Sodium', en: 0.9, valence: 1, color: '#A855F7', type: 'Metal' },
@@ -32,13 +32,13 @@ const ELEMENTS = [
 ];
 
 const CHALLENGES = [
-  { id: 'ionic_theft', title: 'Grand Theft Electron', desc: 'Create an Ionic bond with Î”EN > 2.0', icon: 'zap', color: '#FFD166' },
+  { id: 'ionic_theft', title: 'Grand Theft Electron', desc: 'Create an Ionic bond with ΔEN > 2.0', icon: 'zap', color: '#FFD166' },
   { id: 'covalent_share', title: 'Atomic Handshake', desc: 'Create a Covalent bond between two Carbon atoms', icon: 'link', color: '#FF3131' },
-  { id: 'polar_dipole', title: 'Polar Power', desc: 'Create a Polar Covalent bond (Î”EN 0.5 - 1.7)', icon: 'activity', color: '#00E5FF' },
+  { id: 'polar_dipole', title: 'Polar Power', desc: 'Create a Polar Covalent bond (ΔEN 0.5 - 1.7)', icon: 'activity', color: '#00E5FF' },
   { id: 'perfect_octet', title: 'The Octet Goal', desc: 'Form a stable molecule where all atoms reach 8/2 electrons', icon: 'target', color: '#39FF14' },
 ];
 
-// â”€â”€ Unified UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Unified UI Components ──────────────────────────────
 
 const StatusCard = ({ label, value, unit, color, icon }) => (
   <View style={[styles.statusCard, { borderLeftColor: color }]}>
@@ -71,7 +71,7 @@ const ChallengeCard = ({ challenge, isDone }) => (
   </View>
 );
 
-// â”€â”€ Main Simulation Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Main Simulation Component ───────────────────────────
 
 export default function BondingLab({ scientistMode = false, accentColor = '#4ECDC4' }) {
   const { isDark } = useTheme();
@@ -95,7 +95,7 @@ export default function BondingLab({ scientistMode = false, accentColor = '#4ECD
     return 'Non-Polar Covalent';
   }, [isBonded, deltaEN]);
 
-  // â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Handlers ──────────────────────────────────────────
 
   const panResponderA = useRef(
     PanResponder.create({
@@ -150,7 +150,7 @@ export default function BondingLab({ scientistMode = false, accentColor = '#4ECD
     }
   }, [isBonded, deltaEN, atomA, atomB, completedChallenges]);
 
-  // â”€â”€ Render Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Render Helpers ─────────────────────────────────────
 
   const renderValenceElectrons = (atom, pos, rotationOffset) => {
     const electrons = [];
@@ -174,7 +174,7 @@ export default function BondingLab({ scientistMode = false, accentColor = '#4ECD
     <View style={styles.root}>
       {/* 1. Header Metrics */}
       <View style={styles.metricsRow}>
-        <StatusCard label="Î” EN (DIFF)" value={deltaEN.toFixed(1)} unit="Î”EN" color="#00E5FF" icon="activity" />
+        <StatusCard label="Δ EN (DIFF)" value={deltaEN.toFixed(1)} unit="ΔEN" color="#00E5FF" icon="activity" />
         <StatusCard label="BOND TYPE" value={bondType} unit="" color="#A855F7" icon="link" />
       </View>
 
@@ -274,7 +274,7 @@ export default function BondingLab({ scientistMode = false, accentColor = '#4ECD
           <Text style={styles.sectionTitle}>BONDING ANALYTICS</Text>
           <View style={styles.sciGrid}>
             <ScientistCard 
-              formula="% Ionic = [1 - e^(-0.25Î”ENÂ²)]" 
+              formula="% Ionic = [1 - e^(-0.25ΔEN²)]" 
               description="Pauling Ionic Character Formula" 
               value={`Ionic Character: ${( (1 - Math.exp(-0.25 * Math.pow(deltaEN, 2))) * 100).toFixed(1)}%`}
               color="#A855F7"

@@ -1,36 +1,40 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = 'c:/Users/lenovo/Desktop/curious-brain/curious-minds';
+const topicsDir = 'c:/Users/lenovo/Desktop/curious-brain/curious-minds/topics';
+const registryFile = 'c:/Users/lenovo/Desktop/curious-brain/curious-minds/constants/topicRegistry.js';
 
-// 1. Get Registry IDs
-const registryContent = fs.readFileSync(path.join(ROOT, 'constants/topicRegistry.js'), 'utf8');
-const registryIds = [...registryContent.matchAll(/id:\s*[\"'](.*?)[\"']/g)].map(m => m[1]);
+const content = fs.readFileSync(registryFile, 'utf8');
+const idMatches = content.match(/id:\s*["']([^"']+)["']/g);
+const registryIds = [...new Set(idMatches.map(m => m.match(/["']([^"']+)["']/)[1]))];
 
-// 2. Get Topic Folders
-const topicDirs = fs.readdirSync(path.join(ROOT, 'topics')).filter(d => fs.statSync(path.join(ROOT, 'topics', d)).isDirectory());
+console.log(`Topic Registry has ${registryIds.length} topics.`);
 
-// 3. Get TopicScreen Configs
-const screenContent = fs.readFileSync(path.join(ROOT, 'screens/TopicScreen.jsx'), 'utf8');
-const configsMatch = screenContent.match(/const TOPIC_CONFIGS = \{([\s\S]*?)\};\n\/\//)[1];
-const screenConfigs = [...configsMatch.matchAll(/^\s*([a-z_0-9]+)\s*:/gm)].map(m => m[1]);
+registryIds.forEach(id => {
+    const dirPath = path.join(topicsDir, id);
+    if (!fs.existsSync(dirPath)) {
+        console.log(`[TOPIC] ${id}: MISSING DIRECTORY`);
+        return;
+    }
 
-const labsMatch = screenContent.match(/const LAB_COMPONENTS = \{([\s\S]*?)\};\n\nconst STEPS/)[1];
-const labConfigs = [...labsMatch.matchAll(/^\s*([a-z_0-9]+)\s*:/gm)].map(m => m[1]);
+    const checkConfig = (fileName) => {
+        const filePath = path.join(dirPath, fileName);
+        if (!fs.existsSync(filePath)) return 'MISSING';
+        
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        if (fileContent.length < 500) return 'TOO_SMALL';
+        
+        // Count theory blocks
+        const theoryCount = (fileContent.match(/id:\s*["'][^"']+["']/g) || []).length;
+        if (theoryCount < 3) return `LOW_CONTENT(${theoryCount})`;
+        
+        return 'OK';
+    };
 
-// 4. Get Translation Mapping
-const transContent = fs.readFileSync(path.join(ROOT, 'constants/topicTranslationsMap.js'), 'utf8');
-const transConfigs = [...transContent.matchAll(/^\s*([a-z_0-9]+)\s*:/gm)].map(m => m[1]);
-
-console.log(JSON.stringify({
-    registryCount: registryIds.length,
-    foldersCount: topicDirs.length,
-    screenConfigsCount: screenConfigs.length,
-    labConfigsCount: labConfigs.length,
-    transConfigsCount: transConfigs.length,
-    missingInScreen: registryIds.filter(id => !screenConfigs.includes(id)),
-    folderButNoRegistry: topicDirs.filter(d => !registryIds.includes(d)),
-    registryButNoFolder: registryIds.filter(id => !topicDirs.includes(id)),
-    missingLabs: screenConfigs.filter(id => !labConfigs.includes(id)),
-    missingTrans: screenConfigs.filter(id => !transConfigs.includes(id))
-}, null, 2));
+    const en = checkConfig('config.js');
+    const hi = checkConfig('config_hi.js');
+    
+    if (en !== 'OK' || hi !== 'OK') {
+        console.log(`[TOPIC] ${id}: EN[${en}] | HI[${hi}]`);
+    }
+});

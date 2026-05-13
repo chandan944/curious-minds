@@ -47,3 +47,13 @@ npm-debug.log
 
 # Firebase admin credentials (server-side secrets only)
 *-firebase-adminsdk-*.json
+
+# Scratch files
+scratch/
+scripts/test_api.js
+scripts/generate_facts_or.js
+scripts/generate_facts.js
+scripts/rewrite_facts.js
+scripts/regenerate_facts.js
+scripts/normalize_quiz_options.js
+scripts/resume_normalization.js

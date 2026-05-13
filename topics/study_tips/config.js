@@ -192,26 +192,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "What does the Ebbinghaus Forgetting Curve mathematically prove?", options: ['Memory is perfect if you are smart', 'We forget 50% of new learning within an hour if not reviewed', 'Learning happens in dreams', 'Repetition is unnecessary'], answer: 1, explanation: "Without active disruption, the brain aggressively prunes new memories almost immediately to save energy. 📉" },
-    { id: 'q2', question: "Which technique is known as the 'ultimate memory hack' for permanent retention?", options: ['Cramming the night before', 'Passive rereading', 'Spaced Repetition', 'Listening to audiobooks while sleeping'], answer: 2, explanation: "Spaced Repetition forces recall at the exact moment you are about to forget, thickening the myelin sheath around the memory. ⏱️" },
-    { id: 'q3', question: "Rereading a textbook makes you feel like you know the material, but you fail the test. This is:", options: ['The Zeigarnik Effect', 'The Illusion of Competence', 'Context-Dependent Memory', 'Dual Coding'], answer: 1, explanation: "Recognition (looking at an answer) is not the same as Recall (generating the answer from scratch). 🎭" },
-    { id: 'q4', question: "Active Recall involves:", options: ['Closing the book and retrieving information from your brain', 'Highlighting the most active verbs in a sentence', 'Reading out loud', 'Drinking caffeine before studying'], answer: 0, explanation: "Testing yourself is the strongest method; it acts like a mental workout that physically strengthens synapses. 🏋️‍♂️" },
-    { id: 'q5', question: "The Feynman Technique requires you to:", options: ['Use high-level scientific jargon', 'Explain the concept simply, as if to a 5-year-old', 'Draw a complex mind map', 'Study physics exclusively'], answer: 1, explanation: "Teaching a concept in simple terms exposes the gaps in your own understanding. Jargon hides ignorance! 🧒" },
-    { id: 'q6', question: "A standard Pomodoro cycle consists of:", options: ['60 mins work, 0 breaks', '25 mins focused work, 5 mins break', '5 mins work, 25 mins break', 'Work until you fall asleep'], answer: 1, explanation: "The 25/5 rhythm prevents cognitive burnout while maximizing peak attention spans. 🍅" },
-    { id: 'q7', question: "When you are stuck on a complex coding or math problem, what is the biological solution?", options: ['Stare harder at the screen', 'Take a walk to switch into Diffuse Mode', 'Drink more coffee to increase Focus Mode', 'Switch to a harder problem'], answer: 1, explanation: "Diffuse Mode allows the subconscious mind to make wide, creative connections you cannot make under tight focus. 🚶‍♂️" },
-    { id: 'q8', question: "Interleaving your study sessions means:", options: ['Leaving the room every 10 minutes', 'Mixing different subjects or problem types together randomly', 'Studying under the bed covers', 'Only doing one type of problem for 5 hours'], answer: 1, explanation: "Mixing topics forces the brain to adapt and learn *when* to apply a strategy, not just how. 🔀" },
-    { id: 'q9', question: "During which phase of sleep does the brain move facts to the permanent neocortex?", options: ['Stage 1 Light Sleep', 'Deep Sleep and REM', 'While falling asleep', 'Waking up'], answer: 1, explanation: "Memory consolidation primarily occurs during Deep (Slow Wave) and REM sleep. All-nighters destroy this process. 🛌" },
-    { id: 'q10', question: "Parkinson's Law states that:", options: ['Gravity affects apples', 'Work expands to fill the time available', 'Older people learn slower', 'Brains shrink under stress'], answer: 1, explanation: "If you give yourself 3 weeks, it takes 3 weeks. If you artificially cut the deadline to 3 hours, you do it in 3 hours via hyper-focus! ⏳" },
-    { id: 'q11', question: "Dual Coding Theory suggests you should combine:", options: ['Math and Science', 'Visuals (drawings) with Verbal (text)', 'Coffee and Tea', 'Two languages at once'], answer: 1, explanation: "Using two processing channels simultaneously builds double-strong neural anchors. 🖼️📝" },
-    { id: 'q12', question: "State-Dependent Memory is why you should:", options: ['Only study in the state of California', 'Mimic the physical environment of an exam while studying', 'Drink alcohol to relax', 'Study in bed'], answer: 1, explanation: "Memory retrieval is heavily linked to the environmental and emotional state you were in when encoding it. 🪑" },
-    { id: 'q13', question: "Why is 'Multitasking' while studying a biological myth?", options: ['Humans have only two hands', 'The brain can only rapidly switch tasks, burning energy via switch costs', 'Internet speeds are too slow', 'It\'s not a myth'], answer: 1, explanation: "The brain cannot parallel process complex thought. Dropping and loading contexts destroys focus and IQ. 🤹‍♂️" },
-    { id: 'q14', question: "According to the Zeigarnik Effect, the brain remembers:", options: ['Numbers better than words', 'Completed tasks better than uncompleted tasks', 'Uncompleted or interrupted tasks better than completed ones', 'Faces better than names'], answer: 2, explanation: "Leaving a study session deliberately unfinished in the middle keeps your subconscious 'hooked' on solving it. 🧩" },
-    { id: 'q15', question: "Even a 2% drop in hydration causes:", options: ['Blindness', 'A noticeable drop in cognitive function and focus', 'Hair loss', 'Memory erasure'], answer: 1, explanation: "The brain is extremely sensitive to biological fuel drops; stay hydrated! 💧" },
-    { id: 'q16', question: "Why does the 'Hypercorrection Effect' make failures useful?", options: ['It doesn\'t', 'Getting an answer wrong and being corrected causes an emotional shock that superglues the correct memory', 'It punishes you', 'It makes you re-read the chapter'], answer: 1, explanation: "The shock of a mistake makes the brain highly plastic for a few seconds. ⚡" },
-    { id: 'q17', question: "What is BDNF?", options: ['A tax form', 'Brain-Derived Neurotrophic Factor, released during exercise to grow new neurons', 'A type of caffeine', 'A bad chemical'], answer: 1, explanation: "Cardio exercise acts as 'Miracle-Gro' for your hippocampus, enhancing memory hardware. 🏃‍♂️" },
-    { id: 'q18', question: "Memory athletes use the 'Method of Loci' (Memory Palaces) to hijack what evolutionary trait?", options: ['Flight response', 'Spatial memory for locations', 'Dietary tracking', 'Social gossip'], answer: 1, explanation: "We evolved to remember physical environments flawlessly to survive. Mapping abstract data to physical rooms makes them unforgettable! 🏛️" },
-    { id: 'q19', question: "Why does extreme stress (cortisol) make your mind go blank?", options: ['It turns off the prefrontal cortex to prioritize the survival amygdala', 'It erases the hippocampus physically', 'It causes sleepiness', 'It drops blood pressure'], answer: 0, explanation: "Running from a tiger doesn't require complex calculus, so the brain shuts off logic centers. 🐅" },
-    { id: 'q20', question: "Music WITH lyrics ruins study comprehension due to collisions in the:", options: ['Visual cortex', 'Phonological Loop', 'Motor cortex', 'Occipital lobe'], answer: 1, explanation: "Reading text and hearing words compete for the exact same auditory processing band in the brain. 🎵" },
+    { id: 'q1', question: "What does the Ebbinghaus Forgetting Curve mathematically prove?", options: [
+        "Memory is always perfect",
+        "Forgetting occurs quickly without review",
+        "Learning happens in dreams",
+        "Repetition is unnecessary"
+      ], answer: 1, explanation: "Without active disruption, the brain aggressively prunes new memories almost immediately to save energy. 📉" },
+    { id: 'q2', question: "Which technique is known as the 'ultimate memory hack' for permanent retention?", options: [
+        "Cramming the night before",
+        "Passive rereading",
+        "Spaced Repetition",
+        "Audiobooks while sleeping"
+      ], answer: 2, explanation: "Spaced Repetition forces recall at the exact moment you are about to forget, thickening the myelin sheath around the memory. ⏱️" },
+    { id: 'q3', question: "Rereading a textbook makes you feel like you know the material, but you fail the test. This is:", options: [
+        "The Zeigarnik Effect",
+        "The Illusion of Competence",
+        "Context-Dependent Memory",
+        "Dual Coding"
+      ], answer: 1, explanation: "Recognition (looking at an answer) is not the same as Recall (generating the answer from scratch). 🎭" },
+    { id: 'q4', question: "Active Recall involves:", options: [
+        "Recalling information from memory",
+        "Highlighting active verbs",
+        "Reading out loud",
+        "Drinking caffeine before study"
+      ], answer: 0, explanation: "Testing yourself is the strongest method; it acts like a mental workout that physically strengthens synapses. 🏋️‍♂️" },
+    { id: 'q5', question: "The Feynman Technique requires you to:", options: [
+        "Use complex scientific jargon",
+        "Explain simply to a child",
+        "Draw a complex mind map",
+        "Study physics exclusively"
+      ], answer: 1, explanation: "Teaching a concept in simple terms exposes the gaps in your own understanding. Jargon hides ignorance! 🧒" },
+    { id: 'q6', question: "A standard Pomodoro cycle consists of:", options: [
+        "60 min work, no breaks",
+        "25 min work, 5 min break",
+        "5 min work, 25 min break",
+        "Work until you fall asleep"
+      ], answer: 1, explanation: "The 25/5 rhythm prevents cognitive burnout while maximizing peak attention spans. 🍅" },
+    { id: 'q7', question: "When you are stuck on a complex coding or math problem, what is the biological solution?", options: [
+        "Stare harder at the screen",
+        "Walk to enter Diffuse Mode",
+        "Drink coffee to increase Focus",
+        "Switch to a harder problem"
+      ], answer: 1, explanation: "Diffuse Mode allows the subconscious mind to make wide, creative connections you cannot make under tight focus. 🚶‍♂️" },
+    { id: 'q8', question: "Interleaving your study sessions means:", options: [
+        "Leaving room every 10 minutes",
+        "Mixing different subjects or problem types",
+        "Studying under the bed covers",
+        "Only doing one problem type for hours"
+      ], answer: 1, explanation: "Mixing topics forces the brain to adapt and learn *when* to apply a strategy, not just how. 🔀" },
+    { id: 'q9', question: "During which phase of sleep does the brain move facts to the permanent neocortex?", options: [
+        "Stage 1 Light Sleep",
+        "Deep Sleep and REM",
+        "While falling asleep",
+        "Waking up"
+      ], answer: 1, explanation: "Memory consolidation primarily occurs during Deep (Slow Wave) and REM sleep. All-nighters destroy this process. 🛌" },
+    { id: 'q10', question: "Parkinson's Law states that:", options: [
+        "Gravity affects apples",
+        "Work expands to fill time",
+        "Older people learn slower",
+        "Brains shrink under stress"
+      ], answer: 1, explanation: "If you give yourself 3 weeks, it takes 3 weeks. If you artificially cut the deadline to 3 hours, you do it in 3 hours via hyper-focus! ⏳" },
+    { id: 'q11', question: "Dual Coding Theory suggests you should combine:", options: [
+        "Math and Science",
+        "Visuals with verbal information",
+        "Coffee and Tea",
+        "Two languages at once"
+      ], answer: 1, explanation: "Using two processing channels simultaneously builds double-strong neural anchors. 🖼️📝" },
+    { id: 'q12', question: "State-Dependent Memory is why you should:", options: [
+        "Only study in California",
+        "Mimic exam environment while studying",
+        "Drink alcohol to relax",
+        "Study in bed"
+      ], answer: 1, explanation: "Memory retrieval is heavily linked to the environmental and emotional state you were in when encoding it. 🪑" },
+    { id: 'q13', question: "Why is 'Multitasking' while studying a biological myth?", options: [
+        "Humans have only two hands",
+        "Brain rapidly switches tasks, incurring costs",
+        "Internet speeds are too slow",
+        "It's not a myth"
+      ], answer: 1, explanation: "The brain cannot parallel process complex thought. Dropping and loading contexts destroys focus and IQ. 🤹‍♂️" },
+    { id: 'q14', question: "According to the Zeigarnik Effect, the brain remembers:", options: [
+        "Numbers better than words",
+        "Completed tasks better than uncompleted",
+        "Uncompleted tasks better than completed",
+        "Faces better than names"
+      ], answer: 2, explanation: "Leaving a study session deliberately unfinished in the middle keeps your subconscious 'hooked' on solving it. 🧩" },
+    { id: 'q15', question: "Even a 2% drop in hydration causes:", options: [
+        "Causes immediate blindness",
+        "Drop in cognitive function and focus",
+        "Causes significant hair loss",
+        "Causes complete memory erasure"
+      ], answer: 1, explanation: "The brain is extremely sensitive to biological fuel drops; stay hydrated! 💧" },
+    { id: 'q16', question: "Why does the 'Hypercorrection Effect' make failures useful?", options: [
+        "It doesn't",
+        "Wrong answer, correction, strengthens memory",
+        "It punishes you",
+        "It makes you re-read"
+      ], answer: 1, explanation: "The shock of a mistake makes the brain highly plastic for a few seconds. ⚡" },
+    { id: 'q17', question: "What is BDNF?", options: [
+        "A tax form",
+        "Factor growing new neurons via exercise",
+        "A type of caffeine",
+        "A bad chemical"
+      ], answer: 1, explanation: "Cardio exercise acts as 'Miracle-Gro' for your hippocampus, enhancing memory hardware. 🏃‍♂️" },
+    { id: 'q18', question: "Memory athletes use the 'Method of Loci' (Memory Palaces) to hijack what evolutionary trait?", options: [
+        "Flight response",
+        "Spatial memory for locations",
+        "Dietary tracking",
+        "Social gossip"
+      ], answer: 1, explanation: "We evolved to remember physical environments flawlessly to survive. Mapping abstract data to physical rooms makes them unforgettable! 🏛️" },
+    { id: 'q19', question: "Why does extreme stress (cortisol) make your mind go blank?", options: [
+        "Turns off prefrontal cortex for amygdala",
+        "It erases the hippocampus physically",
+        "It causes sleepiness",
+        "It drops blood pressure"
+      ], answer: 0, explanation: "Running from a tiger doesn't require complex calculus, so the brain shuts off logic centers. 🐅" },
+    { id: 'q20', question: "Music WITH lyrics ruins study comprehension due to collisions in the:", options: [
+        "Visual cortex",
+        "Phonological Loop",
+        "Motor cortex",
+        "Occipital lobe"
+      ], answer: 1, explanation: "Reading text and hearing words compete for the exact same auditory processing band in the brain. 🎵" },
   ],
 
   relatedTopics: ['brain_structure', 'memory_how_it_works', 'learning_behavior', 'social_media_trap'],

@@ -16,11 +16,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 import { useAuth } from "../context/AuthContext";
+import { useProgress } from "../context/ProgressContext";
 import { FONTS, RADIUS, SPACING } from "../constants/theme";
 import { TOPIC_REGISTRY } from "../constants/topicRegistry";
 import { TOPIC_CONFIGS_HI } from "../constants/topicTranslationsMap";
 import { updateTopicProgress, addXP, awardBadge } from "../utils/storage";
 import { XP_REWARDS, BADGES } from "../constants/xpSystem";
+import { syncXpToServer } from "../services/leaderboardService";
 import { soundTap, soundWhoosh } from "../utils/sounds";
 import CuriosityHook from "../components/CuriosityHook";
 import TheoryCards from "../components/TheoryCards";
@@ -207,6 +209,17 @@ const TOPIC_CONFIGS = {
   free_will: () => require("../topics/free_will/config").default,
   consciousness: () => require("../topics/consciousness/config").default,
   eastern_philosophy: () => require("../topics/eastern_philosophy/config").default,
+
+  // ── Block 14: Finance ───────────────────────────────────────
+  personal_finance: () => require("../topics/personal_finance/config").default,
+  banking: () => require("../topics/banking/config").default,
+  investing: () => require("../topics/investing/config").default,
+  debt_credit: () => require("../topics/debt_credit/config").default,
+  taxation: () => require("../topics/taxation/config").default,
+  real_estate_finance: () => require("../topics/real_estate_finance/config").default,
+  corporate_finance: () => require("../topics/corporate_finance/config").default,
+  insurance: () => require("../topics/insurance/config").default,
+  wealth_loops: () => require("../topics/wealth_loops/config").default,
 };
 // ─────────────────────────────────────────────────────────────────
 //  LAB COMPONENTS MAP
@@ -373,6 +386,17 @@ const LAB_COMPONENTS = {
   free_will: () => require("../topics/free_will/LabSimulation").default,
   consciousness: () => require("../topics/consciousness/LabSimulation").default,
   eastern_philosophy: () => require("../topics/eastern_philosophy/LabSimulation").default,
+
+  // ── Block 14: Finance ───────────────────────────────────────
+  personal_finance: () => require("../topics/personal_finance/LabSimulation").default,
+  banking: () => require("../topics/banking/LabSimulation").default,
+  investing: () => require("../topics/investing/LabSimulation").default,
+  debt_credit: () => require("../topics/debt_credit/LabSimulation").default,
+  taxation: () => require("../topics/taxation/LabSimulation").default,
+  real_estate_finance: () => require("../topics/real_estate_finance/LabSimulation").default,
+  corporate_finance: () => require("../topics/corporate_finance/LabSimulation").default,
+  insurance: () => require("../topics/insurance/LabSimulation").default,
+  wealth_loops: () => require("../topics/wealth_loops/LabSimulation").default,
 };
 
 const STEPS = ["hook", "theory", "lab", "dyk", "quiz", "results"];
@@ -389,7 +413,8 @@ const STEP_ICONS = {
 export default function TopicScreen({ topicId, onBack }) {
   const { theme, isDark } = useTheme();
   const { isHindi } = useLanguage();
-  const { refreshUser } = useAuth();
+  const { user, token, refreshUser } = useAuth();
+  const { isCompleted, toggleCompletion, markAsCompleted } = useProgress();
   const [step, setStep] = useState("hook");
   const [topicConfig, setTopicConfig] = useState(null);
   const [LabComponent, setLabComponent] = useState(null);
@@ -401,8 +426,8 @@ export default function TopicScreen({ topicId, onBack }) {
   const [scientistMode, setScientistMode] = useState(false);
   const [labBreakerTriggered, setLabBreakerTriggered] = useState(false);
 
-
   const topicMeta = TOPIC_REGISTRY.find((t) => t.id === topicId);
+  const isDone = isCompleted(topicId);
 
   // ── Load config + lab on mount ─────────────────────────────────
   useEffect(() => {
@@ -437,6 +462,10 @@ export default function TopicScreen({ topicId, onBack }) {
     } else {
       try {
         const cfg = getConfig();
+        if (cfg?.quiz && cfg.quiz.length > 10) {
+          const shuffled = [...cfg.quiz].sort(() => 0.5 - Math.random());
+          cfg.quiz = shuffled.slice(0, 10);
+        }
         debugLog(`Config loaded successfully ✅ — title: "${cfg?.title}"`);
         setTopicConfig(cfg);
         setHindiPending(fallbackToEn);
@@ -564,19 +593,33 @@ export default function TopicScreen({ topicId, onBack }) {
     debugLog(
       `Quiz complete — score: ${score}/${total}, time: ${timeSeconds}s, perfect: ${isPerfect}`,
     );
-    // +10 points per correct answer, no other bonuses
-    const quizXp = score * 10;
+    
+    // Calculate total XP (only quiz points, no bonuses)
+    let totalXp = score * XP_REWARDS.quizCorrect;
+    
+    // Cap to backend limit for 'topic_complete' (200)
+    const quizXp = Math.min(totalXp, 200);
 
     // ── 1. SHOW RESULTS IMMEDIATELY (no awaits blocking the UI) ──
     setEarnedXP(quizXp);
     setNewBadges([]);
     setQuizResult({ score, total, timeSeconds, isPerfect, xpEarned: quizXp });
     setStep("results");
+    markAsCompleted(topicId);
 
     // ── 2. SYNC TO BACKEND IN BACKGROUND (fire-and-forget) ──
     (async () => {
       try {
         await addXP(quizXp, 'topic_complete');
+
+        if (token) {
+          try {
+            await syncXpToServer(token, quizXp, 'topic_complete', user?.streak || 0);
+            debugLog(`Synced ${quizXp} XP to backend for topic_complete`);
+          } catch (syncErr) {
+            debugErr(`Failed to sync XP to backend: ${syncErr?.message}`);
+          }
+        }
 
         const badges = [];
         if (isPerfect) {
@@ -655,25 +698,12 @@ export default function TopicScreen({ topicId, onBack }) {
         </TouchableOpacity>
 
         <View style={styles.navCenter}>
-          <View
-            style={[
-              styles.topicIconWrap,
-              {
-                backgroundColor: accentColor + "22",
-                borderColor: accentColor + "50",
-              },
-            ]}
-          >
-            <Icon
-              name={topicMeta.icon || "book"}
-              size={16}
-              color={accentColor}
-            />
-          </View>
+
           <Text style={[styles.topicTitle, { color: txt1 }]} numberOfLines={1}>
             {topicMeta.title}
           </Text>
         </View>
+
 
         <LanguageToggle size={32} />
 
@@ -1050,7 +1080,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
   },
-  topicTitle: { fontFamily: FONTS.displayMedium, fontSize: 15, flex: 1 },
+  topicTitle: {
+    fontFamily: FONTS.displayMedium,
+    fontSize: 16,
+    letterSpacing: 0.5,
+  },
+  completeBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
   xpChip: {
     flexDirection: "row",
     alignItems: "center",

@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+import { useProgress } from '../context/ProgressContext';
 
 import api from '../services/api';
 import chatService from '../services/chatService';
@@ -26,16 +28,18 @@ import { soundTap, soundWhoosh } from '../utils/sounds';
 const TopicScreen = lazy(() => import('./TopicScreen'));
 const PdfViewerScreen = lazy(() => import('./PdfViewerScreen'));
 const ChatRoomScreen = lazy(() => import('./ChatRoomScreen'));
+import FactsHubScreen from './FactsHubScreen';
+import FactViewerScreen from './FactViewerScreen';
 
 // ── Lightweight tab screens (kept as eager since they use display:none persistence) ──
 import ChatHubScreen from './ChatHubScreen';
 import LeaderboardScreen from './LeaderboardScreen';
 import SettingsScreen from './SettingsScreen';
+import PrivacyPolicyScreen from './PrivacyPolicyScreen';
 import EbookScreen from './EbookScreen';
 import DiscoverScreen from './DiscoverScreen';
 
 import Icon from '../components/ui/Icons';
-import { useTheme } from '../context/ThemeContext';
 import ProfileModal from '../components/ui/ProfileModal';
 import NotificationsModal from '../components/ui/NotificationsModal';
 
@@ -52,12 +56,31 @@ const CARD_W = width * 0.75;
 export default function HomeScreen() {
   const { user, logout, refreshUser } = useAuth();
   const { theme, isDark } = useTheme();
+  const { isCompleted } = useProgress();
   
   // Navigation State
   const [activeTab, setActiveTab] = useState('home');
-  const visitedTabs = useRef(new Set(['home']));
+  const [visitedTabs, setVisitedTabs] = useState(new Set(['home']));
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [isNavigating, setIsNavigating] = useState(false); // Prevents double-tap lag
+  
+  const [viewingFactsHub, setViewingFactsHub] = useState(false);
+  const [viewingLeaderboard, setViewingLeaderboard] = useState(false);
+  const [selectedFactTopic, setSelectedFactTopic] = useState(null);
+
+  const openFactsHub = useCallback(() => {
+    setActiveTab('facts');
+  }, []);
+
+  const openLeaderboard = useCallback(() => {
+    if (isNavigating) return;
+    setIsNavigating(true);
+    soundTap();
+    requestAnimationFrame(() => {
+      setViewingLeaderboard(true);
+      setIsNavigating(false);
+    });
+  }, [isNavigating]);
   
   // User Stats
   const xp = user?.points || 0;
@@ -69,6 +92,7 @@ export default function HomeScreen() {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [notifsVisible, setNotifsVisible] = useState(false);
   const [viewingPdf, setViewingPdf] = useState(null);
+  const [viewingPrivacyPolicy, setViewingPrivacyPolicy] = useState(false);
   const [chatConfig, setChatConfig] = useState(null); // { targetId, chatTitle }
   const [unreadNotifs, setUnreadNotifs] = useState(0);
   const [pendingFriendCount, setPendingFriendCount] = useState(0);
@@ -94,12 +118,14 @@ export default function HomeScreen() {
       fetchPendingFriendCount();
     }
     if (activeTab === 'home' || activeTab === 'chat') {
+      // Reset cooldown and re-fetch so the badge updates after reading messages
+      lastChatFetchTime.current = 0;
       fetchUnreadChatCount();
     }
     
-    // Lazy-load mechanism: Add newly visited tab to our tracker
-    if (!visitedTabs.current.has(activeTab)) {
-      visitedTabs.current.add(activeTab);
+    // Lazy-load mechanism: Add newly visited tab to our tracker (use setState to trigger re-render)
+    if (!visitedTabs.has(activeTab)) {
+      setVisitedTabs(prev => new Set(prev).add(activeTab));
     }
   }, [activeTab]);
 
@@ -125,10 +151,10 @@ export default function HomeScreen() {
   };
 
   const lastChatFetchTime = useRef(0);
-  const fetchUnreadChatCount = () => {
+  const fetchUnreadChatCount = (force = false) => {
     if (!user?.id) return;
     const now = Date.now();
-    if (now - lastChatFetchTime.current < 5000) return; // 5 second cooldown
+    if (!force && now - lastChatFetchTime.current < 5000) return; // 5 second cooldown
     lastChatFetchTime.current = now;
 
     api.get('/chat/unread-count')
@@ -142,12 +168,22 @@ export default function HomeScreen() {
       fetchPendingFriendCount();
     }
     const unsubscribe = chatService.addListener((msg) => {
-      // Real-time unread increment for direct messages
+      // Real-time unread sync for direct messages
       if (msg.type === 'MESSAGE' && msg.target !== 'GLOBAL' && msg.senderId !== user?.id) {
-        setUnreadChatCount(prev => prev + 1);
+        // Force re-fetch from server to get accurate total count
+        fetchUnreadChatCount(true);
+      }
+      if (msg.type === 'READ_RECEIPT') {
+        fetchUnreadChatCount(true);
       }
     });
-    return () => unsubscribe();
+
+    // Real-time notification badge increment (friend requests, likes, etc.)
+    const unsubNotif = chatService.addNotificationListener(() => {
+      setUnreadNotifs(prev => prev + 1);
+    });
+
+    return () => { unsubscribe(); unsubNotif(); };
   }, [user?.id]);
 
   // Fetch unread count when user is available or when modal closes
@@ -162,18 +198,14 @@ export default function HomeScreen() {
     }
   }, [user?.id, notifsVisible]);
 
-  const refreshData = async () => {
-    refreshUser();
-  };
-
-  const openProfile = (userId) => {
-    setSelectedUserId(userId);
-    setProfileVisible(true);
-  };
-
   const openChat = useCallback((targetId, chatTitle) => {
     setChatConfig({ targetId, chatTitle });
     setActiveTab('chatRoom');
+  }, []);
+
+  const openProfile = useCallback((userId) => {
+    setSelectedUserId(userId);
+    setProfileVisible(true);
   }, []);
 
   // ── Deferred topic navigation (prevents UI freeze) ──
@@ -196,6 +228,33 @@ export default function HomeScreen() {
     );
   }
 
+  if (selectedFactTopic) {
+    return (
+      <Suspense fallback={<ScreenLoader />}>
+        <FactViewerScreen topicId={selectedFactTopic.id} onClose={() => setSelectedFactTopic(null)} />
+      </Suspense>
+    );
+  }
+
+  if (viewingLeaderboard) {
+    return (
+      <Suspense fallback={<ScreenLoader />}>
+        <LeaderboardScreen onBack={() => setViewingLeaderboard(false)} onStartChat={openChat} />
+      </Suspense>
+    );
+  }
+
+  if (viewingFactsHub) {
+    return (
+      <Suspense fallback={<ScreenLoader />}>
+        <FactsHubScreen 
+          onClose={() => setViewingFactsHub(false)} 
+          onSelectFactTopic={(topic) => setSelectedFactTopic(topic)} 
+        />
+      </Suspense>
+    );
+  }
+
 
   if (viewingPdf) {
     return (
@@ -203,6 +262,7 @@ export default function HomeScreen() {
         <PdfViewerScreen 
           url={viewingPdf.url} 
           title={viewingPdf.title} 
+          id={viewingPdf.id}
           onBack={() => setViewingPdf(null)} 
         />
       </Suspense>
@@ -217,7 +277,12 @@ export default function HomeScreen() {
         <ChatRoomScreen 
           targetId={chatConfig?.targetId} 
           chatTitle={chatConfig?.chatTitle || 'Chat'} 
-          onBack={() => setActiveTab('chat')}
+          onBack={() => {
+            setActiveTab('chat');
+            // Reset cooldown and immediately re-fetch unread count
+            lastChatFetchTime.current = 0;
+            fetchUnreadChatCount();
+          }}
           onStartDirectChat={openChat}
         />
       </Suspense>
@@ -258,7 +323,7 @@ export default function HomeScreen() {
                   <View style={{ marginLeft: 12 }}>
                     {user ? (
                       <Text style={[styles.tagline, { color: txt1 }]} numberOfLines={1}>
-                        Hi, {user.name?.split(' ')[0] || 'Explorer'} 👋 
+                        Hi, {user.name?.split(' ')[0] || 'Explorer'}
                       </Text>
                     ) : (
                       <Text style={[styles.tagline, { color: txt1 }]}>Curious Minds</Text>
@@ -268,6 +333,9 @@ export default function HomeScreen() {
               </View>
 
               <View style={styles.headerRight}>
+                <TouchableOpacity onPress={openLeaderboard} style={styles.notifBtn}>
+                  <Icon name="trophy" size={22} color={txt1} />
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => setNotifsVisible(true)} style={styles.notifBtn}>
                   <Icon name="bell" size={22} color={txt1} />
                   {unreadNotifs > 0 && (
@@ -343,6 +411,7 @@ export default function HomeScreen() {
                       topic={item}
                       onPress={() => navigateToTopic(item)}
                       theme={theme}
+                      isCompleted={isCompleted(item.id)}
                     />
                   )}
                   initialNumToRender={3}
@@ -357,23 +426,33 @@ export default function HomeScreen() {
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'discover' ? 'flex' : 'none' }}>
-        {visitedTabs.current.has('discover') && <DiscoverScreen onOpenProfile={openProfile} onStartChat={openChat} />}
+        {visitedTabs.has('discover') && <DiscoverScreen onOpenProfile={openProfile} onStartChat={openChat} />}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'chat' ? 'flex' : 'none' }}>
-        {visitedTabs.current.has('chat') && <ChatHubScreen onOpenChat={openChat} />}
+        {visitedTabs.has('chat') && <ChatHubScreen onOpenChat={openChat} />}
       </View>
 
-      <View style={{ flex: 1, display: activeTab === 'leaderboard' ? 'flex' : 'none' }}>
-        {visitedTabs.current.has('leaderboard') && <LeaderboardScreen onBack={() => setActiveTab('home')} onStartChat={openChat} />}
+      <View style={{ flex: 1, display: activeTab === 'facts' ? 'flex' : 'none' }}>
+        {visitedTabs.has('facts') && (
+          <FactsHubScreen 
+            isTab={true}
+            onSelectFactTopic={(topic) => setSelectedFactTopic(topic)} 
+          />
+        )}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'settings' ? 'flex' : 'none' }}>
-        {visitedTabs.current.has('settings') && <SettingsScreen onBack={() => setActiveTab('home')} />}
+        {visitedTabs.has('settings') && (
+          <SettingsScreen 
+            onBack={() => setActiveTab('home')} 
+            onOpenPrivacyPolicy={() => setViewingPrivacyPolicy(true)}
+          />
+        )}
       </View>
 
       <View style={{ flex: 1, display: activeTab === 'ebook' ? 'flex' : 'none' }}>
-        {visitedTabs.current.has('ebook') && <EbookScreen onOpenPdf={(url, title) => setViewingPdf({ url, title })} />}
+        {visitedTabs.has('ebook') && <EbookScreen onOpenPdf={(url, title, id) => setViewingPdf({ url, title, id })} />}
       </View>
 
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} isDark={isDark} pendingFriendCount={pendingFriendCount} unreadChatCount={unreadChatCount} />
@@ -391,6 +470,13 @@ export default function HomeScreen() {
         visible={notifsVisible} 
         onClose={() => setNotifsVisible(false)} 
       />
+
+      {/* Privacy Policy Overlay */}
+      {viewingPrivacyPolicy && (
+        <View style={StyleSheet.absoluteFill}>
+          <PrivacyPolicyScreen onBack={() => setViewingPrivacyPolicy(false)} />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -399,7 +485,7 @@ export default function HomeScreen() {
 const keyExtractor = (item) => item.id;
 
 // ── Topic Card Component (Memoized) ──────────────────────
-const TopicCard = React.memo(function TopicCard({ topic, onPress, theme }) {
+const TopicCard = React.memo(function TopicCard({ topic, onPress, theme, isCompleted }) {
   const cardBg = theme?.bg?.card || '#1C1D26';
   const txt1 = theme?.text?.primary || '#FFFFFF';
   const txtM = theme?.text?.muted || 'rgba(255,255,255,0.6)';
@@ -415,8 +501,16 @@ const TopicCard = React.memo(function TopicCard({ topic, onPress, theme }) {
       onPress={onPress}
       style={[styles.topicCard, { backgroundColor: cardBg, borderColor: border }]}
     >
-      <View style={[styles.cardIconBox, { backgroundColor: topicAccent + '15' }]}>
-        <Icon name={topic.icon || 'book'} size={32} color={topicAccent} />
+      <View style={styles.cardHeader}>
+        <View style={[styles.cardIconBox, { backgroundColor: topicAccent + '15' }]}>
+          <Icon name={topic.icon || 'book'} size={32} color={topicAccent} />
+        </View>
+        {isCompleted && (
+          <View style={[styles.completedBadge, { borderColor: '#22C55E' }]}>
+            <Icon name="check" size={10} color="#22C55E" />
+            <Text style={styles.completedText}>DONE</Text>
+          </View>
+        )}
       </View>
       <Text style={[styles.cardTitle, { color: txt1 }]} numberOfLines={1}>{topic.title}</Text>
       <Text style={[styles.cardSub, { color: txtM }]} numberOfLines={1}>{topic.subtitle}</Text>
@@ -463,8 +557,8 @@ const BottomNav = React.memo(function BottomNav({ activeTab, setActiveTab, theme
     <View style={[styles.bottomNav, { backgroundColor: bg, borderTopColor: border }]}>
       <NavItem id="home" icon="home" label="Home" />
       <NavItem id="chat" icon="chat" label="Chat" badge={unreadChatCount} />
+      <NavItem id="facts" icon="sparkle" label="Facts" />
       <NavItem id="discover" icon="users" label="People" badge={pendingFriendCount} />
-      <NavItem id="leaderboard" icon="trophy" label="Ranking" />
       <NavItem id="ebook" icon="book" label="Library" />
       <NavItem id="settings" icon="grid" label="Menu" />
     </View>
@@ -486,11 +580,11 @@ const styles = StyleSheet.create({
   logoRow: { flexDirection: 'row', alignItems: 'center' },
   tagline: { fontFamily: FONTS.display, fontSize: 18 },
   
-  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 15 },
-  notifBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center'},
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  notifBtn: { width: 40, height: 40,borderRadius: 20, alignItems: 'center', justifyContent: 'center'},
   notifBadge: {
-    position: 'absolute', top: 8, right: 8, width: 10, height: 10, 
-    borderRadius: 5, backgroundColor: '#EF4444', borderWidth: 2, borderColor: '#08090F'
+    position: 'absolute', top: 8, right: 8, width: 8, height: 8, 
+    borderRadius: 4, backgroundColor: '#EF4444'
   },
   avatar: { width: 42, height: 42, borderRadius: 21, borderWidth: 2 },
   avatarPh: { width: 42, height: 42, borderRadius: 21, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
@@ -560,8 +654,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-
-
   sectionTitle: { fontFamily: FONTS.display, fontSize: 22, marginBottom: SPACING.lg },
 
   topicCard: {
@@ -572,12 +664,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
   },
-  cardIconBox: { width: 64, height: 64, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginBottom: 20 },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
+  cardIconBox: { width: 52, height: 52, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   cardTitle: { fontFamily: FONTS.display, fontSize: 20, marginBottom: 4 },
   cardSub: { fontFamily: FONTS.body, fontSize: 14, marginBottom: 20 },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.05)' },
   tagText: { fontFamily: FONTS.bodyMedium, fontSize: 11, textTransform: 'uppercase' },
+  completedBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8, borderWidth: 1, backgroundColor: 'rgba(34, 197, 94, 0.1)' },
+  completedText: { fontSize: 9, fontFamily: FONTS.displayBold, color: '#22C55E', marginLeft: 4 },
 
   bottomNav: {
     flexDirection: 'row',
@@ -592,7 +687,7 @@ const styles = StyleSheet.create({
     position: 'absolute', top: -4, right: -6,
     minWidth: 18, height: 18, borderRadius: 9,
     backgroundColor: '#EF4444', alignItems: 'center', justifyContent: 'center',
-    paddingHorizontal: 4, borderWidth: 2, borderColor: '#13141C',
+    paddingHorizontal: 4,
   },
   navBadgeText: { fontFamily: FONTS.displayMedium, fontSize: 9, color: '#FFFFFF' },
 });

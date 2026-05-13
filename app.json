@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "curious-minds",
+    "name": "Curious Minds",
     "slug": "curious-minds",
     "scheme": "curiousminds",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#F4F6F9"
+      "backgroundColor": "#08090F"
     },
     "ios": {
       "supportsTablet": true,
@@ -20,14 +20,13 @@
     "android": {
       "package": "com.selfhelp.curiousminds",
       "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#F4F6F9"
+        "backgroundColor": "#08090F"
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.VIBRATE",
@@ -52,10 +51,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "54a8e106-a801-4c60-b114-d301cac5986d"
+        "projectId": "af96978b-d0c8-413e-bc1e-a806c30bd55a"
       }
     },
-    "owner": "sonu.prajapati630766",
-    "privacyPolicy": "https://curiousminds.dpdns.org/privacy-policy"
+    "owner": "sonu.prajapati63076"
   }
 }

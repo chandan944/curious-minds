@@ -187,26 +187,126 @@ export default {
   ],
 
   quiz: [
-    { id: 'q1', question: "What is the core principle of Epictetus's 'Dichotomy of Control'?", options: ['Controlling other people', 'Dividing all things into what you can control (your thoughts/actions) and what you cannot (everything else)', 'Learning martial arts', 'Trying to control the weather'], answer: 1, explanation: "Focus 100% of your energy only on what you can control. ⚖️" },
-    { id: 'q2', question: "What does the word 'Stoic' actually mean in the modern philosophical sense?", options: ['Being an emotionless robot', 'Repressing all your feelings', 'Someone who acknowledges emotions but does not let them dictate their actions; remaining calm under pressure', 'Someone who hates pleasure'], answer: 2, explanation: "Stoics feel emotions, they just refuse to be enslaved by them. 🛡️" },
-    { id: 'q3', question: "According to Epictetus, what causes human suffering?", options: ['Bad luck', 'Other people', 'Not the events themselves, but our interpretation and judgments about those events', 'Lack of money'], answer: 2, explanation: "A traffic jam is just cars on a road. Your belief that 'traffic is unfair to me' causes the anger. 🧠" },
-    { id: 'q4', question: "What is 'Memento Mori'?", options: ['A type of coffee', 'The practice of meditating on your own inevitable death to gain perspective and appreciate time', 'A Roman holiday', 'A battle formation'], answer: 1, explanation: "Remembering you will die prevents you from wasting time on petty things. 💀" },
-    { id: 'q5', question: "What does 'Amor Fati' mean?", options: ['Love of Fate: enthusiastically embracing everything that happens to you, good or bad, as fuel for your growth', 'Love of family', 'Hatred of destiny', 'Blind luck'], answer: 0, explanation: "A fire burns everything thrown into it. 💥" },
-    { id: 'q6', question: "Who was Marcus Aurelius?", options: ['A famous baker', 'A crippled slave who became a teacher', 'The Emperor of Rome and author of the private diary \'Meditations\'', 'A Greek god'], answer: 2, explanation: "The most powerful man on Earth was a practicing Stoic. 👑" },
-    { id: 'q7', question: "What is 'Premeditatio Malorum' (Negative Visualization)?", options: ['A spell', 'Intentionally imagining the worst-case scenario (losing your job/family) so you are mentally prepared and deeply grateful for today', 'Being a pessimist who hates life', 'A punishment for slaves'], answer: 1, explanation: "It makes you 'anti-fragile' against disaster. 🎬" },
-    { id: 'q8', question: "For a Stoic, what is the *only* true good in the universe?", options: ['Pleasure', 'Wealth', 'Fame', 'Virtue (Moral Excellence)'], answer: 3, explanation: "Money and health are nice, but they can't make you a 'good person'. 💎" },
-    { id: 'q9', question: "What are the four pillars of Stoic Virtue?", options: ['Money, Power, Respect, Fear', 'Courage, Temperance (Discipline), Justice, Wisdom', 'Earth, Wind, Fire, Water', 'Past, Present, Future, Void'], answer: 1, explanation: "These four virtues guide every Stoic decision. 🏛️" },
-    { id: 'q10', question: "What technique did Marcus Aurelius use to shrink his problems?", options: ['Drinking wine', 'The View from Above: zooming his perspective out to see the Earth from space, making his problems look like ants', 'Sleeping heavily', 'Shouting at walls'], answer: 1, explanation: "Zooming out fundamentally kills anxiety. 🦅" },
-    { id: 'q11', question: "According to Seneca, what causes 'Anger'?", options: ['Bad people', 'Having the wrong expectations. (e.g. You expected life to be perfectly fair, and when it wasn\'t, your brain panicked)', 'Spicy food', 'Lack of sleep (only)'], answer: 1, explanation: "Anger is the gap between expectation and reality. Lower expectations. 🌋" },
-    { id: 'q12', question: "What did Seneca say about Time?", options: ['Time is money', 'Life isn\'t too short, we just waste a massive amount of it on pointless things', 'Time travel is possible', 'We should sleep more'], answer: 1, explanation: "Guard your time like a dragon guards gold. ⏳" },
-    { id: 'q13', question: "What is the 'Inner Citadel'?", options: ['A famous Roman fort', 'The impenetrable fortress of the mind. Even if the outside world is chaotic, your mind can remain calm and rational', 'A book by Epictetus', 'A type of meditation'], answer: 1, explanation: "You can't control the storm, but you can build a waterproof house. 🏰" },
-    { id: 'q14', question: "Did the Stoics believe humans should isolate themselves from society?", options: ['Yes, people are annoying', 'No, they believed in \'Sympatheia\'—the idea that all humans are connected like parts of a body, and we must help each other', 'Yes, to protect their energy', 'They only liked philosophers'], answer: 1, explanation: "What is bad for the hive is bad for the bee. 🐝" },
-    { id: 'q15', question: "Which ancient Stoic began his life as a crippled slave?", options: ['Seneca', 'Zeno', 'Epictetus', 'Marcus Aurelius'], answer: 2, explanation: "Despite being a slave, his mind was freer than most free men. ⛓️" },
-    { id: 'q16', question: "How does modern CBT (Cognitive Behavioral Therapy) relate to Stoicism?", options: ['It doesn\'t', 'CBT is a direct descendant of Stoicism, using the idea that changing your \'story/judgement\' about an event changes your psychological reaction', 'CBT disproved Stoicism', 'CBT is physical therapy'], answer: 1, explanation: "Therapists literally prescribe Stoicism to cure anxiety. 🔬" },
-    { id: 'q17', question: "What was the original purpose of Marcus Aurelius' famous book 'Meditations'?", options: ['To teach his son', 'To become famous', 'To write the laws of Rome', 'It was his private bedtime diary. He never intended for anyone else to read it'], answer: 3, explanation: "It is the ultimate proof of the power of journaling. 📓" },
-    { id: 'q18', question: "How would a Stoic react to someone insulting them?", options: ['Punch them', 'Realize that the other person\'s opinion is \'outside their control\', and therefore ignore it completely', 'Cry privately', 'Insult them back louder'], answer: 1, explanation: "Nobody can insult you without your permission. 🚫" },
-    { id: 'q19', question: "For a Stoic, wealth, health, and reputation are considered:", options: ['Evil', 'The ultimate goal', '\'Preferred Indifferents\'. It\'s fine to have them, but they are not required for a happy, virtuous life', 'Dangerous'], answer: 2, explanation: "They are nice bonuses, but totally unnecessary for a good life. 💰" },
-    { id: 'q20', question: "Stoicism is best described as:", options: ['A religion', 'A theoretical debate framework', 'An operating system / practical toolkit for the mind meant to be used in the real, chaotic world', 'A political party'], answer: 2, explanation: "It is the martial art of the mind. 🥋" },
+    { id: 'q1', question: "What is the core principle of Epictetus's 'Dichotomy of Control'?", options: [
+        "Controlling other people",
+        "Focus on what you control, ignore the rest",
+        "Learning martial arts",
+        "Trying to control the weather"
+      ], answer: 1, explanation: "Focus 100% of your energy only on what you can control. ⚖️" },
+    { id: 'q2', question: "What does the word 'Stoic' actually mean in the modern philosophical sense?", options: [
+        "Being an emotionless robot",
+        "Repressing all your feelings",
+        "Calmly acknowledging emotions, not letting them dictate actions",
+        "Someone who hates pleasure"
+      ], answer: 2, explanation: "Stoics feel emotions, they just refuse to be enslaved by them. 🛡️" },
+    { id: 'q3', question: "According to Epictetus, what causes human suffering?", options: [
+        "Bad luck",
+        "Other people",
+        "Our interpretations and judgments of events",
+        "Lack of money"
+      ], answer: 2, explanation: "A traffic jam is just cars on a road. Your belief that 'traffic is unfair to me' causes the anger. 🧠" },
+    { id: 'q4', question: "What is 'Memento Mori'?", options: [
+        "A type of coffee",
+        "Meditating on your own inevitable death",
+        "A Roman holiday",
+        "A battle formation"
+      ], answer: 1, explanation: "Remembering you will die prevents you from wasting time on petty things. 💀" },
+    { id: 'q5', question: "What does 'Amor Fati' mean?", options: [
+        "Loving and embracing everything that happens",
+        "Love of family",
+        "Hatred of destiny",
+        "Blind luck"
+      ], answer: 0, explanation: "A fire burns everything thrown into it. 💥" },
+    { id: 'q6', question: "Who was Marcus Aurelius?", options: [
+        "A famous baker",
+        "A crippled slave and teacher",
+        "Roman Emperor and author of 'Meditations'",
+        "A Greek god"
+      ], answer: 2, explanation: "The most powerful man on Earth was a practicing Stoic. 👑" },
+    { id: 'q7', question: "What is 'Premeditatio Malorum' (Negative Visualization)?", options: [
+        "A spell",
+        "Imagining worst-case scenarios to prepare and appreciate",
+        "Being a pessimist who hates life",
+        "A punishment for slaves"
+      ], answer: 1, explanation: "It makes you 'anti-fragile' against disaster. 🎬" },
+    { id: 'q8', question: "For a Stoic, what is the *only* true good in the universe?", options: [
+        "Pleasure",
+        "Wealth",
+        "Fame",
+        "Virtue"
+      ], answer: 3, explanation: "Money and health are nice, but they can't make you a 'good person'. 💎" },
+    { id: 'q9', question: "What are the four pillars of Stoic Virtue?", options: [
+        "Money, Power, Respect, Fear",
+        "Courage, Temperance, Justice, Wisdom",
+        "Earth, Wind, Fire, Water",
+        "Past, Present, Future, Void"
+      ], answer: 1, explanation: "These four virtues guide every Stoic decision. 🏛️" },
+    { id: 'q10', question: "What technique did Marcus Aurelius use to shrink his problems?", options: [
+        "Drinking wine",
+        "The View from Above: seeing Earth from space",
+        "Sleeping heavily",
+        "Shouting at walls"
+      ], answer: 1, explanation: "Zooming out fundamentally kills anxiety. 🦅" },
+    { id: 'q11', question: "According to Seneca, what causes 'Anger'?", options: [
+        "Bad people",
+        "Having the wrong expectations about life",
+        "Spicy food",
+        "Lack of sleep (only)"
+      ], answer: 1, explanation: "Anger is the gap between expectation and reality. Lower expectations. 🌋" },
+    { id: 'q12', question: "What did Seneca say about Time?", options: [
+        "Time is money",
+        "Life is long, but we waste it",
+        "Time travel is possible",
+        "We should sleep more"
+      ], answer: 1, explanation: "Guard your time like a dragon guards gold. ⏳" },
+    { id: 'q13', question: "What is the 'Inner Citadel'?", options: [
+        "A famous Roman fort",
+        "The mind's calm, rational, impenetrable fortress",
+        "A book by Epictetus",
+        "A type of meditation"
+      ], answer: 1, explanation: "You can't control the storm, but you can build a waterproof house. 🏰" },
+    { id: 'q14', question: "Did the Stoics believe humans should isolate themselves from society?", options: [
+        "Yes, people are annoying",
+        "No, humans are connected; we must help",
+        "Yes, to protect their energy",
+        "They only liked philosophers"
+      ], answer: 1, explanation: "What is bad for the hive is bad for the bee. 🐝" },
+    { id: 'q15', question: "Which ancient Stoic began his life as a crippled slave?", options: [
+        "Seneca",
+        "Zeno",
+        "Epictetus",
+        "Marcus Aurelius"
+      ], answer: 2, explanation: "Despite being a slave, his mind was freer than most free men. ⛓️" },
+    { id: 'q16', question: "How does modern CBT (Cognitive Behavioral Therapy) relate to Stoicism?", options: [
+        "It doesn't",
+        "CBT descends from Stoicism; changing judgments changes reactions",
+        "CBT disproved Stoicism",
+        "CBT is physical therapy"
+      ], answer: 1, explanation: "Therapists literally prescribe Stoicism to cure anxiety. 🔬" },
+    { id: 'q17', question: "What was the original purpose of Marcus Aurelius' famous book 'Meditations'?", options: [
+        "To teach his son",
+        "To become famous",
+        "To write the laws of Rome",
+        "His private diary, not for public reading"
+      ], answer: 3, explanation: "It is the ultimate proof of the power of journaling. 📓" },
+    { id: 'q18', question: "How would a Stoic react to someone insulting them?", options: [
+        "Punch them",
+        "Ignore it; opinions are outside control",
+        "Cry privately",
+        "Insult them back louder"
+      ], answer: 1, explanation: "Nobody can insult you without your permission. 🚫" },
+    { id: 'q19', question: "For a Stoic, wealth, health, and reputation are considered:", options: [
+        "Evil",
+        "The ultimate goal",
+        "'Preferred Indifferents'; not essential for virtue",
+        "Dangerous"
+      ], answer: 2, explanation: "They are nice bonuses, but totally unnecessary for a good life. 💰" },
+    { id: 'q20', question: "Stoicism is best described as:", options: [
+        "A religion",
+        "A theoretical debate framework",
+        "A practical toolkit for the mind",
+        "A political party"
+      ], answer: 2, explanation: "It is the martial art of the mind. 🥋" },
   ],
 
   relatedTopics: ['absurdism', 'nihilism', 'existentialism'],

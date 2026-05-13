@@ -23,7 +23,7 @@ import MarkdownText from './ui/MarkdownText';
 
 const { width } = Dimensions.get('window');
 
-const GEMINI_API_KEY = 'AIzaSyDxUn9Zgulb4-ZBLkF3Q2tIArDbU3dbQXE';
+const GEMINI_API_KEY = 'AIzaSy-PLACEHOLDER-KEY';
 const GEMINI_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 

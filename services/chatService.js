@@ -51,7 +51,11 @@ class ChatService {
           } else if (data.type === 'READ_RECEIPT') {
             this.notifyListeners(data);
           } else if (data.type === 'NOTIFICATION') {
-            this.notifyNotificationListeners(data);
+            const normalizedNotif = {
+              ...data,
+              type: data.notifType || data.type,
+            };
+            this.notifyNotificationListeners(normalizedNotif);
           } else if (data.type === 'AUTH_SUCCESS') {
             console.log('✅ WebSocket authenticated for User:', data.userId);
           }

@@ -21,7 +21,7 @@ const api = axios.create({
 });
 
 // Upload-specific timeout (used by EbookScreen file uploads)
-export const UPLOAD_TIMEOUT = 120000;
+export const UPLOAD_TIMEOUT = 600000; // 10 minutes for large PDFs
 
 // Auto-handle 401 responses (expired token)
 api.interceptors.response.use(

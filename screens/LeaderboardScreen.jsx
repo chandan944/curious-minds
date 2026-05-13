@@ -25,77 +25,88 @@ const STATUS_BAR_H = Platform.OS === 'android' ? StatusBar.currentHeight || 36 :
 
 const PERIODS = [
   { key: 'all',  label: 'All Time', icon: 'trophy'  },
-  { key: 'month', label: 'This Month', icon: 'calendar' },
-  { key: 'week', label: 'This Week', icon: 'zap' },
+  { key: 'month', label: 'Monthly',  icon: 'calendar' },
+  { key: 'week', label: 'Weekly',   icon: 'zap' },
 ];
 
-const RANK_COLORS = ['#FFD700', '#C0C0C0', '#CD7F32'];
+const RANK_COLORS = ['#FFD700', '#A8B4C2', '#CD7F32'];
 const PAGE_SIZE   = 20;
 
 // ── Skeleton row while loading ───────────────────────────────────────────────
-function SkeletonRow() {
+function SkeletonRow({ isDark }) {
   return (
-    <View style={styles.skeletonRow}>
+    <View style={[styles.skeletonRow, { backgroundColor: isDark ? '#1C1D26' : '#FFFFFF' }]}>
       <SkeletonLoader width={36} height={28} borderRadius={8} />
-      <SkeletonLoader width={40} height={40} circle />
+      <SkeletonLoader width={42} height={42} circle />
       <View style={{ flex: 1, gap: 6 }}>
         <SkeletonLoader width="60%" height={12} />
-        <SkeletonLoader width="40%" height={12} />
+        <SkeletonLoader width="40%" height={10} />
       </View>
-      <SkeletonLoader width={60} height={20} borderRadius={8} />
+      <SkeletonLoader width={60} height={22} borderRadius={12} />
     </View>
   );
 }
 
 // ── Single leaderboard row ───────────────────────────────────────────────────
-const LeaderRow = React.memo(function LeaderRow({ item, isMe, isDark, gold, onAvatarPress }) {
-  const rankColor = item.rank <= 3 ? RANK_COLORS[item.rank - 1] : (isDark ? '#52525B' : '#9CA3AF');
+const LeaderRow = React.memo(function LeaderRow({ item, isMe, isDark, gold, accent, onAvatarPress }) {
+  const rankColor = item.rank <= 3 ? RANK_COLORS[item.rank - 1] : (isDark ? '#4B5563' : '#9CA3AF');
   const isTop3 = item.rank <= 3;
 
   return (
     <TouchableOpacity
       onPress={() => onAvatarPress(item)}
-      activeOpacity={0.75}
+      activeOpacity={0.7}
       style={[
         styles.row,
-        { backgroundColor: isDark ? '#1C1D26' : '#FFFFFF', borderColor: isDark ? '#2A2C3A' : '#E5E7EB' },
-        isMe && { borderColor: gold, borderWidth: 1.5 },
+        {
+          backgroundColor: isDark ? '#16171F' : '#FFFFFF',
+          borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+        },
+        isMe && {
+          borderColor: accent + '60',
+          backgroundColor: isDark ? '#1A1B2A' : '#F0EDFF',
+        },
       ]}
     >
       {/* Rank */}
-      <View style={[styles.rankBox, isTop3 && { backgroundColor: rankColor + '20' }]}>
+      <View style={[styles.rankBox, isTop3 && { backgroundColor: rankColor + '18' }]}>
         {isTop3 ? (
-          <Text style={[styles.rankCrown, { color: rankColor }]}>
-            {item.rank === 1 ? '👑' : item.rank === 2 ? '🥈' : '🥉'}
-          </Text>
+          <Icon name={item.rank === 1 ? 'crown' : 'medal'} size={item.rank === 1 ? 18 : 15} color={rankColor} />
         ) : (
-          <Text style={[styles.rankNum, { color: rankColor }]}>#{item.rank}</Text>
+          <Text style={[styles.rankNum, { color: isDark ? '#6B7280' : '#9CA3AF' }]}>{item.rank}</Text>
         )}
       </View>
 
       {/* Avatar */}
-      {item.imageUrl ? (
-        <Image source={{ uri: item.imageUrl }} style={[styles.avatar, { borderColor: isTop3 ? rankColor : (isDark ? '#3A3C4A' : '#D1D5DB') }]} />
-      ) : (
-        <View style={[styles.avatarPlaceholder, { backgroundColor: isDark ? '#2A2C3A' : '#E5E7EB', borderColor: isDark ? '#3A3C4A' : '#D1D5DB' }]}>
-          <Text style={styles.avatarInitial}>{(item.name || '?')[0].toUpperCase()}</Text>
-        </View>
-      )}
+      <View>
+        {item.imageUrl ? (
+          <Image source={{ uri: item.imageUrl }} style={[styles.avatar, { borderColor: isTop3 ? rankColor : (isDark ? '#2A2C3A' : '#E5E7EB') }]} />
+        ) : (
+          <View style={[styles.avatarPlaceholder, { backgroundColor: isDark ? '#23242E' : '#F1F5F9', borderColor: isDark ? '#2A2C3A' : '#E5E7EB' }]}>
+            <Text style={[styles.avatarInitial, { color: isDark ? '#6B7280' : '#94A3B8' }]}>{(item.name || '?')[0].toUpperCase()}</Text>
+          </View>
+        )}
+        {isTop3 && (
+          <View style={[styles.rowRankDot, { backgroundColor: rankColor }]}>
+            <Text style={styles.rowRankDotText}>{item.rank}</Text>
+          </View>
+        )}
+      </View>
 
       {/* Name + Title */}
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, marginLeft: 2 }}>
         <Text style={[styles.userName, { color: isDark ? '#F1F5F9' : '#0F172A' }]} numberOfLines={1}>
-          {item.name} {isMe ? '(You)' : ''}
+          {item.name}{isMe ? ' (You)' : ''}
         </Text>
-        <Text style={[styles.userTitle, { color: isDark ? '#6B7280' : '#9CA3AF' }]} numberOfLines={1}>
+        <Text style={[styles.userTitle, { color: isDark ? '#4B5563' : '#94A3B8' }]} numberOfLines={1}>
           {item.title}
         </Text>
       </View>
 
-      {/* Points */}
-      <View style={styles.pointsBox}>
+      {/* Points pill */}
+      <View style={[styles.pointsPill, { backgroundColor: isDark ? '#1E1F2C' : '#F8FAFC' }]}>
         <Text style={[styles.pointsNum, { color: gold }]}>{(item.points || 0).toLocaleString()}</Text>
-        <Icon name="coin" size={14} color={gold} />
+        <Icon name="coin" size={12} color={gold} />
       </View>
     </TouchableOpacity>
   );
@@ -176,32 +187,36 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
       isMe={user && item.id === user.id}
       isDark={isDark}
       gold={gold}
+      accent={accent}
       onAvatarPress={handleAvatarPress}
     />
-  ), [user, isDark, gold]);
+  ), [user, isDark, gold, accent]);
 
   const renderFooter = () => {
     if (!isFetchingNextPage) return null;
     return <ActivityIndicator color={accent} style={{ paddingVertical: 20 }} />;
   };
 
+  // ── My rank info bar ──────────────────────────
+  const myEntry = data.find(d => d.id === user?.id);
+
   return (
     <View style={[styles.root, { backgroundColor: bg, paddingTop: 10 }]}>
+      {/* Ambient orbs */}
       <View style={[styles.orb1, { backgroundColor: accent }]} />
       <View style={[styles.orb2, { backgroundColor: gold }]} />
 
       {/* ── Top nav ─────────────────────────────── */}
       <Animated.View style={[styles.topBar, { opacity: headerAnim, transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-20, 0] }) }] }]}>
-        <TouchableOpacity onPress={onBack} style={[styles.backBtn, { borderColor: border, backgroundColor: isDark ? '#1C1D26' : '#FFFFFF' }]} activeOpacity={0.7}>
+        <TouchableOpacity onPress={onBack} style={[styles.backBtn, { borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)', backgroundColor: isDark ? '#16171F' : '#FFFFFF' }]} activeOpacity={0.7}>
           <Icon name="back" size={20} color={txt1} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={[styles.pageTitle, { color: txt1 }]}>Leaderboard</Text>
-          
         </View>
-
-        {/* ── Bell Icon ─────────────────────────────── */}
-        
+        <View style={[styles.headerIcon, { backgroundColor: isDark ? '#16171F' : '#FFFFFF', borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }]}>
+          <Icon name="trophy" size={18} color={gold} />
+        </View>
       </Animated.View>
 
       {/* ── Period Tabs ──────────────────────────── */}
@@ -214,7 +229,10 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
               onPress={() => setPeriod(p.key)}
               style={[
                 styles.tab,
-                { borderColor: border, backgroundColor: isDark ? '#1C1D26' : '#FFFFFF' },
+                {
+                  backgroundColor: isDark ? '#16171F' : '#FFFFFF',
+                  borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+                },
                 isActive && { backgroundColor: accent, borderColor: accent },
               ]}
               activeOpacity={0.8}
@@ -228,62 +246,95 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
 
       {/* ── Top 3 Podium ──────────────────────────── */}
       {!isLoading && data.length >= 3 && (
-        <LinearGradient
-          colors={isDark ? ['#1A1B23', '#13141C'] : ['#F8FAFC', '#FFFFFF']}
-          style={[styles.podium, { borderColor: border }]}
-        >
+        <View style={[styles.podium, { backgroundColor: isDark ? '#16171F' : '#FFFFFF', borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }]}>
           {[1, 0, 2].map(idx => {
             const d = data[idx];
             if (!d) return null;
             const isFirst = idx === 0;
+            const rankColor = RANK_COLORS[idx];
             return (
               <TouchableOpacity
                 key={idx}
-                style={[styles.podiumSlot, idx === 1 && { marginTop: 30 }, idx === 2 && { marginTop: 50 }]}
+                style={[styles.podiumSlot, isFirst && styles.podiumSlotFirst, !isFirst && styles.podiumSlotSecondary]}
                 onPress={() => handleAvatarPress(d)}
                 activeOpacity={0.75}
               >
-                {d.imageUrl ? (
-                  <Image source={{ uri: d.imageUrl }} style={[isFirst ? styles.podiumAvatarLg : styles.podiumAvatar, { borderColor: RANK_COLORS[idx] }]} />
-                ) : (
-                  <View style={[isFirst ? styles.podiumAvatarLgPh : styles.podiumAvatarPh, { borderColor: RANK_COLORS[idx], backgroundColor: isDark ? '#2A2C3A' : '#E5E7EB' }]}>
-                    <Text style={isFirst ? styles.podiumInitialLg : styles.podiumInitial}>{(d.name || '?')[0]}</Text>
+                {/* Avatar with overlapping badge */}
+                <View style={styles.podiumAvatarWrap}>
+                  {isFirst && (
+                    <View style={[styles.podiumCrownFloat]}>
+                      <Icon name="crown" size={20} color="#FFD700" />
+                    </View>
+                  )}
+                  {d.imageUrl ? (
+                    <Image source={{ uri: d.imageUrl }} style={[isFirst ? styles.podiumAvatarLg : styles.podiumAvatar, { borderColor: rankColor }]} />
+                  ) : (
+                    <View style={[isFirst ? styles.podiumAvatarLgPh : styles.podiumAvatarPh, { borderColor: rankColor, backgroundColor: isDark ? '#23242E' : '#F1F5F9' }]}>
+                      <Text style={[isFirst ? styles.podiumInitialLg : styles.podiumInitial, { color: isDark ? '#6B7280' : '#94A3B8' }]}>{(d.name || '?')[0]}</Text>
+                    </View>
+                  )}
+                  {/* Rank badge */}
+                  <View style={[styles.podiumBadge, { backgroundColor: rankColor }]}>
+                    <Text style={styles.podiumBadgeText}>{idx === 0 ? '1' : idx === 1 ? '2' : '3'}</Text>
                   </View>
-                )}
-                <Text style={isFirst ? styles.podiumCrown : styles.podiumMedal}>
-                  {idx === 0 ? '👑' : idx === 1 ? '🥈' : '🥉'}
-                </Text>
+                </View>
+
                 <Text style={[styles.podiumName, { color: txt1 }]} numberOfLines={1}>{d.name?.split(' ')[0]}</Text>
-                <Text style={[styles.podiumPts, { color: RANK_COLORS[idx] }]}>{(d.points || 0).toLocaleString()}</Text>
+
+                {/* Points */}
+                <View style={styles.podiumPtsRow}>
+                  <Icon name="coin" size={11} color={rankColor} />
+                  <Text style={[styles.podiumPts, { color: rankColor }]}>{(d.points || 0).toLocaleString()}</Text>
+                </View>
               </TouchableOpacity>
             );
           })}
-        </LinearGradient>
+        </View>
+      )}
+
+      {/* ── My Rank Bar ────────────────────────────── */}
+      {myEntry && (
+        <View style={[styles.myRankBar, { backgroundColor: isDark ? accent + '15' : accent + '0D', borderColor: accent + '30' }]}>
+          <Icon name="person" size={14} color={accent} />
+          <Text style={[styles.myRankText, { color: accent }]}>Your Rank</Text>
+          <View style={{ flex: 1 }} />
+          <Text style={[styles.myRankValue, { color: accent }]}>#{myEntry.rank}</Text>
+          <View style={styles.myRankDivider} />
+          <Text style={[styles.myRankPts, { color: gold }]}>{(myEntry.points || 0).toLocaleString()}</Text>
+          <Icon name="coin" size={12} color={gold} />
+        </View>
       )}
 
       {/* ── Full List ───────────────────────────────── */}
       {isLoading ? (
         <View style={{ flex: 1, paddingHorizontal: SPACING.lg, paddingTop: 8 }}>
-          {[...Array(8)].map((_, i) => <SkeletonRow key={i} />)}
+          {[...Array(8)].map((_, i) => <SkeletonRow key={i} isDark={isDark} />)}
         </View>
       ) : isError ? (
         <View style={styles.center}>
-          <Icon name="alert" size={36} color={txtM} />
+          <View style={[styles.emptyIcon, { backgroundColor: isDark ? '#1C1D26' : '#F1F5F9' }]}>
+            <Icon name="alert" size={32} color={txtM} />
+          </View>
+          <Text style={[styles.errorTitle, { color: txt1 }]}>Connection Error</Text>
           <Text style={[styles.errorText, { color: txtM }]}>Could not load leaderboard. Check your connection.</Text>
           <TouchableOpacity onPress={() => refetch()} style={[styles.retryBtn, { backgroundColor: accent }]}>
+            <Icon name="refresh" size={16} color="#FFFFFF" />
             <Text style={styles.retryLabel}>Retry</Text>
           </TouchableOpacity>
         </View>
       ) : data.length === 0 ? (
         <View style={styles.center}>
-          <Text style={{ fontSize: 48 }}>🏜️</Text>
-          <Text style={[styles.errorText, { color: txtM }]}>No activity in this window yet.</Text>
+          <View style={[styles.emptyIcon, { backgroundColor: isDark ? '#1C1D26' : '#F1F5F9' }]}>
+            <Icon name="trophy" size={36} color={txtM} />
+          </View>
+          <Text style={[styles.errorTitle, { color: txt1 }]}>No Activity Yet</Text>
+          <Text style={[styles.errorText, { color: txtM }]}>Be the first to earn points!</Text>
         </View>
       ) : (
         <FlatList
           data={data}
           keyExtractor={item => `${item.rank}-${item.id}`}
-          contentContainerStyle={{ paddingHorizontal: SPACING.lg, paddingTop: 8, paddingBottom: 80 }}
+          contentContainerStyle={{ paddingHorizontal: SPACING.lg, paddingTop: 4, paddingBottom: 80 }}
           showsVerticalScrollIndicator={false}
           renderItem={renderItem}
           onEndReached={loadMore}
@@ -319,92 +370,135 @@ export default function LeaderboardScreen({ onBack, onStartChat }) {
 
 // ── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  root: { flex: 1 ,marginTop:-20},
-  orb1: { position: 'absolute', top: -80, right: -60, width: 200, height: 200, borderRadius: 100, opacity: 0.06 },
-  orb2: { position: 'absolute', top: 120, left: -80, width: 180, height: 180, borderRadius: 90, opacity: 0.05 },
+  root: { flex: 1, marginTop: -20 },
+  orb1: { position: 'absolute', top: -80, right: -60, width: 200, height: 200, borderRadius: 100, opacity: 0.05 },
+  orb2: { position: 'absolute', top: 140, left: -80, width: 160, height: 160, borderRadius: 80, opacity: 0.04 },
 
+  // ── Top Bar ──────────────────────────────
   topBar: {
+    marginTop: 25,
     flexDirection: 'row', alignItems: 'center', gap: 14,
     paddingHorizontal: SPACING.lg, paddingVertical: 12,
   },
   backBtn: {
-    width: 40, height: 40, borderRadius: 12, borderWidth: 1,
+    width: 40, height: 40, borderRadius: 14, borderWidth: 1,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  headerIcon: {
+    width: 40, height: 40, borderRadius: 14, borderWidth: 1,
     alignItems: 'center', justifyContent: 'center',
   },
   pageTitle: { fontFamily: FONTS.display, fontSize: 22 },
-  pageSub:   { fontFamily: FONTS.body, fontSize: 12 },
 
-  // Bell
-  bellWrap: { position: 'relative', marginRight: 4 },
-  bellBadge: {
-    position: 'absolute', top: -5, right: -6,
-    minWidth: 18, height: 18, borderRadius: 9,
-    alignItems: 'center', justifyContent: 'center',
-    paddingHorizontal: 4,
-  },
-  bellBadgeText: { fontFamily: FONTS.displayMedium, fontSize: 10, color: '#FFFFFF' },
-
+  // ── Tabs ──────────────────────────────
   tabRow: {
     flexDirection: 'row', gap: 8,
-    paddingHorizontal: SPACING.lg, marginBottom: 12,
+    paddingHorizontal: SPACING.lg, marginBottom: 14,
   },
   tab: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 5, paddingVertical: 9, borderRadius: RADIUS.full, borderWidth: 1,
+    gap: 6, paddingVertical: 10, borderRadius: RADIUS.full, borderWidth: 1,
   },
-  tabLabel: { fontFamily: FONTS.bodyMedium, fontSize: 11 },
+  tabLabel: { fontFamily: FONTS.bodyMedium, fontSize: 12 },
 
-  // Podium
+  // ── Podium ──────────────────────────────
   podium: {
     flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end',
-    marginHorizontal: SPACING.lg, marginBottom: 12,
-    borderRadius: RADIUS.lg, borderWidth: 1,
-    paddingHorizontal: SPACING.md, paddingTop: 16, paddingBottom: 14,
-    gap: 8,
+    marginHorizontal: SPACING.lg, marginBottom: 14,
+    borderRadius: 20, borderWidth: 1,
+    paddingHorizontal: SPACING.md, paddingTop: 24, paddingBottom: 18,
+    gap: 6,
   },
-  podiumSlot: { flex: 1, alignItems: 'center', gap: 4 },
-  podiumAvatar: { width: 52, height: 52, borderRadius: 26, borderWidth: 2 },
-  podiumAvatarPh: { width: 52, height: 52, borderRadius: 26, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  podiumAvatarLg: { width: 68, height: 68, borderRadius: 34, borderWidth: 2.5 },
-  podiumAvatarLgPh: { width: 68, height: 68, borderRadius: 34, borderWidth: 2.5, alignItems: 'center', justifyContent: 'center' },
-  podiumInitial:   { fontFamily: FONTS.displayMedium, fontSize: 20, color: '#9CA3AF' },
-  podiumInitialLg: { fontFamily: FONTS.displayMedium, fontSize: 26, color: '#9CA3AF' },
-  podiumCrown: { fontSize: 20 },
-  podiumMedal: { fontSize: 16 },
-  podiumName: { fontFamily: FONTS.bodyMedium, fontSize: 12, textAlign: 'center' },
+  podiumSlot: { flex: 1, alignItems: 'center', gap: 6 },
+  podiumSlotFirst: { marginTop: 0 },
+  podiumSlotSecondary: { marginTop: 32 },
+  podiumAvatarWrap: { position: 'relative', alignItems: 'center', marginBottom: 4 },
+  podiumCrownFloat: {
+    position: 'absolute',
+    top: -18,
+    zIndex: 10,
+  },
+  podiumAvatar: { width: 54, height: 54, borderRadius: 27, borderWidth: 2.5 },
+  podiumAvatarPh: { width: 54, height: 54, borderRadius: 27, borderWidth: 2.5, alignItems: 'center', justifyContent: 'center' },
+  podiumAvatarLg: { width: 72, height: 72, borderRadius: 36, borderWidth: 3 },
+  podiumAvatarLgPh: { width: 72, height: 72, borderRadius: 36, borderWidth: 3, alignItems: 'center', justifyContent: 'center' },
+  podiumInitial:   { fontFamily: FONTS.displayMedium, fontSize: 20 },
+  podiumInitialLg: { fontFamily: FONTS.displayMedium, fontSize: 26 },
+  podiumBadge: {
+    position: 'absolute',
+    bottom: -6,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  podiumBadgeText: { fontFamily: FONTS.displayMedium, fontSize: 10, color: '#FFFFFF' },
+  podiumName: { fontFamily: FONTS.bodyMedium, fontSize: 12, textAlign: 'center', maxWidth: 80 },
+  podiumPtsRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   podiumPts:  { fontFamily: FONTS.displayMedium, fontSize: 13 },
 
-  // Rows
+  // ── My Rank Bar ──────────────────────────
+  myRankBar: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    marginHorizontal: SPACING.lg, marginBottom: 12,
+    paddingHorizontal: 16, paddingVertical: 10,
+    borderRadius: 14, borderWidth: 1,
+  },
+  myRankText: { fontFamily: FONTS.bodyMedium, fontSize: 12 },
+  myRankValue: { fontFamily: FONTS.displayMedium, fontSize: 15 },
+  myRankDivider: { width: 1, height: 16, backgroundColor: 'rgba(128,128,128,0.2)', marginHorizontal: 4 },
+  myRankPts: { fontFamily: FONTS.displayMedium, fontSize: 14, marginRight: 4 },
+
+  // ── Rows ──────────────────────────────
   row: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    borderRadius: RADIUS.md, borderWidth: 1,
-    paddingHorizontal: 14, paddingVertical: 12,
+    borderRadius: 16, borderWidth: 1,
+    paddingHorizontal: 14, paddingVertical: 14,
     marginBottom: 8,
   },
   rankBox: {
-    width: 36, alignItems: 'center', justifyContent: 'center',
-    paddingVertical: 4, borderRadius: 8,
+    width: 34, height: 34, alignItems: 'center', justifyContent: 'center',
+    borderRadius: 10,
   },
-  rankCrown: { fontSize: 20 },
   rankNum:   { fontFamily: FONTS.displayMedium, fontSize: 14 },
-  avatar: { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5 },
-  avatarPlaceholder: { width: 40, height: 40, borderRadius: 20, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
-  avatarInitial: { fontFamily: FONTS.displayMedium, fontSize: 16, color: '#9CA3AF' },
+  avatar: { width: 42, height: 42, borderRadius: 21, borderWidth: 2 },
+  avatarPlaceholder: { width: 42, height: 42, borderRadius: 21, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
+  avatarInitial: { fontFamily: FONTS.displayMedium, fontSize: 16 },
+  rowRankDot: {
+    position: 'absolute', bottom: -2, right: -2,
+    width: 18, height: 18, borderRadius: 9,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  rowRankDotText: { fontFamily: FONTS.displayMedium, fontSize: 8, color: '#FFFFFF' },
   userName:  { fontFamily: FONTS.bodyMedium, fontSize: 14 },
-  userTitle: { fontFamily: FONTS.body, fontSize: 11 },
-  pointsBox: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  pointsNum: { fontFamily: FONTS.displayMedium, fontSize: 15 },
+  userTitle: { fontFamily: FONTS.body, fontSize: 11, marginTop: 1 },
+  pointsPill: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 10, paddingVertical: 5,
+    borderRadius: 12,
+  },
+  pointsNum: { fontFamily: FONTS.displayMedium, fontSize: 14 },
 
-  // Skeleton
-  skeletonRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8, paddingHorizontal: 14, paddingVertical: 12 },
-  skeletonRank:   { width: 36, height: 28, borderRadius: 8 },
-  skeletonAvatar: { width: 40, height: 40, borderRadius: 20 },
-  skeletonLine:   { height: 12, borderRadius: 6 },
-  skeletonPoints: { width: 60, height: 20, borderRadius: 8 },
+  // ── Skeleton ──────────────────────────────
+  skeletonRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    marginBottom: 8, paddingHorizontal: 14, paddingVertical: 14,
+    borderRadius: 16,
+  },
 
-  // States
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 40 },
-  errorText: { fontFamily: FONTS.body, fontSize: 14, textAlign: 'center' },
-  retryBtn: { paddingHorizontal: 24, paddingVertical: 10, borderRadius: RADIUS.full },
+  // ── States ──────────────────────────────
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 40 },
+  emptyIcon: {
+    width: 72, height: 72, borderRadius: 36,
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: 4,
+  },
+  errorTitle: { fontFamily: FONTS.displayMedium, fontSize: 17, textAlign: 'center' },
+  errorText: { fontFamily: FONTS.body, fontSize: 13, textAlign: 'center', lineHeight: 20 },
+  retryBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    paddingHorizontal: 24, paddingVertical: 11, borderRadius: RADIUS.full, marginTop: 4,
+  },
   retryLabel: { fontFamily: FONTS.bodyMedium, fontSize: 14, color: '#FFFFFF' },
 });

@@ -1,0 +1,908 @@
+[
+  {
+    "id": "mountains_caves",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\mountains_caves\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "rivers_lakes",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\rivers_lakes\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "deserts_dry_lands",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\deserts_dry_lands\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "chemistry_elements",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\chemistry_elements\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "chemistry_elements",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\chemistry_elements\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "physics_forces",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\physics_forces\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "physics_forces",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\physics_forces\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "microbiology_cells",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\microbiology_cells\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "microbiology_cells",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\microbiology_cells\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "electricity_magnetism",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\electricity_magnetism\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "electricity_magnetism",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\electricity_magnetism\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "light_optics",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\light_optics\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "light_optics",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\light_optics\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "temperature_energy",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\temperature_energy\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "temperature_energy",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\temperature_energy\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "brain_structure",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\brain_structure\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "brain_structure",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\brain_structure\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "human_body_organs",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\human_body_organs\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "human_body_organs",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\human_body_organs\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "burnout",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\burnout\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "burnout",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\burnout\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "dna_genetics",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\dna_genetics\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "dna_genetics",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\dna_genetics\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "human_senses",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\human_senses\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "human_senses",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\human_senses\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "sleep_dreams",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\sleep_dreams\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "sleep_dreams",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\sleep_dreams\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "mental_health_psychology",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\mental_health_psychology\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "mental_health_psychology",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\mental_health_psychology\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "ancient_history",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\ancient_history\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "ancient_history",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\ancient_history\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "greek_roman",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\greek_roman\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "greek_roman",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\greek_roman\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "middle_eastern_history",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\middle_eastern_history\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "middle_eastern_history",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\middle_eastern_history\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "asian_empires",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\asian_empires\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "asian_empires",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\asian_empires\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "wars_battles",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\wars_battles\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "wars_battles",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\wars_battles\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "kings_queens",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\kings_queens\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "kings_queens",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\kings_queens\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "exploration_discovery",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\exploration_discovery\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "exploration_discovery",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\exploration_discovery\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "slavery_freedom",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\slavery_freedom\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "slavery_freedom",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\slavery_freedom\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "medieval_history",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\medieval_history\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "medieval_history",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\medieval_history\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "modern_history",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\modern_history\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "modern_history",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\modern_history\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "african_culture",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\african_culture\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "african_culture",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\african_culture\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "asian_culture",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\asian_culture\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "asian_culture",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\asian_culture\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "south_american_culture",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\south_american_culture\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "south_american_culture",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\south_american_culture\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "european_countries",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\european_countries\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "european_countries",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\european_countries\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "north_american_culture",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\north_american_culture\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "north_american_culture",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\north_american_culture\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "australia_oceania",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\australia_oceania\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "australia_oceania",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\australia_oceania\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "flags_meanings",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\flags_meanings\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "flags_meanings",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\flags_meanings\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "languages_communication",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\languages_communication\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "languages_communication",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\languages_communication\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "traditions_festivals",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\traditions_festivals\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "traditions_festivals",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\traditions_festivals\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "world_cuisines",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\world_cuisines\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "world_cuisines",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\world_cuisines\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "computers_internet",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\computers_internet\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "computers_internet",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\computers_internet\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "artificial_intelligence",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\artificial_intelligence\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "artificial_intelligence",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\artificial_intelligence\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "smartphones_gadgets",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\smartphones_gadgets\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "smartphones_gadgets",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\smartphones_gadgets\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "cars_automobiles",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\cars_automobiles\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "cars_automobiles",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\cars_automobiles\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "aviation_aircraft",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\aviation_aircraft\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "aviation_aircraft",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\aviation_aircraft\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "space_technology",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\space_technology\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "space_technology",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\space_technology\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "machines_engineering",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\machines_engineering\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "machines_engineering",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\machines_engineering\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "energy_power",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\energy_power\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "energy_power",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\energy_power\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "cybersecurity_hacking",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\cybersecurity_hacking\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "cybersecurity_hacking",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\cybersecurity_hacking\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "scientific_inventions",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\scientific_inventions\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "scientific_inventions",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\scientific_inventions\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "theatre_drama",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\theatre_drama\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "theatre_drama",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\theatre_drama\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "music_instruments",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\music_instruments\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "music_instruments",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\music_instruments\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "painting_visual_arts",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\painting_visual_arts\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "painting_visual_arts",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\painting_visual_arts\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "photography_film",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\photography_film\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "photography_film",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\photography_film\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "architecture_buildings",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\architecture_buildings\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "architecture_buildings",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\architecture_buildings\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "literature_books",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\literature_books\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "literature_books",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\literature_books\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "sculptures_monuments",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\sculptures_monuments\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "sculptures_monuments",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\sculptures_monuments\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "cinema_directors",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\cinema_directors\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "cinema_directors",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\cinema_directors\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "philosophy_thinkers",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\philosophy_thinkers\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "philosophy_thinkers",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\philosophy_thinkers\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "psychology_behavior",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\psychology_behavior\\config.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "psychology_behavior",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\psychology_behavior\\config_hi.js",
+    "reason": "missing_visuals"
+  },
+  {
+    "id": "critical_thinking",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\critical_thinking\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "critical_thinking",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\critical_thinking\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "football_soccer",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\football_soccer\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "football_soccer",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\football_soccer\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "cricket_baseball",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\cricket_baseball\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "cricket_baseball",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\cricket_baseball\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "basketball_court",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\basketball_court\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "basketball_court",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\basketball_court\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "tennis_racket",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\tennis_racket\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "tennis_racket",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\tennis_racket\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "swimming_water",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\swimming_water\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "swimming_water",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\swimming_water\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "martial_arts",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\martial_arts\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "martial_arts",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\martial_arts\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "video_games",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\video_games\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "video_games",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\video_games\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "chess_board",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\chess_board\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "chess_board",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\chess_board\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "olympics_athletics",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\olympics_athletics\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "olympics_athletics",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\olympics_athletics\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "extreme_adventure",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\extreme_adventure\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "extreme_adventure",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\extreme_adventure\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "myths_legends",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\myths_legends\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "myths_legends",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\myths_legends\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "paranormal_unexplained",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\paranormal_unexplained\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "paranormal_unexplained",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\paranormal_unexplained\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "ufo_aliens",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\ufo_aliens\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "ufo_aliens",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\ufo_aliens\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "lost_cities",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\lost_cities\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "lost_cities",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\lost_cities\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "ancient_religions",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\ancient_religions\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "ancient_religions",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\ancient_religions\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "secret_societies",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\secret_societies\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "secret_societies",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\secret_societies\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "death_afterlife",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\death_afterlife\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "death_afterlife",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\death_afterlife\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "afterlife_beliefs",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\afterlife_beliefs\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "afterlife_beliefs",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\afterlife_beliefs\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "astrology_zodiac",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\astrology_zodiac\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "astrology_zodiac",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\astrology_zodiac\\config_hi.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "magic_illusions",
+    "file": "config.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\magic_illusions\\config.js",
+    "reason": "text_to_content"
+  },
+  {
+    "id": "magic_illusions",
+    "file": "config_hi.js",
+    "path": "c:\\Users\\lenovo\\Desktop\\curious-brain\\curious-minds\\facts\\magic_illusions\\config_hi.js",
+    "reason": "text_to_content"
+  }
+]

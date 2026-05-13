@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 //  OnboardingScreen.jsx — Balanced Premium Onboarding
 // ─────────────────────────────────────────────────────────────
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,11 @@ import {
   Platform,
   StatusBar,
   Image,
+  ActivityIndicator,
+  Easing,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { soundTap } from '../utils/sounds';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from '../components/ui/Icons';
 import { FONTS, RADIUS } from '../constants/theme';
@@ -21,41 +25,124 @@ import { FONTS, RADIUS } from '../constants/theme';
 const { width, height } = Dimensions.get('window');
 const STATUS_BAR_H = Platform.OS === 'android' ? StatusBar.currentHeight || 36 : 50;
 
+// ── Cosmic floating orbs ─────────────────────────────────────
+const ORB_COLORS = ['#3B82F6', '#A78BFA', '#F472B6', '#4ADE80', '#F59E0B', '#818CF8', '#FB7185', '#34D399'];
+const ORB_COUNT = 18;
+
+function useOrbs() {
+  return useMemo(() => {
+    const corners = [
+      { xMin: -10, xMax: width * 0.25, yMin: -10, yMax: height * 0.18 },   // top-left
+      { xMin: width * 0.75, xMax: width + 10, yMin: -10, yMax: height * 0.18 }, // top-right
+      { xMin: -10, xMax: width * 0.25, yMin: height * 0.82, yMax: height + 10 }, // bottom-left
+      { xMin: width * 0.75, xMax: width + 10, yMin: height * 0.82, yMax: height + 10 }, // bottom-right
+    ];
+    return Array.from({ length: ORB_COUNT }, (_, i) => {
+      const c = corners[i % 4];
+      return {
+        id: i,
+        size: 4 + Math.random() * 14,
+        x: c.xMin + Math.random() * (c.xMax - c.xMin),
+        y: c.yMin + Math.random() * (c.yMax - c.yMin),
+        color: ORB_COLORS[i % ORB_COLORS.length],
+        opacity: 0.15 + Math.random() * 0.3,
+        duration: 3000 + Math.random() * 5000,
+        drift: 10 + Math.random() * 25,
+      };
+    });
+  }, []);
+}
+
+const FloatingOrb = React.memo(({ orb }) => {
+  const anim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(anim, { toValue: 1, duration: orb.duration, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(anim, { toValue: 0, duration: orb.duration, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [0, -orb.drift] });
+  const translateX = anim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, orb.drift * 0.4, 0] });
+  return (
+    <Animated.View style={{
+      position: 'absolute', left: orb.x, top: orb.y,
+      width: orb.size, height: orb.size, borderRadius: orb.size / 2,
+      backgroundColor: orb.color, opacity: orb.opacity,
+      transform: [{ translateY }, { translateX }],
+    }} />
+  );
+});
+
+function CosmicOrbs() {
+  const orbs = useOrbs();
+  return (
+    <View style={[StyleSheet.absoluteFill, { zIndex: 50 }]} pointerEvents="none">
+      {orbs.map(o => <FloatingOrb key={o.id} orb={o} />)}
+    </View>
+  );
+}
+
 const SLIDES = [
   {
     id: '1',
-    headline: 'Learn anything.\nAnytime.',
-    sub: '150+ interactive topics across science, philosophy, psychology, and technology — crafted for the deeply curious.',
-    icon: 'compass',
-    accent: '#7B6FFF',
+    headline: 'Master the World\nfrom First Principles',
+    sub: 'Move beyond surface-level trivia. Deep-dive into the fundamental laws of science, finance, and history with academic rigor.',
+    image: require('../assets/onboarding_screen/theory.png'),
+    accent: '#3B82F6', // Science Blue
     highlights: [
-      { icon: 'flask', label: 'Interactive Labs' },
-      { icon: 'brain', label: 'Bite-sized Lessons' },
-      { icon: 'atom', label: 'Real Simulations' },
+      { icon: 'flask', label: 'Theory Cards' },
+      { icon: 'atom', label: 'Fundamental Laws' },
+      { icon: 'zap', label: 'Quick Insights' },
     ],
   },
   {
     id: '2',
-    headline: 'Read. Chat.\nGrow together.',
-    sub: 'A premium e-book library, global community chat, and an AI tutor that never sleeps — your complete learning companion.',
-    icon: 'book',
-    accent: '#34D399',
+    headline: 'Theory Meets\nInteractive Labs',
+    sub: 'Learn through high-fidelity theory cards and test your intuition in our immersive, interactive labs.',
+    image: require('../assets/onboarding_screen/lab.png'),
+    accent: '#4ADE80', // Nature Green
     highlights: [
-      { icon: 'book', label: 'Premium E-Books' },
-      { icon: 'chat', label: 'Global Community' },
-     
+      { icon: 'cpu', label: 'Real Simulations' },
+      { icon: 'target', label: 'Interactive Tests' },
+      { icon: 'layers', label: 'Deep Learning' },
     ],
   },
   {
     id: '3',
-    headline: 'Compete.\nClimb. Conquer.',
-    sub: 'Earn XP from quizzes, climb the global leaderboard, collect badges, and prove you are the sharpest mind.',
-    icon: 'trophy',
-    accent: '#F59E0B',
+    headline: 'The Daily\nFacts Hub',
+    sub: 'Access 1,000+ premium educational facts. Stunningly designed, dual-language (EN/HI), and ready to share.',
+    image: require('../assets/onboarding_screen/fact.png'),
+    accent: '#F472B6', // Pink Fact
     highlights: [
-      { icon: 'question', label: 'Smart Quizzes' },
-      { icon: 'trophy', label: 'Leaderboard' },
-      
+      { icon: 'share', label: 'Shareable Facts' },
+      { icon: 'message-circle', label: 'Hindi Support' },
+      { icon: 'star', label: 'Daily Wisdom' },
+    ],
+  },
+  {
+    id: '4',
+    headline: 'Mind-Blowing\nGlitch eBooks',
+    sub: 'A revolutionary reading experience. Immerse yourself in deep insights with animated layouts and profound knowledge.',
+    image: require('../assets/onboarding_screen/ebook.png'),
+    accent: '#A78BFA', // Purple Book
+    highlights: [
+      { icon: 'book-open', label: 'Deep Insights' },
+      { icon: 'galaxy', label: 'Premium Design' },
+      { icon: 'moon', label: 'Dark Reading' },
+    ],
+  },
+  {
+    id: '5',
+    headline: 'Compete, Chat\nand Conquer',
+    sub: 'Challenge yourself in quizzes, climb the global leaderboard, and connect with a community of bright minds.',
+    image: require('../assets/onboarding_screen/quiz.png'),
+    accent: '#F59E0B', // Gold
+    highlights: [
+      { icon: 'award', label: 'Global Rank' },
+      { icon: 'users', label: 'Chat Hub' },
+      { icon: 'badge', label: 'Collect XP' },
     ],
   },
 ];
@@ -74,50 +161,71 @@ export default function OnboardingScreen({ onFinish }) {
     }).start();
   }, []);
 
+  const [hasFinished, setHasFinished] = useState(false);
+
   const viewableItemsChanged = useRef(({ viewableItems }) => {
-    if (viewableItems?.length > 0) setCurrentIndex(viewableItems[0].index);
+    if (viewableItems?.length > 0) {
+      setCurrentIndex(viewableItems[0].index);
+    }
   }).current;
+
+  useEffect(() => {
+    if (currentIndex === SLIDES.length && !hasFinished) {
+      setHasFinished(true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      onFinish();
+    }
+  }, [currentIndex, hasFinished, onFinish]);
 
   const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
   const scrollToNext = () => {
-    if (currentIndex < SLIDES.length - 1) {
+    soundTap();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (currentIndex < SLIDES.length) {
       slidesRef.current?.scrollToIndex({ index: currentIndex + 1 });
-    } else {
-      onFinish();
     }
   };
 
   const isLast = currentIndex === SLIDES.length - 1;
-  const slide = SLIDES[currentIndex];
+  const slide = SLIDES[currentIndex] || SLIDES[SLIDES.length - 1];
+
+  const bgColors = [
+    '#0B132B', // Theory: Dark Blue
+    '#0B2416', // Lab: Dark Green
+    '#2E0B20', // Fact: Dark Pink
+    '#1A0B2E', // eBook: Dark Purple
+    '#2E1C0B', // Quiz: Dark Gold
+  ];
+
+  const animatedBg = scrollX.interpolate({
+    inputRange: [...SLIDES.map((_, i) => i * width), SLIDES.length * width],
+    outputRange: [...bgColors, '#08090F'],
+    extrapolate: 'clamp',
+  });
 
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-      <LinearGradient colors={['#08090F', '#0F1019']} style={StyleSheet.absoluteFill} />
+      <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: animatedBg }]} />
 
-      {/* Soft accent glow behind icon area */}
-      <View style={[styles.glow, { backgroundColor: slide.accent }]} />
 
-      {/* ── Header ───────────────────────────────── */}
+      {/* ── Header Overlay (Z-Index) ── */}
       <Animated.View style={[styles.header, { opacity: entranceAnim }]}>  
-        <View style={styles.logoRow}>
-          <Image source={require('../assets/icon.png')} style={styles.logo} />
-          
-        </View>
+        
         <TouchableOpacity onPress={onFinish} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
           <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
       </Animated.View>
 
-      {/* ── Slides ───────────────────────────────── */}
+      {/* ── Full Screen Slides ── */}
       <FlatList
         ref={slidesRef}
-        data={SLIDES}
+        data={[...SLIDES, { id: 'finish' }]} // Append dummy slide to trigger onFinish when scrolled
         keyExtractor={(item) => item.id}
         horizontal
         pagingEnabled
-        bounces={false}
+        bounces={true}
         showsHorizontalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -126,35 +234,28 @@ export default function OnboardingScreen({ onFinish }) {
         scrollEventThrottle={16}
         onViewableItemsChanged={viewableItemsChanged}
         viewabilityConfig={viewConfig}
-        renderItem={({ item }) => (
-          <View style={styles.slide}>
-            {/* Icon */}
-            <View style={[styles.iconCircle, { backgroundColor: item.accent + '12', borderColor: item.accent + '20' }]}>
-              <Icon name={item.icon} size={36} color={item.accent} />
+        renderItem={({ item }) => {
+          if (item.id === 'finish') {
+            return (
+              <View style={{ width, height, backgroundColor: '#08090F', alignItems: 'center', justifyContent: 'center' }}>
+                <ActivityIndicator size="large" color="#FFFFFF" />
+              </View>
+            );
+          }
+          return (
+            <View style={styles.slide}>
+              <Image 
+                source={item.image} 
+                style={styles.slideImage} 
+                resizeMode="cover"
+              />
             </View>
-
-            {/* Headline */}
-           
-
-          
-            {/* Highlight Row */}
-            <View style={styles.highlightRow}>
-              {item.highlights.map((h, i) => (
-                <View key={i} style={[styles.highlightItem, { borderColor: 'rgba(255,255,255,0.06)' }]}>
-                  <View style={[styles.highlightIcon, { backgroundColor: item.accent + '12' }]}>
-                    <Icon name={h.icon} size={18} color={item.accent} />
-                  </View>
-                  <Text style={styles.highlightLabel}>{h.label}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
+          );
+        }}
       />
 
-      {/* ── Bottom ───────────────────────────────── */}
+      {/* ── Bottom Overlay Dots (Z-Index) ── */}
       <View style={styles.bottom}>
-        {/* Dots */}
         <View style={styles.dots}>
           {SLIDES.map((s, i) => {
             const inputRange = [(i - 1) * width, i * width, (i + 1) * width];
@@ -166,18 +267,13 @@ export default function OnboardingScreen({ onFinish }) {
           })}
         </View>
 
-        {/* Button */}
-        <TouchableOpacity onPress={scrollToNext} activeOpacity={0.85} style={styles.btnWrap}>
-          <LinearGradient
-            colors={[slide.accent, slide.accent + 'BB']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.btn}
-          >
-            <Text style={styles.btnText}>{isLast ? 'Get Started' : 'Continue'}</Text>
-          </LinearGradient>
+        <TouchableOpacity onPress={scrollToNext} style={styles.nextBtn} activeOpacity={0.8}>
+          <Icon name="chevron-right" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
+
+      {/* ── Cosmic Orbs (above slides, below controls) ── */}
+      <CosmicOrbs />
     </View>
   );
 }
@@ -195,8 +291,13 @@ const styles = StyleSheet.create({
     opacity: 0.06,
   },
 
-  // Header
+  // Header Overlay
   header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -206,24 +307,22 @@ const styles = StyleSheet.create({
   },
   logoRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   logo: { width: 30, height: 30, borderRadius: 9 },
-  brand: { fontFamily: FONTS.displayMedium, fontSize: 15, color: 'rgba(255,255,255,0.65)' },
-  skipText: { fontFamily: FONTS.body, fontSize: 14, color: 'rgba(255,255,255,0.3)' },
+  skipText: { fontFamily: FONTS.body, fontSize: 16, color: '#FFFFFF', textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: {width: 0, height: 1}, textShadowRadius: 3 },
 
-  // Slide
+  // Full Screen Slide
   slide: {
     width,
+    height,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
+    paddingHorizontal: 30,
+    paddingVertical: 30,
   },
-  iconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 26,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 152,
+  slideImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 24,
+    overflow: 'hidden',
   },
   headline: {
     fontFamily: FONTS.display,
@@ -273,25 +372,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // Bottom
+  // Bottom Overlay
   bottom: {
-    paddingHorizontal: 24,
-    paddingBottom: Platform.OS === 'ios' ? 48 : 30,
-    gap: 20,
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 60 : 40,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  dots: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  dot: { height: 5, borderRadius: 3 },
-  btnWrap: { width: '100%' },
-  btn: {
-    paddingVertical: 17,
-    borderRadius: 16,
+  dots: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  dot: { height: 6, borderRadius: 3 },
+  nextBtn: {
+    position: 'absolute',
+    right: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.1)',
     alignItems: 'center',
-  },
-  btnText: {
-    fontFamily: FONTS.displayMedium,
-    fontSize: 16,
-    color: '#FFFFFF',
-    letterSpacing: 0.3,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
 });

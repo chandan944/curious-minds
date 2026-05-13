@@ -1,5 +1,5 @@
-﻿/**
- * Human Body Systems Lab â€” interactive simulation
+/**
+ * Human Body Systems Lab — interactive simulation
  * NO react-native-reanimated (incompatible with Old Architecture)
  * Uses only: RN Animated API, setInterval, useState, useRef
  */
@@ -19,22 +19,22 @@ const CX = width / 2;
 const CY = VIEWPORT_H / 2;
 
 const DISCOVERIES = [
-  { id: 'b1', cond: s => s.hr > 140 && s.cortisol > 70, title: 'Fight-or-Flight', entry: 'High cortisol + elevated heart rate activates the sympathetic nervous system. Pupils dilate, digestion halts, muscles get priority blood flow â€” the ancient survival cascade.', rarity: 'Common' },
-  { id: 'b2', cond: s => s.o2 < 88, title: 'Hypoxia Warning', entry: 'SpOâ‚‚ below 90% triggers chemoreceptors in the carotid body â€” the brainstem forces breathing to accelerate. Below 85%, cognitive function rapidly deteriorates.', rarity: 'Uncommon' },
-  { id: 'b3', cond: s => s.nerve > 82 && s.cortisol < 20, title: 'Flow State', entry: 'Fast neural conduction with low stress cortisol produces peak cognitive and athletic performance â€” the neuroscience of a "flow state". Timing and low anxiety are both essential.', rarity: 'Rare âœ¨' },
-  { id: 'b4', cond: s => s.hr < 48, title: 'Athletic Bradycardia', entry: 'Heart rates below 50 bpm in trained athletes mean each stroke volume is massive. Lance Armstrong\'s resting HR was 32 bpm â€” his heart is so efficient it barely needs to beat!', rarity: 'Uncommon' },
-  { id: 'b5', cond: s => s.o2 < 84 && s.hr > 155, title: 'Anaerobic Threshold', entry: 'When Oâ‚‚ can\'t meet demand at extreme heart rates, muscles switch to anaerobic glycolysis â€” producing lactic acid and the famous "burn" of intense exercise.', rarity: 'Rare âœ¨' },
+  { id: 'b1', cond: s => s.hr > 140 && s.cortisol > 70, title: 'Fight-or-Flight', entry: 'High cortisol + elevated heart rate activates the sympathetic nervous system. Pupils dilate, digestion halts, muscles get priority blood flow — the ancient survival cascade.', rarity: 'Common' },
+  { id: 'b2', cond: s => s.o2 < 88, title: 'Hypoxia Warning', entry: 'SpO₂ below 90% triggers chemoreceptors in the carotid body — the brainstem forces breathing to accelerate. Below 85%, cognitive function rapidly deteriorates.', rarity: 'Uncommon' },
+  { id: 'b3', cond: s => s.nerve > 82 && s.cortisol < 20, title: 'Flow State', entry: 'Fast neural conduction with low stress cortisol produces peak cognitive and athletic performance — the neuroscience of a "flow state". Timing and low anxiety are both essential.', rarity: 'Rare ✨' },
+  { id: 'b4', cond: s => s.hr < 48, title: 'Athletic Bradycardia', entry: 'Heart rates below 50 bpm in trained athletes mean each stroke volume is massive. Lance Armstrong\'s resting HR was 32 bpm — his heart is so efficient it barely needs to beat!', rarity: 'Uncommon' },
+  { id: 'b5', cond: s => s.o2 < 84 && s.hr > 155, title: 'Anaerobic Threshold', entry: 'When O₂ can\'t meet demand at extreme heart rates, muscles switch to anaerobic glycolysis — producing lactic acid and the famous "burn" of intense exercise.', rarity: 'Rare ✨' },
 ];
 
 export default function HumanBodySystemsLab({ scientistMode = false, accentColor = '#FF6B9D', onLabBreaker }) {
-  const [hr,       setHr]       = useState(72);   // 40â€“200 bpm
-  const [o2,       setO2]       = useState(98);   // 0â€“100 SpO2
+  const [hr,       setHr]       = useState(72);   // 40–200 bpm
+  const [o2,       setO2]       = useState(98);   // 0–100 SpO2
   const [nerve,    setNerve]    = useState(50);   // nerve conduction speed
   const [cortisol, setCortisol] = useState(20);  // stress hormone %
   const [frame,    setFrame]    = useState(0);
   const [danger,   setDanger]   = useState(false);
   const [logs,     setLogs]     = useState([]);
-  const [hint,     setHint]     = useState('Raise heart rate â€” watch blood cells speed up and lungs expand! Push HR above 170 for danger mode.');
+  const [hint,     setHint]     = useState('Raise heart rate — watch blood cells speed up and lungs expand! Push HR above 170 for danger mode.');
   const [logsOpen, setLogsOpen] = useState(false);
   const [discMode, setDiscMode] = useState(false);
 
@@ -45,7 +45,7 @@ export default function HumanBodySystemsLab({ scientistMode = false, accentColor
   const dangerLoop = useRef(null);
   const shakeLoop  = useRef(null);
 
-  // Frame loop â€” speed driven by heart rate
+  // Frame loop — speed driven by heart rate
   useEffect(() => {
     const speed = hr / 72;
     const id = setInterval(() => {
@@ -73,7 +73,7 @@ export default function HumanBodySystemsLab({ scientistMode = false, accentColor
         Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
       ]));
       shakeLoop.current.start();
-      setHint(hr > 172 ? 'ðŸ”¥ CARDIAC EMERGENCY â€” Heart rate critically high!' : 'âš ï¸ Extreme bradycardia â€” heart rate dangerously low!');
+      setHint(hr > 172 ? '🔥 CARDIAC EMERGENCY — Heart rate critically high!' : '⚠️ Extreme bradycardia — heart rate dangerously low!');
     } else {
       dangerLoop.current?.stop();
       shakeLoop.current?.stop();
@@ -92,7 +92,7 @@ export default function HumanBodySystemsLab({ scientistMode = false, accentColor
           discLocks.current[d.id] = true;
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           setLogs(p => [d, ...p]);
-          setHint(`ðŸ’¡ Discovery: ${d.title}`);
+          setHint(`💡 Discovery: ${d.title}`);
         }
       });
     }, 1200);
@@ -101,7 +101,7 @@ export default function HumanBodySystemsLab({ scientistMode = false, accentColor
 
   const shakeX = shakeAnim.interpolate({ inputRange: [-1, 0, 1], outputRange: [-5, 0, 5] });
 
-  // Blood cells â€” orbit speed proportional to HR
+  // Blood cells — orbit speed proportional to HR
   const bloodCells = Array.from({ length: 12 }, (_, i) => {
     const speed = hr / 72;
     const t = (frameRef.current * speed + i / 12) % 1;
@@ -114,7 +114,7 @@ export default function HumanBodySystemsLab({ scientistMode = false, accentColor
     };
   });
 
-  // Lung expand â€” breathing cycle
+  // Lung expand — breathing cycle
   const breathPhase = Math.sin(frameRef.current * Math.PI * 2 * 0.35) * 0.5 + 0.5;
   const lungRx = 28 + breathPhase * 14 * (o2 / 100);
   const lungRy = 42 + breathPhase * 18 * (o2 / 100);
@@ -125,7 +125,7 @@ export default function HumanBodySystemsLab({ scientistMode = false, accentColor
   const heartR = 26 + beatPhase * 10;
   const heartFill = danger ? '#FF0000' : '#FF6B9D';
 
-  // Neural signals â€” move left to right
+  // Neural signals — move left to right
   const neuralSignals = nerve > 15 ? Array.from({ length: 5 }, (_, i) => {
     const speed = nerve / 100;
     const t = (frameRef.current * speed * 2 + i / 5) % 1;
@@ -196,19 +196,19 @@ export default function HumanBodySystemsLab({ scientistMode = false, accentColor
       {/* CONTROLS */}
       <View style={styles.panel}>
         <View style={styles.panelRow}>
-          <SliderControl label="ðŸ«€ Heart Rate" value={Math.round((hr - 40) / 1.6)} onChange={v => { setHr(Math.round(40 + v * 1.6)); soundTap(); }} color={danger ? '#FF3131' : '#FF6B9D'} displayVal={`${hr} bpm`} />
-          <SliderControl label="ðŸ« SpOâ‚‚ Oxygen" value={o2} onChange={v => { setO2(v); soundTap(); }} color={o2 < 90 ? '#FF9500' : '#4FC3F7'} displayVal={`${o2}%`} />
+          <SliderControl label="🫀 Heart Rate" value={Math.round((hr - 40) / 1.6)} onChange={v => { setHr(Math.round(40 + v * 1.6)); soundTap(); }} color={danger ? '#FF3131' : '#FF6B9D'} displayVal={`${hr} bpm`} />
+          <SliderControl label="🫁 SpO₂ Oxygen" value={o2} onChange={v => { setO2(v); soundTap(); }} color={o2 < 90 ? '#FF9500' : '#4FC3F7'} displayVal={`${o2}%`} />
         </View>
         <View style={styles.panelRow}>
-          <SliderControl label="âš¡ Nerve Speed" value={nerve} onChange={v => { setNerve(v); soundTap(); }} color="#F9CA24" displayVal={`${nerve}%`} />
-          <SliderControl label="ðŸ’Š Cortisol" value={cortisol} onChange={v => { setCortisol(v); soundTap(); }} color={cortisol > 70 ? '#FF4500' : '#C77DFF'} displayVal={`${cortisol}%`} />
+          <SliderControl label="⚡ Nerve Speed" value={nerve} onChange={v => { setNerve(v); soundTap(); }} color="#F9CA24" displayVal={`${nerve}%`} />
+          <SliderControl label="💊 Cortisol" value={cortisol} onChange={v => { setCortisol(v); soundTap(); }} color={cortisol > 70 ? '#FF4500' : '#C77DFF'} displayVal={`${cortisol}%`} />
         </View>
       </View>
 
       {/* READOUT */}
       <View style={styles.readoutBar}>
         <ReadoutPill label="Heart Rate" value={`${hr}bpm`} color={danger ? '#FF3131' : '#FF6B9D'} />
-        <ReadoutPill label="SpOâ‚‚" value={`${o2}%`} color={o2 < 90 ? '#FF9500' : '#4FC3F7'} />
+        <ReadoutPill label="SpO₂" value={`${o2}%`} color={o2 < 90 ? '#FF9500' : '#4FC3F7'} />
         <ReadoutPill label="Status" value={danger ? 'DANGER' : hr > 120 ? 'Active' : hr < 55 ? 'Rest' : 'Normal'} color={danger ? '#FF3131' : '#22C55E'} />
         <ReadoutPill label="Logs" value={`${logs.length}/5`} color="#FFD93D" />
       </View>
@@ -225,14 +225,14 @@ export default function HumanBodySystemsLab({ scientistMode = false, accentColor
         <View style={styles.modalBg}>
           <View style={[styles.modalContent, { backgroundColor: '#110822' }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: '#FF6B9D' }]}>Research Logs ðŸ““</Text>
+              <Text style={[styles.modalTitle, { color: '#FF6B9D' }]}>Research Logs 📓</Text>
               <TouchableOpacity onPress={() => { setLogsOpen(false); soundTap(); }}>
                 <Icon name="close" size={22} color="#FFE0EE" />
               </TouchableOpacity>
             </View>
             <ScrollView>
               {logs.length === 0
-                ? <Text style={styles.emptyLog}>Explore controls to unlock discoveries! Try extreme HR, low SpOâ‚‚, or low cortisol + high nerve speed.</Text>
+                ? <Text style={styles.emptyLog}>Explore controls to unlock discoveries! Try extreme HR, low SpO₂, or low cortisol + high nerve speed.</Text>
                 : logs.map(l => (
                   <View key={l.id} style={[styles.logCard, { borderLeftColor: '#FF6B9D' }]}>
                     <View style={styles.logCardHeader}>

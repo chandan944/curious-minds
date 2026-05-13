@@ -159,140 +159,240 @@ export default {
     {
       id: "q1",
       question: "What is the pH of pure water?",
-      options: ["0", "7", "14", "1"],
+      options: [
+        "0",
+        "7",
+        "14",
+        "1"
+      ],
       answer: 1,
       explanation: "pH 7 is neutral — the perfect balance point between acid and base! 🌊",
     },
     {
       id: "q2",
       question: "Which of these is a strong acid?",
-      options: ["Soap", "Lemon Juice", "Drain Cleaner", "Sea Water"],
+      options: [
+        "Soap",
+        "Lemon Juice",
+        "Drain Cleaner",
+        "Sea Water"
+      ],
       answer: 1,
       explanation: "Lemon juice contains Citric acid with a potent pH of about 2! 🍋",
     },
     {
       id: "q3",
       question: "Bases typically taste...",
-      options: ["Sour", "Sweet", "Bitter", "Salty"],
+      options: [
+        "Sour",
+        "Sweet",
+        "Bitter",
+        "Salty"
+      ],
       answer: 2,
       explanation: "Bases like soap or baking soda have a distinctively bitter taste! 🧼",
     },
     {
       id: "q4",
       question: "What is the primary function of an indicator?",
-      options: ["To neutralize acids", "To explode in water", "To change color based on pH", "To increase reaction speed"],
+      options: [
+        "To neutralize acids",
+        "To explode in water",
+        "To change color based on pH",
+        "To increase reaction speed"
+      ],
       answer: 2,
       explanation: "Indicators use color changes to signal the concentration of protons in a liquid! 🌈",
     },
     {
       id: "q5",
       question: "A liquid with a pH of 13 is a...",
-      options: ["Strong Acid", "Strong Base", "Neutral Salt", "Weak Acid"],
+      options: [
+        "Strong Acid",
+        "Strong Base",
+        "Neutral Salt",
+        "Weak Acid"
+      ],
       answer: 1,
       explanation: "Values high on the scale (12-14) are high-intensity alkaline solutions! 🧴",
     },
     {
       id: "q6",
       question: "A solution with pH 4 is how much stronger than pH 5?",
-      options: ["2 times", "10 times", "100 times", "1,000 times"],
+      options: [
+        "2 times",
+        "10 times",
+        "100 times",
+        "1,000 times"
+      ],
       answer: 1,
       explanation: "The pH scale is logarithmic — every single step is a 10x power jump! 🔢",
     },
     {
       id: "q7",
       question: "What are the products of a neutralization reaction?",
-      options: ["Oxygen + Hydrogen", "Water + Salt", "Oil + Sugar", "Metal + Gas"],
+      options: [
+        "Oxygen + Hydrogen",
+        "Water + Salt",
+        "Oil + Sugar",
+        "Metal + Gas"
+      ],
       answer: 1,
       explanation: "Mixing acid and base cancels both out, creating pure water and a salt! ⚓",
     },
     {
       id: "q8",
       question: "Which ion defines the strength of an ACID?",
-      options: ["$OH^{-}$", "$H^{+}$ (Proton)", "$NaCl$", "$O_2$"],
+      options: [
+        "$OH^{-}$",
+        "$H^{+}$ (Proton)",
+        "$NaCl$",
+        "$O_2$"
+      ],
       answer: 1,
       explanation: "Acids are proton donors — their strength comes from releasing $H^{+}$ ions! 🧪",
     },
     {
       id: "q9",
       question: "What do we call substances that resist pH changes?",
-      options: ["Neutralizers", "Acidifiers", "Buffers", "Solvents"],
+      options: [
+        "Neutralizers",
+        "Acidifiers",
+        "Buffers",
+        "Solvents"
+      ],
       answer: 2,
       explanation: "Buffers like the chemicals in your blood prevent lethal pH spikes! 🩸",
     },
     {
       id: "q10",
       question: "Potent acids feel...",
-      options: ["Slippery", "Bitter", "Stinging or burning", "Gritty"],
+      options: [
+        "Slippery",
+        "Bitter",
+        "Stinging or burning",
+        "Gritty"
+      ],
       answer: 2,
       explanation: "Strong acids sting because they are aggressively attacking tissue proteins! 🍋",
     },
     {
       id: "q11",
       question: "What is the precise pH of human blood?",
-      options: ["2.0", "7.0 (Neutral)", "7.4 (Slightly Basic)", "12.0"],
+      options: [
+        "2.0",
+        "7.0 (Neutral)",
+        "7.4 (Slightly Basic)",
+        "12.0"
+      ],
       answer: 2,
       explanation: "Human blood is precisely buffered to be slightly alkaline (7.4)! 🩸",
     },
     {
       id: "q12",
       question: "Which of these is a household BASE?",
-      options: ["Vinegar", "Battery Acid", "Baking Soda", "Coffee"],
+      options: [
+        "Vinegar",
+        "Battery Acid",
+        "Baking Soda",
+        "Coffee"
+      ],
       answer: 2,
       explanation: "Baking soda is Sodium Bicarbonate, a reliable weak base! 🥮",
     },
     {
       id: "q13",
       question: "A pH of 0 would most likely belong to...",
-      options: ["Pure Water", "Battery Acid", "Black Coffee", "Ammonia"],
+      options: [
+        "Pure Water",
+        "Battery Acid",
+        "Black Coffee",
+        "Ammonia"
+      ],
       answer: 1,
       explanation: "Zero is the absolute maximum acidic intensity on the standard scale! 🔋",
     },
     {
       id: "q14",
       question: "What is the scientific term for 'Basic'?",
-      options: ["Corrosive", "Reactive", "Alkaline", "Metallic"],
+      options: [
+        "Corrosive",
+        "Reactive",
+        "Alkaline",
+        "Metallic"
+      ],
       answer: 2,
       explanation: "Alkaline refers to any substance with a pH higher than 7! 🧴",
     },
     {
       id: "q15",
       question: "Saponification is the process of making...",
-      options: ["Rust", "Soap", "Gas", "Acid"],
+      options: [
+        "Rust",
+        "Soap",
+        "Gas",
+        "Acid"
+      ],
       answer: 1,
       explanation: "When a base reacts with organic fats, it chemically creates soap! 🧼",
     },
     {
       id: "q16",
       question: "In a base, red litmus paper will turn...",
-      options: ["Red", "Yellow", "Blue", "Clear"],
+      options: [
+        "Red",
+        "Yellow",
+        "Blue",
+        "Clear"
+      ],
       answer: 2,
       explanation: "Base = Blue! Litmus changes color to signal the alkalinity! 🌈",
     },
     {
       id: "q17",
       question: "What is the typical pH range of stomach acid?",
-      options: ["1.5 to 3.5", "7.0", "8.5 to 10.0", "14.4"],
+      options: [
+        "1.5 to 3.5",
+        "7.0",
+        "8.5 to 10.0",
+        "14.4"
+      ],
       answer: 0,
       explanation: "Stomach acid (HCl) is incredibly potent to break down tough proteins! 🥩",
     },
     {
       id: "q18",
       question: "A pH of 14 represents...",
-      options: ["Neutrality", "Potent Acid", "Extreme Base", "Liquid Metal"],
+      options: [
+        "Neutrality",
+        "Potent Acid",
+        "Extreme Base",
+        "Liquid Metal"
+      ],
       answer: 2,
       explanation: "14 is the maximum alkaline/basic value on the standard scale! 🧴",
     },
     {
       id: "q19",
       question: "Which lab tool is required for a titration?",
-      options: ["Beaker", "Burette", "Graduated Cylinder", "Bunsen Burner"],
+      options: [
+        "Beaker",
+        "Burette",
+        "Graduated Cylinder",
+        "Bunsen Burner"
+      ],
       answer: 1,
       explanation: "A Burette allows for precise, drop-by-drop delivery of titration fluids! 💧",
     },
     {
       id: "q20",
       question: "What is an 'Amphoteric' substance? 🦎",
-      options: ["A substance that can only be an acid", "A substance that can act as BOTH an acid and a base", "A substance that is frozen", "A substance that doesn't react"],
+      options: [
+        "Acts only as an acid",
+        "Acts as both acid and base",
+        "Is a frozen substance",
+        "Does not react"
+      ],
       answer: 1,
       explanation: "Amphoteric substances (like Water!) are chemical chameleons — they can give OR take protons depending on the situation! 🦎",
     },

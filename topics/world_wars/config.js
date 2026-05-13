@@ -162,26 +162,126 @@ export default {
 
   // ── QUIZ (20) ───────────────────────────────
   quiz: [
-    { id: 'q1', question: "What does the 'M' in the M.A.I.N. causes of WWI stand for? 🎖️", options: ['Monarchy', 'Militarism', 'Marxism', 'Mutiny'], answer: 1, explanation: "Militarism! European nations were rapidly building up massive armies and fleets causing intense paranoia. 🪖" },
-    { id: 'q2', question: "The assassination of Archduke Franz Ferdinand happened in which city? 🔫", options: ['Berlin', 'Paris', 'Sarajevo', 'London'], answer: 2, explanation: "He was assassinated in Sarajevo by a Serbian nationalist, which ignited the European powder keg. 🔥" },
-    { id: 'q3', question: "Why did WWI turn into Trench Warfare? 🛡️", options: ['Soldiers wanted to hide from planes', 'Machine guns made running across open fields suicidal', 'They were looking for gold', 'It was too cold above ground'], answer: 1, explanation: "Machine guns fired so fast that defending a trench was easy, but attacking an enemy trench was nearly impossible. ⚔️" },
-    { id: 'q4', question: "Which WWI invention was specifically designed to crush barbed wire and cross trenches? 🚜", options: ['The Helicopter', 'The Submarine', 'The Tank', 'The Motorcycle'], answer: 2, explanation: "Tanks were slow and clunky at first, but their armor allowed them to survive machine-gun fire and roll right over trenches! 🛡️" },
-    { id: 'q5', question: "What was the name of the harsh peace treaty that ended WWI? 📜", options: ['Treaty of Paris', 'Treaty of London', 'Treaty of Versailles', 'Treaty of Berlin'], answer: 2, explanation: "The Treaty of Versailles forced Germany to take full blame, pay billions, and lose massive territory, devastating their economy. 📉" },
-    { id: 'q6', question: "Which political ideology demands total loyalty to the state/dictator and destroys democracy? ✊", options: ['Democracy', 'Capitalism', 'Fascism', 'Anarchism'], answer: 2, explanation: "Fascism (led by dictators like Hitler and Mussolini) seized total control of the military, press, and people's lives. ⏱️" },
-    { id: 'q7', question: "What event officially started World War II in September 1939? ⚡", options: ['The bombing of London', 'Germany invading Poland', 'The attack on Pearl Harbor', 'The assassination of Hitler'], answer: 1, explanation: "When Germany invaded Poland, Britain and France finally said 'enough is enough' and declared war. 🛡️" },
-    { id: 'q8', question: "What does the German tactic 'Blitzkrieg' translate to? ⛈️", options: ['Trench War', 'Submarine War', 'Lightning War', 'Slow War'], answer: 2, explanation: "Blitzkrieg used fast-moving tanks and airplanes communicating by radio to encircle enemy armies before they could react. ⚡" },
-    { id: 'q9', question: "The systematic, industrialized murder of six million Jewish people by the Nazis is known as: 🕯️", options: ['The Blitz', 'The Holocaust', 'The Inquisition', 'The Gulag'], answer: 1, explanation: "The Holocaust was one of the darkest crimes in history, leading directly to modern laws defining Genocide and Human Rights. 🕊️" },
-    { id: 'q10', question: "Why did the United States enter World War II? 🇺🇸", options: ['Germany invaded New York', 'Japan launched a surprise attack on Pearl Harbor', 'They wanted to conquer Europe', 'The British King ordered them to'], answer: 1, explanation: "The attack on Pearl Harbor in 1941 instantly shifted the USA from neutral into a total war machine. ⚓" },
-    { id: 'q11', question: "During WWII, what were the two massive global 'Theaters' (areas of fighting) called? 🌏", options: ['Space and Sea', 'European and Pacific', 'African and Arctic', 'Northern and Southern'], answer: 1, explanation: "The Allies fought the Nazis in the European Theater, and fought the Japanese Empire in the Pacific Theater! 🗺️" },
-    { id: 'q12', question: "What was the 'Manhattan Project'? 🧠", options: ['A plan to build skyscrapers', 'The secret project to build the Atomic Bomb', 'A spy network in Germany', 'A plan to invade Japan'], answer: 1, explanation: "The top-secret Manhattan Project involved brilliant scientists splitting the atom to build a weapon of unthinkable power. ☢️" },
-    { id: 'q13', question: "What two Japanese cities were hit by Atomic Bombs? 💥", options: ['Hiroshima and Nagasaki', 'Tokyo and Kyoto', 'Osaka and Kobe', 'Seoul and Beijing'], answer: 0, explanation: "Hiroshima and Nagasaki were the targets. The unimaginable destruction forced Japan's immediate surrender. 🌌" },
-    { id: 'q14', question: "What international organization was created after WWII to prevent future World Wars? 🇺🇳", options: ['NATO', 'The League of Nations', 'The United Nations (UN)', 'The European Union'], answer: 2, explanation: "The UN was founded to provide a place for countries to resolve their arguments with diplomacy instead of weapons. 🕊️" },
-    { id: 'q15', question: "What 'War' immediately followed WWII, featuring spies and the Space Race? 🚀", options: ['The Great War', 'The Cold War', 'The proxy War', 'The Cyber War'], answer: 1, explanation: "The USA and Soviet Union entered a 40-year 'Cold War', avoiding direct shooting because of nuclear weapons. 🧊" },
-    { id: 'q16', question: "What machine did the Germans use to create unbreakable secret codes in WWII? 🔐", options: ['The Typewriter', 'The Telegraph', 'The Enigma Machine', 'The Computer'], answer: 2, explanation: "The Enigma machine used spinning electrical rotors to scramble messages so completely that humans couldn't decode them by hand. ⚙️" },
-    { id: 'q17', question: "In WWI, 'No Man\'s Land' referred to: 💀", options: ['The ocean', 'The sky', 'The muddy, deadly ground between the two enemy trenches', 'A neutral country'], answer: 2, explanation: "It was called No Man's Land because stepping into it meant almost certain death from machine gun fire. 🛡️" },
-    { id: 'q18', question: "Which WWII dictator heavily relied on his intense, theatrical speeches to gain power in Germany? 🎤", options: ['Winston Churchill', 'Joseph Stalin', 'Adolf Hitler', 'Franklin D. Roosevelt'], answer: 2, explanation: "Hitler used massive rallies and screaming rhetoric to whip crowds into a frenzy of nationalism and anger. 🦅" },
-    { id: 'q19', question: "Before dropping the atomic bomb, how was the US fighting Japan? 🏝️", options: ['Submarine warfare only', 'Island Hopping (capturing islands closer and closer to Japan)', 'A huge land war in China', 'They weren\'t fighting'], answer: 1, explanation: "The US Navy and Marines brutally fought across thousands of miles of ocean, capturing island after island to get bombing range of Tokyo. ⚓" },
-    { id: 'q20', question: "Which of the following was NOT a major power on the Allied side in WWII? 🤝", options: ['United States', 'Soviet Union (Russia)', 'Great Britain', 'Italy'], answer: 3, explanation: "Italy was part of the Axis powers (along with Germany and Japan) led by the fascist dictator Mussolini. 🌏" },
+    { id: 'q1', question: "What does the 'M' in the M.A.I.N. causes of WWI stand for? 🎖️", options: [
+        "Monarchy",
+        "Militarism",
+        "Marxism",
+        "Mutiny"
+      ], answer: 1, explanation: "Militarism! European nations were rapidly building up massive armies and fleets causing intense paranoia. 🪖" },
+    { id: 'q2', question: "The assassination of Archduke Franz Ferdinand happened in which city? 🔫", options: [
+        "Berlin",
+        "Paris",
+        "Sarajevo",
+        "London"
+      ], answer: 2, explanation: "He was assassinated in Sarajevo by a Serbian nationalist, which ignited the European powder keg. 🔥" },
+    { id: 'q3', question: "Why did WWI turn into Trench Warfare? 🛡️", options: [
+        "Soldiers wanted to hide from planes",
+        "Machine guns made running across open fields suicidal",
+        "They were looking for gold",
+        "It was too cold above ground"
+      ], answer: 1, explanation: "Machine guns fired so fast that defending a trench was easy, but attacking an enemy trench was nearly impossible. ⚔️" },
+    { id: 'q4', question: "Which WWI invention was specifically designed to crush barbed wire and cross trenches? 🚜", options: [
+        "The Helicopter",
+        "The Submarine",
+        "The Tank",
+        "The Motorcycle"
+      ], answer: 2, explanation: "Tanks were slow and clunky at first, but their armor allowed them to survive machine-gun fire and roll right over trenches! 🛡️" },
+    { id: 'q5', question: "What was the name of the harsh peace treaty that ended WWI? 📜", options: [
+        "Treaty of Paris",
+        "Treaty of London",
+        "Treaty of Versailles",
+        "Treaty of Berlin"
+      ], answer: 2, explanation: "The Treaty of Versailles forced Germany to take full blame, pay billions, and lose massive territory, devastating their economy. 📉" },
+    { id: 'q6', question: "Which political ideology demands total loyalty to the state/dictator and destroys democracy? ✊", options: [
+        "Democracy",
+        "Capitalism",
+        "Fascism",
+        "Anarchism"
+      ], answer: 2, explanation: "Fascism (led by dictators like Hitler and Mussolini) seized total control of the military, press, and people's lives. ⏱️" },
+    { id: 'q7', question: "What event officially started World War II in September 1939? ⚡", options: [
+        "The bombing of London",
+        "Germany invading Poland",
+        "The attack on Pearl Harbor",
+        "The assassination of Hitler"
+      ], answer: 1, explanation: "When Germany invaded Poland, Britain and France finally said 'enough is enough' and declared war. 🛡️" },
+    { id: 'q8', question: "What does the German tactic 'Blitzkrieg' translate to? ⛈️", options: [
+        "Trench War",
+        "Submarine War",
+        "Lightning War",
+        "Slow War"
+      ], answer: 2, explanation: "Blitzkrieg used fast-moving tanks and airplanes communicating by radio to encircle enemy armies before they could react. ⚡" },
+    { id: 'q9', question: "The systematic, industrialized murder of six million Jewish people by the Nazis is known as: 🕯️", options: [
+        "The Blitz",
+        "The Holocaust",
+        "The Inquisition",
+        "The Gulag"
+      ], answer: 1, explanation: "The Holocaust was one of the darkest crimes in history, leading directly to modern laws defining Genocide and Human Rights. 🕊️" },
+    { id: 'q10', question: "Why did the United States enter World War II? 🇺🇸", options: [
+        "Germany invaded New York",
+        "Japan launched a surprise attack on Pearl Harbor",
+        "They wanted to conquer Europe",
+        "The British King ordered them to"
+      ], answer: 1, explanation: "The attack on Pearl Harbor in 1941 instantly shifted the USA from neutral into a total war machine. ⚓" },
+    { id: 'q11', question: "During WWII, what were the two massive global 'Theaters' (areas of fighting) called? 🌏", options: [
+        "Space and Sea",
+        "European and Pacific",
+        "African and Arctic",
+        "Northern and Southern"
+      ], answer: 1, explanation: "The Allies fought the Nazis in the European Theater, and fought the Japanese Empire in the Pacific Theater! 🗺️" },
+    { id: 'q12', question: "What was the 'Manhattan Project'? 🧠", options: [
+        "A plan to build skyscrapers",
+        "The secret project to build the Atomic Bomb",
+        "A spy network in Germany",
+        "A plan to invade Japan"
+      ], answer: 1, explanation: "The top-secret Manhattan Project involved brilliant scientists splitting the atom to build a weapon of unthinkable power. ☢️" },
+    { id: 'q13', question: "What two Japanese cities were hit by Atomic Bombs? 💥", options: [
+        "Hiroshima and Nagasaki",
+        "Tokyo and Kyoto",
+        "Osaka and Kobe",
+        "Seoul and Beijing"
+      ], answer: 0, explanation: "Hiroshima and Nagasaki were the targets. The unimaginable destruction forced Japan's immediate surrender. 🌌" },
+    { id: 'q14', question: "What international organization was created after WWII to prevent future World Wars? 🇺🇳", options: [
+        "NATO",
+        "The League of Nations",
+        "The United Nations (UN)",
+        "The European Union"
+      ], answer: 2, explanation: "The UN was founded to provide a place for countries to resolve their arguments with diplomacy instead of weapons. 🕊️" },
+    { id: 'q15', question: "What 'War' immediately followed WWII, featuring spies and the Space Race? 🚀", options: [
+        "The Great War",
+        "The Cold War",
+        "The proxy War",
+        "The Cyber War"
+      ], answer: 1, explanation: "The USA and Soviet Union entered a 40-year 'Cold War', avoiding direct shooting because of nuclear weapons. 🧊" },
+    { id: 'q16', question: "What machine did the Germans use to create unbreakable secret codes in WWII? 🔐", options: [
+        "The Typewriter",
+        "The Telegraph",
+        "The Enigma Machine",
+        "The Computer"
+      ], answer: 2, explanation: "The Enigma machine used spinning electrical rotors to scramble messages so completely that humans couldn't decode them by hand. ⚙️" },
+    { id: 'q17', question: "In WWI, 'No Man\'s Land' referred to: 💀", options: [
+        "The ocean",
+        "The sky",
+        "Deadly ground between enemy trenches",
+        "A neutral country"
+      ], answer: 2, explanation: "It was called No Man's Land because stepping into it meant almost certain death from machine gun fire. 🛡️" },
+    { id: 'q18', question: "Which WWII dictator heavily relied on his intense, theatrical speeches to gain power in Germany? 🎤", options: [
+        "Winston Churchill",
+        "Joseph Stalin",
+        "Adolf Hitler",
+        "Franklin D. Roosevelt"
+      ], answer: 2, explanation: "Hitler used massive rallies and screaming rhetoric to whip crowds into a frenzy of nationalism and anger. 🦅" },
+    { id: 'q19', question: "Before dropping the atomic bomb, how was the US fighting Japan? 🏝️", options: [
+        "Submarine warfare only",
+        "Island Hopping strategy",
+        "A huge land war in China",
+        "They weren't fighting"
+      ], answer: 1, explanation: "The US Navy and Marines brutally fought across thousands of miles of ocean, capturing island after island to get bombing range of Tokyo. ⚓" },
+    { id: 'q20', question: "Which of the following was NOT a major power on the Allied side in WWII? 🤝", options: [
+        "United States",
+        "Soviet Union (Russia)",
+        "Great Britain",
+        "Italy"
+      ], answer: 3, explanation: "Italy was part of the Axis powers (along with Germany and Japan) led by the fascist dictator Mussolini. 🌏" },
   ],
 
   // ── RELATED TOPICS ──────────────────────────

@@ -1,0 +1,41 @@
+ # Quiz Option Normalization Context
+
+This document summarizes the problem we faced with quiz options and the automated script we built to fix it. You can use this context to explain the situation to other developers or AI models.
+
+## 1. The Core Problem: Option Length Bias
+In the current quizzes across the app, there is a clear pattern:
+- **The correct answer (often Option B or C) is significantly longer and more detailed than the incorrect distractors.**
+- This happens because the AI that originally generated the questions tends to over-explain the correct answer while giving very short, low-effort incorrect answers.
+- **Result:** Users can easily guess the correct answer just by picking the longest sentence, completely defeating the educational purpose of the quiz.
+
+## 2. The Solution: AI-Powered Rewriting Script
+To fix this without manually rewriting thousands of questions across English and Hindi files, we created an automated Node.js script (`scripts/normalize_quiz_options.js`). 
+
+### What the Script Does:
+1. It reads the `config.js` and `config_hi.js` files block by block.
+2. It parses the JavaScript file to extract each question's `options` array and the `answer` index.
+3. It sends the question and options to the **Google Gemini API** with a strict prompt.
+4. It receives the rewritten options, ensures the formatting is correct, and updates the file directly while preserving all other code (comments, icons, syntax).
+
+### The Prompt Engineering Rules:
+We refined the prompt to enforce strict rules for the rewritten options:
+1. **Short & Simple:** ALL 4 options must be short (ideally 3 to 8 words).
+2. **Equal Length:** The correct answer must be condensed, and the wrong answers expanded slightly, so they all look visually identical in length.
+3. **Preserve Meaning:** The actual meaning of the options cannot change.
+4. **Preserve Position:** The correct answer MUST stay at its original index so the scoring logic doesn't break.
+5. **Language Support:** It processes both English and Hindi (Devanagari script) dynamically.
+
+## 3. Current Progress & The API Rate Limit Issue
+We successfully tested the script on the first Phase (the `depression` topic). The script successfully converted bloated options into short, concise ones. 
+
+**Example of the successful output:**
+- *Old:* `["Eating too fast", "Obsessively looping negative thoughts in your mind without finding a solution", "Sleeping all day", "Running away"]`
+- *New:* `["Eating food very quickly", "Obsessively looping negative thoughts", "Sleeping throughout the day", "Running away from problems"]`
+
+> [!WARNING]
+> **The Blocker:** The `gemini-flash-latest` Free Tier API key has a hard limit of **20 requests per day**. Because each question requires one API request, the script immediately crashes with a `429 Quota Exceeded` error after processing 20 questions (which is just one single file). 
+> 
+> To process the remaining 13 Blocks of topics, we need to either:
+> 1. Switch to a paid tier API key (or an Enterprise API key).
+> 2. Switch to a different LLM provider (like OpenAI/OpenRouter) that has higher rate limits.
+> 3. Run the script extremely slowly over several weeks (20 questions per day).

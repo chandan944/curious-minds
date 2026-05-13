@@ -159,140 +159,240 @@ export default {
     {
       id: "q1",
       question: "What are the massive clouds of gas where stars are born?",
-      options: ["Galaxies", "Nebulae", "Comets", "Asteroids"],
+      options: [
+        "Galaxies",
+        "Nebulae",
+        "Comets",
+        "Asteroids"
+      ],
       answer: 1,
       explanation: "Nebulae are the cosmic dust and gas 'nurseries' for new stars! ☁️",
     },
     {
       id: "q2",
       question: "What is the primary fuel for a young star?",
-      options: ["Gold", "Oxygen", "Hydrogen", "Carbon"],
+      options: [
+        "Gold",
+        "Oxygen",
+        "Hydrogen",
+        "Carbon"
+      ],
       answer: 2,
       explanation: "Stars start by fusing Hydrogen into Helium! ⛽",
     },
     {
       id: "q3",
       question: "The 'Adult' phase of a star is called the...",
-      options: ["Red Giant", "Main Sequence", "White Dwarf", "Supernova"],
+      options: [
+        "Red Giant",
+        "Main Sequence",
+        "White Dwarf",
+        "Supernova"
+      ],
       answer: 1,
       explanation: "This is where stars spend most of their lives in perfect balance! ☀️",
     },
     {
       id: "q4",
       question: "Which force pulls the gas together to form a star?",
-      options: ["Magnetism", "Gravity", "Electricity", "Wind"],
+      options: [
+        "Magnetism",
+        "Gravity",
+        "Electricity",
+        "Wind"
+      ],
       answer: 1,
       explanation: "Gravity is the 'Builder' that pulls everything together! 🏗️",
     },
     {
       id: "q5",
       question: "What happens when a star runs out of fuel and expands massively?",
-      options: ["It becomes a White Dwarf", "It becomes a Red Giant", "It turns into a Planet", "It disappears"],
+      options: [
+        "Becomes a white dwarf",
+        "Becomes a red giant",
+        "Turns into a planet",
+        "Simply disappears"
+      ],
       answer: 1,
       explanation: "A star expands significantly in its old age! 🍎",
     },
     {
       id: "q6",
       question: "What will our Sun eventually end its life as?",
-      options: ["Black Hole", "Neutron Star", "White Dwarf", "Supernova"],
+      options: [
+        "Black Hole",
+        "Neutron Star",
+        "White Dwarf",
+        "Supernova"
+      ],
       answer: 2,
       explanation: "Medium stars like the Sun end as small, dense White Dwarfs! 🥚",
     },
     {
       id: "q7",
       question: "Supernovae only happen to...",
-      options: ["Small stars", "Medium stars", "Massive stars", "All stars"],
+      options: [
+        "Small stars",
+        "Medium stars",
+        "Massive stars",
+        "All stars"
+      ],
       answer: 2,
       explanation: "Only heavyweights (10x Sun mass) have the gravity to go Supernova! 🥊",
     },
     {
       id: "q8",
       question: "What is the densest object in the universe?",
-      options: ["Sun", "Neutron Star", "Earth", "Nebula"],
+      options: [
+        "Sun",
+        "Neutron Star",
+        "Earth",
+        "Nebula"
+      ],
       answer: 1,
       explanation: "A teaspoon of a Neutron Star would weigh billions of tons! ⚛️",
     },
     {
       id: "q9",
       question: "What lies at the center of a Black Hole?",
-      options: ["A Sun", "A vacuum", "A Singularity", "A white dwarf"],
+      options: [
+        "A Sun",
+        "A vacuum",
+        "A Singularity",
+        "A white dwarf"
+      ],
       answer: 2,
       explanation: "A point of infinite density where physics as we know it ends! 🕳️",
     },
     {
       id: "q10",
       question: "Which element is the 'Death' of a massive star's fusion?",
-      options: ["Carbon", "Helium", "Iron", "Oxygen"],
+      options: [
+        "Carbon",
+        "Helium",
+        "Iron",
+        "Oxygen"
+      ],
       answer: 2,
       explanation: "Fusing Iron consumes energy instead of releasing it, causing collapse! 🛑",
     },
     {
       id: "q11",
       question: "What diagram plots star temperature vs brightness?",
-      options: ["Einstein Plot", "H-R Diagram", "Hubble Chart", "Galactic Map"],
+      options: [
+        "Einstein Plot",
+        "H-R Diagram",
+        "Hubble Chart",
+        "Galactic Map"
+      ],
       answer: 1,
       explanation: "The Hertzsprung-Russell diagram is the master map of stellar life! 📈",
     },
     {
       id: "q12",
       question: "Hotter stars tend to be which color?",
-      options: ["Red", "Blue", "Yellow", "Orange"],
+      options: [
+        "Red",
+        "Blue",
+        "Yellow",
+        "Orange"
+      ],
       answer: 1,
       explanation: "Blue stars are the hottest; Red are the relatively 'coolest'! 🌡️",
     },
     {
       id: "q13",
       question: "Stellar Nucleosynthesis is the process of creating...",
-      options: ["Planets", "Life", "Heavier Elements", "Black Holes"],
+      options: [
+        "Planets",
+        "Life",
+        "Heavier Elements",
+        "Black Holes"
+      ],
       answer: 2,
       explanation: "It's the forging of atoms inside the stellar furnace! 🧪",
     },
     {
       id: "q14",
       question: "Planetary Nebulae are formed when...",
-      options: ["Planets explode", "A star is born", "A medium star sheds its outer layers", "Black holes merge"],
+      options: [
+        "Planets explode",
+        "A new star forms",
+        "Medium star sheds layers",
+        "Black holes merge"
+      ],
       answer: 2,
       explanation: "It's the beautiful final 'breath' of a Sun-like star! 💨",
     },
     {
       id: "q15",
       question: "What keeps a star from collapsing while it's 'alive'?",
-      options: ["Magnetic Force", "Outward Fusion Pressure", "Centrifugal Motion", "Solid Core"],
+      options: [
+        "Magnetic Force",
+        "Outward Fusion Pressure",
+        "Centrifugal Motion",
+        "Solid Core"
+      ],
       answer: 1,
       explanation: "Nuclear fusion prevents gravity from crushing the star! 🏎️",
     },
     {
       id: "q16",
       question: "A 'Pulsar' is a rapidly spinning...",
-      options: ["White Dwarf", "Neutron Star", "Black Hole", "Red Giant"],
+      options: [
+        "White Dwarf",
+        "Neutron Star",
+        "Black Hole",
+        "Red Giant"
+      ],
       answer: 1,
       explanation: "They pulse like lighthouses across the cosmos! 🚨",
     },
     {
       id: "q17",
       question: "What is the 'Event Horizon'?",
-      options: ["The birth of a star", "The edge of a black hole", "The end of a galaxy", "A solar flare"],
+      options: [
+        "The birth of a star",
+        "The edge of a black hole",
+        "The end of a galaxy",
+        "A solar flare"
+      ],
       answer: 1,
       explanation: "The 'Point of No Return' where even light is trapped! 🌒",
     },
     {
       id: "q18",
       question: "Most stars spend 90% of their life in which phase?",
-      options: ["Red Giant", "Supernova", "Main Sequence", "Protostar"],
+      options: [
+        "Red Giant",
+        "Supernova",
+        "Main Sequence",
+        "Protostar"
+      ],
       answer: 2,
       explanation: "Main Sequence is the 'stable middle-age' for stars! ⏳",
     },
     {
       id: "q19",
       question: "Where did the heaviest elements in your body come from?",
-      options: ["Big Bang", "The Earth", "Star Explosions (Supernova)", "Volcanoes"],
+      options: [
+        "The Big Bang",
+        "From the Earth",
+        "Supernova explosions",
+        "From volcanoes"
+      ],
       answer: 2,
       explanation: "You are truly legacy stardust! 🌟",
     },
     {
       id: "q20",
       question: "The Sun is about how far through its life cycle?",
-      options: ["Finished", "Starting", "Halfway", "Almost end"],
+      options: [
+        "Finished",
+        "Starting",
+        "Halfway",
+        "Almost end"
+      ],
       answer: 2,
       explanation: "The Sun is roughly 4.6 billion years old, with 5 billion more to go! 🕶️",
     },
